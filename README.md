@@ -1,46 +1,166 @@
-# Getting Started with Create React App
+# 🚀 FoodXchange Frontend (FDX-frontend)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern React TypeScript application for the FoodXchange food trading platform.
 
-## Available Scripts
+## 🌟 Features
 
-In the project directory, you can run:
+- **Modern React 18** with TypeScript
+- **Tailwind CSS** for responsive styling
+- **Authentication System** with JWT tokens
+- **RFQ Management** - Request for Quotations
+- **Product Marketplace** - Browse and discover food products
+- **Order Management** - Track orders and shipments
+- **Supplier Directory** - Connect with verified suppliers
+- **AI-Powered Features** - Smart supplier matching and recommendations
 
-### `npm start`
+## 🛠️ Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Frontend**: React 18 + TypeScript
+- **Styling**: Tailwind CSS
+- **Build Tool**: React Scripts / Webpack
+- **State Management**: React Hooks + Context API
+- **HTTP Client**: Fetch API
+- **Icons**: Heroicons
+- **Development**: ESLint + Prettier
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 🚀 Quick Start
 
-### `npm test`
+### Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js 18+ and npm
+- Git
 
-### `npm run build`
+### Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+`ash
+# Clone the repository
+git clone https://github.com/foodXchange/FDX-frontend.git
+cd FDX-frontend
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Install dependencies
+npm install
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Start development server
+npm start
+`
 
-### `npm run eject`
+### Backend Setup
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Make sure the FoodXchange backend is running on http://localhost:5000:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+`ash
+# In backend directory
+cd ../Foodxchange-backend
+node server.js
+`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 📱 Usage
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+1. **Start the application**: 
+pm start
+2. **Open browser**: Navigate to http://localhost:3000
+3. **Login with demo credentials**:
+   - Email: demo@foodxchange.com
+   - Password: demo123
 
-## Learn More
+## 🏗️ Project Structure
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+`
+FDX-frontend/
+├── public/              # Static files
+├── src/
+│   ├── components/      # Reusable UI components
+│   ├── features/        # Feature-specific components
+│   │   ├── auth/        # Authentication
+│   │   ├── rfq/         # Request for Quotations
+│   │   ├── marketplace/ # Product marketplace
+│   │   └── orders/      # Order management
+│   ├── services/        # API services
+│   ├── types/           # TypeScript type definitions
+│   ├── utils/           # Utility functions
+│   └── App.tsx          # Main application component
+├── package.json
+└── README.md
+`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🔧 Available Scripts
+
+- 
+pm start - Start development server
+- 
+pm build - Build for production
+- 
+pm test - Run tests
+- 
+pm run eject - Eject from Create React App
+
+## 🌐 API Integration
+
+The frontend communicates with the FoodXchange backend API:
+
+- **Base URL**: http://localhost:5000/api
+- **Authentication**: JWT tokens stored in localStorage
+- **Endpoints**: /auth, /rfqs, /products, /suppliers, /orders
+
+## 🎨 Design System
+
+- **Primary Colors**: Blue (#2563eb)
+- **Secondary Colors**: Green (#059669), Orange (#ea580c)
+- **Typography**: System fonts with Tailwind CSS
+- **Icons**: Heroicons for consistent iconography
+
+## 🧪 Testing
+
+`ash
+# Run tests
+npm test
+
+# Run tests with coverage
+npm test -- --coverage
+`
+
+## 📦 Building for Production
+
+`ash
+# Create production build
+npm run build
+
+# The build folder contains optimized production files
+`
+
+## 🚀 Deployment
+
+The application can be deployed to various platforms:
+
+- **Netlify**: Connect GitHub repo for automatic deployments
+- **Vercel**: Zero-config deployment for React apps
+- **AWS S3 + CloudFront**: Static hosting with CDN
+- **Docker**: Use provided Dockerfile for containerization
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: git checkout -b feature/amazing-feature
+3. Commit changes: git commit -m 'Add amazing feature'
+4. Push to branch: git push origin feature/amazing-feature
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- **Documentation**: [FoodXchange Docs](https://docs.foodxchange.com)
+- **Issues**: [GitHub Issues](https://github.com/foodXchange/FDX-frontend/issues)
+- **Discord**: [FoodXchange Community](https://discord.gg/foodxchange)
+
+## 🙏 Acknowledgments
+
+- React team for the amazing framework
+- Tailwind CSS for the utility-first CSS framework
+- All contributors who help make FoodXchange better
+
+---
+
+**Made with ❤️ by the FoodXchange Team**
