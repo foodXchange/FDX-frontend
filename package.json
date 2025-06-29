@@ -13,7 +13,8 @@
     "eject": "react-scripts eject",
     "start": "react-scripts start",
     "test": "react-scripts test",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "build-css": "tailwindcss build -i ./src/index.css -o ./dist/output.css"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
