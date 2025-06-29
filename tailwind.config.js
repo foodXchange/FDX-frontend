@@ -2,27 +2,22 @@
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html"
   ],
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#eff6ff',
-          100: '#dbeafe', 
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-        }
+        'fx-orange': '#ea580c',
+        'fx-orange-light': '#fb923c',
+        'fx-orange-dark': '#c2410c',
+        'fx-teal': '#0d9488',
+        'fx-teal-light': '#14b8a6',
+        'fx-teal-dark': '#0f766e',
+      },
+      fontFamily: {
+        'inter': ['Inter', 'sans-serif'],
       }
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [],
 }

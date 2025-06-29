@@ -16,29 +16,26 @@
     "build": "react-scripts build"
   },
   "dependencies": {
-    "@tailwindcss/forms": "^0.5.6",
-    "@types/node": "^16.18.48",
-    "@testing-library/jest-dom": "^5.17.0",
-    "tailwindcss": "^3.3.3",
-    "@tanstack/react-query": "^4.32.6",
-    "postcss": "^8.4.29",
-    "react": "^18.2.0",
-    "typescript": "^4.9.5",
-    "@testing-library/user-event": "^13.5.0",
     "@heroicons/react": "^2.0.18",
-    "react-dom": "^18.2.0",
-    "axios": "^1.5.0",
-    "@types/react": "^18.2.21",
-    "react-scripts": "5.0.1",
-    "react-router-dom": "^6.15.0",
+    "@tailwindcss/forms": "^0.5.6",
     "@tailwindcss/typography": "^0.5.9",
-    "web-vitals": "^2.1.4",
-    "autoprefixer": "^10.4.15",
-    "react-hook-form": "^7.45.4",
-    "@types/react-dom": "^18.2.7",
-    "@types/jest": "^27.5.2",
+    "@tanstack/react-query": "^4.32.6",
+    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
-    "date-fns": "^2.30.0"
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "@types/react-router-dom": "^5.3.3",
+    "axios": "^1.5.0",
+    "date-fns": "^2.30.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.45.4",
+    "react-router-dom": "^6.30.1",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4"
   },
   "version": "1.0.0",
   "browserslist": {
@@ -57,5 +54,11 @@
     "type": "git",
     "url": "https://github.com/foodXchange/FDX-frontend.git"
   },
-  "author": "FoodXchange Team"
+  "author": "FoodXchange Team",
+  "devDependencies": {
+    "@types/node": "^24.0.7",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11"
+  }
 }
