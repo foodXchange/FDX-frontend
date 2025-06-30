@@ -1,30 +1,48 @@
 import React from 'react';
-import './App.css';
-import TailwindTest from './components/TailwindTest';
+import './index.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header p-6">
-        <div className="container mx-auto">
-          <h1 className="text-3xl font-bold text-primary-600">
-            FoodXchange Development Environment
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow">
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold text-gray-900">
+            🍔 FoodXchange
           </h1>
-          <p className="text-gray-600 mt-2">
-            B2B Food Trading Platform - Ready for Development
-          </p>
         </div>
       </header>
-      
-      <main className="container mx-auto py-8">
-        <TailwindTest />
-        
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">
-            🚀 Frontend ready for development! 
-            <br />
-            TypeScript ✅ | Tailwind CSS ✅ | React 18 ✅
-          </p>
+      <main>
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="px-4 py-5 sm:p-6">
+                <h2 className="text-2xl font-bold text-primary-600 mb-4">
+                  Welcome to FoodXchange
+                </h2>
+                <p className="text-gray-600 mb-4">
+                  B2B Food Trading Platform - Connecting Israeli buyers with European suppliers
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  <div className="bg-primary-50 p-4 rounded-lg">
+                    <h3 className="font-semibold text-primary-700">✅ React</h3>
+                    <p className="text-sm text-primary-600">Setup Complete</p>
+                  </div>
+                  <div className="bg-secondary-50 p-4 rounded-lg">
+                    <h3 className="font-semibold text-secondary-700">✅ TypeScript</h3>
+                    <p className="text-sm text-secondary-600">Configured</p>
+                  </div>
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <h3 className="font-semibold text-green-700">✅ Tailwind</h3>
+                    <p className="text-sm text-green-600">Ready to use</p>
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <button className="btn-primary mr-2">Get Started</button>
+                  <button className="btn-secondary">Learn More</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
