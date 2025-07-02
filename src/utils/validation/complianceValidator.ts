@@ -1,201 +1,145 @@
-﻿// src/utils/validation/complianceValidator.ts
-
-interface ValidationRule {
-  type: 'required' | 'enum' | 'range' | 'exact_match' | 'regex';
-  values?: string[] | number[];
-  min?: number;
-  max?: number;
-  pattern?: RegExp;
-  message?: string;
-}
-
 interface ValidationResult {
   isValid: boolean;
   errors: string[];
   warnings: string[];
 }
 
-interface ProductSpecs {
+interface ProductSpecification {
   productType: string;
   color?: string;
   size?: string;
   packaging?: string;
-  quantity?: number;
-  unit?: string;
+  quantity: number;
+  unit: string;
 }
 
-interface RFQFormData {
+interface RFQData {
   title: string;
   description: string;
   productType: string;
-  specifications: {
-    color?: string;
-    size?: string;
-    packaging?: string;
-    quantity: number;
-    unit: string;
-  };
+  specifications: ProductSpecification;
   allergens: string[];
   deadline: string;
   budget: number;
 }
 
+const COMPLIANCE_RULES = {
+  cornflakeColors: {
+    valid: ['golden', 'light_brown', 'amber', 'honey'],
+    invalid: ['dark_brown', 'white', 'black', 'grey', 'green']
+  },
+  
+  commonAllergens: [
+    'milk', 'eggs', 'fish', 'shellfish', 'tree_nuts', 'peanuts', 
+    'wheat', 'soybeans', 'sesame', 'mustard', 'celery', 'lupin'
+  ]
+};
+
 class ComplianceValidator {
-  private static validateField(value: any, rule: ValidationRule): { isValid: boolean } {
-    switch (rule.type) {
-      case 'required':
-        return { isValid: value !== null && value !== undefined && value !== '' };
-
-      case 'enum':
-        if (!rule.values) return { isValid: true };
-        return { isValid: (rule.values as any[]).includes(value) || false };
-
-      case 'range':
-        if (typeof value !== 'number') return { isValid: false };
-        const min = rule.min ?? Number.MIN_SAFE_INTEGER;
-        const max = rule.max ?? Number.MAX_SAFE_INTEGER;
-        return { isValid: value >= min && value <= max };
-
-      case 'exact_match':
-        if (!rule.values) return { isValid: true };
-        return { isValid: (rule.values as any[]).includes(value) || false };
-
-      case 'regex':
-        if (!rule.pattern) return { isValid: true };
-        return { isValid: rule.pattern.test(String(value)) };
-
-      default:
-        return { isValid: true };
-    }
-  }
-
-  static validateProduct(formData: RFQFormData): ValidationResult {
-    const errors: string[] = [];
-    const warnings: string[] = [];
-
-    // Basic validation
-    if (!formData.title.trim()) {
-      errors.push('RFQ title is required');
-    }
-
-    if (!formData.productType) {
-      errors.push('Product type must be selected');
-    }
-
-    if (formData.specifications.quantity <= 0) {
-      errors.push('Quantity must be greater than 0');
-    }
-
-    // Budget validation
-    if (formData.budget <= 0) {
-      warnings.push('Consider setting a budget for better supplier matching');
-    }
-
-    return { isValid: errors.length === 0, errors, warnings };
-  }
-
-  static validateSpecifications(specs: ProductSpecs): ValidationResult {
+  
+  validateSpecifications(specs: ProductSpecification): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
     // Critical cornflake color validation
     if (specs.productType === 'cornflakes' && specs.color) {
-      const approvedColors = ['golden', 'light_brown', 'amber', 'honey'];
-      if (!approvedColors.includes(specs.color.toLowerCase())) {
-        errors.push('❌ CRITICAL ERROR: Invalid cornflake color. Must be one of: ' + approvedColors.join(', '));
+      if (COMPLIANCE_RULES.cornflakeColors.invalid.includes(specs.color)) {
+        errors.push('CRITICAL: Invalid cornflake color \"' + specs.color + '\". This caused a 9-month project failure before!');
+        errors.push('Valid colors: ' + COMPLIANCE_RULES.cornflakeColors.valid.join(', '));
+      } else if (!COMPLIANCE_RULES.cornflakeColors.valid.includes(specs.color)) {
+        warnings.push('Cornflake color \"' + specs.color + '\" not in pre-approved list. Verification required.');
       }
     }
 
     // Quantity validation
-    if (specs.quantity && specs.quantity < 1) {
-      errors.push('Quantity must be at least 1');
+    if (specs.quantity <= 0) {
+      errors.push('Quantity must be greater than 0');
     }
 
-    if (specs.quantity && specs.quantity > 10000) {
-      warnings.push('Large quantity order - consider breaking into smaller batches');
+    if (specs.quantity > 100000) {
+      warnings.push('Large quantity order - verify supplier capacity and logistics');
     }
 
-    return { isValid: errors.length === 0, errors, warnings };
-  }
-
-  static validateFoodSafety(formData: RFQFormData): ValidationResult {
-    const errors: string[] = [];
-    const warnings: string[] = [];
-
-    // Allergen validation
-    if (formData.allergens.length === 0) {
-      warnings.push('Consider specifying allergen requirements for food safety compliance');
+    // Unit validation
+    const validUnits = ['kg', 'tons', 'lbs', 'pieces', 'cases'];
+    if (!validUnits.includes(specs.unit)) {
+      errors.push('Invalid unit \"' + specs.unit + '\". Valid units: ' + validUnits.join(', '));
     }
 
-    // Deadline validation
-    if (formData.deadline) {
-      const deadlineDate = new Date(formData.deadline);
-      const now = new Date();
-      const daysDiff = Math.ceil((deadlineDate.getTime() - now.getTime()) / (1000 * 3600 * 24));
-
-      if (daysDiff < 7) {
-        warnings.push('Short deadline may limit supplier options and increase costs');
-      }
-
-      if (daysDiff < 0) {
-        errors.push('Deadline cannot be in the past');
-      }
-    }
-
-    // Food safety requirements by product type
-    if (formData.productType === 'cornflakes') {
-      warnings.push('Ensure suppliers have HACCP certification for cereal products');
-    }
-
-    return { isValid: errors.length === 0, errors, warnings };
-  }
-
-  static validateRegulatory(formData: RFQFormData, targetMarket: string = 'US'): ValidationResult {
-    const errors: string[] = [];
-    const warnings: string[] = [];
-
-    // Market-specific regulations
-    switch (targetMarket.toLowerCase()) {
-      case 'us':
-        warnings.push('Ensure FDA compliance for US market entry');
-        break;
-      case 'eu':
-        warnings.push('Verify EU Novel Food regulations compliance');
-        break;
-      case 'uk':
-        warnings.push('Check UK Food Standards Agency requirements');
-        break;
-      default:
-        warnings.push('Verify local food safety regulations for target market');
-    }
-
-    // Labeling requirements
-    if (formData.allergens.length > 0) {
-      warnings.push('Allergen labeling must comply with local regulations');
-    }
-
-    return { isValid: errors.length === 0, errors, warnings };
-  }
-
-  // Error prevention utilities
-  static getColorValidationHint(productType: string): string {
-    if (productType === 'cornflakes') {
-      return '⚠️ Remember: Wrong cornflake color caused 9-month project failure. Approved: Golden, Light Brown, Amber, Honey';
-    }
-    return 'Select appropriate color specification for your product';
-  }
-
-  static getCriticalSpecs(productType: string): string[] {
-    const criticalSpecs: { [key: string]: string[] } = {
-      'cornflakes': ['color', 'quantity', 'packaging'],
-      'wheat': ['grade', 'protein_content', 'moisture'],
-      'rice': ['grain_type', 'quality_grade', 'moisture'],
-      'oats': ['cut_type', 'quality', 'moisture'],
-      'pasta': ['shape', 'wheat_type', 'cooking_time']
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings
     };
+  }
 
-    return criticalSpecs[productType] || ['quantity', 'quality'];
+  validateProduct(rfqData: RFQData): ValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    if (!rfqData.title.trim()) {
+      errors.push('RFQ title is required');
+    }
+
+    if (!rfqData.productType) {
+      errors.push('Product type must be selected');
+    }
+
+    if (!rfqData.deadline) {
+      errors.push('Deadline is required');
+    } else {
+      const deadlineDate = new Date(rfqData.deadline);
+      const today = new Date();
+      if (deadlineDate <= today) {
+        errors.push('Deadline must be in the future');
+      }
+    }
+
+    if (rfqData.budget <= 0) {
+      errors.push('Budget must be greater than 0');
+    }
+
+    const specValidation = this.validateSpecifications(rfqData.specifications);
+    errors.push(...specValidation.errors);
+    warnings.push(...specValidation.warnings);
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings
+    };
+  }
+
+  validateFoodSafety(rfqData: RFQData): ValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    if (rfqData.allergens.length === 0) {
+      warnings.push('No allergens declared - verify product is allergen-free');
+    }
+
+    const hasNuts = rfqData.allergens.some(allergen => 
+      ['tree_nuts', 'peanuts'].includes(allergen)
+    );
+    const hasMilk = rfqData.allergens.includes('milk');
+    
+    if (hasNuts && hasMilk) {
+      warnings.push('Product contains both nuts and milk - ensure separate production lines');
+    }
+
+    if (rfqData.productType === 'cornflakes') {
+      if (!rfqData.allergens.includes('wheat') && !rfqData.title.toLowerCase().includes('gluten-free')) {
+        warnings.push('Cornflakes typically contain gluten - verify allergen declaration');
+      }
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings
+    };
   }
 }
 
-export const complianceValidator = ComplianceValidator;
+export const complianceValidator = new ComplianceValidator();
+export default complianceValidator;

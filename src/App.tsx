@@ -1,80 +1,76 @@
-import React, { useState } from 'react';
+import React from 'react';
 import RFQFormRealTime from './components/RFQFormRealTime';
-import RealTimeNotifications from './components/RealTimeNotifications';
 import './App.css';
 
 function App() {
-  const [showForm, setShowForm] = useState(false);
-
-  if (showForm) {
-    return (
-      <div className="App">
-        <header className="bg-blue-600 text-white p-4">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold">🥘 FoodXchange Platform</h1>
-              <p className="text-blue-100">Real-Time Collaboration • Compliance Protection</p>
-            </div>
-            <button
-              onClick={() => setShowForm(false)}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-md transition-colors"
-            >
-              ← Back to Dashboard
-            </button>
-          </div>
-        </header>
-        
-        <main className="min-h-screen bg-gray-50 py-8">
-          <div className="max-w-7xl mx-auto px-4">
-            <RFQFormRealTime />
-          </div>
-        </main>
-        
-        {/* Real-time notifications */}
-        <RealTimeNotifications />
-      </div>
-    );
-  }
-
   return (
     <div className="App">
-      <header className="bg-blue-600 text-white p-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold">🥘 FoodXchange Platform</h1>
-          <p className="text-blue-100">Transforming Global Food Sourcing with Unified Digital Solutions</p>
+      <header className="bg-gradient-to-r from-blue-600 to-teal-600 text-white py-6">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="text-2xl font-bold">
+                <span className="text-orange-400">🥣</span> FoodXchange
+              </div>
+              <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                LIVE
+              </span>
+            </div>
+            <div className="text-sm">
+              Transforming Global Food Sourcing
+            </div>
+          </div>
         </div>
       </header>
-      
-      <main className="min-h-screen bg-gray-50 p-6">
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            🛡️ Real-Time Compliance System
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Live collaboration with instant compliance alerts to prevent project failures.
-          </p>
-          
-          <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
-            <h3 className="font-medium text-green-800 mb-2">🚀 NEW: Real-Time Features</h3>
-            <ul className="text-green-700 text-sm space-y-1">
-              <li>• Team sees your changes instantly</li>
-              <li>• Immediate alerts for compliance violations</li>
-              <li>• Live collaboration on RFQ specifications</li>
-              <li>• Prevents miscommunication errors</li>
-            </ul>
+
+      <main className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-6">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Real-Time RFQ Management
+            </h1>
+            <p className="text-gray-600">
+              Collaborate with your team in real-time • Prevent costly errors • Ensure compliance
+            </p>
           </div>
 
-          <button
-            onClick={() => setShowForm(true)}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition-colors"
-          >
-            🔗 Start Real-Time RFQ Collaboration
-          </button>
+          <RFQFormRealTime />
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="text-blue-600 mb-3">🔗</div>
+              <h3 className="font-semibold text-gray-900 mb-2">Real-Time Collaboration</h3>
+              <p className="text-gray-600 text-sm">
+                Team members see changes instantly and get notified of critical compliance issues
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="text-red-600 mb-3">🚨</div>
+              <h3 className="font-semibold text-gray-900 mb-2">Error Prevention</h3>
+              <p className="text-gray-600 text-sm">
+                Prevents spec errors like wrong cornflake colors that caused 9-month project failures
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="text-green-600 mb-3">✅</div>
+              <h3 className="font-semibold text-gray-900 mb-2">Compliance Validation</h3>
+              <p className="text-gray-600 text-sm">
+                Automated food safety and regulatory compliance checks for global markets
+              </p>
+            </div>
+          </div>
         </div>
       </main>
-      
-      {/* Real-time notifications */}
-      <RealTimeNotifications />
+
+      <footer className="bg-gray-800 text-white py-6 mt-12">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-gray-400">
+            © 2025 FoodXchange • Transforming Global Food Sourcing with Unified Digital Solutions
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
