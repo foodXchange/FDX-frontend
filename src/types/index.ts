@@ -1,244 +1,21 @@
-// src/types/index.ts
-// FoodXchange TypeScript Type Definitions
+// src/types/index.ts - Main type definitions
 
+// User Types
 export interface User {
   id: string;
   email: string;
   name: string;
-  company: string;
   role: 'buyer' | 'supplier' | 'admin';
+  company?: string;
   avatar?: string;
-  verified: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Company {
-  id: string;
-  name: string;
-  type: 'buyer' | 'supplier';
-  description: string;
-  website?: string;
-  logo?: string;
-  address: Address;
-  certifications: Certification[];
-  verified: boolean;
-  rating: number;
-  totalTrades: number;
-}
-
-export interface Address {
-  street: string;
-  city: string;
-  state: string;
-  country: string;
-  postalCode: string;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-}
-
-export interface Certification {
-  id: string;
-  type: string;
-  name: string;
-  authority: string;
-  number: string;
-  validFrom: string;
-  validUntil: string;
-  documentUrl?: string;
-  verified: boolean;
-}
-
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  supplier: Supplier;
-  images: string[];
-  specifications: Record<string, any>;
-  certifications: string[];
-  pricing: {
-    unitPrice: number;
-    currency: string;
-    unit: string;
-    minimumOrder: number;
-    priceBreaks?: PriceBreak[];
-  };
-  availability: {
-    inStock: boolean;
-    quantity: number;
-    leadTime: number;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PriceBreak {
-  minQuantity: number;
-  price: number;
-  leadTime?: number;
-}
-
-export interface Supplier {
-  id: string;
-  companyName: string;
-  contactPerson: string;
-  email: string;
-  phone: string;
-  country: string;
-  verified: boolean;
-  rating: number;
-  totalProducts: number;
-  specialties: string[];
-  certifications: string[];
-}
-
-export interface RFQ {
-  id: string;
-  referenceNumber: string;
-  title: string;
-  description: string;
-  category: string;
-  buyer: {
-    companyId: string;
-    userId: string;
-    companyName: string;
-  };
-  products: RFQProduct[];
-  requirements: {
-    certifications: string[];
-    qualityStandards: string[];
-    paymentTerms: string[];
-    deliveryTerms: string;
-  };
-  timeline: {
-    publishedAt: string;
-    deadline: string;
-    deliveryDate: string;
-  };
-  status: 'draft' | 'published' | 'closed' | 'awarded';
-  responses: RFQResponse[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface RFQProduct {
-  name: string;
-  specifications: Record<string, any>;
-  quantity: number;
-  unit: string;
-  targetPrice?: number;
-  samples: boolean;
-}
-
-export interface RFQResponse {
-  id: string;
-  rfqId: string;
-  supplier: Supplier;
-  products: RFQResponseProduct[];
-  totalPrice: number;
-  currency: string;
-  deliveryTerms: string;
-  paymentTerms: string;
-  validUntil: string;
-  notes?: string;
-  status: 'submitted' | 'accepted' | 'rejected';
-  submittedAt: string;
-}
-
-export interface RFQResponseProduct {
-  name: string;
-  unitPrice: number;
-  quantity: number;
-  totalPrice: number;
-  leadTime: number;
-  specifications: Record<string, any>;
-  samples?: {
-    available: boolean;
-    cost: number;
-    deliveryTime: number;
-  };
-}
-
-export interface Order {
-  id: string;
-  orderNumber: string;
-  rfqId?: string;
-  buyer: Company;
-  supplier: Company;
-  products: OrderProduct[];
-  pricing: {
-    subtotal: number;
-    tax: number;
-    shipping: number;
-    total: number;
-    currency: string;
-  };
-  delivery: {
-    address: Address;
-    method: string;
-    estimatedDate: string;
-    actualDate?: string;
-    trackingNumber?: string;
-  };
-  payment: {
-    method: string;
-    terms: string;
-    status: 'pending' | 'paid' | 'failed';
-    dueDate: string;
-    paidAt?: string;
-  };
-  status: 'draft' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  documents: OrderDocument[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface OrderProduct {
-  productId: string;
-  name: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-  specifications: Record<string, any>;
-}
-
-export interface OrderDocument {
-  id: string;
-  type: 'invoice' | 'contract' | 'certificate' | 'shipping';
-  name: string;
-  url: string;
-  uploadedAt: string;
-  uploadedBy: string;
-}
-
-// API Response Types
-export interface APIResponse<T = any> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-}
-
-export interface PaginatedResponse<T = any> {
-  success: boolean;
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    pages: number;
-  };
-}
-
-// Form Types
+// Authentication Types
 export interface LoginFormData {
   email: string;
   password: string;
-  remember?: boolean;
 }
 
 export interface RegisterFormData {
@@ -248,64 +25,222 @@ export interface RegisterFormData {
   name: string;
   company: string;
   role: 'buyer' | 'supplier';
-  phone: string;
+}
+
+// Product Types
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  unit: string;
+  supplierId: string;
+  supplierName: string;
+  image?: string;
+  specifications: ProductSpecification[];
+  certifications: string[];
+  origin: string;
+  minOrderQuantity: number;
+  leadTime: number; // days
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductSpecification {
+  name: string;
+  value: string;
+  unit?: string;
+}
+
+// RFQ Types
+export interface RFQ {
+  id: string;
+  title: string;
+  description: string;
+  status: 'draft' | 'published' | 'closed' | 'awarded';
+  createdBy: string;
+  buyerCompany: string;
+  products: RFQProduct[];
+  requirements: RFQRequirements;
+  timeline: RFQTimeline;
+  budget?: {
+    min: number;
+    max: number;
+    currency: string;
+  };
+  proposals: RFQProposal[];
+  createdAt: string;
+  updatedAt: string;
+  deadline: string;
+}
+
+export interface RFQProduct {
+  id: string;
+  name: string;
+  category: string;
+  quantity: number;
+  unit: string;
+  specifications: ProductSpecification[];
+  description?: string;
+}
+
+export interface RFQRequirements {
+  certifications: string[];
+  qualityStandards: string[];
+  paymentTerms: string[];
+  deliveryTerms: string;
+  packagingRequirements?: string;
+  labeling?: string[];
+}
+
+export interface RFQTimeline {
+  proposalDeadline: string;
+  expectedDelivery: string;
+  evaluationPeriod: number; // days
+}
+
+export interface RFQProposal {
+  id: string;
+  rfqId: string;
+  supplierId: string;
+  supplierName: string;
+  status: 'submitted' | 'under_review' | 'accepted' | 'rejected';
+  pricing: ProposalPricing[];
+  documents: string[];
+  notes?: string;
+  submittedAt: string;
+}
+
+export interface ProposalPricing {
+  productId: string;
+  unitPrice: number;
+  totalPrice: number;
+  currency: string;
+  leadTime: number;
+}
+
+// Order Types
+export interface Order {
+  id: string;
+  rfqId: string;
+  proposalId: string;
+  buyerId: string;
+  supplierId: string;
+  status: 'pending' | 'confirmed' | 'in_production' | 'shipped' | 'delivered' | 'cancelled';
+  items: OrderItem[];
+  total: number;
+  currency: string;
+  paymentStatus: 'pending' | 'paid' | 'overdue';
+  shipping: ShippingDetails;
+  timeline: OrderTimeline;
+  documents: OrderDocument[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderItem {
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  totalPrice: number;
+  specifications: ProductSpecification[];
+}
+
+export interface ShippingDetails {
+  method: string;
+  trackingNumber?: string;
+  carrier?: string;
+  estimatedDelivery: string;
+  address: Address;
+}
+
+export interface OrderTimeline {
+  ordered: string;
+  confirmed?: string;
+  inProduction?: string;
+  shipped?: string;
+  delivered?: string;
+}
+
+export interface OrderDocument {
+  id: string;
+  type: 'invoice' | 'contract' | 'certificate' | 'shipping_label' | 'other';
+  name: string;
+  url: string;
+  uploadedAt: string;
+}
+
+// Supplier Types
+export interface Supplier {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  country: string;
+  address: Address;
+  certifications: string[];
+  specialties: string[];
+  description?: string;
+  website?: string;
+  logo?: string;
+  verified: boolean;
+  rating: number;
+  totalOrders: number;
+  onTimeDelivery: number; // percentage
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Common Types
+export interface Address {
+  street: string;
+  city: string;
+  state?: string;
+  postalCode: string;
   country: string;
 }
 
-export interface RFQFormData {
-  title: string;
-  description: string;
-  category: string;
-  products: RFQProduct[];
-  certifications: string[];
-  deliveryDate: string;
-  deliveryLocation: string;
+export interface APIResponse<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: string;
 }
 
-// Filter and Search Types
-export interface ProductFilters {
-  category?: string;
-  supplier?: string;
-  country?: string;
-  certifications?: string[];
-  priceRange?: {
-    min: number;
-    max: number;
+export interface PaginatedResponse<T> extends APIResponse<T[]> {
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
   };
-  inStock?: boolean;
 }
 
-export interface SearchParams {
-  query?: string;
-  filters?: ProductFilters;
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+// Dashboard Types
+export interface DashboardStats {
+  totalRFQs: number;
+  activeRFQs: number;
+  totalOrders: number;
+  totalSuppliers: number;
+  pendingApprovals: number;
+  revenue: number;
 }
 
-// UI Component Types
-export interface SelectOption {
-  value: string;
-  label: string;
-  disabled?: boolean;
-}
-
-export interface TableColumn<T = any> {
-  key: keyof T;
-  title: string;
-  sortable?: boolean;
-  render?: (value: any, record: T) => React.ReactNode;
-}
-
-export interface NotificationData {
+// Notification Types
+export interface Notification {
   id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: 'info' | 'success' | 'warning' | 'error';
   title: string;
   message: string;
-  duration?: number;
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
+  read: boolean;
+  createdAt: string;
+  actionUrl?: string;
 }
+
+// Export all types from sub-modules
+export * from './auth';
+export * from './rfq';

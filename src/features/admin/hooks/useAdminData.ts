@@ -1,63 +1,100 @@
+// src/features/admin/hooks/useAdminData.ts
 import { useState, useEffect } from 'react';
-import adminApi from '../services/adminApi';
-import { SystemHealth, UsageStats, AIUsage, UserActivity, SecurityAlert } from '../types';
+import { 
+  adminApi, 
+  SystemHealth, 
+  UsageStats, 
+  AIUsageData, 
+  UserActivity, 
+  SecurityAlert 
+} from '../../../services/api/admin';
 
 interface AdminData {
   health: SystemHealth | null;
   usage: UsageStats | null;
-  aiUsage: AIUsage | null;
-  users: UserActivity[];
-  alerts: SecurityAlert[];
-  loading: boolean;
-  error: string | null;
+  aiUsage: AIUsageData | null;
+  users: UserActivity[] | null;
+  alerts: SecurityAlert[] | null;
 }
 
-export const useAdminData = (refreshInterval: number = 30000) => {
+export const useAdminData = () => {
   const [data, setData] = useState<AdminData>({
     health: null,
     usage: null,
     aiUsage: null,
-    users: [],
-    alerts: [],
-    loading: true,
-    error: null,
+    users: null,
+    alerts: null
   });
-
-  const fetchData = async () => {
-    try {
-      setData(prev => ({ ...prev, loading: true, error: null }));
-      
-      const [health, usage, aiUsage, users, alerts] = await Promise.all([
-        adminApi.getSystemHealth(),
-        adminApi.getUsageStats(),
-        adminApi.getAIUsage(),
-        adminApi.getUserActivity(),
-        adminApi.getSecurityAlerts(),
-      ]);
-
-      setData({
-        health,
-        usage,
-        aiUsage,
-        users,
-        alerts,
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      setData(prev => ({
-        ...prev,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch admin data',
-      }));
-    }
-  };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, refreshInterval);
-    return () => clearInterval(interval);
-  }, [refreshInterval]);
+    const fetchAdminData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  return { ...data, refresh: fetchData };
+        const [health, usage, aiUsage, users, alerts] = await Promise.all([
+          adminApi.getSystemHealth(),
+          adminApi.getUsageStats(),
+          adminApi.getAIUsage(),
+          adminApi.getUserActivity(),
+          adminApi.getSecurityAlerts(),
+        ]);
+
+        setData({
+          health,
+          usage,
+          aiUsage,
+          users,
+          alerts
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch admin data');
+        console.error('Admin data fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdminData();
+  }, []);
+
+  const refetch = () => {
+    const fetchAdminData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const [health, usage, aiUsage, users, alerts] = await Promise.all([
+          adminApi.getSystemHealth(),
+          adminApi.getUsageStats(),
+          adminApi.getAIUsage(),
+          adminApi.getUserActivity(),
+          adminApi.getSecurityAlerts(),
+        ]);
+
+        setData({
+          health,
+          usage,
+          aiUsage,
+          users,
+          alerts
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch admin data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdminData();
+  };
+
+  return {
+    ...data,
+    loading,
+    error,
+    refetch
+  };
 };
