@@ -1,20 +1,14 @@
 {
-  "license": "MIT",
   "name": "foodxchange-frontend",
+  "version": "1.0.0",
+  "license": "MIT",
   "homepage": "https://github.com/foodXchange/FDX-frontend",
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "description": "FoodXchange Frontend - Modern React TypeScript application",
   "scripts": {
-    "eject": "react-scripts eject",
     "start": "react-scripts start",
-    "test": "react-scripts test",
     "build": "react-scripts build",
-    "build-css": "tailwindcss build -i ./src/index.css -o ./dist/output.css"
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
@@ -24,46 +18,49 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/react-router-dom": "^5.3.3",
-    "axios": "^1.10.0",
     "date-fns": "^2.30.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",
     "react-router-dom": "^6.30.1",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
     "zustand": "^5.0.6"
   },
-  "version": "1.0.0",
+  "devDependencies": {
+    "@types/jest": "^27.5.2",
+    "@types/node": "^18.19.113",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.23",
+    "@types/react-router-dom": "^5.3.3",
+    "ajv": "^8.12.0",
+    "ajv-keywords": "^5.1.0",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^4.9.5"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
   "browserslist": {
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ],
     "production": [
       ">0.2%",
       "not dead",
       "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/foodXchange/FDX-frontend.git"
   },
-  "author": "FoodXchange Team",
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.11",
-    "@types/node": "^18.19.113",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "ajv": "^8.12.0",
-    "ajv-keywords": "^5.1.0",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11",
-    "typescript": "^4.9.5"
-  }
+  "author": "FoodXchange Team"
 }
