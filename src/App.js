@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import * as HeroIcons from '@heroicons/react/24/outline';
+import { AuthProvider } from './contexts/AuthContext';
 
 // ===== DESIGN SYSTEM =====
 const cn = (...classes) => classes.filter(Boolean).join(' ');
@@ -294,105 +295,6 @@ const RFQCard = ({ rfq, onStatusUpdate, isUpdating }) => {
   );
 };
 
-// ===== ANALYTICS DASHBOARD =====
-const AnalyticsDashboard = () => {
-  const metrics = [
-    { title: 'Total RFQs', value: 247, change: 12.5, icon: 'rfqs' },
-    { title: 'Active Orders', value: 89, change: 8.2, icon: 'orders' },
-    { title: 'Revenue', value: '$1.25M', change: 15.3, icon: 'CurrencyDollarIcon' },
-    { title: 'Suppliers', value: 34, change: -2.1, icon: 'suppliers' }
-  ];
-
-  const recentActivity = [
-    { id: 1, action: 'New RFQ created', user: 'John Doe', time: '2 minutes ago', type: 'create' },
-    { id: 2, action: 'Order approved', user: 'Jane Smith', time: '5 minutes ago', type: 'approved' },
-    { id: 3, action: 'Supplier added', user: 'Mike Johnson', time: '10 minutes ago', type: 'create' },
-    { id: 4, action: 'RFQ updated', user: 'Sarah Wilson', time: '15 minutes ago', type: 'edit' }
-  ];
-
-  return (
-    <div className="space-y-6">
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
-          <Card key={index} className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">{metric.title}</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{metric.value}</p>
-                <div className={cn(
-                  'flex items-center mt-2',
-                  metric.change > 0 ? 'text-green-600' : 'text-red-600'
-                )}>
-                  <AutoIcon 
-                    name={metric.change > 0 ? 'TrendingUpIcon' : 'TrendingDownIcon'} 
-                    className="w-4 h-4 mr-1" 
-                  />
-                  <span className="text-sm font-medium">
-                    {Math.abs(metric.change)}% from last month
-                  </span>
-                </div>
-              </div>
-              
-              <div className="p-3 bg-blue-100 rounded-full">
-                <AutoIcon name={metric.icon} className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      {/* Charts Placeholder */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
-          <div className="h-64 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg flex items-center justify-center">
-            <p className="text-gray-500">Chart Component Would Go Here</p>
-          </div>
-        </Card>
-        
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status</h3>
-          <div className="h-64 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg flex items-center justify-center">
-            <p className="text-gray-500">Pie Chart Component Would Go Here</p>
-          </div>
-        </Card>
-      </div>
-
-      {/* Recent Activity */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-        <div className="space-y-3">
-          {recentActivity.map(activity => (
-            <div key={activity.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-              <div className={cn(
-                'w-8 h-8 rounded-full flex items-center justify-center',
-                activity.type === 'create' ? 'bg-green-100' :
-                activity.type === 'approved' ? 'bg-blue-100' :
-                activity.type === 'edit' ? 'bg-yellow-100' : 'bg-gray-100'
-              )}>
-                <AutoIcon 
-                  name={
-                    activity.type === 'create' ? 'create' :
-                    activity.type === 'approved' ? 'approved' :
-                    activity.type === 'edit' ? 'edit' : 'user'
-                  } 
-                  className="w-4 h-4" 
-                />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                <p className="text-xs text-gray-500">by {activity.user}</p>
-              </div>
-              <span className="text-xs text-gray-500">{activity.time}</span>
-            </div>
-          ))}
-        </div>
-      </Card>
-    </div>
-  );
-};
-
 // ===== MAIN APPLICATION =====
 const CompleteFoodXchangeApp = () => {
   const [currentView, setCurrentView] = useState('dashboard');
@@ -549,9 +451,6 @@ const CompleteFoodXchangeApp = () => {
 
   const renderContent = () => {
     switch (currentView) {
-      case 'analytics':
-        return <AnalyticsDashboard />;
-      
       case 'rfqs':
         return (
           <div className="space-y-6">
@@ -577,37 +476,9 @@ const CompleteFoodXchangeApp = () => {
           </div>
         );
       
-      case 'orders':
-        return (
-          <div className="text-center py-12">
-            <AutoIcon name="orders" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Orders Management</h3>
-            <p className="text-gray-500">Track and manage your food orders</p>
-          </div>
-        );
-      
-      case 'suppliers':
-        return (
-          <div className="text-center py-12">
-            <AutoIcon name="suppliers" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Supplier Directory</h3>
-            <p className="text-gray-500">Manage your supplier relationships</p>
-          </div>
-        );
-        
-      case 'settings':
-        return (
-          <div className="text-center py-12">
-            <AutoIcon name="settings" className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Settings</h3>
-            <p className="text-gray-500">Configure your FoodXchange preferences</p>
-          </div>
-        );
-      
       default:
         return (
           <div className="space-y-6">
-            {/* Welcome Section */}
             <Card className="p-6 bg-gradient-to-r from-blue-50 to-purple-50">
               <div className="flex items-center justify-between">
                 <div>
@@ -626,67 +497,14 @@ const CompleteFoodXchangeApp = () => {
               </div>
             </Card>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <AutoIcon name="rfqs" className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">5</p>
-                    <p className="text-sm text-gray-600">Active RFQs</p>
-                  </div>
-                </div>
-              </Card>
-              
-              <Card className="p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <AutoIcon name="orders" className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">2</p>
-                    <p className="text-sm text-gray-600">Pending Orders</p>
-                  </div>
-                </div>
-              </Card>
-              
-              <Card className="p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <AutoIcon name="suppliers" className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">{activeUsers.length}</p>
-                    <p className="text-sm text-gray-600">Online Users</p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-
-            {/* Recent RFQs */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Recent RFQs</h3>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setCurrentView('rfqs')}
-                >
-                  View All
-                </Button>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {rfqs.slice(0, 2).map(rfq => (
-                  <RFQCard
-                    key={rfq.id}
-                    rfq={rfq}
-                    onStatusUpdate={updateRFQStatus}
-                  />
-                ))}
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {rfqs.slice(0, 2).map(rfq => (
+                <RFQCard
+                  key={rfq.id}
+                  rfq={rfq}
+                  onStatusUpdate={updateRFQStatus}
+                />
+              ))}
             </div>
           </div>
         );
@@ -704,7 +522,6 @@ const CompleteFoodXchangeApp = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile Navigation */}
       <MobileNavigation 
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
@@ -712,11 +529,9 @@ const CompleteFoodXchangeApp = () => {
         onNavigate={setCurrentView}
       />
       
-      {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
-            {/* Left side */}
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setMobileMenuOpen(true)}
@@ -736,9 +551,7 @@ const CompleteFoodXchangeApp = () => {
               </div>
             </div>
             
-            {/* Right side */}
             <div className="flex items-center space-x-4">
-              {/* Connection Status */}
               <div className="flex items-center space-x-2">
                 <div className={cn('w-2 h-2 rounded-full', statusConfig.color)} />
                 <span className="text-sm font-medium text-gray-700 hidden sm:inline">
@@ -746,7 +559,6 @@ const CompleteFoodXchangeApp = () => {
                 </span>
               </div>
               
-              {/* Notifications */}
               <div className="relative">
                 <button className="p-2 rounded-lg hover:bg-gray-100">
                   <AutoIcon name="notification" className="w-5 h-5 text-gray-600" />
@@ -758,7 +570,6 @@ const CompleteFoodXchangeApp = () => {
                 )}
               </div>
               
-              {/* User Avatar */}
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                 <AutoIcon name="user" className="w-4 h-4 text-gray-600" />
               </div>
@@ -767,9 +578,7 @@ const CompleteFoodXchangeApp = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="p-4 lg:p-6 pb-20 lg:pb-6">
-        {/* Notifications */}
         <div className="fixed top-20 right-4 z-50 space-y-2">
           {notifications.map(notification => (
             <div
@@ -792,7 +601,6 @@ const CompleteFoodXchangeApp = () => {
         {renderContent()}
       </main>
 
-      {/* Bottom Navigation (Mobile) */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-30 lg:hidden">
         <div className="flex items-center justify-around">
           {[
@@ -819,4 +627,13 @@ const CompleteFoodXchangeApp = () => {
   );
 };
 
-export default CompleteFoodXchangeApp;
+// ===== MAIN APP COMPONENT =====
+function App() {
+  return (
+    <AuthProvider>
+      <CompleteFoodXchangeApp />
+    </AuthProvider>
+  );
+}
+
+export default App;
