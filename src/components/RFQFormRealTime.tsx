@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { complianceValidator } from '../utils/validation/complianceValidation';
+import { complianceValidator } from '../features/compliance';
 
 interface RFQFormData {
   title: string;
