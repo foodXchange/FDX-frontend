@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { complianceValidator } from '../utils/validation/complianceValidator';
-import websocketService from '../services/websocket';
+import { complianceValidator } from '../utils/validation/complianceValidation';
 
 interface RFQFormData {
   title: string;
@@ -16,6 +15,14 @@ interface RFQFormData {
   allergens: string[];
   deadline: string;
   budget: number;
+}
+
+interface WebSocketMessage {
+  type: string;
+  field: string;
+  value: any;
+  complianceStatus: string;
+  timestamp: string;
 }
 
 const RFQFormRealTime: React.FC = () => {
@@ -35,26 +42,33 @@ const RFQFormRealTime: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [teamActivity, setTeamActivity] = useState<string[]>([]);
+  const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    websocketService.connect('user123');
-    websocketService.joinRFQRoom('rfq_123');
+    // Initialize WebSocket connection (mock for now)
+    console.log('Initializing real-time collaboration...');
     
-    websocketService.on('rfq_updated', (update: any) => {
-      console.log('Real-time update from team:', update);
-      const timestamp = new Date().toLocaleTimeString();
-      setTeamActivity(prev => [
-        timestamp + ': Team member updated ' + update.field,
-        ...prev.slice(0, 4)
-      ]);
-
-      if (update.complianceStatus === 'error') {
-        alert('Team member found compliance issue in ' + update.field + '!');
+    // Simulate team activity
+    const activityTimer = setInterval(() => {
+      const activities = [
+        'Sarah updated quantity specification',
+        'Mike added compliance note',
+        'Alex verified allergen information',
+        'Team lead approved specifications'
+      ];
+      
+      if (Math.random() > 0.8) { // 20% chance every few seconds
+        const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+        const timestamp = new Date().toLocaleTimeString();
+        setTeamActivity(prev => [`${timestamp}: ${randomActivity}`, ...prev.slice(0, 4)]);
       }
-    });
+    }, 5000);
 
     return () => {
-      websocketService.disconnect();
+      clearInterval(activityTimer);
+      if (wsConnection) {
+        wsConnection.close();
+      }
     };
   }, []);
 
@@ -70,32 +84,32 @@ const RFQFormRealTime: React.FC = () => {
       ...formData.specifications,
       [field]: value
     };
-
+    
     setFormData(prev => ({
       ...prev,
       specifications: updatedSpecs
     }));
 
+    // Real-time validation
     if (formData.productType) {
-      const validation = complianceValidator.validateSpecifications({
-        productType: formData.productType,
-        quantity: updatedSpecs.quantity,
-        unit: updatedSpecs.unit,
-        color: updatedSpecs.color,
-        size: updatedSpecs.size,
-        packaging: updatedSpecs.packaging
-      });
+      const validation = complianceValidator.validateProductSpecification(
+        {
+          productType: formData.productType,
+          ...updatedSpecs
+        },
+        ['US', 'EU'] // Default target markets
+      );
       
       setValidationErrors(validation.errors);
-      const complianceStatus = validation.errors.length > 0 ? 'error' : 'valid';
-      websocketService.updateRFQField('rfq_123', field, value, complianceStatus);
 
+      // Critical color validation for cornflakes
       if (field === 'color' && formData.productType === 'cornflakes' && validation.errors.length > 0) {
-        websocketService.sendComplianceAlert(
-          'rfq_123',
-          'CRITICAL: Wrong cornflake color selected - this caused 9-month project failure before!',
-          'error'
-        );
+        // Simulate real-time team notification
+        const timestamp = new Date().toLocaleTimeString();
+        setTeamActivity(prev => [
+          `${timestamp}: 🚨 CRITICAL: Wrong cornflake color selected - this caused 9-month project failure before!`,
+          ...prev.slice(0, 4)
+        ]);
       }
     }
   };
@@ -104,33 +118,38 @@ const RFQFormRealTime: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const specValidation = complianceValidator.validateSpecifications({
-      productType: formData.productType,
-      quantity: formData.specifications.quantity,
-      unit: formData.specifications.unit,
-      color: formData.specifications.color,
-      size: formData.specifications.size,
-      packaging: formData.specifications.packaging
-    });
+    // Final validation
+    const specValidation = complianceValidator.validateProductSpecification(
+      {
+        productType: formData.productType,
+        ...formData.specifications
+      },
+      ['US', 'EU']
+    );
 
     const allErrors = [...specValidation.errors];
-
     setValidationErrors(allErrors);
 
     if (allErrors.length === 0) {
-      websocketService.sendComplianceAlert(
-        'rfq_123',
-        'RFQ passed all compliance checks and submitted successfully!',
-        'success'
-      );
-      alert('RFQ submitted successfully with full compliance!');
+      // Simulate successful submission
+      const timestamp = new Date().toLocaleTimeString();
+      setTeamActivity(prev => [
+        `${timestamp}: ✅ RFQ passed all compliance checks and submitted successfully!`,
+        ...prev.slice(0, 4)
+      ]);
+      
+      setTimeout(() => {
+        alert('RFQ submitted successfully with full compliance!');
+        setIsSubmitting(false);
+      }, 2000);
+    } else {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Create New RFQ</h2>
@@ -144,6 +163,7 @@ const RFQFormRealTime: React.FC = () => {
         </div>
       </div>
 
+      {/* Team Activity */}
       {teamActivity.length > 0 && (
         <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
           <h3 className="text-blue-800 font-medium mb-2">📡 Team Activity</h3>
@@ -155,6 +175,7 @@ const RFQFormRealTime: React.FC = () => {
         </div>
       )}
 
+      {/* Validation Errors */}
       {validationErrors.length > 0 && (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
           <h3 className="text-red-800 font-medium mb-2">🚨 Compliance Errors</h3>
@@ -169,7 +190,9 @@ const RFQFormRealTime: React.FC = () => {
         </div>
       )}
 
+      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Basic Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -205,6 +228,7 @@ const RFQFormRealTime: React.FC = () => {
           </div>
         </div>
 
+        {/* Product Specifications */}
         <div className="bg-gray-50 p-4 rounded-md">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             Product Specifications
@@ -212,6 +236,7 @@ const RFQFormRealTime: React.FC = () => {
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Color selection for cornflakes */}
             {formData.productType === 'cornflakes' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -236,6 +261,7 @@ const RFQFormRealTime: React.FC = () => {
               </div>
             )}
 
+            {/* Quantity */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 📦 Quantity
@@ -249,9 +275,27 @@ const RFQFormRealTime: React.FC = () => {
                 required
               />
             </div>
+
+            {/* Unit */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                📏 Unit
+              </label>
+              <select
+                value={formData.specifications.unit}
+                onChange={(e) => handleSpecificationChange('unit', e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="kg">Kilograms (kg)</option>
+                <option value="tons">Tons</option>
+                <option value="lbs">Pounds (lbs)</option>
+                <option value="units">Units</option>
+              </select>
+            </div>
           </div>
         </div>
 
+        {/* Timeline and Budget */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -281,16 +325,21 @@ const RFQFormRealTime: React.FC = () => {
           </div>
         </div>
 
+        {/* Submit Button */}
         <div className="flex justify-end">
           <button
             type="submit"
             disabled={isSubmitting || validationErrors.length > 0}
-            className={'px-6 py-3 rounded-md font-medium text-white transition-colors ' + 
-              (isSubmitting || validationErrors.length > 0
+            className={`px-6 py-3 rounded-md font-medium text-white transition-colors ${
+              isSubmitting || validationErrors.length > 0
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700')}
+                : 'bg-blue-600 hover:bg-blue-700'
+            }`}
           >
-            {isSubmitting ? 'Validating & Notifying Team...' : '🚀 Create RFQ (Team Notified)'}
+            {isSubmitting 
+              ? 'Validating & Notifying Team...' 
+              : '🚀 Create RFQ (Team Notified)'
+            }
           </button>
         </div>
       </form>

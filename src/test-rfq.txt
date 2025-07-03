@@ -1,4 +1,0 @@
-﻿import RFQForm from './components/RFQForm';
-
-// Add this to your App component JSX:
-<RFQForm />

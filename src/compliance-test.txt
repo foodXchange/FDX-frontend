@@ -1,4 +1,0 @@
-import ComplianceOverlay from './components/ComplianceOverlay';
-
-// Add this before the closing </div> in your App component:
-<ComplianceOverlay />
