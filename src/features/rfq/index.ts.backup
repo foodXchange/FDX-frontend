@@ -1,0 +1,14 @@
+// File: /src/features/rfq/index.ts
+export { default as RealTimeRFQDashboard } from './components/RealTimeRFQDashboard';
+
+// Comment out missing components to avoid compilation errors
+// export { default as RFQDashboard } from './components/rfq-dashboard';
+// export { default as RFQForm } from './components/rfq-form';
+// export { aiMatchingService } from './services/aiMatchingService';
+
+// Placeholder exports for missing components
+export const RFQDashboard = () => null;
+export const RFQForm = () => null;
+export const aiMatchingService = {
+  findMatches: () => Promise.resolve([])
+};

@@ -100,7 +100,7 @@ const RFQFormRealTime: React.FC = () => {
         ['US', 'EU'] // Default target markets
       );
       
-      setValidationErrors(validation.errors);
+      setValidationErrors(validation.errors.map(err => err.message));
 
       // Critical color validation for cornflakes
       if (field === 'color' && formData.productType === 'cornflakes' && validation.errors.length > 0) {
@@ -128,7 +128,7 @@ const RFQFormRealTime: React.FC = () => {
     );
 
     const allErrors = [...specValidation.errors];
-    setValidationErrors(allErrors);
+    setValidationErrors(allErrors.map(err => err.message));
 
     if (allErrors.length === 0) {
       // Simulate successful submission
@@ -348,3 +348,5 @@ const RFQFormRealTime: React.FC = () => {
 };
 
 export default RFQFormRealTime;
+
+

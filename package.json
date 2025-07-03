@@ -7,17 +7,23 @@
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
     "@types/react-dom": "^19.1.6",
+    "eventemitter3": "^5.0.1",
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "socket.io-client": "^4.8.1",
-    "web-vitals": "^5.0.3"
+    "web-vitals": "^5.0.3",
+    "ws": "^8.18.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev:websocket": "npm start",
+    "test:websocket": "npm test -- --testPathPattern=websocket",
+    "build:prod": "npm run build && echo 'Build completed with WebSocket support'",
+    "start:legacy": "GENERATE_SOURCEMAP=false react-scripts start"
   },
   "browserslist": {
     "production": [
@@ -33,9 +39,15 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.10",
+    "@types/ws": "^8.18.1",
     "autoprefixer": "^10.4.21",
+    "crypto-browserify": "^3.12.1",
+    "events": "^3.3.0",
+    "path-browserify": "^1.0.1",
     "postcss": "^8.5.6",
     "react-scripts": "^0.0.0",
-    "tailwindcss": "^4.1.11"
+    "stream": "^0.0.3",
+    "tailwindcss": "^4.1.11",
+    "util": "^0.12.5"
   }
 }

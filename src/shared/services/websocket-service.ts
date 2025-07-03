@@ -1,5 +1,4 @@
 // File: /src/shared/services/websocket-service.ts
-
 import { EventEmitter } from 'events';
 
 interface WebSocketMessage {
@@ -73,17 +72,13 @@ class FoodXchangeWebSocketService extends EventEmitter {
   private messageQueue: WebSocketMessage[] = [];
   private connectionOptions: ConnectionOptions | null = null;
 
-  constructor(
-    private baseUrl: string = process.env.REACT_APP_WS_URL || 'ws://localhost:3001'
-  ) {
+  constructor(private baseUrl: string = process.env.REACT_APP_WS_URL || 'ws://localhost:3001') {
     super();
-    this.setMaxListeners(50); // Increase listener limit for multiple components
+    this.setMaxListeners(50);
   }
 
-  // Connection Management
   async connect(options: ConnectionOptions): Promise<void> {
     this.connectionOptions = options;
-    
     return new Promise((resolve, reject) => {
       if (this.connectionState === 'connected') {
         resolve();
@@ -102,11 +97,11 @@ class FoodXchangeWebSocketService extends EventEmitter {
             this.ws.close();
             reject(new Error('Connection timeout'));
           }
-        }, 10000); // 10 second timeout
+        }, 10000);
 
         this.ws.onopen = () => {
           clearTimeout(connectionTimeout);
-          console.log('🔗 FoodXchange WebSocket connected');
+          console.log('FoodXchange WebSocket connected');
           this.connectionState = 'connected';
           this.reconnectAttempts = 0;
           this.startHeartbeat();
@@ -139,7 +134,7 @@ class FoodXchangeWebSocketService extends EventEmitter {
           this.stopHeartbeat();
           this.emit('disconnected', { code: event.code, reason: event.reason });
           this.emit('connectionStateChange', 'disconnected');
-          
+
           if (!event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
             this.scheduleReconnect();
           }
@@ -157,38 +152,31 @@ class FoodXchangeWebSocketService extends EventEmitter {
   disconnect(): void {
     this.stopHeartbeat();
     this.clearReconnectTimeout();
-    
     if (this.ws) {
       this.ws.close(1000, 'User disconnected');
       this.ws = null;
     }
-    
     this.connectionState = 'disconnected';
     this.emit('connectionStateChange', 'disconnected');
     this.messageQueue = [];
   }
 
-  // Message Handling
   private handleIncomingMessage(message: WebSocketMessage): void {
-    console.log('📨 WebSocket message received:', message.type);
+    console.log('WebSocket message received:', message.type);
 
     switch (message.type) {
       case 'rfq_update':
         this.emit('rfqUpdate', message.payload as RFQUpdate);
         break;
-      
       case 'compliance_update':
         this.emit('complianceUpdate', message.payload as ComplianceUpdate);
         break;
-      
       case 'collaboration_message':
         this.emit('collaborationMessage', message.payload as CollaborationMessage);
         break;
-      
       case 'user_activity':
         this.emit('userActivity', message.payload as ActiveUser);
         break;
-      
       case 'notification':
         this.emit('notification', {
           id: message.messageId || Date.now().toString(),
@@ -199,22 +187,17 @@ class FoodXchangeWebSocketService extends EventEmitter {
           rfqId: message.rfqId
         });
         break;
-      
       case 'heartbeat_ack':
-        // Handle heartbeat acknowledgment
         break;
-      
       case 'error':
         this.emit('serverError', message.payload);
         break;
-      
       default:
         console.warn('Unknown message type:', message.type);
         this.emit('unknownMessage', message);
     }
   }
 
-  // Send Messages
   private sendMessage(type: string, payload: any, targetRfqId?: string): void {
     const message: WebSocketMessage = {
       type,
@@ -228,13 +211,12 @@ class FoodXchangeWebSocketService extends EventEmitter {
     if (this.isConnected()) {
       this.ws!.send(JSON.stringify(message));
     } else {
-      // Queue message for when connection is restored
       this.messageQueue.push(message);
       console.warn('WebSocket not connected, message queued:', type);
     }
   }
 
-  // RFQ Real-time Features
+  // RFQ Methods
   joinRFQ(rfqId: string): void {
     this.sendMessage('join_rfq', { rfqId });
     this.emit('joinedRFQ', rfqId);
@@ -246,9 +228,9 @@ class FoodXchangeWebSocketService extends EventEmitter {
   }
 
   updateRFQStatus(rfqId: string, status: string, data?: any): void {
-    this.sendMessage('rfq_status_update', { 
-      rfqId, 
-      status, 
+    this.sendMessage('rfq_status_update', {
+      rfqId,
+      status,
       data,
       timestamp: new Date().toISOString()
     });
@@ -262,10 +244,10 @@ class FoodXchangeWebSocketService extends EventEmitter {
     this.sendMessage('unsubscribe_rfqs', { rfqIds });
   }
 
-  // Collaboration Features
+  // Collaboration Methods
   sendCollaborationMessage(rfqId: string, message: string, metadata?: any): void {
-    this.sendMessage('collaboration_message', { 
-      rfqId, 
+    this.sendMessage('collaboration_message', {
+      rfqId,
       message,
       metadata,
       userName: this.getCurrentUserName()
@@ -280,10 +262,10 @@ class FoodXchangeWebSocketService extends EventEmitter {
     this.sendMessage('typing_indicator', { rfqId, isTyping });
   }
 
-  // Compliance Real-time Features
+  // Compliance Methods
   requestComplianceCheck(rfqId: string, specifications: any): void {
-    this.sendMessage('compliance_check_request', { 
-      rfqId, 
+    this.sendMessage('compliance_check_request', {
+      rfqId,
       specifications,
       priority: 'normal'
     });
@@ -293,7 +275,7 @@ class FoodXchangeWebSocketService extends EventEmitter {
     this.sendMessage('subscribe_compliance', { rfqId });
   }
 
-  // Notification System
+  // Notification Methods
   markNotificationAsRead(notificationId: string): void {
     this.sendMessage('notification_read', { notificationId });
   }
@@ -302,7 +284,7 @@ class FoodXchangeWebSocketService extends EventEmitter {
     this.sendMessage('subscribe_notifications', { types });
   }
 
-  // Connection Health & Reliability
+  // Private utility methods
   private startHeartbeat(): void {
     const interval = this.connectionOptions?.heartbeatInterval || 30000;
     this.heartbeatInterval = setInterval(() => {
@@ -329,11 +311,10 @@ class FoodXchangeWebSocketService extends EventEmitter {
     this.reconnectAttempts++;
     this.connectionState = 'reconnecting';
     this.emit('connectionStateChange', 'reconnecting');
-    
+
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts - 1), 30000);
-    
     console.log(`Attempting reconnect ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`);
-    
+
     this.reconnectTimeout = setTimeout(() => {
       if (this.connectionOptions) {
         this.connect(this.connectionOptions).catch(error => {
@@ -360,7 +341,6 @@ class FoodXchangeWebSocketService extends EventEmitter {
     }
   }
 
-  // Utility Methods
   isConnected(): boolean {
     return this.ws !== null && this.ws.readyState === WebSocket.OPEN;
   }
@@ -385,13 +365,11 @@ class FoodXchangeWebSocketService extends EventEmitter {
     return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // Cleanup
   destroy(): void {
     this.disconnect();
     this.removeAllListeners();
   }
 
-  // Debug & Monitoring
   getStats(): any {
     return {
       connectionState: this.connectionState,
@@ -403,15 +381,14 @@ class FoodXchangeWebSocketService extends EventEmitter {
   }
 }
 
-// Singleton instance
 export const websocketService = new FoodXchangeWebSocketService();
 
 export default websocketService;
-export type { 
-  WebSocketMessage, 
-  RFQUpdate, 
-  ComplianceUpdate, 
-  CollaborationMessage, 
+export type {
+  WebSocketMessage,
+  RFQUpdate,
+  ComplianceUpdate,
+  CollaborationMessage,
   ActiveUser,
-  ConnectionOptions 
+  ConnectionOptions
 };

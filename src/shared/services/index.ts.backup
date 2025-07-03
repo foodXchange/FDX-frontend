@@ -1,1 +1,2 @@
+// File: /src/shared/services/index.ts
 export { default as websocketService } from './websocket-service';

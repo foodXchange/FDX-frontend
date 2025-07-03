@@ -4,7 +4,8 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "es6"
+      "es6",
+      "webworker"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -21,14 +22,11 @@
     "jsx": "react-jsx",
     "baseUrl": "src",
     "paths": {
-      "@shared/*": ["src/components/shared/*"],
       "@features/*": ["features/*"],
-      "@pages/*": ["pages/*"],
-      "@components/*": ["src/components/shared/components/*"],
-      "@services/*": ["src/components/shared/services/*"],
-      "@utils/*": ["src/components/shared/utils/*"],
-      "@types/*": ["src/components/shared/types/*"],
-      "@hooks/*": ["src/components/shared/hooks/*"]
+      "@shared/*": ["shared/*"],
+      "@components/*": ["components/*"],
+      "@services/*": ["shared/services/*"],
+      "@hooks/*": ["shared/hooks/*"]
     }
   },
   "include": [

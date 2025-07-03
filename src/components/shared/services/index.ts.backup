@@ -1,0 +1,16 @@
+// File: /src/components/shared/services/index.ts
+// Note: This file currently has placeholder exports
+// The actual websocket-service is in /src/shared/services/
+
+// Placeholder exports - update paths when services are moved
+// export { default as websocketService } from './websocket-service';
+
+// For now, just export a placeholder to avoid compilation errors
+export const websocketService = {
+  connect: () => Promise.resolve(),
+  disconnect: () => {},
+  isConnected: () => false
+};
+
+// Remove this line that causes circular import
+// export { default as apiClient } from './index';
