@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const WebSocketContext = createContext();
+const WebSocketContext = createContext<any>(undefined);
 
 export const useWebSocket = () => {
   const context = useContext(WebSocketContext);
@@ -49,3 +49,6 @@ export const WebSocketProvider = ({ children }) => {
     </WebSocketContext.Provider>
   );
 };
+
+
+

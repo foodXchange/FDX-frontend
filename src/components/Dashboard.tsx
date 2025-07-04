@@ -153,9 +153,9 @@ const Dashboard = () => {
     }).format(amount);
   };
 
-  const formatRelativeTime = (date) => {
+  const formatRelativeTime = (date: Date) => {
     const now = new Date();
-    const diff = now - date;
+    const diff = now.getTime() - date.getTime();
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
