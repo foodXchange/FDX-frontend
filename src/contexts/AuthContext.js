@@ -1,9 +1,8 @@
 // File: C:\Users\foodz\Documents\GitHub\Development\FDX-frontend\src\contexts\AuthContext.js
 
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import { authService } from '../services/authService';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -15,76 +14,112 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('authToken'));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (token) {
-      loadUser();
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
+    checkAuth();
+  }, []);
 
-  const loadUser = async () => {
+  const checkAuth = async () => {
     try {
-      const response = await authService.getProfile();
-      setUser(response.user);
+      const token = localStorage.getItem('token');
+      if (token) {
+        // Mock user for now - replace with real API call
+        const mockUser = {
+          id: 1,
+          email: 'demo@foodxchange.com',
+          firstName: 'Demo',
+          lastName: 'User',
+          company: 'FoodXchange Demo',
+          role: 'buyer'
+        };
+        setUser(mockUser);
+        setIsAuthenticated(true);
+      }
     } catch (error) {
-      console.error('Failed to load user:', error);
-      logout();
+      console.error('Auth check failed:', error);
+      localStorage.removeItem('token');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const login = async (credentials) => {
+  const login = async (email, password) => {
     try {
-      const response = await authService.login(credentials);
+      setIsLoading(true);
+      setError(null);
       
-      localStorage.setItem('authToken', response.token);
-      setToken(response.token);
-      setUser(response.user);
-      
-      return { success: true, user: response.user };
+      // Mock login - replace with real API call
+      if (email === 'demo@foodxchange.com' && password === 'demo123') {
+        const mockUser = {
+          id: 1,
+          email: email,
+          firstName: 'Demo',
+          lastName: 'User',
+          company: 'FoodXchange Demo',
+          role: 'buyer'
+        };
+        
+        localStorage.setItem('token', 'mock-jwt-token');
+        setUser(mockUser);
+        setIsAuthenticated(true);
+        return mockUser;
+      } else {
+        throw new Error('Invalid credentials');
+      }
     } catch (error) {
-      return { success: false, error: error.message };
+      setError(error.message);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const register = async (userData) => {
     try {
-      const response = await authService.register(userData);
+      setIsLoading(true);
+      setError(null);
       
-      localStorage.setItem('authToken', response.token);
-      setToken(response.token);
-      setUser(response.user);
+      // Mock registration - replace with real API call
+      const newUser = {
+        id: Date.now(),
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        company: userData.company,
+        role: userData.role
+      };
       
-      return { success: true, user: response.user };
+      localStorage.setItem('token', 'mock-jwt-token');
+      setUser(newUser);
+      setIsAuthenticated(true);
+      return newUser;
     } catch (error) {
-      return { success: false, error: error.message };
+      setError(error.message);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    setToken(null);
+  const logout = async () => {
+    localStorage.removeItem('token');
     setUser(null);
-  };
-
-  const updateUser = (updates) => {
-    setUser(prev => ({ ...prev, ...updates }));
+    setIsAuthenticated(false);
+    setError(null);
   };
 
   const value = {
     user,
-    loading,
-    isAuthenticated: !!user,
+    isAuthenticated,
+    isLoading,
+    error,
     login,
     register,
     logout,
-    updateUser,
-    loadUser
+    checkAuth
   };
 
   return (
