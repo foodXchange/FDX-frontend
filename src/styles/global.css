@@ -1,0 +1,43 @@
+/* Import the main index.css */
+@import '../index.css';
+
+/* Additional global styles specific to the app */
+.container {
+  @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+}
+
+/* Custom focus styles */
+:focus-visible {
+  @apply outline-none ring-2 ring-[#1E4C8A] ring-offset-2;
+}
+
+/* Loading states */
+.loading-spinner {
+  @apply animate-spin h-5 w-5 text-[#1E4C8A];
+}
+
+/* Transitions */
+.transition-base {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.transition-slow {
+  @apply transition-all duration-500 ease-in-out;
+}
+
+/* Z-index scale */
+.z-dropdown {
+  z-index: 1000;
+}
+
+.z-modal {
+  z-index: 1050;
+}
+
+.z-notification {
+  z-index: 1100;
+}
+
+.z-tooltip {
+  z-index: 1150;
+}
