@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@components/ui/Button';
 import { Card } from '@components/ui/Card';
-import { Toast } from '@components/ui/Toast';
+// import { Toast } from '@components/ui/Toast';
 import { api } from '@/services/api-client';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
@@ -66,7 +66,7 @@ const ForgotPassword: React.FC = () => {
             We've sent a password reset link to your email address.
           </p>
           <Link to="/login">
-            <Button variant="primary" className="w-full mt-6">
+            <Button variant="default" className="w-full mt-6">
               Back to Login
             </Button>
           </Link>
@@ -116,7 +116,7 @@ const ForgotPassword: React.FC = () => {
             <div>
               <Button
                 type="submit"
-                variant="primary"
+                variant="default"
                 className="w-full"
                 disabled={isLoading}
               >

@@ -41,7 +41,12 @@ export const Modal: React.FC<ModalProps> = ({
 
     firstFocusableElement?.focus();
 
-    const handleTabKey = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && closeOnEscape) {
+        closeModal(id);
+        return;
+      }
+
       if (e.key !== 'Tab') return;
 
       if (e.shiftKey) {
@@ -57,9 +62,9 @@ export const Modal: React.FC<ModalProps> = ({
       }
     };
 
-    modalElement.addEventListener('keydown', handleTabKey);
-    return () => modalElement.removeEventListener('keydown', handleTabKey);
-  }, []);
+    modalElement.addEventListener('keydown', handleKeyDown);
+    return () => modalElement.removeEventListener('keydown', handleKeyDown);
+  }, [closeOnEscape, id, closeModal]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (closeOnBackdrop && e.target === e.currentTarget) {

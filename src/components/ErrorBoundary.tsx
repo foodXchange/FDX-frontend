@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@components/ui/Button';
 import { logger } from '@/services/logger';
 import { logErrorToService } from '@/utils/errorReporting';
@@ -97,7 +97,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <div className="mt-6 space-y-3">
               <Button
-                variant="primary"
+                variant="default"
                 className="w-full"
                 onClick={() => window.location.reload()}
               >

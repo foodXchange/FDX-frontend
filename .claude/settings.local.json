@@ -14,7 +14,10 @@
       "Bash(git pull:*)",
       "Bash(find:*)",
       "Bash(sed:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm start)",
+      "Bash(curl:*)",
+      "Bash(npx kill-port:*)"
     ],
     "deny": []
   }

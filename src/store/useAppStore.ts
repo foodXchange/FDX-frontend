@@ -18,6 +18,7 @@ interface AppSettings {
 }
 
 interface AppState {
+  user: any;
   // Settings
   settings: AppSettings;
   updateSettings: (settings: Partial<AppSettings>) => void;
@@ -65,6 +66,7 @@ export const useAppStore = create<AppState>()(
   devtools(
     persist(
       immer((set) => ({
+        user: null,
         // Settings
         settings: defaultSettings,
         updateSettings: (newSettings) =>

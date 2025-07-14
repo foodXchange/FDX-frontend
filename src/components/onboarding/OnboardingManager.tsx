@@ -331,7 +331,7 @@ export const useOnboardingManager = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const { user } = useAppStore();
 
-  const startOnboarding = (mode: 'tour' | 'demo' = 'tour') => {
+  const startOnboarding = (_mode: 'tour' | 'demo' = 'tour') => {
     setShowOnboarding(true);
   };
 

@@ -24,5 +24,5 @@ export {
 } from './OnboardingManager';
 
 // Analytics and tracking
-export { useOnboardingAnalytics, useOnboardingAnalyticsData } from '../hooks/useOnboardingAnalytics';
-export type { OnboardingStep, OnboardingSession, OnboardingAnalytics } from '../hooks/useOnboardingAnalytics';
+export { useOnboardingAnalytics, useOnboardingAnalyticsData } from '../../hooks/useOnboardingAnalytics';
+export type { OnboardingStep, OnboardingSession, OnboardingAnalytics } from '../../hooks/useOnboardingAnalytics';

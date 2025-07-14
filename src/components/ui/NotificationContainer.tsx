@@ -13,7 +13,9 @@ export const NotificationContainer: React.FC = () => {
       {notifications.map((notification) => (
         <div key={notification.id} className="pointer-events-auto">
           <Toast
-            message={notification.message || notification.title}
+            id={notification.id}
+            title={notification.title || notification.message || 'Notification'}
+            message={notification.message}
             type={notification.type === 'error' ? 'error' : notification.type === 'success' ? 'success' : 'info'}
             onClose={() => removeNotification(notification.id)}
           />

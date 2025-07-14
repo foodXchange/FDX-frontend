@@ -17,6 +17,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         disconnectNotifications();
       };
     }
+    return undefined;
   }, [isAuthenticated, connectNotifications, disconnectNotifications]);
 
   return (

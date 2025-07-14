@@ -72,7 +72,7 @@ const ResetPassword: React.FC = () => {
             This password reset link is invalid or has expired.
           </p>
           <Link to="/forgot-password">
-            <Button variant="primary" className="w-full">
+            <Button variant="default" className="w-full">
               Request New Reset Link
             </Button>
           </Link>
@@ -188,7 +188,7 @@ const ResetPassword: React.FC = () => {
             <div>
               <Button
                 type="submit"
-                variant="primary"
+                variant="default"
                 className="w-full"
                 disabled={isLoading}
               >

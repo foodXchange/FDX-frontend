@@ -139,7 +139,7 @@ export const Login: React.FC = () => {
             <div>
               <Button
                 type="submit"
-                variant="primary"
+                variant="default"
                 className="w-full"
                 disabled={isLoading}
               >
@@ -206,6 +206,8 @@ export const Login: React.FC = () => {
 
         {showToast && (
           <Toast
+            id="login-error"
+            title="Login Failed"
             message={error || 'Login failed'}
             type="error"
             onClose={() => setShowToast(false)}

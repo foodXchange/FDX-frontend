@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AppRouterProvider } from '@/router/RouterProvider';
 import { StoreProvider } from '@/components/providers/StoreProvider';
@@ -7,7 +7,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AsyncErrorBoundary } from '@/components/ErrorBoundary/AsyncErrorBoundary';
 import './styles/global.css';
 
-function App() {
+const App: FC = () => {
   return (
     <ErrorBoundary>
       <AuthProvider>
@@ -21,6 +21,6 @@ function App() {
       </AuthProvider>
     </ErrorBoundary>
   );
-}
+};
 
 export default App;

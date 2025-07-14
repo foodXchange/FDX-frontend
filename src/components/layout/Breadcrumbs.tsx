@@ -15,7 +15,7 @@ export const Breadcrumbs: React.FC = () => {
     breadcrumbs.push({ name: 'Home', href: '/' });
 
     let currentPath = '';
-    pathnames.forEach((segment, index) => {
+    pathnames.forEach((segment) => {
       currentPath += `/${segment}`;
       
       // Skip if it's a parameter (starts with :)

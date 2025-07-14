@@ -191,7 +191,7 @@ const PageErrorFallback: React.FC<{
   error: Error;
   resetError: () => void;
   errorCount: number;
-}> = ({ error, resetError, errorCount }) => (
+}> = ({ resetError }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
     <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
       <h1 className="text-2xl font-bold text-gray-900 mb-4">
@@ -200,11 +200,13 @@ const PageErrorFallback: React.FC<{
       <p className="text-gray-600 mb-6">
         We're having trouble loading this page. Please try again.
       </p>
+      {/* Commented out for now
       {errorCount > 2 && (
         <p className="text-sm text-red-600 mb-4">
           Multiple errors detected. You may need to refresh the page.
         </p>
       )}
+      */}
       <button
         onClick={resetError}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -219,7 +221,7 @@ const SectionErrorFallback: React.FC<{
   error: Error;
   resetError: () => void;
   errorCount: number;
-}> = ({ error, resetError, errorCount }) => (
+}> = ({ resetError }) => (
   <div className="bg-red-50 border border-red-200 rounded-lg p-6 m-4">
     <h2 className="text-lg font-semibold text-red-800 mb-2">
       Section Error
@@ -241,7 +243,7 @@ const ComponentErrorFallback: React.FC<{
   resetError: () => void;
   errorCount: number;
   isolate?: boolean;
-}> = ({ error, resetError, errorCount, isolate }) => {
+}> = ({ resetError, isolate }) => {
   if (isolate) {
     return (
       <div className="bg-gray-100 border border-gray-300 rounded p-4 text-center">

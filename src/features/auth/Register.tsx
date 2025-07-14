@@ -19,7 +19,7 @@ const registerSchema = z.object({
     .regex(/[0-9]/, 'Password must contain at least one number'),
   confirmPassword: z.string(),
   company: z.string().min(2, 'Company name is required'),
-  role: z.enum(['supplier', 'buyer']),
+  role: z.string(),
   acceptTerms: z.boolean().refine(val => val === true, 'You must accept the terms'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -165,7 +165,7 @@ export const Register: React.FC = () => {
                   <option value="supplier">Supplier</option>
                 </select>
                 {errors.role && (
-                  <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+                  <p className="mt-1 text-sm text-red-600">{errors.role?.message}</p>
                 )}
               </div>
             </div>
@@ -279,7 +279,7 @@ export const Register: React.FC = () => {
             <div>
               <Button
                 type="submit"
-                variant="primary"
+                variant="default"
                 className="w-full"
                 disabled={isLoading}
               >
@@ -291,6 +291,8 @@ export const Register: React.FC = () => {
 
         {showToast && (
           <Toast
+            id="register-error"
+            title="Registration Failed"
             message={error || 'Registration failed'}
             type="error"
             onClose={() => setShowToast(false)}

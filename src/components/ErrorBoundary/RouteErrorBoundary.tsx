@@ -63,7 +63,7 @@ export const RouteErrorBoundary: React.FC = () => {
 
           <div className="mt-6 space-y-3">
             <Button
-              variant="primary"
+              variant="default"
               className="w-full"
               onClick={handleGoHome}
             >
