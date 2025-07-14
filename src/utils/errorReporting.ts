@@ -160,7 +160,7 @@ class ErrorReporter {
         platform: navigator.platform,
         cookieEnabled: navigator.cookieEnabled,
         onLine: navigator.onLine,
-        screenResolution: `${screen.width}x${screen.height}`,
+        screenResolution: `${window.screen.width}x${window.screen.height}`,
       },
     };
 

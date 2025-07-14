@@ -8,7 +8,13 @@
       "Bash(npx tsc:*)",
       "Bash(npm run type-check:*)",
       "Bash(npx eslint:*)",
-      "Bash(gh repo view:*)"
+      "Bash(gh repo view:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(find:*)",
+      "Bash(sed:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

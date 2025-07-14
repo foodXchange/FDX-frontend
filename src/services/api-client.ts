@@ -234,156 +234,156 @@ const generateRequestId = (): string => {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
 
-// Create API client instance
-const apiClient = createApiClient();
+// Create temporary instance for internal use
+const tempApiClient = createApiClient();
 
 // API Service Methods
 export const api = {
   // Health check
   get: (endpoint: string): Promise<ApiResponse> =>
-    apiClient.get(endpoint),
+    tempApiClient.get(endpoint),
     
   // Authentication
   auth: {
     login: (data: LoginRequest): Promise<ApiResponse<LoginResponse>> =>
-      apiClient.post('/auth/login', data),
+      tempApiClient.post('/auth/login', data),
     
     register: (data: any): Promise<ApiResponse<User>> =>
-      apiClient.post('/auth/register', data),
+      tempApiClient.post('/auth/register', data),
     
     logout: (): Promise<ApiResponse> =>
-      apiClient.post('/auth/logout'),
+      tempApiClient.post('/auth/logout'),
     
     refreshToken: (): Promise<ApiResponse<{ token: string }>> =>
-      apiClient.post('/auth/refresh'),
+      tempApiClient.post('/auth/refresh'),
     
     forgotPassword: (email: string): Promise<ApiResponse> =>
-      apiClient.post('/auth/forgot-password', { email }),
+      tempApiClient.post('/auth/forgot-password', { email }),
     
     resetPassword: (token: string, password: string): Promise<ApiResponse> =>
-      apiClient.post('/auth/reset-password', { token, password }),
+      tempApiClient.post('/auth/reset-password', { token, password }),
   },
 
   // Products
   products: {
     getAll: (params?: SearchParams): Promise<ApiResponse<Product[]>> =>
-      apiClient.get('/products', { params }),
+      tempApiClient.get('/products', { params }),
     
     getById: (id: string): Promise<ApiResponse<Product>> =>
-      apiClient.get(`/products/${id}`),
+      tempApiClient.get(`/products/${id}`),
     
     getFeatured: (): Promise<ApiResponse<Product[]>> =>
-      apiClient.get('/products/featured'),
+      tempApiClient.get('/products/featured'),
     
     getCategories: (): Promise<ApiResponse<any[]>> =>
-      apiClient.get('/products/categories'),
+      tempApiClient.get('/products/categories'),
     
     create: (data: FormData): Promise<ApiResponse<Product>> =>
-      apiClient.post('/products', data, {
+      tempApiClient.post('/products', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       }),
     
     update: (id: string, data: Partial<Product>): Promise<ApiResponse<Product>> =>
-      apiClient.put(`/products/${id}`, data),
+      tempApiClient.put(`/products/${id}`, data),
     
     delete: (id: string): Promise<ApiResponse> =>
-      apiClient.delete(`/products/${id}`),
+      tempApiClient.delete(`/products/${id}`),
     
     requestSample: (productId: string, data: any): Promise<ApiResponse<SampleRequest>> =>
-      apiClient.post(`/products/${productId}/sample-request`, data),
+      tempApiClient.post(`/products/${productId}/sample-request`, data),
   },
 
   // RFQs
   rfqs: {
     getAll: (params?: SearchParams): Promise<ApiResponse<RFQ[]>> =>
-      apiClient.get('/rfq', { params }),
+      tempApiClient.get('/rfq', { params }),
     
     getById: (id: string): Promise<ApiResponse<RFQ>> =>
-      apiClient.get(`/rfq/${id}`),
+      tempApiClient.get(`/rfq/${id}`),
     
     create: (data: Partial<RFQ>): Promise<ApiResponse<RFQ>> =>
-      apiClient.post('/rfq', data),
+      tempApiClient.post('/rfq', data),
     
     update: (id: string, data: Partial<RFQ>): Promise<ApiResponse<RFQ>> =>
-      apiClient.put(`/rfq/${id}`, data),
+      tempApiClient.put(`/rfq/${id}`, data),
     
     updateStatus: (id: string, status: string): Promise<ApiResponse<RFQ>> =>
-      apiClient.patch(`/rfq/${id}/status`, { status }),
+      tempApiClient.patch(`/rfq/${id}/status`, { status }),
     
     delete: (id: string): Promise<ApiResponse> =>
-      apiClient.delete(`/rfq/${id}`),
+      tempApiClient.delete(`/rfq/${id}`),
   },
 
   // Proposals
   proposals: {
     create: (data: Partial<Proposal>): Promise<ApiResponse<Proposal>> =>
-      apiClient.post('/proposals', data),
+      tempApiClient.post('/proposals', data),
     
     getByRFQ: (rfqId: string): Promise<ApiResponse<Proposal[]>> =>
-      apiClient.get(`/proposals/rfq/${rfqId}`),
+      tempApiClient.get(`/proposals/rfq/${rfqId}`),
     
     getById: (id: string): Promise<ApiResponse<Proposal>> =>
-      apiClient.get(`/proposals/${id}`),
+      tempApiClient.get(`/proposals/${id}`),
     
     accept: (id: string): Promise<ApiResponse<Proposal>> =>
-      apiClient.put(`/proposals/${id}/accept`),
+      tempApiClient.put(`/proposals/${id}/accept`),
   },
 
   // Orders
   orders: {
     getAll: (params?: SearchParams): Promise<ApiResponse<Order[]>> =>
-      apiClient.get('/orders', { params }),
+      tempApiClient.get('/orders', { params }),
     
     getById: (id: string): Promise<ApiResponse<Order>> =>
-      apiClient.get(`/orders/${id}`),
+      tempApiClient.get(`/orders/${id}`),
     
     updateStatus: (id: string, status: string): Promise<ApiResponse<Order>> =>
-      apiClient.patch(`/orders/${id}/status`, { status }),
+      tempApiClient.patch(`/orders/${id}/status`, { status }),
   },
 
   // Compliance
   compliance: {
     validate: (data: any): Promise<ApiResponse<ComplianceValidation>> =>
-      apiClient.post('/compliance/validate', data),
+      tempApiClient.post('/compliance/validate', data),
     
     validateField: (field: string, value: any): Promise<ApiResponse> =>
-      apiClient.post('/compliance/validate-field', { field, value }),
+      tempApiClient.post('/compliance/validate-field', { field, value }),
     
     getHistory: (params?: SearchParams): Promise<ApiResponse<ComplianceValidation[]>> =>
-      apiClient.get('/compliance/history', { params }),
+      tempApiClient.get('/compliance/history', { params }),
     
     getRules: (productType: string, targetMarket?: string): Promise<ApiResponse<any>> =>
-      apiClient.get(`/compliance/rules/${productType}${targetMarket ? `/${targetMarket}` : ''}`),
+      tempApiClient.get(`/compliance/rules/${productType}${targetMarket ? `/${targetMarket}` : ''}`),
     
     getReport: (rfqId: string): Promise<ApiResponse<any>> =>
-      apiClient.get(`/compliance/report/${rfqId}`),
+      tempApiClient.get(`/compliance/report/${rfqId}`),
   },
 
   // AI Services
   ai: {
     analyzeRFQ: (rfqData: any): Promise<ApiResponse<AIMatchingResult[]>> =>
-      apiClient.post('/ai/rfq/analyze', rfqData),
+      tempApiClient.post('/ai/rfq/analyze', rfqData),
     
     analyzeProduct: (productId: string): Promise<ApiResponse<AIAnalysisResponse>> =>
-      apiClient.post(`/ai/product/${productId}/analyze`),
+      tempApiClient.post(`/ai/product/${productId}/analyze`),
     
     batchAnalyzeProducts: (productIds: string[]): Promise<ApiResponse<AIAnalysisResponse[]>> =>
-      apiClient.post('/ai/products/batch-analyze', { productIds }),
+      tempApiClient.post('/ai/products/batch-analyze', { productIds }),
   },
 
   // Sample Requests
   samples: {
     getAll: (params?: SearchParams): Promise<ApiResponse<SampleRequest[]>> =>
-      apiClient.get('/samples', { params }),
+      tempApiClient.get('/samples', { params }),
     
     getById: (id: string): Promise<ApiResponse<SampleRequest>> =>
-      apiClient.get(`/samples/${id}`),
+      tempApiClient.get(`/samples/${id}`),
     
     updateStatus: (id: string, status: string): Promise<ApiResponse<SampleRequest>> =>
-      apiClient.patch(`/samples/${id}/status`, { status }),
+      tempApiClient.patch(`/samples/${id}/status`, { status }),
     
     submitFeedback: (id: string, feedback: any): Promise<ApiResponse> =>
-      apiClient.post(`/samples/${id}/feedback`, feedback),
+      tempApiClient.post(`/samples/${id}/feedback`, feedback),
   },
 
   // File Upload
@@ -393,7 +393,7 @@ export const api = {
       formData.append('file', file);
       formData.append('type', type);
       
-      return apiClient.post('/upload/single', formData, {
+      return tempApiClient.post('/upload/single', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     },
@@ -403,7 +403,7 @@ export const api = {
       files.forEach((file) => formData.append('files', file));
       formData.append('type', type);
       
-      return apiClient.post('/upload/multiple', formData, {
+      return tempApiClient.post('/upload/multiple', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     },
@@ -415,7 +415,7 @@ export const api = {
       const formData = new FormData();
       formData.append('file', file);
       
-      return apiClient.post('/import/products', formData, {
+      return tempApiClient.post('/import/products', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     },

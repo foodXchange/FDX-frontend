@@ -38,17 +38,17 @@
     "zustand": "^5.0.6"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,json}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css,scss,json}\"",
     "type-check": "tsc --noEmit",
-    "test:coverage": "react-scripts test --coverage --watchAll=false",
-    "test:ci": "CI=true react-scripts test --coverage --watchAll=false",
+    "test:coverage": "craco test --coverage --watchAll=false",
+    "test:ci": "CI=true craco test --coverage --watchAll=false",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "docker:build": "docker build -t fdx-frontend .",
     "docker:run": "docker run -p 8080:8080 fdx-frontend"
@@ -72,7 +72,9 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "autoprefixer": "^10.4.16",
+    "craco-alias": "^3.0.1",
     "postcss": "^8.4.31"
   }
 }
