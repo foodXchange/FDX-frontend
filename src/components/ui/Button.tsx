@@ -3,18 +3,19 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 transform hover:scale-[1.02] active:scale-[0.98]',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E4C8A] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 transform hover:scale-[1.02] active:scale-[0.98] ripple',
   {
     variants: {
       variant: {
-        default: 'bg-gradient-to-r from-blue-600 to-teal-600 text-white shadow-lg hover:from-blue-700 hover:to-teal-700',
-        destructive: 'bg-red-500 text-white shadow-lg hover:bg-red-600',
-        outline: 'border border-gray-200 bg-white hover:bg-gray-50 hover:text-gray-900',
+        default: 'bg-gradient-to-r from-[#1E4C8A] to-[#2E6BB8] text-white shadow-lg hover:shadow-xl hover:from-[#163A6B] hover:to-[#2559A3]',
+        destructive: 'bg-red-500 text-white shadow-lg hover:bg-red-600 hover:shadow-xl',
+        outline: 'border border-gray-300 bg-white hover:bg-gray-50 hover:text-gray-900 hover:border-gray-400',
         secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
         ghost: 'hover:bg-gray-100 hover:text-gray-900',
-        link: 'text-blue-600 underline-offset-4 hover:underline',
-        success: 'bg-green-500 text-white shadow-lg hover:bg-green-600',
-        warning: 'bg-orange-500 text-white shadow-lg hover:bg-orange-600',
+        link: 'text-[#1E4C8A] underline-offset-4 hover:underline',
+        success: 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl hover:from-green-600 hover:to-green-700',
+        warning: 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg hover:shadow-xl hover:from-yellow-600 hover:to-yellow-700',
+        gold: 'bg-gradient-to-r from-[#B08D57] to-[#D4A574] text-white shadow-lg hover:shadow-xl hover:from-[#9A7A4A] hover:to-[#C19560]',
       },
       size: {
         default: 'h-10 px-4 py-2',

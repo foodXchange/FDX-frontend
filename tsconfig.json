@@ -28,7 +28,8 @@
       "@types/*": ["src/types/*"],
       "@utils/*": ["src/utils/*"],
       "@hooks/*": ["src/hooks/*"],
-      "@contexts/*": ["src/contexts/*"]
+      "@contexts/*": ["src/contexts/*"],
+      "@shared/*": ["src/shared/*"]
     },
     "noUnusedLocals": true,
     "noUnusedParameters": true,

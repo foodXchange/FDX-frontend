@@ -16,8 +16,10 @@ import {
   DocumentTextIcon, 
   ShoppingCartIcon, 
   ShieldCheckIcon, 
-  TruckIcon 
+  TruckIcon,
+  CloudArrowUpIcon 
 } from '@heroicons/react/24/outline';
+import { DataImport } from './features/admin/DataImport';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -98,7 +100,9 @@ useEffect(() => {
     { id: 'marketplace', label: 'Marketplace', icon: ShoppingCartIcon, description: 'Browse Products' },
     { id: 'compliance', label: 'Compliance Center', icon: ShieldCheckIcon, description: 'Validation & Safety' },
     { id: 'logistics', label: 'Logistics', icon: TruckIcon, description: 'Shipping & Tracking' },
-  ];
+    { id: 'import', label: 'Data Import', icon: CloudArrowUpIcon, description: 'Import Data' },
+
+    ];
 
   if (!isLoggedIn) {
     return (
@@ -229,6 +233,8 @@ useEffect(() => {
               </Card>
             </div>
           )}
+
+          {currentView === 'import' && <DataImport />}
         </div>
       </div>
 
