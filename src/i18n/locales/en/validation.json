@@ -1,0 +1,45 @@
+{
+  "required": "{{field}} is required",
+  "email": "Please enter a valid email address",
+  "url": "Please enter a valid URL",
+  "number": "Please enter a valid number",
+  "integer": "Please enter a whole number",
+  "positive": "{{field}} must be positive",
+  "min": "{{field}} must be at least {{min}}",
+  "max": "{{field}} must not exceed {{max}}",
+  "minLength": "{{field}} must be at least {{min}} characters",
+  "maxLength": "{{field}} must not exceed {{max}} characters",
+  "pattern": "{{field}} format is invalid",
+  "unique": "{{field}} must be unique",
+  "date": {
+    "invalid": "Please enter a valid date",
+    "future": "Date must be in the future",
+    "past": "Date must be in the past",
+    "between": "Date must be between {{start}} and {{end}}",
+    "after": "Date must be after {{date}}",
+    "before": "Date must be before {{date}}"
+  },
+  "file": {
+    "required": "Please select a file",
+    "size": "File size must not exceed {{size}}",
+    "type": "File type must be {{types}}",
+    "count": "You can upload maximum {{count}} files"
+  },
+  "password": {
+    "weak": "Password is too weak",
+    "mismatch": "Passwords do not match",
+    "requirements": "Password must contain at least {{requirements}}",
+    "uppercase": "one uppercase letter",
+    "lowercase": "one lowercase letter",
+    "number": "one number",
+    "special": "one special character"
+  },
+  "custom": {
+    "phone": "Please enter a valid phone number",
+    "zipCode": "Please enter a valid zip code",
+    "creditCard": "Please enter a valid credit card number",
+    "cvv": "Please enter a valid CVV",
+    "iban": "Please enter a valid IBAN",
+    "bic": "Please enter a valid BIC/SWIFT code"
+  }
+}

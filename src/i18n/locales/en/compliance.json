@@ -1,0 +1,129 @@
+{
+  "title": "Compliance Center",
+  "dashboard": "Compliance Dashboard",
+  "validator": "Compliance Validator",
+  "overview": {
+    "title": "Compliance Overview",
+    "subtitle": "Monitor and manage regulatory compliance",
+    "score": "Compliance Score",
+    "issues": "Active Issues",
+    "expiring": "Expiring Certificates",
+    "audits": "Upcoming Audits"
+  },
+  "certificates": {
+    "title": "Certificates",
+    "types": {
+      "haccp": "HACCP",
+      "iso": "ISO Certification",
+      "organic": "Organic Certification",
+      "halal": "Halal Certification",
+      "kosher": "Kosher Certification",
+      "gmp": "Good Manufacturing Practice",
+      "fda": "FDA Registration"
+    },
+    "status": {
+      "valid": "Valid",
+      "expiring": "Expiring Soon",
+      "expired": "Expired",
+      "pending": "Pending Verification"
+    },
+    "fields": {
+      "type": "Certificate Type",
+      "number": "Certificate Number",
+      "issuer": "Issuing Authority",
+      "issueDate": "Issue Date",
+      "expiryDate": "Expiry Date",
+      "scope": "Scope"
+    },
+    "actions": {
+      "upload": "Upload Certificate",
+      "renew": "Renew",
+      "verify": "Verify",
+      "download": "Download"
+    }
+  },
+  "validation": {
+    "title": "Product Validation",
+    "subtitle": "Validate products against compliance requirements",
+    "fields": {
+      "product": "Product",
+      "category": "Category",
+      "targetMarket": "Target Market",
+      "regulations": "Applicable Regulations"
+    },
+    "results": {
+      "compliant": "Compliant",
+      "nonCompliant": "Non-Compliant",
+      "conditionallyCompliant": "Conditionally Compliant",
+      "pendingReview": "Pending Review"
+    },
+    "requirements": {
+      "labeling": "Labeling Requirements",
+      "ingredients": "Ingredient Restrictions",
+      "packaging": "Packaging Standards",
+      "testing": "Testing Requirements",
+      "documentation": "Required Documentation"
+    }
+  },
+  "audits": {
+    "title": "Audits",
+    "upcoming": "Upcoming Audits",
+    "history": "Audit History",
+    "types": {
+      "internal": "Internal Audit",
+      "external": "External Audit",
+      "regulatory": "Regulatory Audit",
+      "supplier": "Supplier Audit"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "followUp": "Follow-up Required"
+    },
+    "fields": {
+      "type": "Audit Type",
+      "auditor": "Auditor",
+      "date": "Audit Date",
+      "scope": "Scope",
+      "findings": "Findings",
+      "actions": "Corrective Actions"
+    }
+  },
+  "alerts": {
+    "title": "Compliance Alerts",
+    "types": {
+      "expiring": "Certificate Expiring",
+      "expired": "Certificate Expired",
+      "regulatory": "Regulatory Update",
+      "audit": "Audit Reminder",
+      "violation": "Compliance Violation"
+    },
+    "severity": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+  "reports": {
+    "title": "Compliance Reports",
+    "types": {
+      "summary": "Compliance Summary",
+      "detailed": "Detailed Report",
+      "audit": "Audit Report",
+      "certificate": "Certificate Status"
+    },
+    "generate": "Generate Report",
+    "export": "Export Report",
+    "schedule": "Schedule Report"
+  },
+  "messages": {
+    "validationComplete": "Validation completed successfully",
+    "certificateUploaded": "Certificate uploaded successfully",
+    "certificateExpiring": "Certificate expires in {{days}} days",
+    "auditScheduled": "Audit scheduled successfully",
+    "reportGenerated": "Report generated successfully",
+    "complianceUpdated": "Compliance status updated"
+  }
+}

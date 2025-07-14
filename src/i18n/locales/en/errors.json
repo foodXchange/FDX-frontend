@@ -1,0 +1,68 @@
+{
+  "general": {
+    "title": "Error",
+    "unknown": "An unknown error occurred",
+    "tryAgain": "Please try again",
+    "contactSupport": "If the problem persists, please contact support"
+  },
+  "network": {
+    "title": "Network Error",
+    "offline": "You appear to be offline",
+    "slowConnection": "Slow network connection detected",
+    "timeout": "Request timed out",
+    "connectionFailed": "Failed to connect to server",
+    "checkConnection": "Please check your internet connection"
+  },
+  "auth": {
+    "unauthorized": "You are not authorized to access this resource",
+    "sessionExpired": "Your session has expired",
+    "invalidToken": "Invalid authentication token",
+    "loginRequired": "Please log in to continue",
+    "insufficientPermissions": "You don't have permission to perform this action"
+  },
+  "validation": {
+    "invalidData": "Invalid data provided",
+    "missingFields": "Required fields are missing",
+    "invalidFormat": "Invalid format",
+    "tooLarge": "File or data too large",
+    "unsupportedType": "Unsupported file type"
+  },
+  "api": {
+    "400": "Bad Request - The request was invalid",
+    "401": "Unauthorized - Authentication required",
+    "403": "Forbidden - You don't have access to this resource",
+    "404": "Not Found - The requested resource was not found",
+    "409": "Conflict - The request conflicts with existing data",
+    "422": "Validation Error - The provided data is invalid",
+    "429": "Too Many Requests - Please try again later",
+    "500": "Server Error - Something went wrong on our end",
+    "502": "Bad Gateway - Server communication error",
+    "503": "Service Unavailable - The service is temporarily unavailable",
+    "504": "Gateway Timeout - The server took too long to respond"
+  },
+  "pages": {
+    "404": {
+      "title": "Page Not Found",
+      "message": "The page you're looking for doesn't exist",
+      "action": "Go to Homepage"
+    },
+    "403": {
+      "title": "Access Denied",
+      "message": "You don't have permission to access this page",
+      "action": "Go Back"
+    },
+    "500": {
+      "title": "Server Error",
+      "message": "Something went wrong on our end",
+      "action": "Refresh Page"
+    }
+  },
+  "actions": {
+    "retry": "Retry",
+    "goBack": "Go Back",
+    "goHome": "Go to Homepage",
+    "refresh": "Refresh Page",
+    "report": "Report Issue",
+    "details": "View Details"
+  }
+}

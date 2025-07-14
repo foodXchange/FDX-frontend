@@ -1,7 +1,7 @@
 // API Client Configuration for Frontend
 // Copy this file to your frontend project: src/services/api-client.ts
 
-import axios, { AxiosInstance, AxiosError } from 'axios';
+import axios, { AxiosInstance, AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import type {
   ApiResponse,
   ApiError,
@@ -22,6 +22,70 @@ import type {
 // Configuration
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 const REQUEST_TIMEOUT = 30000; // 30 seconds
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY = 1000; // 1 second
+
+// Retry configuration
+interface RetryConfig extends AxiosRequestConfig {
+  _retryCount?: number;
+  _retryDelay?: number;
+}
+
+// Request queue for offline support
+class RequestQueue {
+  private queue: Array<{ config: AxiosRequestConfig; timestamp: number }> = [];
+  private processing = false;
+
+  add(config: AxiosRequestConfig) {
+    this.queue.push({ config, timestamp: Date.now() });
+    this.process();
+  }
+
+  async process() {
+    if (this.processing || !navigator.onLine) return;
+    
+    this.processing = true;
+    while (this.queue.length > 0 && navigator.onLine) {
+      const request = this.queue.shift();
+      if (request) {
+        try {
+          await axios(request.config);
+        } catch (error) {
+          // If still failing, add back to queue
+          if (!isNetworkError(error)) {
+            this.queue.unshift(request);
+          }
+        }
+      }
+    }
+    this.processing = false;
+  }
+}
+
+const requestQueue = new RequestQueue();
+
+// Helper to check if error is network related
+const isNetworkError = (error: any): boolean => {
+  return !error.response && error.code !== 'ECONNABORTED';
+};
+
+// Helper to determine if request should be retried
+const shouldRetry = (error: AxiosError, config: RetryConfig): boolean => {
+  const retryCount = config._retryCount || 0;
+  
+  // Don't retry if max attempts reached
+  if (retryCount >= MAX_RETRY_ATTEMPTS) return false;
+  
+  // Retry on network errors or 5xx errors
+  if (!error.response) return true;
+  if (error.response.status >= 500) return true;
+  if (error.response.status === 429) return true; // Rate limit
+  
+  return false;
+};
+
+// Sleep helper for retry delay
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Create axios instance
 const createApiClient = (): AxiosInstance => {
@@ -35,15 +99,20 @@ const createApiClient = (): AxiosInstance => {
 
   // Request interceptor
   client.interceptors.request.use(
-    (config) => {
+    (config: InternalAxiosRequestConfig) => {
       // Add auth token
-      const token = localStorage.getItem('auth_token');
-      if (token) {
+      const token = localStorage.getItem('authToken');
+      if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
 
       // Add request ID for tracking
-      config.headers['X-Request-ID'] = generateRequestId();
+      if (config.headers) {
+        config.headers['X-Request-ID'] = generateRequestId();
+      }
+
+      // Add timestamp for request timing
+      (config as any).metadata = { startTime: Date.now() };
 
       return config;
     },
@@ -56,34 +125,89 @@ const createApiClient = (): AxiosInstance => {
   // Response interceptor
   client.interceptors.response.use(
     (response) => {
+      // Log response time
+      const config = response.config as any;
+      if (config.metadata) {
+        const duration = Date.now() - config.metadata.startTime;
+        console.debug(`API call to ${config.url} took ${duration}ms`);
+      }
+
       // Return data directly
       return response.data;
     },
     async (error: AxiosError<ApiError>) => {
+      const originalRequest = error.config as RetryConfig;
+      
+      // Handle retry logic
+      if (originalRequest && shouldRetry(error, originalRequest)) {
+        originalRequest._retryCount = (originalRequest._retryCount || 0) + 1;
+        const delay = originalRequest._retryDelay || RETRY_DELAY;
+        originalRequest._retryDelay = delay * 2; // Exponential backoff
+        
+        console.warn(`Retrying request (attempt ${originalRequest._retryCount}/${MAX_RETRY_ATTEMPTS})`);
+        await sleep(delay);
+        
+        return client(originalRequest);
+      }
+
+      // Handle offline mode
+      if (isNetworkError(error) && originalRequest) {
+        // Queue the request for later
+        requestQueue.add(originalRequest);
+        return Promise.reject({
+          success: false,
+          message: 'You are offline. Request will be sent when connection is restored.',
+          errors: ['Network error'],
+          statusCode: 0,
+          requestId: generateRequestId(),
+        } as ApiError);
+      }
+
       const { response } = error;
 
       if (response) {
         // Handle specific error cases
         switch (response.status) {
           case 401:
-            // Unauthorized - clear token and redirect
-            localStorage.removeItem('auth_token');
-            window.location.href = '/login';
+            // Unauthorized - try to refresh token first
+            if (originalRequest && !originalRequest.url?.includes('/auth/refresh')) {
+              try {
+                const refreshResponse = await client.post('/auth/refresh');
+                const newToken = refreshResponse.data.token;
+                localStorage.setItem('authToken', newToken);
+                
+                // Retry original request with new token
+                if (originalRequest.headers) {
+                  originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                }
+                return client(originalRequest);
+              } catch (refreshError) {
+                // Refresh failed - clear token and redirect
+                localStorage.removeItem('authToken');
+                window.location.href = '/login';
+              }
+            }
             break;
           
           case 403:
-            // Forbidden - show permission error
-            console.error('Permission denied');
+            // Forbidden - emit event for global error handling
+            window.dispatchEvent(new CustomEvent('api:forbidden', { detail: response.data }));
             break;
           
           case 429:
             // Rate limited - show appropriate message
-            console.error('Too many requests. Please try again later.');
+            const retryAfter = response.headers['retry-after'];
+            window.dispatchEvent(new CustomEvent('api:rate-limited', { 
+              detail: { retryAfter, message: response.data.message }
+            }));
             break;
           
           case 500:
+          case 502:
+          case 503:
+          case 504:
             // Server error
-            console.error('Server error. Please try again later.');
+            window.dispatchEvent(new CustomEvent('api:server-error', { detail: response.data }));
             break;
         }
 
@@ -91,11 +215,11 @@ const createApiClient = (): AxiosInstance => {
         return Promise.reject(response.data);
       }
 
-      // Network error
+      // Unknown error
       return Promise.reject({
         success: false,
-        message: 'Network error. Please check your connection.',
-        errors: ['Network error'],
+        message: error.message || 'An unexpected error occurred',
+        errors: [error.message || 'Unknown error'],
         statusCode: 0,
         requestId: generateRequestId(),
       } as ApiError);
@@ -298,22 +422,36 @@ export const api = {
   },
 };
 
+// Monitor online/offline status
+window.addEventListener('online', () => {
+  console.log('Back online - processing queued requests');
+  requestQueue.process();
+});
+
+// Export configured axios instance
+export const apiClient = createApiClient();
+
 // Helper functions
 export const setAuthToken = (token: string): void => {
-  localStorage.setItem('auth_token', token);
+  localStorage.setItem('authToken', token);
+  apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 };
 
 export const clearAuthToken = (): void => {
-  localStorage.removeItem('auth_token');
+  localStorage.removeItem('authToken');
+  delete apiClient.defaults.headers.common['Authorization'];
 };
 
 export const getAuthToken = (): string | null => {
-  return localStorage.getItem('auth_token');
+  return localStorage.getItem('authToken');
 };
 
 export const isAuthenticated = (): boolean => {
   return !!getAuthToken();
 };
+
+// Export default instance for backward compatibility
+export default apiClient;
 
 // Export types for convenience
 export type { ApiResponse, ApiError } from '@shared/types';

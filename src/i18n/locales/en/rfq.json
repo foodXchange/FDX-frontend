@@ -1,0 +1,145 @@
+{
+  "title": "RFQ Management",
+  "createRFQ": "Create RFQ",
+  "viewRFQ": "View RFQ",
+  "editRFQ": "Edit RFQ",
+  "deleteRFQ": "Delete RFQ",
+  "list": {
+    "title": "Request for Quotations",
+    "subtitle": "Manage your RFQs and proposals",
+    "emptyState": {
+      "title": "No RFQs found",
+      "message": "Create your first RFQ to start receiving proposals from suppliers",
+      "action": "Create RFQ"
+    },
+    "filters": {
+      "all": "All RFQs",
+      "active": "Active",
+      "pending": "Pending",
+      "closed": "Closed",
+      "draft": "Drafts"
+    },
+    "columns": {
+      "id": "RFQ ID",
+      "title": "Title",
+      "category": "Category",
+      "quantity": "Quantity",
+      "deliveryDate": "Delivery Date",
+      "status": "Status",
+      "proposals": "Proposals",
+      "createdAt": "Created",
+      "deadline": "Deadline"
+    }
+  },
+  "form": {
+    "title": "RFQ Details",
+    "basicInfo": "Basic Information",
+    "productDetails": "Product Details",
+    "deliveryInfo": "Delivery Information",
+    "additionalInfo": "Additional Information",
+    "fields": {
+      "title": {
+        "label": "RFQ Title",
+        "placeholder": "Enter a descriptive title for your RFQ"
+      },
+      "category": {
+        "label": "Product Category",
+        "placeholder": "Select category"
+      },
+      "productName": {
+        "label": "Product Name",
+        "placeholder": "Enter product name"
+      },
+      "quantity": {
+        "label": "Quantity",
+        "placeholder": "Enter quantity"
+      },
+      "unit": {
+        "label": "Unit",
+        "placeholder": "Select unit"
+      },
+      "specifications": {
+        "label": "Product Specifications",
+        "placeholder": "Enter detailed specifications"
+      },
+      "deliveryDate": {
+        "label": "Required Delivery Date",
+        "placeholder": "Select delivery date"
+      },
+      "deliveryLocation": {
+        "label": "Delivery Location",
+        "placeholder": "Enter delivery address"
+      },
+      "paymentTerms": {
+        "label": "Payment Terms",
+        "placeholder": "Select payment terms"
+      },
+      "deadline": {
+        "label": "Proposal Deadline",
+        "placeholder": "Select deadline for proposals"
+      },
+      "notes": {
+        "label": "Additional Notes",
+        "placeholder": "Any additional requirements or notes"
+      }
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "categoryRequired": "Category is required",
+      "quantityRequired": "Quantity is required",
+      "quantityPositive": "Quantity must be positive",
+      "deliveryDateRequired": "Delivery date is required",
+      "deliveryDateFuture": "Delivery date must be in the future",
+      "deadlineBeforeDelivery": "Deadline must be before delivery date"
+    }
+  },
+  "status": {
+    "draft": "Draft",
+    "published": "Published",
+    "active": "Active",
+    "evaluating": "Evaluating",
+    "awarded": "Awarded",
+    "closed": "Closed",
+    "cancelled": "Cancelled"
+  },
+  "actions": {
+    "publish": "Publish RFQ",
+    "saveDraft": "Save as Draft",
+    "viewProposals": "View Proposals",
+    "awardContract": "Award Contract",
+    "closeRFQ": "Close RFQ",
+    "cancelRFQ": "Cancel RFQ",
+    "duplicate": "Duplicate RFQ",
+    "export": "Export RFQ"
+  },
+  "proposals": {
+    "title": "Proposals",
+    "received": "{{count}} proposals received",
+    "deadline": "Deadline: {{date}}",
+    "noProposals": "No proposals received yet",
+    "columns": {
+      "supplier": "Supplier",
+      "price": "Price",
+      "deliveryDate": "Delivery Date",
+      "rating": "Rating",
+      "status": "Status",
+      "submittedAt": "Submitted"
+    },
+    "actions": {
+      "view": "View Proposal",
+      "accept": "Accept",
+      "reject": "Reject",
+      "negotiate": "Negotiate"
+    }
+  },
+  "messages": {
+    "createSuccess": "RFQ created successfully",
+    "updateSuccess": "RFQ updated successfully",
+    "publishSuccess": "RFQ published successfully",
+    "deleteSuccess": "RFQ deleted successfully",
+    "awardSuccess": "Contract awarded successfully",
+    "confirmPublish": "Are you sure you want to publish this RFQ?",
+    "confirmDelete": "Are you sure you want to delete this RFQ?",
+    "confirmCancel": "Are you sure you want to cancel this RFQ?"
+  }
+}

@@ -1,5 +1,6 @@
 /* Import the main index.css */
 @import '../index.css';
+@import './animations.css';
 
 /* Custom Properties for Consistent Theming */
 :root {

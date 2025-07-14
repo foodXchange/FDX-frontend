@@ -1,0 +1,120 @@
+{
+  "title": "Orders",
+  "orderLines": "Order Lines",
+  "standingOrders": "Standing Orders",
+  "createOrder": "Create Order",
+  "viewOrder": "View Order",
+  "list": {
+    "title": "Order Management",
+    "subtitle": "Track and manage your orders",
+    "emptyState": {
+      "title": "No orders found",
+      "message": "You don't have any orders yet",
+      "action": "Browse Marketplace"
+    },
+    "filters": {
+      "all": "All Orders",
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "inTransit": "In Transit",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "columns": {
+      "orderNumber": "Order #",
+      "supplier": "Supplier",
+      "items": "Items",
+      "total": "Total",
+      "status": "Status",
+      "orderDate": "Order Date",
+      "deliveryDate": "Delivery Date",
+      "trackingNumber": "Tracking #"
+    }
+  },
+  "details": {
+    "orderInformation": "Order Information",
+    "shippingInformation": "Shipping Information",
+    "paymentInformation": "Payment Information",
+    "orderItems": "Order Items",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "shipping": "Shipping",
+    "total": "Total",
+    "notes": "Order Notes"
+  },
+  "status": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "inTransit": "In Transit",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "refunded": "Refunded"
+  },
+  "standingOrders": {
+    "title": "Standing Orders",
+    "subtitle": "Manage your recurring orders",
+    "create": "Create Standing Order",
+    "frequency": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "biweekly": "Bi-weekly",
+      "monthly": "Monthly",
+      "quarterly": "Quarterly"
+    },
+    "fields": {
+      "frequency": "Delivery Frequency",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "nextDelivery": "Next Delivery",
+      "quantity": "Standing Quantity",
+      "autoApprove": "Auto-approve Orders"
+    },
+    "actions": {
+      "pause": "Pause",
+      "resume": "Resume",
+      "modify": "Modify",
+      "cancel": "Cancel"
+    },
+    "status": {
+      "active": "Active",
+      "paused": "Paused",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    }
+  },
+  "tracking": {
+    "title": "Order Tracking",
+    "trackingNumber": "Tracking Number",
+    "carrier": "Carrier",
+    "estimatedDelivery": "Estimated Delivery",
+    "currentLocation": "Current Location",
+    "timeline": {
+      "orderPlaced": "Order Placed",
+      "orderConfirmed": "Order Confirmed",
+      "inPreparation": "In Preparation",
+      "shipped": "Shipped",
+      "inTransit": "In Transit",
+      "outForDelivery": "Out for Delivery",
+      "delivered": "Delivered"
+    }
+  },
+  "actions": {
+    "viewDetails": "View Details",
+    "track": "Track Order",
+    "cancel": "Cancel Order",
+    "reorder": "Reorder",
+    "downloadInvoice": "Download Invoice",
+    "reportIssue": "Report Issue",
+    "confirmReceipt": "Confirm Receipt"
+  },
+  "messages": {
+    "orderPlaced": "Order placed successfully",
+    "orderCancelled": "Order cancelled successfully",
+    "confirmCancel": "Are you sure you want to cancel this order?",
+    "trackingUpdated": "Tracking information updated",
+    "receiptConfirmed": "Receipt confirmed successfully"
+  }
+}

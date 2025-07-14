@@ -7,7 +7,8 @@
       "Bash(grep:*)",
       "Bash(npx tsc:*)",
       "Bash(npm run type-check:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(gh repo view:*)"
     ],
     "deny": []
   }
