@@ -55,7 +55,7 @@ export const Register: React.FC = () => {
         password: data.password,
         name: data.name,
         company: data.company,
-        role: data.role,
+        role: data.role as 'supplier' | 'buyer',
       });
       navigate('/dashboard');
     } catch (err) {

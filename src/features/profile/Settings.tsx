@@ -13,7 +13,8 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Settings: React.FC = () => {
-  const { user, updateProfile } = useAuth();
+  const { updateProfile } = useAuth();
+  // const user = useAuth().user; // Uncomment when user data is needed
   const [activeTab, setActiveTab] = useState('notifications');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -227,7 +228,7 @@ const Settings: React.FC = () => {
       {/* Save Button */}
       {activeTab !== 'security' && (
         <div className="mt-6 flex justify-end">
-          <Button variant="primary" onClick={handleSave}>
+          <Button variant="default" onClick={handleSave}>
             Save Settings
           </Button>
         </div>
@@ -236,6 +237,8 @@ const Settings: React.FC = () => {
       {/* Toast Notification */}
       {showToast && (
         <Toast
+          id="settings-toast"
+          title={toastMessage.includes('Failed') ? 'Error' : 'Success'}
           message={toastMessage}
           type={toastMessage.includes('Failed') ? 'error' : 'success'}
           onClose={() => setShowToast(false)}

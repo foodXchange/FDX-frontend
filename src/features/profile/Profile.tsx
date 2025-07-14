@@ -39,13 +39,13 @@ const Profile: React.FC = () => {
             )}
             <h2 className="text-xl font-semibold text-gray-900">{user.name}</h2>
             <p className="text-gray-600">{user.email}</p>
-            <Badge variant="primary" className="mt-2">
+            <Badge variant="default" className="mt-2">
               {user.role}
             </Badge>
           </div>
 
           <div className="mt-6 space-y-2">
-            <Button variant="primary" className="w-full">
+            <Button variant="default" className="w-full">
               <PencilIcon className="h-4 w-4 mr-2" />
               Edit Profile
             </Button>
@@ -101,7 +101,7 @@ const Profile: React.FC = () => {
             <h4 className="text-sm font-medium text-gray-700 mb-3">Permissions</h4>
             <div className="flex flex-wrap gap-2">
               {user.permissions.map((permission) => (
-                <Badge key={permission} variant="secondary">
+                <Badge key={permission} variant="default">
                   {permission.replace(/\./g, ' ').toUpperCase()}
                 </Badge>
               ))}

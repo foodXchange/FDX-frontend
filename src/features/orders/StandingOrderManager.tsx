@@ -31,11 +31,11 @@ import {
   Plus,
   MoreHorizontal,
   TrendingUp,
-  CheckCircle,
+  // CheckCircle, // Unused for now
   RefreshCw,
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
-import { format, addDays, addWeeks, addMonths } from 'date-fns';
+import { format, /* addDays, */ addWeeks, addMonths } from 'date-fns';
 
 interface StandingOrder {
   id: string;
@@ -83,6 +83,7 @@ const statusConfig = {
   expired: { label: 'Expired', color: 'bg-gray-100 text-gray-700', icon: Clock },
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getNextDeliveryDate = (lastDate: Date, frequency: StandingOrder['frequency']): Date => {
   switch (frequency) {
     case 'weekly':

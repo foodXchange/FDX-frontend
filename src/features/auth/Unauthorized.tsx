@@ -28,7 +28,7 @@ export const Unauthorized: React.FC = () => {
         
         <div className="mt-8 space-y-3">
           <Button
-            variant="primary"
+            variant="default"
             className="w-full"
             onClick={() => navigate(-1)}
           >

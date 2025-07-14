@@ -35,7 +35,7 @@ const NotFound: React.FC = () => {
           {/* Action Buttons */}
           <div className="mt-8 space-y-3">
             <Link to="/dashboard">
-              <Button variant="primary" className="w-full">
+              <Button variant="default" className="w-full">
                 <HomeIcon className="h-5 w-5 mr-2" />
                 Go to Dashboard
               </Button>
