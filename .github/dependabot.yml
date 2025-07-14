@@ -1,0 +1,70 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "foodxchange-team"
+    assignees:
+      - "foodxchange-lead-dev"
+    labels:
+      - "dependencies"
+      - "npm"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    ignore:
+      # Ignore major version updates for these packages
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Group all development dependencies
+      development-dependencies:
+        dependency-type: "development"
+      # Group all production dependencies
+      production-dependencies:
+        dependency-type: "production"
+        exclude-patterns:
+          - "@types/*"
+      # Group type definitions
+      types:
+        patterns:
+          - "@types/*"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+    reviewers:
+      - "foodxchange-devops"
+    assignees:
+      - "foodxchange-lead-dev"
+    labels:
+      - "github-actions"
+      - "ci-cd"
+    commit-message:
+      prefix: "ci"
+
+  # Enable security updates
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+    labels:
+      - "security"
+      - "high-priority"
+    commit-message:
+      prefix: "security"

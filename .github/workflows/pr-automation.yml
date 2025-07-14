@@ -1,0 +1,245 @@
+name: PR Automation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, ready_for_review]
+  pull_request_review:
+    types: [submitted]
+  issue_comment:
+    types: [created]
+
+jobs:
+  # Auto-label PRs based on files changed
+  auto-label:
+    name: Auto Label PR
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: 🏷️ Label PR based on files
+        uses: actions/labeler@v4
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          configuration-path: .github/labeler.yml
+
+      - name: 🏷️ Label PR by size
+        uses: codelytv/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_label: 'size/XS'
+          xs_max_size: '10'
+          s_label: 'size/S'
+          s_max_size: '100'
+          m_label: 'size/M'
+          m_max_size: '300'
+          l_label: 'size/L'
+          l_max_size: '1000'
+          xl_label: 'size/XL'
+          fail_if_xl: false
+
+  # Check PR quality
+  pr-quality-check:
+    name: PR Quality Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📝 Check PR Description
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const minDescriptionLength = 50;
+            
+            if (!pr.body || pr.body.length < minDescriptionLength) {
+              core.setFailed(`PR description must be at least ${minDescriptionLength} characters long`);
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `## ⚠️ PR Description Required
+                
+                Please provide a detailed description of your changes. Include:
+                - What changes were made
+                - Why these changes were necessary
+                - How to test the changes
+                - Any breaking changes or migration steps
+                
+                Minimum description length: ${minDescriptionLength} characters`
+              });
+            }
+
+      - name: 🔍 Check for linked issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            
+            // Check for issue references
+            const issuePattern = /(closes|fixes|resolves)\s+#\d+/i;
+            if (!issuePattern.test(body)) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `## 🔗 No Linked Issues
+                
+                This PR doesn't reference any issues. If this PR fixes an issue, please add:
+                - \`Fixes #<issue-number>\`
+                - \`Closes #<issue-number>\`
+                - \`Resolves #<issue-number>\`
+                
+                to your PR description.`
+              });
+            }
+
+  # Auto-assign reviewers
+  auto-assign:
+    name: Auto Assign Reviewers
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    
+    steps:
+      - name: 👥 Auto-assign reviewers
+        uses: kentaro-m/auto-assign-action@v1.2.5
+        with:
+          configuration-path: '.github/auto-assign.yml'
+
+  # Generate PR summary
+  pr-summary:
+    name: Generate PR Summary
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📊 Generate diff summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            
+            // Get PR diff stats
+            const { data: prFiles } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number
+            });
+            
+            // Categorize changes
+            const changes = {
+              components: [],
+              features: [],
+              styles: [],
+              tests: [],
+              config: [],
+              other: []
+            };
+            
+            prFiles.forEach(file => {
+              if (file.filename.includes('components/')) changes.components.push(file.filename);
+              else if (file.filename.includes('features/')) changes.features.push(file.filename);
+              else if (file.filename.includes('.css') || file.filename.includes('styles/')) changes.styles.push(file.filename);
+              else if (file.filename.includes('.test.') || file.filename.includes('__tests__')) changes.tests.push(file.filename);
+              else if (file.filename.includes('config') || file.filename.includes('.json')) changes.config.push(file.filename);
+              else changes.other.push(file.filename);
+            });
+            
+            // Create summary comment
+            let summary = `## 📋 PR Summary\n\n`;
+            summary += `### 📊 Change Statistics\n`;
+            summary += `- **Total files changed:** ${prFiles.length}\n`;
+            summary += `- **Lines added:** +${prFiles.reduce((acc, f) => acc + f.additions, 0)}\n`;
+            summary += `- **Lines removed:** -${prFiles.reduce((acc, f) => acc + f.deletions, 0)}\n\n`;
+            
+            summary += `### 📁 Changes by Category\n`;
+            if (changes.components.length) summary += `\n**Components (${changes.components.length}):**\n${changes.components.map(f => `- ${f}`).join('\n')}\n`;
+            if (changes.features.length) summary += `\n**Features (${changes.features.length}):**\n${changes.features.map(f => `- ${f}`).join('\n')}\n`;
+            if (changes.styles.length) summary += `\n**Styles (${changes.styles.length}):**\n${changes.styles.map(f => `- ${f}`).join('\n')}\n`;
+            if (changes.tests.length) summary += `\n**Tests (${changes.tests.length}):**\n${changes.tests.map(f => `- ${f}`).join('\n')}\n`;
+            if (changes.config.length) summary += `\n**Config (${changes.config.length}):**\n${changes.config.map(f => `- ${f}`).join('\n')}\n`;
+            if (changes.other.length) summary += `\n**Other (${changes.other.length}):**\n${changes.other.map(f => `- ${f}`).join('\n')}\n`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: summary
+            });
+
+  # Dependency review
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Dependency Review
+        uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: moderate
+          allow-licenses: MIT, Apache-2.0, BSD-3-Clause, ISC
+
+  # PR command handler
+  command-handler:
+    name: Handle PR Commands
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issue_comment' && github.event.issue.pull_request
+    
+    steps:
+      - name: 🤖 Handle commands
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = context.payload.comment;
+            const body = comment.body.trim();
+            
+            // Check if comment is from a collaborator
+            const { data: permissions } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: comment.user.login
+            });
+            
+            if (!['admin', 'write'].includes(permissions.permission)) {
+              return;
+            }
+            
+            // Handle different commands
+            if (body === '/rebase') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🔄 Rebasing PR with main branch...'
+              });
+              // Trigger rebase workflow
+            } else if (body === '/update-snapshots') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '📸 Updating test snapshots...'
+              });
+              // Trigger snapshot update workflow
+            } else if (body === '/deploy-preview') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚀 Deploying preview environment...'
+              });
+              // Trigger preview deployment
+            }

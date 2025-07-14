@@ -1,0 +1,247 @@
+name: Release Management
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.2.3)'
+        required: true
+        type: string
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          REACT_APP_ENVIRONMENT: production
+
+      - name: 📋 Generate changelog
+        id: changelog
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            
+            // Get previous tag
+            const tags = execSync('git tag --sort=-version:refname').toString().split('\n').filter(Boolean);
+            const currentTag = context.ref.replace('refs/tags/', '');
+            const previousTag = tags[1] || 'HEAD~20';
+            
+            // Generate changelog
+            const commits = execSync(`git log ${previousTag}..${currentTag} --pretty=format:"- %s (%h)"`).toString();
+            
+            // Categorize commits
+            const features = [];
+            const fixes = [];
+            const others = [];
+            
+            commits.split('\n').forEach(commit => {
+              if (commit.includes('feat:') || commit.includes('feature:')) {
+                features.push(commit.replace(/feat:|feature:/, '✨'));
+              } else if (commit.includes('fix:') || commit.includes('bugfix:')) {
+                fixes.push(commit.replace(/fix:|bugfix:/, '🐛'));
+              } else if (commit) {
+                others.push(commit);
+              }
+            });
+            
+            let changelog = `# Release ${currentTag}\n\n`;
+            changelog += `## What's Changed\n\n`;
+            
+            if (features.length) {
+              changelog += `### ✨ New Features\n${features.join('\n')}\n\n`;
+            }
+            if (fixes.length) {
+              changelog += `### 🐛 Bug Fixes\n${fixes.join('\n')}\n\n`;
+            }
+            if (others.length) {
+              changelog += `### 📦 Other Changes\n${others.join('\n')}\n\n`;
+            }
+            
+            changelog += `\n**Full Changelog**: https://github.com/${{ github.repository }}/compare/${previousTag}...${currentTag}`;
+            
+            core.setOutput('changelog', changelog);
+            core.setOutput('previous-tag', previousTag);
+
+      - name: 📦 Create release assets
+        run: |
+          # Create release bundle
+          zip -r fdx-frontend-${{ github.ref_name }}.zip build/
+          
+          # Create source bundle
+          git archive --format=tar.gz -o fdx-frontend-source-${{ github.ref_name }}.tar.gz HEAD
+
+      - name: 🚀 Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: ${{ steps.changelog.outputs.changelog }}
+          files: |
+            fdx-frontend-${{ github.ref_name }}.zip
+            fdx-frontend-source-${{ github.ref_name }}.tar.gz
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}
+
+      - name: 📊 Update release metrics
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Add release metrics as a comment
+            const releaseInfo = {
+              version: context.ref.replace('refs/tags/', ''),
+              date: new Date().toISOString(),
+              author: context.actor,
+              commits: execSync(`git rev-list ${{ steps.changelog.outputs.previous-tag }}..HEAD --count`).toString().trim(),
+              contributors: execSync(`git log ${{ steps.changelog.outputs.previous-tag }}..HEAD --format="%aN" | sort -u | wc -l`).toString().trim()
+            };
+            
+            await github.rest.repos.createReleaseAsset({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: context.payload.release.id,
+              name: 'release-metrics.json',
+              data: JSON.stringify(releaseInfo, null, 2)
+            });
+
+  docker-release:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 🔐 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📝 Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/fdx-frontend
+            ghcr.io/${{ github.repository_owner }}/fdx-frontend
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+
+      - name: 🐳 Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  update-documentation:
+    name: Update Documentation
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📝 Update version in docs
+        run: |
+          VERSION=${{ github.ref_name }}
+          
+          # Update README
+          sed -i "s/version-[0-9.v]*/version-${VERSION}/g" README.md
+          
+          # Update package.json version
+          npm version ${VERSION#v} --no-git-tag-version
+          
+          # Create version file
+          echo ${VERSION} > version.txt
+
+      - name: 💾 Commit documentation updates
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'docs: update version to ${{ github.ref_name }}'
+          add: 'README.md package.json version.txt'
+          default_author: github_actions
+
+  notify-release:
+    name: Send Release Notifications
+    runs-on: ubuntu-latest
+    needs: [create-release, docker-release]
+    if: always()
+    
+    steps:
+      - name: 📱 Send Slack notification
+        if: ${{ secrets.SLACK_WEBHOOK }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text: "🎉 New FDX Frontend Release!",
+              attachments: [{
+                color: 'good',
+                fields: [
+                  { title: 'Version', value: '${{ github.ref_name }}', short: true },
+                  { title: 'Released By', value: '${{ github.actor }}', short: true },
+                  { title: 'Release URL', value: 'https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}', short: false }
+                ]
+              }]
+            }
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: 🐦 Tweet release
+        if: false  # Enable when Twitter credentials are configured
+        uses: ethomson/send-tweet-action@v1
+        with:
+          status: |
+            🚀 FDX Frontend ${{ github.ref_name }} has been released!
+            
+            Check out what's new: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+            
+            #FoodXchange #OpenSource #WebDev
+          consumer-key: ${{ secrets.TWITTER_CONSUMER_KEY }}
+          consumer-secret: ${{ secrets.TWITTER_CONSUMER_SECRET }}
+          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}

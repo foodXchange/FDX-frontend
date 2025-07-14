@@ -1,0 +1,294 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, 'feature/**' ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18.x'
+  CACHE_NAME: 'node-modules-cache'
+
+jobs:
+  # Job 1: Code Quality Checks
+  quality-checks:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit
+          
+      - name: 🎨 Run ESLint
+        run: npm run lint || true
+        continue-on-error: true
+
+      - name: 📝 TypeScript Type Checking
+        run: npm run type-check || npx tsc --noEmit
+
+      - name: 🎯 Check code formatting
+        run: npx prettier --check "src/**/*.{js,jsx,ts,tsx,css,scss,json}" || true
+
+      - name: 📊 Generate ESLint Report
+        if: always()
+        run: |
+          npm run lint -- --format json --output-file eslint-report.json || true
+          
+      - name: 💾 Upload ESLint Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: eslint-report
+          path: eslint-report.json
+
+  # Job 2: Build and Test
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: 🧪 Run tests with coverage
+        run: |
+          npm test -- --coverage --watchAll=false --passWithNoTests
+        env:
+          CI: true
+
+      - name: 🏗️ Build application
+        run: |
+          npm run build
+        env:
+          CI: true
+          GENERATE_SOURCEMAP: false
+
+      - name: 📊 Upload coverage reports
+        if: matrix.node-version == '18.x'
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+      - name: 📦 Upload build artifacts
+        if: matrix.node-version == '18.x'
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: build/
+          retention-days: 7
+
+  # Job 3: Security Scanning
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔒 Run npm audit
+        run: |
+          npm audit --production --audit-level=moderate || true
+          
+      - name: 🔍 Run Snyk Security Scan
+        continue-on-error: true
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: 🛡️ Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'FDX-Frontend'
+          path: '.'
+          format: 'HTML'
+          args: >
+            --enableRetired
+
+      - name: 📤 Upload OWASP results
+        uses: actions/upload-artifact@v3
+        with:
+          name: owasp-results
+          path: reports/
+
+  # Job 4: Performance Testing
+  performance:
+    name: Performance & Bundle Analysis
+    runs-on: ubuntu-latest
+    needs: build-test
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: 📊 Analyze bundle size
+        run: |
+          npm run build
+          npx source-map-explorer 'build/static/js/*.js' --json > bundle-analysis.json || true
+
+      - name: 🚀 Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:3000
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: 💾 Upload bundle analysis
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundle-analysis
+          path: bundle-analysis.json
+
+  # Job 5: Deploy Preview
+  deploy-preview:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    needs: [build-test, security-scan]
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: 🏗️ Build for preview
+        run: npm run build
+        env:
+          REACT_APP_ENVIRONMENT: preview
+          REACT_APP_API_URL: ${{ secrets.PREVIEW_API_URL }}
+
+      - name: 🚀 Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          github-comment: true
+
+  # Job 6: Semantic Release
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    needs: [build-test, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🚀 Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
+
+  # Job 7: Notification
+  notify:
+    name: Send Notifications
+    runs-on: ubuntu-latest
+    needs: [build-test, security-scan, performance]
+    if: always()
+    
+    steps:
+      - name: 📱 Send Slack Notification
+        if: ${{ secrets.SLACK_WEBHOOK }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            CI/CD Pipeline Status: ${{ job.status }}
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: 📧 Create GitHub Issue on Failure
+        if: failure() && github.ref == 'refs/heads/main'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `CI/CD Pipeline Failed - ${new Date().toISOString()}`,
+              body: `## Pipeline Failure Report
+              
+              **Workflow:** ${context.workflow}
+              **Run Number:** ${context.runNumber}
+              **Run ID:** ${context.runId}
+              **Actor:** ${context.actor}
+              **SHA:** ${context.sha}
+              
+              [View Failed Run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+              `,
+              labels: ['bug', 'ci-failure', 'high-priority']
+            });

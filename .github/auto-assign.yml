@@ -1,0 +1,42 @@
+# Configuration for auto-assign
+# https://github.com/kentaro-m/auto-assign-action
+
+# Add reviewers/assignees to pull requests
+addReviewers: true
+addAssignees: author
+
+# Set the number of reviewers added to the pull request
+# Set 0 to add all the reviewers
+numberOfReviewers: 2
+
+# A list of reviewers to be added to pull requests
+reviewers:
+  - foodxchange-reviewer-1
+  - foodxchange-reviewer-2
+  - foodxchange-reviewer-3
+
+# A list of keywords to skip adding reviewers
+skipKeywords:
+  - wip
+  - draft
+  - '[skip-review]'
+
+# A list of assignees to be added to pull requests
+assignees:
+  - foodxchange-lead-dev
+
+# A number of assignees added to the pull request
+numberOfAssignees: 1
+
+# A list of reviewers to be added to specific file changes
+fileReviewers:
+  '*.tsx':
+    - frontend-team
+  '*.ts':
+    - frontend-team
+  '*.css':
+    - design-team
+  'src/features/compliance/**':
+    - compliance-team
+  'src/services/**':
+    - backend-integration-team

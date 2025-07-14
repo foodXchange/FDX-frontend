@@ -1,0 +1,66 @@
+# Configuration for PR labeler
+# https://github.com/actions/labeler
+
+# Add 'documentation' label to any change in docs files
+documentation:
+  - README.md
+  - docs/**/*
+  - '*.md'
+
+# Add 'frontend' label to any frontend file changes
+frontend:
+  - src/**/*
+  - public/**/*
+
+# Add component-specific labels
+components:
+  - src/components/**/*
+
+features:
+  - src/features/**/*
+
+styles:
+  - '**/*.css'
+  - '**/*.scss'
+  - src/styles/**/*
+
+# Add 'test' label to test files
+test:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  - '__tests__/**/*'
+
+# Configuration changes
+configuration:
+  - package.json
+  - package-lock.json
+  - tsconfig.json
+  - .eslintrc*
+  - .prettierrc*
+  - '*.config.js'
+  - '*.config.ts'
+
+# CI/CD changes
+ci-cd:
+  - .github/workflows/*
+  - .github/**/*
+
+# Dependencies
+dependencies:
+  - package.json
+  - package-lock.json
+  - yarn.lock
+
+# Security-related changes
+security:
+  - .env*
+  - src/services/auth*
+  - src/config/security*
+
+# Type definitions
+types:
+  - '**/*.d.ts'
+  - src/types/**/*
+  - src/shared/types/**/*

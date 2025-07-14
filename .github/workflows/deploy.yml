@@ -1,0 +1,257 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+          - development
+
+env:
+  NODE_VERSION: '18.x'
+
+jobs:
+  # Pre-deployment checks
+  pre-deploy-checks:
+    name: Pre-deployment Validation
+    runs-on: ubuntu-latest
+    outputs:
+      should-deploy: ${{ steps.check.outputs.should-deploy }}
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Check deployment criteria
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Check if last commit is a merge commit
+            const commit = context.payload.head_commit;
+            const isMergeCommit = commit.message.startsWith('Merge');
+            
+            // Check if commit has [skip-deploy] tag
+            const skipDeploy = commit.message.includes('[skip-deploy]');
+            
+            // Check time window (no deploys on weekends)
+            const now = new Date();
+            const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+            
+            const shouldDeploy = !skipDeploy && !isWeekend;
+            
+            core.setOutput('should-deploy', shouldDeploy);
+            
+            if (!shouldDeploy) {
+              console.log('Deployment skipped:', {
+                skipDeploy,
+                isWeekend,
+                day: now.getDay()
+              });
+            }
+
+  # Build for production
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: pre-deploy-checks
+    if: needs.pre-deploy-checks.outputs.should-deploy == 'true'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci --production
+
+      - name: 🔐 Configure production environment
+        run: |
+          echo "REACT_APP_API_URL=${{ secrets.PROD_API_URL }}" >> .env.production
+          echo "REACT_APP_AZURE_AI_ENDPOINT=${{ secrets.AZURE_AI_ENDPOINT }}" >> .env.production
+          echo "REACT_APP_ENVIRONMENT=production" >> .env.production
+          echo "GENERATE_SOURCEMAP=false" >> .env.production
+
+      - name: 🏗️ Build for production
+        run: npm run build
+        env:
+          CI: true
+          NODE_ENV: production
+
+      - name: 📦 Create deployment artifact
+        run: |
+          tar -czf build.tar.gz build/
+          
+      - name: 💾 Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: production-build
+          path: build.tar.gz
+          retention-days: 30
+
+  # Deploy to Azure
+  deploy-azure:
+    name: Deploy to Azure
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: ${{ github.event.inputs.environment || 'production' }}
+      url: ${{ steps.deploy.outputs.webapp-url }}
+    
+    steps:
+      - name: 📥 Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: production-build
+
+      - name: 📦 Extract build
+        run: tar -xzf build.tar.gz
+
+      - name: 🚀 Deploy to Azure Web App
+        id: deploy
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./build
+
+      - name: 🔥 Purge CDN cache
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az cdn endpoint purge \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+              --profile-name ${{ secrets.AZURE_CDN_PROFILE }} \
+              --name ${{ secrets.AZURE_CDN_ENDPOINT }} \
+              --content-paths "/*"
+
+  # Deploy to AWS S3/CloudFront
+  deploy-aws:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    needs: build
+    if: false  # Enable when AWS is configured
+    
+    steps:
+      - name: 📥 Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: production-build
+
+      - name: 📦 Extract build
+        run: tar -xzf build.tar.gz
+
+      - name: 🔧 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: 🚀 Deploy to S3
+        run: |
+          aws s3 sync build/ s3://${{ secrets.S3_BUCKET_NAME }} \
+            --delete \
+            --cache-control "public, max-age=31536000" \
+            --exclude "*.html" \
+            --exclude "service-worker.js"
+          
+          aws s3 sync build/ s3://${{ secrets.S3_BUCKET_NAME }} \
+            --cache-control "public, max-age=0, must-revalidate" \
+            --include "*.html" \
+            --include "service-worker.js"
+
+      - name: 🔥 Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+  # Post-deployment tasks
+  post-deploy:
+    name: Post Deployment Tasks
+    runs-on: ubuntu-latest
+    needs: [deploy-azure]
+    if: always()
+    
+    steps:
+      - name: 🔍 Run smoke tests
+        run: |
+          # Basic health check
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.PROD_URL }})
+          if [ $response -ne 200 ]; then
+            echo "Health check failed with status: $response"
+            exit 1
+          fi
+          echo "Health check passed"
+
+      - name: 📊 Update deployment dashboard
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: '${{ github.event.inputs.environment || 'production' }}',
+              description: 'Production deployment',
+              auto_merge: false,
+              required_contexts: []
+            });
+            
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.data.id,
+              state: 'success',
+              environment_url: '${{ secrets.PROD_URL }}',
+              description: 'Deployment successful'
+            });
+
+      - name: 📱 Send deployment notification
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text: "🚀 FDX Frontend Deployed Successfully!",
+              attachments: [{
+                color: 'good',
+                fields: [
+                  { title: 'Environment', value: '${{ github.event.inputs.environment || 'production' }}', short: true },
+                  { title: 'Version', value: '${{ github.sha }}', short: true },
+                  { title: 'Deployed By', value: '${{ github.actor }}', short: true },
+                  { title: 'URL', value: '${{ secrets.PROD_URL }}', short: true }
+                ]
+              }]
+            }
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: 🏷️ Create release tag
+        if: success() && github.ref == 'refs/heads/main'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            const tagName = `deploy-${date}-${context.sha.substring(0, 7)}`;
+            
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${tagName}`,
+              sha: context.sha
+            });

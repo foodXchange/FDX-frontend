@@ -1,0 +1,11 @@
+build
+coverage
+node_modules
+.next
+.cache
+public
+*.min.js
+*.min.css
+package-lock.json
+yarn.lock
+CHANGELOG.md
