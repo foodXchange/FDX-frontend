@@ -8,7 +8,7 @@ import {
   MagnifyingGlassIcon,
   PlusCircleIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '@utils/cn';
+import { cn } from '../../utils/cn';
 import { Button } from './Button';
 
 export type EmptyStateType = 'no-data' | 'no-results' | 'error' | 'coming-soon';

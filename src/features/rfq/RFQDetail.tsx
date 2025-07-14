@@ -14,16 +14,14 @@ import {
   ExclamationTriangleIcon,
   PaperAirplaneIcon,
   EyeIcon,
-  DownloadIcon,
-  StarIcon,
+  ArrowDownTrayIcon,
   XMarkIcon,
   ChatBubbleLeftEllipsisIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline';
 import { rfqService } from '../../services/rfqService';
-import { RFQ, Proposal, Message, User } from '../../shared/types';
+import { RFQ, Proposal } from '../../shared/types';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { ProgressTracker } from '../../components/ui/ProgressTracker';
 import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
 import { formatDistanceToNow, format } from 'date-fns';
 
@@ -32,20 +30,21 @@ interface RFQDetailProps {
 }
 
 const proposalStatuses = {
+  draft: { color: 'bg-gray-100 text-gray-800', label: 'Draft' },
   submitted: { color: 'bg-blue-100 text-blue-800', label: 'Submitted' },
   under_review: { color: 'bg-yellow-100 text-yellow-800', label: 'Under Review' },
-  shortlisted: { color: 'bg-green-100 text-green-800', label: 'Shortlisted' },
+  accepted: { color: 'bg-green-100 text-green-800', label: 'Accepted' },
   rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
-  awarded: { color: 'bg-purple-100 text-purple-800', label: 'Awarded' },
+  withdrawn: { color: 'bg-gray-100 text-gray-800', label: 'Withdrawn' },
 };
 
-const timelineSteps = [
-  { id: 1, title: 'RFQ Published', description: 'Available for suppliers' },
-  { id: 2, title: 'Proposals Received', description: 'Suppliers submit proposals' },
-  { id: 3, title: 'Evaluation', description: 'Reviewing submissions' },
-  { id: 4, title: 'Award', description: 'Select winning proposal' },
-  { id: 5, title: 'Contract', description: 'Finalize agreement' },
-];
+// const timelineSteps = [
+//   { id: 1, title: 'RFQ Published', description: 'Available for suppliers' },
+//   { id: 2, title: 'Proposals Received', description: 'Suppliers submit proposals' },
+//   { id: 3, title: 'Evaluation', description: 'Reviewing submissions' },
+//   { id: 4, title: 'Award', description: 'Select winning proposal' },
+//   { id: 5, title: 'Contract', description: 'Finalize agreement' },
+// ];
 
 export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
   const { id } = useParams<{ id: string }>();
@@ -53,13 +52,13 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
   
   const [rfq, setRfq] = useState<RFQ | null>(null);
   const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'proposals' | 'messages'>('overview');
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
   const [newMessage, setNewMessage] = useState('');
-  const [showProposalForm, setShowProposalForm] = useState(false);
+  const [, setShowProposalForm] = useState(false);
   
   useEffect(() => {
     if (id) {
@@ -113,8 +112,8 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
 
     try {
       await rfqService.sendMessage(id!, {
-        content: newMessage,
-        recipientId: selectedProposal?.supplierId,
+        message: newMessage,
+        recipient: typeof selectedProposal?.supplier === 'string' ? selectedProposal.supplier : selectedProposal?.supplier?.id || '',
       });
       setNewMessage('');
       fetchRFQDetails(); // Refresh messages
@@ -123,16 +122,16 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
     }
   };
 
-  const getTimelineCurrentStep = () => {
-    if (!rfq) return 1;
-    
-    switch (rfq.status) {
-      case 'published': return proposals.length > 0 ? 2 : 1;
-      case 'closed': return 3;
-      case 'awarded': return 4;
-      default: return 1;
-    }
-  };
+  // const getTimelineCurrentStep = () => {
+  //   if (!rfq) return 1;
+  //   
+  //   switch (rfq.status) {
+  //     case 'active': return proposals.length > 0 ? 2 : 1;
+  //     case 'closed': return 3;
+  //     case 'awarded': return 4;
+  //     default: return 1;
+  //   }
+  // };
 
   const getUrgencyLevel = () => {
     if (!rfq) return 'normal';
@@ -240,10 +239,10 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
       {/* Timeline */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">RFQ Progress</h2>
-        <ProgressTracker 
+        {/* <ProgressTracker 
           steps={timelineSteps} 
           currentStep={getTimelineCurrentStep()} 
-        />
+        /> */}
       </div>
 
       {/* Tabs */}
@@ -323,37 +322,37 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
                       <h4 className="font-medium text-gray-700 mb-2">Delivery Location</h4>
                       <div className="flex items-center text-gray-600">
                         <MapPinIcon className="h-4 w-4 mr-2" />
-                        {rfq.deliveryLocation}
+                        <span>
+                          {typeof rfq.deliveryLocation === 'string' 
+                            ? rfq.deliveryLocation 
+                            : `${rfq.deliveryLocation.street}, ${rfq.deliveryLocation.city}, ${rfq.deliveryLocation.country}`
+                          }
+                        </span>
                       </div>
                     </div>
 
                     <div>
                       <h4 className="font-medium text-gray-700 mb-2">Product Specifications</h4>
                       <div className="space-y-3">
-                        {rfq.specifications.map((spec, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div className="flex items-center space-x-3">
-                              <span className="font-medium text-gray-900">{spec.name}</span>
-                              <span className="text-gray-600">{spec.value}</span>
-                              {spec.tolerance && (
-                                <span className="text-sm text-gray-500">±{spec.tolerance}</span>
-                              )}
+                        {rfq.lineItems.map((item, index) => (
+                          <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                            <div className="font-medium text-gray-900 mb-2">{item.productName}</div>
+                            <div className="text-sm text-gray-600">
+                              Quantity: {item.quantity} {item.unit}
                             </div>
-                            {spec.critical && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                Critical
-                              </span>
+                            {item.description && (
+                              <div className="text-sm text-gray-600 mt-1">{item.description}</div>
                             )}
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    {rfq.certifications && rfq.certifications.length > 0 && (
+                    {rfq.requirements?.certifications && rfq.requirements.certifications.length > 0 && (
                       <div>
                         <h4 className="font-medium text-gray-700 mb-2">Required Certifications</h4>
                         <div className="flex flex-wrap gap-2">
-                          {rfq.certifications.map((cert) => (
+                          {rfq.requirements.certifications?.map((cert) => (
                             <span key={cert} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
                               {cert}
                             </span>
@@ -362,24 +361,11 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
                       </div>
                     )}
 
-                    {rfq.evaluationCriteria && rfq.evaluationCriteria.length > 0 && (
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-2">Evaluation Criteria</h4>
-                        <div className="space-y-2">
-                          {rfq.evaluationCriteria.map((criterion, index) => (
-                            <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                              <span className="text-gray-700">{criterion.criterion}</span>
-                              <span className="font-medium text-gray-900">{criterion.weight}%</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
 
-                    {rfq.additionalRequirements && (
+                    {rfq.requirements?.additionalRequirements && (
                       <div>
                         <h4 className="font-medium text-gray-700 mb-2">Additional Requirements</h4>
-                        <p className="text-gray-600">{rfq.additionalRequirements}</p>
+                        <p className="text-gray-600">{rfq.requirements.additionalRequirements}</p>
                       </div>
                     )}
                   </div>
@@ -388,7 +374,7 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
 
               {activeTab === 'proposals' && (
                 <div className="space-y-4">
-                  {userRole === 'supplier' && rfq.status === 'published' && (
+                  {userRole === 'supplier' && rfq.status === 'active' && (
                     <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div>
@@ -433,14 +419,16 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
                               <div className="flex-shrink-0">
                                 <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                                   <span className="text-sm font-medium text-gray-600">
-                                    {proposal.supplierName.charAt(0)}
+                                    {typeof proposal.supplier === 'string' ? proposal.supplier.charAt(0) : proposal.supplier.name.charAt(0)}
                                   </span>
                                 </div>
                               </div>
                               <div>
-                                <h4 className="font-medium text-gray-900">{proposal.supplierName}</h4>
+                                <h4 className="font-medium text-gray-900">
+                                  {typeof proposal.supplier === 'string' ? proposal.supplier : proposal.supplier.name}
+                                </h4>
                                 <p className="text-sm text-gray-500">
-                                  Submitted {formatDistanceToNow(new Date(proposal.submittedAt))} ago
+                                  Submitted {formatDistanceToNow(new Date(proposal.createdAt))} ago
                                 </p>
                               </div>
                             </div>
@@ -448,12 +436,6 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
                               <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${proposalStatuses[proposal.status].color}`}>
                                 {proposalStatuses[proposal.status].label}
                               </span>
-                              {proposal.rating && (
-                                <div className="flex items-center">
-                                  <StarIcon className="h-4 w-4 text-yellow-400 fill-current" />
-                                  <span className="ml-1 text-sm text-gray-600">{proposal.rating}</span>
-                                </div>
-                              )}
                             </div>
                           </div>
 
@@ -461,15 +443,15 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
                             <div className="bg-gray-50 rounded-lg p-3">
                               <div className="text-sm text-gray-500 mb-1">Price</div>
                               <div className="text-lg font-semibold text-green-600">${proposal.totalPrice}</div>
-                              <div className="text-xs text-gray-500">${proposal.unitPrice}/{rfq.unit}</div>
+                              <div className="text-xs text-gray-500">{proposal.currency}</div>
                             </div>
                             <div className="bg-gray-50 rounded-lg p-3">
                               <div className="text-sm text-gray-500 mb-1">Delivery</div>
                               <div className="text-sm font-medium text-gray-900">
-                                {proposal.deliveryDays} days
+                                {proposal.deliveryTerms}
                               </div>
                               <div className="text-xs text-gray-500">
-                                by {format(new Date(proposal.deliveryDate), 'MMM dd')}
+                                Valid until {format(new Date(proposal.validUntil), 'MMM dd')}
                               </div>
                             </div>
                             <div className="bg-gray-50 rounded-lg p-3">
@@ -497,8 +479,8 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
                                     className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
                                   >
                                     <DocumentTextIcon className="h-4 w-4 mr-2" />
-                                    {attachment.name}
-                                    <DownloadIcon className="h-4 w-4 ml-2" />
+                                    {attachment}
+                                    <ArrowDownTrayIcon className="h-4 w-4 ml-2" />
                                   </button>
                                 ))}
                               </div>
@@ -539,7 +521,7 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
                                   </button>
                                 </>
                               )}
-                              {proposal.status === 'shortlisted' && (
+                              {proposal.status === 'accepted' && (
                                 <button
                                   onClick={() => handleProposalAction(proposal.id, 'award')}
                                   className="inline-flex items-center px-3 py-1 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600"
@@ -641,7 +623,7 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">Shortlisted</span>
                 <span className="font-semibold text-green-600">
-                  {proposals.filter(p => p.status === 'shortlisted').length}
+                  {proposals.filter(p => p.status === 'accepted').length}
                 </span>
               </div>
               <div className="flex items-center justify-between">

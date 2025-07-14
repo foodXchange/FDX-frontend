@@ -10,10 +10,10 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
 } from '@heroicons/react/24/outline';
-import { Card, CardContent } from '@components/ui/Card';
-import { Button } from '@components/ui/Button';
-import { ProgressIndicator } from '@components/ui/ProgressIndicator';
-import { cn } from '@utils/cn';
+import { Card, CardContent } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
+import { cn } from '../../utils/cn';
 
 interface StatCardProps {
   title: string;

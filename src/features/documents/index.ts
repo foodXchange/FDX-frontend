@@ -1,0 +1,1 @@
+export { DocumentUploadCenter } from './DocumentUploadCenter';

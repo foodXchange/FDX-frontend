@@ -223,6 +223,50 @@ export interface RFQ {
   createdAt: Date;
   updatedAt: Date;
   closingDate: Date;
+  submissionDeadline: Date;
+  quantity: number;
+  unit: string;
+  proposalCount: number;
+}
+
+export interface RFQFilters {
+  status?: string;
+  category?: string;
+  sortBy?: string;
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+
+export interface CreateRFQData {
+  title: string;
+  description: string;
+  category: string;
+  quantity: number;
+  unit: string;
+  deliveryDate: string;
+  deliveryLocation: string;
+  specifications: ProductSpecification[];
+  certifications?: string[];
+  additionalRequirements?: string;
+  budgetRange?: {
+    min: number;
+    max: number;
+  };
+  submissionDeadline: string;
+  evaluationCriteria: EvaluationCriterion[];
+}
+
+export interface ProductSpecification {
+  name: string;
+  value: string;
+  tolerance?: string;
+  critical?: boolean;
+}
+
+export interface EvaluationCriterion {
+  criterion: string;
+  weight: number;
 }
 
 export enum RFQStatus {
@@ -468,6 +512,15 @@ export interface DashboardStats {
   newMessages: number;
 }
 
+export interface RFQStats {
+  totalRFQs: number;
+  activeRFQs: number;
+  draftRFQs: number;
+  closedRFQs: number;
+  averageProposals: number;
+  averageResponseTime: number;
+}
+
 export interface AnalyticsTimeRange {
   start: Date;
   end: Date;
@@ -556,4 +609,58 @@ export interface AIMatchingResult {
   reasons: string[];
   strengths: string[];
   concerns: string[];
+}
+
+// Additional Compliance Types
+export interface ComplianceOverview {
+  totalProducts: number;
+  compliantProducts: number;
+  pendingChecks: number;
+  expiringCertifications: number;
+  averageComplianceScore: number;
+  recentChecks: ComplianceCheck[];
+  upcomingDeadlines: Certification[];
+  regionalCompliance: RegionalCompliance[];
+}
+
+export interface ComplianceCheck {
+  id: string;
+  productName: string;
+  checkType: string;
+  status: ComplianceStatus;
+  score: number;
+  checkedAt: Date;
+  checkedBy: string;
+  region: string;
+  notes?: string;
+  issues?: ComplianceIssue[];
+}
+
+export interface ComplianceIssue {
+  id: string;
+  type: string;
+  severity: 'high' | 'medium' | 'low';
+  description: string;
+  recommendation?: string;
+  dueDate?: Date;
+  resolved: boolean;
+}
+
+export interface RegionalCompliance {
+  region: string;
+  compliant: number;
+  total: number;
+  percentage: number;
+}
+
+// Message Types
+export interface Message {
+  id: string;
+  sender: string | User;
+  recipient: string | User;
+  content: string;
+  timestamp: Date;
+  read: boolean;
+  type?: 'message' | 'system' | 'notification';
+  attachments?: string[];
 }

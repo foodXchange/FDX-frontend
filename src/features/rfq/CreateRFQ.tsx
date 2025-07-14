@@ -9,15 +9,13 @@ import {
   ChevronRightIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
-  DocumentIcon,
   PlusIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { rfqService } from '../../services/rfqService';
 import { validationService } from '../../services/validationService';
-import { ProgressTracker } from '../../components/ui/ProgressTracker';
 import { SpecValidator } from '../validation/SpecValidator';
-import { CreateRFQData, ProductSpecification } from '../../shared/types';
+import { CreateRFQData } from '../../shared/types';
 
 const rfqSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -31,7 +29,7 @@ const rfqSchema = z.object({
     name: z.string().min(1, 'Specification name is required'),
     value: z.string().min(1, 'Specification value is required'),
     tolerance: z.string().optional(),
-    critical: z.boolean().default(false),
+    critical: z.boolean().optional().default(false),
   })).min(1, 'At least one specification is required'),
   certifications: z.array(z.string()).optional(),
   additionalRequirements: z.string().optional(),
@@ -88,7 +86,7 @@ const commonCertifications = [
 
 export const CreateRFQ: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [validationErrors, setValidationErrors] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [specValidationResults, setSpecValidationResults] = useState<any>(null);
   const navigate = useNavigate();
@@ -96,12 +94,12 @@ export const CreateRFQ: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     watch,
     setValue,
     getValues,
     trigger,
-  } = useForm<RFQFormData>({
+  } = useForm({
     resolver: zodResolver(rfqSchema),
     mode: 'onChange',
     defaultValues: {
@@ -161,9 +159,6 @@ export const CreateRFQ: React.FC = () => {
 
       const rfqData: CreateRFQData = {
         ...data,
-        status: 'draft',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
       };
 
       const result = await rfqService.createRFQ(rfqData);
@@ -284,7 +279,7 @@ export const CreateRFQ: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              {watchedSpecs.map((spec, index) => (
+              {watchedSpecs.map((_, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-4">
                     <h4 className="text-sm font-medium text-gray-900">
@@ -363,9 +358,12 @@ export const CreateRFQ: React.FC = () => {
                         render={({ field }) => (
                           <label className="flex items-center">
                             <input
-                              {...field}
                               type="checkbox"
                               checked={field.value}
+                              onChange={(e) => field.onChange(e.target.checked)}
+                              onBlur={field.onBlur}
+                              name={field.name}
+                              ref={field.ref}
                               className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                             />
                             <span className="ml-2 text-sm text-gray-700">Critical</span>
@@ -634,7 +632,7 @@ export const CreateRFQ: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                {watch('evaluationCriteria')?.map((criterion, index) => (
+                {watch('evaluationCriteria')?.map((_, index) => (
                   <div key={index} className="flex items-center space-x-4">
                     <div className="flex-1">
                       <Controller
@@ -744,11 +742,11 @@ export const CreateRFQ: React.FC = () => {
                   </div>
                 </div>
 
-                {watch('certifications')?.length > 0 && (
+                {(watch('certifications') || []).length > 0 && (
                   <div>
                     <h5 className="font-medium text-gray-700">Required Certifications</h5>
                     <p className="text-sm text-gray-600">
-                      {watch('certifications')?.join(', ')}
+                      {(watch('certifications') || []).join(', ')}
                     </p>
                   </div>
                 )}
@@ -796,7 +794,7 @@ export const CreateRFQ: React.FC = () => {
         </p>
       </div>
 
-      <ProgressTracker steps={steps} currentStep={currentStep} />
+      {/* <ProgressTracker steps={steps} currentStep={currentStep} /> */}
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">

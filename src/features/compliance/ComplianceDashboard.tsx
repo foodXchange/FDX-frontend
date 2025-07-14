@@ -8,7 +8,6 @@ import {
   DocumentTextIcon,
   GlobeAmericasIcon,
   CheckCircleIcon,
-  XCircleIcon,
   ArrowTrendingUpIcon,
   CalendarDaysIcon,
   BellIcon,
@@ -16,11 +15,10 @@ import {
   PlusIcon,
   ArrowPathIcon,
 } from '@heroicons/react/24/outline';
-import { complianceService } from '../../services/complianceService';
-import { ComplianceOverview, ComplianceCheck, Certification } from '../../shared/types';
+import { ComplianceCheck, Certification, ComplianceStatus } from '../../shared/types';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
-import { formatDistanceToNow, format, addDays, isBefore } from 'date-fns';
+import { formatDistanceToNow, format, addDays } from 'date-fns';
 
 interface ComplianceStats {
   totalProducts: number;
@@ -48,38 +46,44 @@ const mockComplianceStats: ComplianceStats = {
     {
       id: '1',
       productName: 'Organic Cornflakes',
-      region: 'EU',
-      status: 'compliant',
-      checkedAt: new Date().toISOString(),
+      checkType: 'Food Safety',
+      status: ComplianceStatus.VALID,
       score: 98,
-      issues: [],
+      checkedAt: new Date(),
+      checkedBy: 'John Doe',
+      region: 'EU',
+      notes: 'All requirements met',
     },
     {
       id: '2',
       productName: 'Gluten-Free Pasta',
-      region: 'US',
-      status: 'non-compliant',
-      checkedAt: new Date(Date.now() - 3600000).toISOString(),
+      checkType: 'Labeling',
+      status: ComplianceStatus.INVALID,
       score: 76,
-      issues: ['Missing FDA approval', 'Incomplete labeling'],
+      checkedAt: new Date(Date.now() - 3600000),
+      checkedBy: 'Jane Smith',
+      region: 'US',
+      notes: 'Issues found with labeling',
     },
   ],
   upcomingDeadlines: [
     {
       id: '1',
       name: 'Organic Certification',
-      type: 'Organic',
-      expiryDate: addDays(new Date(), 30).toISOString(),
+      issuingBody: 'USDA',
+      certificateNumber: 'ORG-2024-001',
+      issueDate: new Date('2023-06-01'),
+      expiryDate: addDays(new Date(), 30),
       status: 'active',
-      productIds: ['prod-1', 'prod-2'],
     },
     {
       id: '2',
       name: 'HACCP Certificate',
-      type: 'HACCP',
-      expiryDate: addDays(new Date(), 15).toISOString(),
+      issuingBody: 'FDA',
+      certificateNumber: 'HACCP-2024-002',
+      issueDate: new Date('2023-07-01'),
+      expiryDate: addDays(new Date(), 15),
       status: 'active',
-      productIds: ['prod-3'],
     },
   ],
   regionalCompliance: [
@@ -126,8 +130,8 @@ export const ComplianceDashboard: React.FC = () => {
     return 'text-red-600 bg-red-100';
   };
 
-  const getUrgencyLevel = (expiryDate: string) => {
-    const expiry = new Date(expiryDate);
+  const getUrgencyLevel = (expiryDate: string | Date) => {
+    const expiry = typeof expiryDate === 'string' ? new Date(expiryDate) : expiryDate;
     const now = new Date();
     const daysUntilExpiry = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     
@@ -361,22 +365,22 @@ export const ComplianceDashboard: React.FC = () => {
                         <span>•</span>
                         <span>Checked {formatDistanceToNow(new Date(check.checkedAt))} ago</span>
                       </div>
-                      {check.issues.length > 0 && (
+                      {check.issues && check.issues.length > 0 && (
                         <div className="mt-2">
                           <div className="flex items-center text-sm text-red-600">
                             <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
-                            <span>{check.issues.length} issue{check.issues.length !== 1 ? 's' : ''}</span>
+                            <span>{check.issues?.length} issue{check.issues?.length !== 1 ? 's' : ''}</span>
                           </div>
                           <ul className="mt-1 text-sm text-red-600 space-y-1">
-                            {check.issues.slice(0, 2).map((issue, index) => (
+                            {check.issues?.slice(0, 2).map((issue, index) => (
                               <li key={index} className="flex items-center">
                                 <span className="w-1 h-1 bg-red-400 rounded-full mr-2" />
-                                {issue}
+                                {typeof issue === 'string' ? issue : issue.description}
                               </li>
                             ))}
-                            {check.issues.length > 2 && (
+                            {check.issues && check.issues.length > 2 && (
                               <li className="text-sm text-gray-500">
-                                +{check.issues.length - 2} more issues
+                                +{check.issues?.length - 2} more issues
                               </li>
                             )}
                           </ul>
@@ -432,14 +436,14 @@ export const ComplianceDashboard: React.FC = () => {
                           </span>
                         </div>
                         <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <span>Type: {cert.type}</span>
+                          <span>Issuer: {cert.issuingBody}</span>
                           <span>•</span>
                           <span>
                             Expires: {format(new Date(cert.expiryDate), 'MMM dd, yyyy')}
                           </span>
                           <span>•</span>
                           <span>
-                            {cert.productIds.length} product{cert.productIds.length !== 1 ? 's' : ''}
+                            Certificate: {cert.certificateNumber}
                           </span>
                         </div>
                       </div>

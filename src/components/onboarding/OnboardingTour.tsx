@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { cn } from '@utils/cn';
-import { Button } from '@components/ui/Button';
+import { cn } from '../../utils/cn';
+import { Button } from '../ui/Button';
 
 export interface TourStep {
   id: string;

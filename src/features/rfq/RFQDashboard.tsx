@@ -6,7 +6,7 @@ import {
   ClockIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   EyeIcon,
   PencilIcon,
   TrashIcon,
@@ -56,7 +56,7 @@ export const RFQDashboard: React.FC = () => {
     },
     {
       title: 'Pending Proposals',
-      value: stats?.pendingProposals || 0,
+      value: stats?.draftRFQs || 0,
       icon: ClockIcon,
       color: 'bg-yellow-500',
       trend: '+8%',
@@ -64,7 +64,7 @@ export const RFQDashboard: React.FC = () => {
     },
     {
       title: 'Completed RFQs',
-      value: stats?.completedRFQs || 0,
+      value: stats?.closedRFQs || 0,
       icon: CheckCircleIcon,
       color: 'bg-green-500',
       trend: '+15%',
@@ -72,7 +72,7 @@ export const RFQDashboard: React.FC = () => {
     },
     {
       title: 'Urgent Actions',
-      value: stats?.urgentActions || 0,
+      value: stats?.averageProposals || 0,
       icon: ExclamationTriangleIcon,
       color: 'bg-red-500',
       trend: '-5%',
@@ -157,7 +157,7 @@ export const RFQDashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center text-sm text-green-600">
-                <TrendingUpIcon className="h-4 w-4 mr-1" />
+                <ArrowTrendingUpIcon className="h-4 w-4 mr-1" />
                 {card.trend}
               </div>
             </div>
