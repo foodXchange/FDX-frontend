@@ -1,155 +1,347 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheckIcon, GlobeAltIcon, CheckBadgeIcon, TrophyIcon } from '@heroicons/react/24/outline';
+import { Box, Container, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 export const TrustBar: React.FC = () => {
+  const theme = useTheme();
+  
   const clients = [
-    { name: 'Nestlé', logo: 'N', color: 'from-red-500 via-orange-500 to-yellow-500' },
-    { name: 'Unilever', logo: 'U', color: 'from-blue-500 via-indigo-500 to-purple-500' },
-    { name: 'PepsiCo', logo: 'P', color: 'from-blue-600 via-red-500 to-pink-500' },
-    { name: 'Kraft Heinz', logo: 'K', color: 'from-yellow-500 via-orange-500 to-red-500' },
-    { name: 'Tyson Foods', logo: 'T', color: 'from-green-500 via-emerald-500 to-blue-500' },
-    { name: 'Cargill', logo: 'C', color: 'from-amber-500 via-orange-500 to-red-500' },
+    { name: 'Nestlé', logo: 'N', color: 'linear-gradient(135deg, #EF4444 0%, #F97316 50%, #EAB308 100%)' },
+    { name: 'Unilever', logo: 'U', color: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 50%, #8B5CF6 100%)' },
+    { name: 'PepsiCo', logo: 'P', color: 'linear-gradient(135deg, #2563EB 0%, #EF4444 50%, #EC4899 100%)' },
+    { name: 'Kraft Heinz', logo: 'K', color: 'linear-gradient(135deg, #EAB308 0%, #F97316 50%, #EF4444 100%)' },
+    { name: 'Tyson Foods', logo: 'T', color: 'linear-gradient(135deg, #10B981 0%, #059669 50%, #3B82F6 100%)' },
+    { name: 'Cargill', logo: 'C', color: 'linear-gradient(135deg, #F59E0B 0%, #F97316 50%, #EF4444 100%)' },
   ];
 
   return (
-    <section className="py-32 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+    <Box 
+      component="section" 
+      sx={{ 
+        py: 16, 
+        background: 'linear-gradient(to bottom, #ffffff, #f8fafc)', 
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
       {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 to-purple-500/5"></div>
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent"></div>
+      <Box 
+        sx={{ 
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to right, rgba(139, 92, 246, 0.05), rgba(168, 85, 247, 0.05))'
+        }}
+      />
+      <Box 
+        sx={{ 
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '1px',
+          background: 'linear-gradient(to right, transparent, rgba(139, 92, 246, 0.2), transparent)'
+        }}
+      />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="text-center mb-20">
-          <motion.div
+      <Container maxWidth="xl" sx={{ position: 'relative', px: { xs: 2, sm: 3, md: 4, lg: 5 } }}>
+        <Box sx={{ textAlign: 'center', mb: 10 }}>
+          <Box
+            component={motion.div}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-violet-500/10 to-purple-500/10 border border-violet-500/20 text-violet-600 text-sm font-medium mb-6">
-              <TrophyIcon className="w-4 h-4 mr-2" />
+            <Box 
+              sx={{ 
+                display: 'inline-flex',
+                alignItems: 'center',
+                px: 2,
+                py: 1,
+                borderRadius: 6,
+                background: 'linear-gradient(to right, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1))',
+                border: '1px solid rgba(139, 92, 246, 0.2)',
+                color: theme.palette.secondary.main,
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                mb: 3
+              }}
+            >
+              <TrophyIcon className="h-6 w-6" style={{ marginRight: 8 }} />
               Trusted by Industry Leaders
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            </Box>
+            <Typography 
+              variant="h2" 
+              sx={{ 
+                fontSize: { xs: '2.5rem', md: '3rem' },
+                fontWeight: 700,
+                color: 'text.primary',
+                mb: 2
+              }}
+            >
               Join{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-purple-600">
+              <Box 
+                component="span" 
+                sx={{ 
+                  background: 'linear-gradient(to right, #8B5CF6, #A855F7)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  color: 'transparent'
+                }}
+              >
                 500+ Companies
-              </span>
+              </Box>
               <br />
               Already Scaling with Us
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            </Typography>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                color: 'text.secondary',
+                maxWidth: '32rem',
+                mx: 'auto'
+              }}
+            >
               From Fortune 500 to innovative startups, leading companies choose FoodXchange
-            </p>
-          </motion.div>
-        </div>
+            </Typography>
+          </Box>
+        </Box>
 
         {/* Client Logos with Enhanced Design */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-24">
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 4, mb: 12 }}>
           {clients.map((client, index) => (
-            <motion.div 
-              key={index} 
-              className="flex flex-col items-center group"
-              initial={{ opacity: 0, y: 30, rotateY: -90 }}
-              whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-              transition={{ 
-                duration: 0.8, 
-                delay: index * 0.1,
-                type: "spring",
-                stiffness: 100
-              }}
-              viewport={{ once: true }}
-              whileHover={{ y: -8 }}
-            >
-              <div className="relative mb-4">
-                <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${client.color} flex items-center justify-center text-white font-black text-2xl shadow-2xl group-hover:shadow-3xl transition-all duration-500 transform group-hover:scale-110 group-hover:rotate-3`}>
-                  {client.logo}
-                </div>
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
-              <span className="text-sm text-gray-600 font-semibold group-hover:text-gray-900 transition-colors">
-                {client.name}
-              </span>
-            </motion.div>
+            <Box key={index}>
+              <Box
+                component={motion.div}
+                initial={{ opacity: 0, y: 30, rotateY: -90 }}
+                whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+                transition={{ 
+                  duration: 0.8, 
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8 }}
+                sx={{ 
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  '&:hover .logo': {
+                    transform: 'scale(1.1) rotate(3deg)',
+                    boxShadow: theme.shadows[20]
+                  },
+                  '&:hover .overlay': {
+                    opacity: 1
+                  },
+                  '&:hover .name': {
+                    color: 'text.primary'
+                  }
+                }}
+              >
+                <Box sx={{ position: 'relative', mb: 2 }}>
+                  <Box
+                    className="logo"
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: 6,
+                      background: client.color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                      fontWeight: 900,
+                      fontSize: '1.5rem',
+                      boxShadow: theme.shadows[8],
+                      transition: 'all 0.5s ease',
+                    }}
+                  >
+                    {client.logo}
+                  </Box>
+                  <Box
+                    className="overlay"
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: 6,
+                      background: 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.2), transparent)',
+                      opacity: 0,
+                      transition: 'opacity 0.3s ease'
+                    }}
+                  />
+                </Box>
+                <Typography 
+                  className="name"
+                  variant="body2" 
+                  sx={{ 
+                    color: 'text.secondary',
+                    fontWeight: 600,
+                    transition: 'color 0.3s ease'
+                  }}
+                >
+                  {client.name}
+                </Typography>
+              </Box>
+            </Box>
           ))}
-        </div>
+        </Box>
 
         {/* Trust Indicators with Glassmorphism */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 4, maxWidth: '80rem', mx: 'auto' }}>
           {[
             {
               icon: ShieldCheckIcon,
               title: "ISO 27001 Certified",
               description: "Enterprise Security",
-              color: "from-emerald-500 to-green-500",
-              bgColor: "from-emerald-500/10 to-green-500/10"
+              color: "linear-gradient(to right, #10B981, #22C55E)",
+              bgColor: "linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.1))"
             },
             {
               icon: CheckBadgeIcon,
               title: "SOC 2 Type II",
               description: "Data Protection",
-              color: "from-blue-500 to-indigo-500",
-              bgColor: "from-blue-500/10 to-indigo-500/10"
+              color: "linear-gradient(to right, #3B82F6, #6366F1)",
+              bgColor: "linear-gradient(to right, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1))"
             },
             {
               icon: GlobeAltIcon,
               title: "GDPR Compliant",
               description: "Global Standards",
-              color: "from-purple-500 to-violet-500",
-              bgColor: "from-purple-500/10 to-violet-500/10"
+              color: "linear-gradient(to right, #8B5CF6, #A855F7)",
+              bgColor: "linear-gradient(to right, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1))"
             }
           ].map((item, index) => (
-            <motion.div 
-              key={index}
-              className="relative group"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -5 }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/40 to-white/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-              <div className={`relative p-8 rounded-3xl bg-gradient-to-r ${item.bgColor} backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300`}>
-                <div className="flex items-center mb-4">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-r ${item.color} flex items-center justify-center mr-4 shadow-lg`}>
-                    <item.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-lg">{item.title}</h3>
-                    <p className="text-gray-600 text-sm">{item.description}</p>
-                  </div>
-                </div>
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-              </div>
-            </motion.div>
+            <Box key={index}>
+              <Box
+                component={motion.div}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -5 }}
+                sx={{ 
+                  position: 'relative',
+                  '&:hover .blur-bg': {
+                    filter: 'blur(32px)'
+                  },
+                  '&:hover .card': {
+                    borderColor: 'rgba(255, 255, 255, 0.4)'
+                  }
+                }}
+              >
+                <Box
+                  className="blur-bg"
+                  sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(to right, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2))',
+                    borderRadius: 6,
+                    filter: 'blur(24px)',
+                    transition: 'all 0.3s ease'
+                  }}
+                />
+                <Box
+                  className="card"
+                  sx={{
+                    position: 'relative',
+                    p: 4,
+                    borderRadius: 6,
+                    background: item.bgColor,
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 4,
+                        background: item.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mr: 2,
+                        boxShadow: theme.shadows[4]
+                      }}
+                    >
+                      <item.icon className="h-6 w-6" style={{ color: 'white' }} />
+                    </Box>
+                    <Box>
+                      <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                        {item.title}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        {item.description}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box 
+                    sx={{ 
+                      width: '100%',
+                      height: '1px',
+                      background: 'linear-gradient(to right, transparent, rgba(156, 163, 175, 1), transparent)'
+                    }}
+                  />
+                </Box>
+              </Box>
+            </Box>
           ))}
-        </div>
+        </Box>
 
         {/* Bottom Stats */}
-        <motion.div 
-          className="mt-24 text-center"
+        <Box
+          component={motion.div}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
+          sx={{ mt: 12, textAlign: 'center' }}
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 4, maxWidth: '64rem', mx: 'auto' }}>
             {[
               { number: "500+", label: "Companies" },
               { number: "50+", label: "Countries" },
               { number: "99.9%", label: "Uptime" },
               { number: "24/7", label: "Support" }
             ].map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-purple-600 mb-2">
-                  {stat.number}
-                </div>
-                <p className="text-gray-600 font-medium">{stat.label}</p>
-              </div>
+              <Box key={index}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography 
+                    variant="h3" 
+                    sx={{ 
+                      fontWeight: 900,
+                      background: 'linear-gradient(to right, #8B5CF6, #A855F7)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      color: 'transparent',
+                      mb: 1
+                    }}
+                  >
+                    {stat.number}
+                  </Typography>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      color: 'text.secondary',
+                      fontWeight: 500
+                    }}
+                  >
+                    {stat.label}
+                  </Typography>
+                </Box>
+              </Box>
             ))}
-          </div>
-        </motion.div>
-      </div>
-    </section>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 };

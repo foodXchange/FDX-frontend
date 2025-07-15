@@ -30,7 +30,8 @@
       "Bash(npm run dev:*)",
       "Bash(npm run:*)",
       "Bash(npm cache clean:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(npm ls:*)"
     ],
     "deny": []
   }

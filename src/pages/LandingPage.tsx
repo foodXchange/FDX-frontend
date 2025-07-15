@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@mui/material';
 import { Navbar } from '@/components/landing/Navbar';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { TrustBar } from '@/components/landing/TrustBar';
@@ -12,9 +13,9 @@ import { StickyCTA } from '@/components/landing/StickyCTA';
 
 const LandingPage: React.FC = () => {
   return (
-    <div className="viewport-container">
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      <main className="flex-1">
+      <Box component="main" sx={{ flexGrow: 1 }}>
         <HeroSection />
         <TrustBar />
         <Features />
@@ -22,10 +23,10 @@ const LandingPage: React.FC = () => {
         <ROICalculator />
         <SocialProof />
         <CTA />
-      </main>
+      </Box>
       <Footer />
       <StickyCTA />
-    </div>
+    </Box>
   );
 };
 

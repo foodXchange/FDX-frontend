@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { Box, Container } from '@mui/material';
 import { ModernHeader } from '@components/layout/ModernHeader';
 import { Sidebar } from '@components/layout/Sidebar';
 import { Breadcrumbs } from '@components/layout/Breadcrumbs';
@@ -14,28 +15,44 @@ const MainLayout: React.FC = () => {
 
   return (
     <MonitoringProvider>
-      <div className="min-h-screen bg-gray-50 viewport-container">
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
         <ModernHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         
-        <div className="flex">
+        <Box sx={{ display: 'flex', flex: 1 }}>
           {/* Sidebar */}
           <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
           
           {/* Main Content */}
-          <main className={`flex-1 transition-all duration-300 overflow-auto ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
-            <div className="px-4 sm:px-6 lg:px-8 py-8">
+          <Box
+            component="main"
+            sx={{
+              flex: 1,
+              transition: 'all 0.3s',
+              overflow: 'auto',
+              ml: sidebarOpen ? '256px' : '64px',
+            }}
+          >
+            <Container 
+              maxWidth="xl" 
+              sx={{ 
+                px: { xs: 2, sm: 3, md: 4, lg: 5 },
+                py: { xs: 3, sm: 4 },
+                width: '100%',
+                maxWidth: '1400px'
+              }}
+            >
               {/* Breadcrumbs */}
               <Breadcrumbs />
               
               {/* Page Content */}
-              <div className="mt-4">
+              <Box sx={{ mt: 2 }}>
                 <Outlet />
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
+              </Box>
+            </Container>
+          </Box>
+        </Box>
+      </Box>
     </MonitoringProvider>
   );
 };

@@ -1,4 +1,8 @@
 import { createTheme } from '@mui/material/styles';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
 
 export const theme = createTheme({
   palette: {
@@ -92,6 +96,39 @@ export const theme = createTheme({
     borderRadius: 8,
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        // ONLY GLOBAL STYLES GO HERE
+        body: {
+          margin: 0,
+          padding: 0,
+          boxSizing: 'border-box',
+          scrollbarColor: '#888 #f1f1f1',
+          '&::-webkit-scrollbar': {
+            width: 8,
+            height: 8,
+          },
+          '&::-webkit-scrollbar-track': {
+            background: '#f1f1f1',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: '#888',
+            borderRadius: 4,
+            '&:hover': {
+              background: '#555',
+            },
+          },
+        },
+        '*': {
+          boxSizing: 'inherit',
+        },
+        '#root': {
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {

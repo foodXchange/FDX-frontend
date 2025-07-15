@@ -4,7 +4,6 @@ import { Badge } from '../../components/ui/Badge';
 import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
 import { Clock, AlertCircle, Package, Truck, Home } from 'lucide-react';
 import { format } from 'date-fns';
-import { cn } from '../../utils/cn';
 import { useSampleTracking } from '../../hooks/useSampleTracking';
 
 interface TimelineEvent {
@@ -234,10 +233,7 @@ export const SampleTracker: React.FC = () => {
       {/* Connection Status */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className={cn(
-            "w-2 h-2 rounded-full",
-            isConnected ? "bg-green-500" : "bg-red-500"
-          )} />
+          <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`} />
           <span className="text-sm text-muted-foreground">
             {isConnected ? "Real-time updates active" : "Disconnected"}
           </span>
@@ -252,10 +248,7 @@ export const SampleTracker: React.FC = () => {
         {samples.map((sample) => (
           <Card
             key={sample.id}
-            className={cn(
-              "cursor-pointer transition-all hover:shadow-lg",
-              selectedSample?.id === sample.id && "ring-2 ring-primary"
-            )}
+            className={`cursor-pointer transition-all hover:shadow-lg ${selectedSample?.id === sample.id ? "ring-2 ring-primary" : ""}`}
             onClick={() => setSelectedSample(sample)}
           >
             <CardHeader className="pb-3">
@@ -321,12 +314,7 @@ export const SampleTracker: React.FC = () => {
                     )}
                     
                     <div
-                      className={cn(
-                        "relative z-10 flex h-10 w-10 items-center justify-center rounded-full",
-                        event.status === 'completed' && "bg-green-100 text-green-600",
-                        event.status === 'active' && "bg-blue-100 text-blue-600 ring-4 ring-blue-100",
-                        event.status === 'pending' && "bg-gray-100 text-gray-400"
-                      )}
+                      className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full ${event.status === 'completed' ? "bg-green-100 text-green-600" : event.status === 'active' ? "bg-blue-100 text-blue-600 ring-4 ring-blue-100" : "bg-gray-100 text-gray-400"}`}
                     >
                       <Icon className="h-5 w-5" />
                     </div>

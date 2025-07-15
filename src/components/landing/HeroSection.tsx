@@ -191,9 +191,12 @@ export const HeroSection: React.FC = () => {
         sx={{
           position: 'relative',
           zIndex: 10,
+          px: { xs: 2, sm: 4, md: 6, lg: 8 },
           pt: { xs: 16, md: 20 },
           pb: { xs: 10, md: 12 },
           textAlign: 'center',
+          width: '100%',
+          maxWidth: '1400px'
         }}
       >
         <Box
@@ -225,11 +228,11 @@ export const HeroSection: React.FC = () => {
               backdropFilter: 'blur(8px)',
             }}
           >
-            <StarIcon style={{ width: 14, height: 14, marginRight: 6, color: theme.palette.warning.main }} aria-hidden="true" />
+            <StarIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.warning.main }} aria-hidden="true" />
             <Typography variant="body2" component="span" sx={{ fontWeight: 600 }}>
               #1 B2B Food Marketplace
             </Typography>
-            <SparklesIcon style={{ width: 14, height: 14, marginLeft: 6, color: theme.palette.warning.main }} aria-hidden="true" />
+            <SparklesIcon className="h-6 w-6" style={{ marginLeft: 8, color: theme.palette.warning.main }} aria-hidden="true" />
           </Paper>
 
           {/* Main Headlines */}
@@ -394,7 +397,7 @@ export const HeroSection: React.FC = () => {
                 },
               }}
             >
-              <PlayCircleIcon style={{ width: 20, height: 20, marginRight: 8 }} aria-hidden="true" />
+              <PlayCircleIcon className="h-6 w-6" style={{ marginRight: 8 }} aria-hidden="true" />
               Watch Demo
             </Button>
           </Box>
@@ -415,15 +418,15 @@ export const HeroSection: React.FC = () => {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <CheckCircleIcon style={{ width: 16, height: 16, marginRight: 6, color: theme.palette.success.main }} />
+              <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
               <Typography variant="body2">No credit card required</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <CheckCircleIcon style={{ width: 16, height: 16, marginRight: 6, color: theme.palette.success.main }} />
+              <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
               <Typography variant="body2">Free 14-day trial</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <CheckCircleIcon style={{ width: 16, height: 16, marginRight: 6, color: theme.palette.success.main }} />
+              <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
               <Typography variant="body2">60% faster sourcing</Typography>
             </Box>
           </Box>

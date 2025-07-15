@@ -1,12 +1,32 @@
 import React, { useState } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+  Alert,
+  Paper,
+  CircularProgress,
+  Link,
+  Slide,
+  useTheme,
+} from '@mui/material';
+import { TransitionProps } from '@mui/material/transitions';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { BRAND_COLORS, ICON_CLASS } from '@/constants';
+import { logger } from '@/services/logger';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -21,9 +41,19 @@ interface LoginModalProps {
   onClose: () => void;
 }
 
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const { login, error } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,6 +61,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
+    reset,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
@@ -40,217 +72,243 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     try {
       await login(data.email, data.password);
       navigate('/dashboard');
-      onClose();
+      handleClose();
     } catch (err) {
-      console.error('Login error:', err);
+      logger.error('Login error in modal', {
+        error: err instanceof Error ? err.message : 'Unknown error',
+        email: data.email,
+        timestamp: new Date().toISOString(),
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleClose = () => {
+    reset();
+    setShowPassword(false);
+    setIsLoading(false);
+    onClose();
+  };
+
+  const fillDemoData = () => {
+    setValue('email', 'demo@foodsupply.com');
+    setValue('password', 'Demo123!');
+  };
+
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+    <Dialog
+      open={isOpen}
+      onClose={handleClose}
+      TransitionComponent={Transition}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: 3,
+          p: 1,
+        },
+      }}
+    >
+      <DialogTitle sx={{ pb: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary' }}>
+            Sign In
+          </Typography>
+          <IconButton
+            onClick={handleClose}
+            sx={{
+              color: 'text.secondary',
+              '&:hover': {
+                color: 'text.primary',
+              },
+            }}
+          >
+            <XMarkIcon className={ICON_CLASS} />
+          </IconButton>
+        </Box>
+      </DialogTitle>
+
+      <DialogContent sx={{ pt: 2 }}>
+        {/* Demo Credentials */}
+        <Paper
+          elevation={0}
+          sx={{
+            bgcolor: 'info.light',
+            p: 2,
+            mb: 3,
+            borderRadius: 2,
+            border: `1px solid ${theme.palette.info.main}`,
+          }}
         >
-          <div className="fixed inset-0 bg-black/50" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+          <Box sx={{ textAlign: 'center', mb: 2 }}>
+            <Typography variant="subtitle2" sx={{ color: 'info.dark', fontWeight: 600, mb: 1 }}>
+              Demo Credentials
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'info.main' }}>
+              Use these credentials to test the login
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+            <Typography variant="body2" sx={{ textAlign: 'center' }}>
+              Email: <Box component="span" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>demo@foodsupply.com</Box>
+            </Typography>
+            <Typography variant="body2" sx={{ textAlign: 'center' }}>
+              Password: <Box component="span" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>Demo123!</Box>
+            </Typography>
+          </Box>
+          
+          <Box sx={{ textAlign: 'center' }}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={fillDemoData}
+              sx={{
+                bgcolor: BRAND_COLORS.secondary,
+                '&:hover': {
+                  bgcolor: BRAND_COLORS.secondary,
+                  filter: 'brightness(0.9)',
+                },
+              }}
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <div className="flex justify-between items-center mb-6">
-                  <Dialog.Title className="text-2xl font-bold text-gray-900">
-                    Sign In
-                  </Dialog.Title>
-                  <button
-                    onClick={onClose}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+              Fill Demo Data
+            </Button>
+          </Box>
+        </Paper>
+
+        {/* Error Display */}
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
+
+        {/* Login Form */}
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {/* Email Field */}
+          <TextField
+            {...register('email')}
+            label="Email address"
+            type="email"
+            fullWidth
+            autoComplete="email"
+            placeholder="Enter your email address"
+            error={!!errors.email}
+            helperText={errors.email?.message}
+            variant="outlined"
+          />
+
+          {/* Password Field */}
+          <TextField
+            {...register('password')}
+            label="Password"
+            type={showPassword ? 'text' : 'password'}
+            fullWidth
+            autoComplete="current-password"
+            placeholder="Enter your password"
+            error={!!errors.password}
+            helperText={errors.password?.message}
+            variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Demo Credentials */}
-                <div className="bg-blue-50 rounded-lg p-4 mb-6 border border-blue-200">
-                  <div className="text-center mb-3">
-                    <h3 className="text-sm font-semibold text-blue-800 mb-1">Demo Credentials</h3>
-                    <p className="text-xs text-blue-600">Use these credentials to test the login</p>
-                  </div>
-                  <div className="text-center space-y-1">
-                    <p className="text-xs text-gray-600">Email: <span className="font-mono">demo@foodsupply.com</span></p>
-                    <p className="text-xs text-gray-600">Password: <span className="font-mono">Demo123!</span></p>
-                  </div>
-                  <div className="mt-3 text-center">
-                    <button 
-                      type="button"
-                      className="text-xs font-medium text-white px-4 py-2 rounded-md transition-colors"
-                      style={{ backgroundColor: '#1E4C8A' }}
-                      onClick={() => {
-                        const emailInput = document.getElementById('email') as HTMLInputElement;
-                        const passwordInput = document.getElementById('password') as HTMLInputElement;
-                        if (emailInput) emailInput.value = 'demo@foodsupply.com';
-                        if (passwordInput) passwordInput.value = 'Demo123!';
-                      }}
-                    >
-                      Fill Demo Data
-                    </button>
-                  </div>
-                </div>
-
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  {/* Email Field */}
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      Email address
-                    </label>
-                    <input
-                      {...register('email')}
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md text-gray-900 text-base focus:outline-none focus:ring-2 focus:border-transparent transition-all"
-                      onFocus={(e) => {
-                        (e.target as HTMLInputElement).style.borderColor = '#1E4C8A';
-                        (e.target as HTMLInputElement).style.boxShadow = '0 0 0 2px rgba(30, 76, 138, 0.2)';
-                      }}
-                      onBlur={(e) => {
-                        (e.target as HTMLInputElement).style.borderColor = '#d1d5db';
-                        (e.target as HTMLInputElement).style.boxShadow = 'none';
-                      }}
-                      placeholder="Enter your email address"
-                    />
-                    {errors.email && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center">
-                        <svg className="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Password Field */}
-                  <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        {...register('password')}
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        autoComplete="current-password"
-                        className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-md text-gray-900 text-base focus:outline-none focus:ring-2 focus:border-transparent transition-all"
-                        onFocus={(e) => {
-                          (e.target as HTMLInputElement).style.borderColor = '#1E4C8A';
-                          (e.target as HTMLInputElement).style.boxShadow = '0 0 0 2px rgba(30, 76, 138, 0.2)';
-                        }}
-                        onBlur={(e) => {
-                          (e.target as HTMLInputElement).style.borderColor = '#d1d5db';
-                          (e.target as HTMLInputElement).style.boxShadow = 'none';
-                        }}
-                        placeholder="Enter your password"
-                      />
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-gray-700 transition-colors"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeSlashIcon className="h-4 w-4 flex-shrink-0" />
-                        ) : (
-                          <EyeIcon className="h-4 w-4 flex-shrink-0" />
-                        )}
-                      </button>
-                    </div>
-                    {errors.password && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center">
-                        <svg className="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {errors.password.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Remember Me */}
-                  <div className="flex items-center">
-                    <input
-                      {...register('rememberMe')}
-                      id="rememberMe"
-                      type="checkbox"
-                      className="h-4 w-4 border-gray-300 rounded focus:ring-2 focus:ring-offset-2 transition-colors"
-                      style={{ accentColor: '#1E4C8A' } as React.CSSProperties}
-                    />
-                    <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
-                      Remember me
-                    </label>
-                  </div>
-
-                  {/* Sign In Button */}
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full text-white py-3 px-4 rounded-md text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    style={{ backgroundColor: '#1E4C8A' }}
-                    onMouseEnter={(e) => !isLoading && ((e.target as HTMLButtonElement).style.backgroundColor = '#16365F')}
-                    onMouseLeave={(e) => !isLoading && ((e.target as HTMLButtonElement).style.backgroundColor = '#1E4C8A')}
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Signing in...
-                      </div>
+                    {showPassword ? (
+                      <EyeSlashIcon className={ICON_CLASS} />
                     ) : (
-                      'Sign in'
+                      <EyeIcon className={ICON_CLASS} />
                     )}
-                  </button>
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
 
-                  {error && (
-                    <div className="text-red-600 text-sm text-center">
-                      {error}
-                    </div>
-                  )}
-                </form>
+          {/* Remember Me */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                {...register('rememberMe')}
+                sx={{
+                  color: BRAND_COLORS.secondary,
+                  '&.Mui-checked': {
+                    color: BRAND_COLORS.secondary,
+                  },
+                }}
+              />
+            }
+            label="Remember me"
+          />
 
-                <div className="mt-6 text-center space-y-4">
-                  <a href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500 transition-colors">
-                    Forgot password?
-                  </a>
-                  <div className="text-sm text-gray-600">
-                    Don't have an account?{' '}
-                    <a href="/enterprise" className="text-blue-600 hover:text-blue-500 font-medium transition-colors">
-                      Enterprise SSO Login →
-                    </a>
-                  </div>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
+          {/* Sign In Button */}
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            disabled={isLoading}
+            sx={{
+              py: 1.5,
+              fontSize: '1rem',
+              fontWeight: 500,
+              bgcolor: BRAND_COLORS.secondary,
+              '&:hover': {
+                bgcolor: BRAND_COLORS.secondary,
+                filter: 'brightness(0.9)',
+              },
+              '&:disabled': {
+                bgcolor: 'action.disabled',
+              },
+            }}
+          >
+            {isLoading ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <CircularProgress size={20} sx={{ color: 'white' }} />
+                Signing in...
+              </Box>
+            ) : (
+              'Sign in'
+            )}
+          </Button>
+
+          {/* Additional Links */}
+          <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Link 
+              href="/forgot-password" 
+              sx={{ 
+                color: BRAND_COLORS.secondary,
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Forgot password?
+            </Link>
+            
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              Don't have an account?{' '}
+              <Link 
+                href="/enterprise"
+                sx={{ 
+                  color: BRAND_COLORS.secondary,
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                Enterprise SSO Login →
+              </Link>
+            </Typography>
+          </Box>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 };

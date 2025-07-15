@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useUIStore } from '@/store/useUIStore';
-import { cn } from '@/utils/cn';
 
 interface ModalProps {
   id: string;
@@ -106,11 +105,7 @@ export const Modal: React.FC<ModalProps> = ({
         {/* Modal panel */}
         <div
           ref={modalRef}
-          className={cn(
-            'inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full',
-            sizeClasses[size],
-            className
-          )}
+          className={`inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full ${sizeClasses[size]} ${className || ''}`}
         >
           {showCloseButton && (
             <button

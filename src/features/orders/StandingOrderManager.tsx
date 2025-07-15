@@ -34,7 +34,6 @@ import {
   // CheckCircle, // Unused for now
   RefreshCw,
 } from 'lucide-react';
-import { cn } from '../../utils/cn';
 import { format } from 'date-fns';
 
 interface StandingOrder {
@@ -417,11 +416,7 @@ export const StandingOrderManager: React.FC = () => {
                             <p className="text-sm">
                               {format(order.nextDelivery, 'MMM dd, yyyy')}
                             </p>
-                            <p className={cn(
-                              "text-xs",
-                              daysUntil <= 3 ? "text-red-600" : 
-                              daysUntil <= 7 ? "text-yellow-600" : "text-muted-foreground"
-                            )}>
+                            <p className={`text-xs ${daysUntil <= 3 ? "text-red-600" : daysUntil <= 7 ? "text-yellow-600" : "text-muted-foreground"}`}>
                               {daysUntil > 0 ? `${daysUntil} days` : 'Overdue'}
                             </p>
                           </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { SkeletonLoader } from '@components/ui/SkeletonLoader';
+import { Box } from '@mui/material';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -21,9 +22,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <SkeletonLoader className="w-full max-w-md h-64" />
-      </div>
+      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <SkeletonLoader sx={{ width: '100%', maxWidth: '28rem', height: '16rem' }} />
+      </Box>
     );
   }
 

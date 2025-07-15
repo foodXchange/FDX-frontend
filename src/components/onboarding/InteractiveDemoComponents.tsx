@@ -7,7 +7,6 @@ import {
   TruckIcon,
   ShieldCheckIcon
 } from '@heroicons/react/24/outline';
-import { cn } from '../../utils/cn';
 import { Button } from '../ui/Button';
 
 // Interactive AI Chat Demo
@@ -57,7 +56,7 @@ export const AIChatDemo: React.FC<{ className?: string }> = ({ className }) => {
   };
 
   return (
-    <div className={cn('glass-morphism rounded-xl p-4', className)}>
+    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
       <div className="flex items-center mb-4">
         <SparklesIcon className="w-5 h-5 text-purple-600 mr-2" />
         <h3 className="font-semibold text-gray-900">AI Assistant Demo</h3>
@@ -70,12 +69,7 @@ export const AIChatDemo: React.FC<{ className?: string }> = ({ className }) => {
               key={message.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className={cn(
-                'mb-3 p-2 rounded-lg max-w-[85%]',
-                message.type === 'user' 
-                  ? 'bg-blue-500 text-white ml-auto' 
-                  : 'bg-white text-gray-900'
-              )}
+              className={`mb-3 p-2 rounded-lg max-w-[85%] ${message.type === 'user' ? 'bg-blue-500 text-white ml-auto' : 'bg-white text-gray-900'}`}
             >
               <div className="text-sm whitespace-pre-line">{message.text}</div>
             </motion.div>
@@ -135,7 +129,7 @@ export const MarketDataDemo: React.FC<{ className?: string }> = ({ className }) 
   const currentProduct = marketData[selectedProduct];
 
   return (
-    <div className={cn('glass-morphism rounded-xl p-4', className)}>
+    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
       <div className="flex items-center mb-4">
         <ChartBarIcon className="w-5 h-5 text-green-600 mr-2" />
         <h3 className="font-semibold text-gray-900">Live Market Data</h3>
@@ -158,10 +152,7 @@ export const MarketDataDemo: React.FC<{ className?: string }> = ({ className }) 
             
             <div>
               <div className="text-xs text-gray-600">24h Change</div>
-              <div className={cn(
-                'text-sm font-semibold',
-                currentProduct.change > 0 ? 'text-green-600' : 'text-red-600'
-              )}>
+              <div className={`text-sm font-semibold ${currentProduct.change > 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {currentProduct.change > 0 ? '+' : ''}{currentProduct.change}%
               </div>
             </div>
@@ -183,12 +174,7 @@ export const MarketDataDemo: React.FC<{ className?: string }> = ({ className }) 
             <button
               key={product.name}
               onClick={() => setSelectedProduct(index)}
-              className={cn(
-                'p-2 rounded-lg text-xs transition-all',
-                index === selectedProduct 
-                  ? 'bg-blue-100 border-2 border-blue-300' 
-                  : 'bg-gray-100 hover:bg-gray-200'
-              )}
+              className={`p-2 rounded-lg text-xs transition-all ${index === selectedProduct ? 'bg-blue-100 border-2 border-blue-300' : 'bg-gray-100 hover:bg-gray-200'}`}
             >
               {product.name}
             </button>
@@ -256,7 +242,7 @@ export const SupplierMatchDemo: React.FC<{ className?: string }> = ({ className 
   };
 
   return (
-    <div className={cn('glass-morphism rounded-xl p-4', className)}>
+    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
       <div className="flex items-center mb-4">
         <UserGroupIcon className="w-5 h-5 text-blue-600 mr-2" />
         <h3 className="font-semibold text-gray-900">AI Supplier Matching</h3>
@@ -348,7 +334,7 @@ export const ComplianceDemo: React.FC<{ className?: string }> = ({ className }) 
   };
 
   return (
-    <div className={cn('glass-morphism rounded-xl p-4', className)}>
+    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
       <div className="flex items-center mb-4">
         <ShieldCheckIcon className="w-5 h-5 text-green-600 mr-2" />
         <h3 className="font-semibold text-gray-900">Compliance Checker</h3>
@@ -395,11 +381,7 @@ export const ComplianceDemo: React.FC<{ className?: string }> = ({ className }) 
                 className="flex items-center justify-between p-2 bg-white rounded-lg border"
               >
                 <div className="flex items-center">
-                  <div className={cn(
-                    'w-2 h-2 rounded-full mr-2',
-                    check.status === 'passed' ? 'bg-green-500' :
-                    check.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
-                  )} />
+                  <div className={`w-2 h-2 rounded-full mr-2 ${check.status === 'passed' ? 'bg-green-500' : check.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'}`} />
                   <span className="text-sm font-medium">{check.name}</span>
                 </div>
                 <div className="text-xs text-gray-600">
@@ -449,7 +431,7 @@ export const OrderTrackingDemo: React.FC<{ className?: string }> = ({ className 
   const currentOrder = orders[selectedOrder];
 
   return (
-    <div className={cn('glass-morphism rounded-xl p-4', className)}>
+    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
       <div className="flex items-center mb-4">
         <TruckIcon className="w-5 h-5 text-orange-600 mr-2" />
         <h3 className="font-semibold text-gray-900">Live Order Tracking</h3>
@@ -461,12 +443,7 @@ export const OrderTrackingDemo: React.FC<{ className?: string }> = ({ className 
             <button
               key={order.id}
               onClick={() => setSelectedOrder(index)}
-              className={cn(
-                'px-3 py-1 text-xs rounded-full transition-all',
-                index === selectedOrder 
-                  ? 'bg-orange-100 text-orange-800 border border-orange-300' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              )}
+              className={`px-3 py-1 text-xs rounded-full transition-all ${index === selectedOrder ? 'bg-orange-100 text-orange-800 border border-orange-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
             >
               {order.id}
             </button>
@@ -540,7 +517,7 @@ export const DemoShowcase: React.FC<{ className?: string }> = ({ className }) =>
   const ActiveDemoComponent = demos[activeDemo].component;
 
   return (
-    <div className={cn('glass-morphism rounded-xl p-6', className)}>
+    <div className={`glass-morphism rounded-xl p-6 ${className || ''}`}>
       <h2 className="text-xl font-bold mb-6 gradient-text text-center">
         Platform Capabilities Demo
       </h2>
@@ -552,12 +529,7 @@ export const DemoShowcase: React.FC<{ className?: string }> = ({ className }) =>
             <button
               key={demo.title}
               onClick={() => setActiveDemo(index)}
-              className={cn(
-                'flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all',
-                index === activeDemo
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              )}
+              className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${index === activeDemo ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
               <IconComponent className="w-4 h-4 mr-2" />
               {demo.title}

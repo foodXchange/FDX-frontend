@@ -182,7 +182,7 @@ const FeatureCard: React.FC<FeatureCardProps> = React.memo(({
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
               }}
             >
-              <Icon style={{ width: 32, height: 32, color: 'white' }} />
+              <Icon className="h-6 w-6" style={{ color: 'white' }} />
             </Box>
             <Typography
               component={motion.div}
@@ -247,15 +247,7 @@ const FeatureCard: React.FC<FeatureCardProps> = React.memo(({
             <Typography variant="body2" sx={{ fontWeight: 600, color: 'inherit' }}>
               Explore feature
             </Typography>
-            <ArrowRightIcon
-              style={{
-                width: 16,
-                height: 16,
-                marginLeft: 6,
-                color: 'inherit',
-                transition: 'transform 0.2s ease',
-              }}
-            />
+            <ArrowRightIcon className="h-6 w-6" style={{ marginLeft: 8, color: 'inherit' }} />
           </Box>
         </Box>
       </Paper>
@@ -354,7 +346,7 @@ export const Features: React.FC = () => {
           sx={{ textAlign: 'center', mb: 12 }}
         >
           <Chip
-            icon={<SparklesIcon style={{ width: 14, height: 14 }} />}
+            icon={<SparklesIcon className="h-6 w-6" />}
             label="Comprehensive B2B Platform"
             sx={{
               background: `linear-gradient(45deg, ${theme.palette.secondary.main}10, ${theme.palette.primary.main}10)`,

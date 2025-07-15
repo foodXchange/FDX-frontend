@@ -7,7 +7,8 @@ import {
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '../../utils/cn';
+import { Box, Typography, Button, IconButton } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -24,28 +25,36 @@ export interface ToastProps {
   onClose?: (id: string) => void;
 }
 
-const toastConfig = {
+const getToastConfig = (theme: any) => ({
   success: {
     icon: CheckCircleIcon,
-    className: 'bg-green-50 border-green-200 text-green-800',
-    iconClassName: 'text-green-400',
+    backgroundColor: theme.palette.success.light + '20',
+    borderColor: theme.palette.success.light,
+    textColor: theme.palette.success.dark,
+    iconColor: theme.palette.success.main,
   },
   error: {
     icon: XCircleIcon,
-    className: 'bg-red-50 border-red-200 text-red-800',
-    iconClassName: 'text-red-400',
+    backgroundColor: theme.palette.error.light + '20',
+    borderColor: theme.palette.error.light,
+    textColor: theme.palette.error.dark,
+    iconColor: theme.palette.error.main,
   },
   info: {
     icon: InformationCircleIcon,
-    className: 'bg-blue-50 border-blue-200 text-blue-800',
-    iconClassName: 'text-blue-400',
+    backgroundColor: theme.palette.info.light + '20',
+    borderColor: theme.palette.info.light,
+    textColor: theme.palette.info.dark,
+    iconColor: theme.palette.info.main,
   },
   warning: {
     icon: ExclamationCircleIcon,
-    className: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-    iconClassName: 'text-yellow-400',
+    backgroundColor: theme.palette.warning.light + '20',
+    borderColor: theme.palette.warning.light,
+    textColor: theme.palette.warning.dark,
+    iconColor: theme.palette.warning.main,
   },
-};
+});
 
 export const Toast: React.FC<ToastProps> = ({
   id,
@@ -57,7 +66,8 @@ export const Toast: React.FC<ToastProps> = ({
   onClose,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const config = toastConfig[type];
+  const theme = useTheme();
+  const config = getToastConfig(theme)[type];
   const Icon = config.icon;
 
   const handleClose = () => {
@@ -81,48 +91,95 @@ export const Toast: React.FC<ToastProps> = ({
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
+        <Box
+          component={motion.div}
           initial={{ opacity: 0, x: 100, scale: 0.9 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 100, scale: 0.9 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className={cn(
-            'max-w-sm w-full shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden',
-            config.className
-          )}
+          sx={{
+            maxWidth: 384,
+            width: '100%',
+            boxShadow: theme.shadows[8],
+            borderRadius: 2,
+            pointerEvents: 'auto',
+            border: `1px solid ${config.borderColor}`,
+            bgcolor: config.backgroundColor,
+            overflow: 'hidden',
+          }}
         >
-          <div className="p-4">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <Icon className={cn('h-6 w-6', config.iconClassName)} />
-              </div>
-              <div className="ml-3 w-0 flex-1 pt-0.5">
-                <p className="text-sm font-medium">{title}</p>
+          <Box sx={{ p: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+              <Box sx={{ flexShrink: 0 }}>
+                <Icon 
+                  className="h-6 w-6"
+                  style={{ 
+                    color: config.iconColor 
+                  }} 
+                />
+              </Box>
+              <Box sx={{ ml: 1.5, width: 0, flex: 1, pt: 0.25 }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontWeight: 500,
+                    color: config.textColor,
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  {title}
+                </Typography>
                 {message && (
-                  <p className="mt-1 text-sm opacity-90">{message}</p>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      mt: 0.5, 
+                      fontSize: '0.875rem',
+                      opacity: 0.9,
+                      color: config.textColor,
+                    }}
+                  >
+                    {message}
+                  </Typography>
                 )}
                 {action && (
-                  <div className="mt-3">
-                    <button
+                  <Box sx={{ mt: 1.5 }}>
+                    <Button
                       onClick={action.onClick}
-                      className="text-sm font-medium hover:underline focus:outline-none"
+                      sx={{
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        color: config.textColor,
+                        p: 0,
+                        minWidth: 'auto',
+                        '&:hover': {
+                          textDecoration: 'underline',
+                          bgcolor: 'transparent',
+                        },
+                      }}
                     >
                       {action.label}
-                    </button>
-                  </div>
+                    </Button>
+                  </Box>
                 )}
-              </div>
-              <div className="ml-4 flex-shrink-0 flex">
-                <button
+              </Box>
+              <Box sx={{ ml: 2, flexShrink: 0, display: 'flex' }}>
+                <IconButton
                   onClick={handleClose}
-                  className="rounded-md inline-flex text-current hover:opacity-70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-current"
+                  size="small"
+                  sx={{
+                    color: config.textColor,
+                    '&:hover': {
+                      opacity: 0.7,
+                    },
+                  }}
                 >
-                  <XMarkIcon className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+                  <XMarkIcon className="h-6 w-6" />
+                </IconButton>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       )}
     </AnimatePresence>
   );
@@ -131,15 +188,31 @@ export const Toast: React.FC<ToastProps> = ({
 // Toast Container
 export const ToastContainer: React.FC<{ toasts: ToastProps[] }> = ({ toasts }) => {
   return (
-    <div className="fixed inset-0 pointer-events-none z-notification">
-      <div className="fixed top-4 right-4 space-y-4">
+    <Box
+      sx={{
+        position: 'fixed',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 'tooltip',
+      }}
+    >
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 16,
+          right: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
         {toasts.map((toast) => (
-          <div key={toast.id} className="pointer-events-auto">
+          <Box key={toast.id} sx={{ pointerEvents: 'auto' }}>
             <Toast {...toast} />
-          </div>
+          </Box>
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

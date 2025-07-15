@@ -8,7 +8,6 @@ import {
   MagnifyingGlassIcon,
   PlusCircleIcon,
 } from '@heroicons/react/24/outline';
-import { cn } from '../../utils/cn';
 import { Button } from './Button';
 
 export type EmptyStateType = 'no-data' | 'no-results' | 'error' | 'coming-soon';
@@ -48,10 +47,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={cn(
-        'flex flex-col items-center justify-center py-12 px-4 text-center',
-        className
-      )}
+      className={`flex flex-col items-center justify-center py-12 px-4 text-center ${className || ''}`}
     >
       <div className="relative mb-6">
         <div className="absolute inset-0 bg-gradient-to-r from-[#B08D57] to-[#1E4C8A] opacity-10 blur-3xl rounded-full" />

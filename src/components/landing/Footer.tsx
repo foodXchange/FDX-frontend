@@ -1,76 +1,177 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Box, Container, Typography, Link } from '@mui/material';
+// TODO: Replace with actual logo from https://github.com/foodXchange/FDX-frontend/issues/4#issue-3233238788
+// import FoodXchangeLogo from '@/assets/foodxchange-logo.svg';
+const FoodXchangeLogo = ''; // Placeholder until logo is downloaded
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-900 text-white py-12">
-      <div className="container mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-8">
-          <div>
-            <div className="flex items-center mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style={{ backgroundColor: '#FF6B35' }}>
-                <span className="text-white font-bold text-sm">F</span>
-              </div>
-              <span className="text-xl font-bold">FoodXchange</span>
-            </div>
-            <p className="text-gray-400 mb-4">
+    <Box 
+      component="footer" 
+      sx={{ 
+        bgcolor: 'background.paper',
+        borderTop: '1px solid',
+        borderColor: 'divider',
+        py: 6,
+        mt: 'auto'
+      }}
+    >
+      <Container 
+        maxWidth="xl"
+        sx={{ 
+          px: { xs: 2, sm: 3, md: 4, lg: 5 },
+          width: '100%',
+          maxWidth: '1400px'
+        }}
+      >
+        <Box 
+          sx={{ 
+            display: 'grid',
+            gridTemplateColumns: { 
+              xs: 'repeat(2, 1fr)',
+              sm: 'repeat(2, 1fr)',
+              md: '2fr repeat(4, 1fr)'
+            },
+            gap: 4,
+            mb: 5
+          }}
+        >
+          {/* Logo and Description */}
+          <Box sx={{ gridColumn: { xs: '1 / -1', sm: '1 / -1', md: 'auto' } }}>
+            <Box sx={{ mb: 3 }}>
+              <img 
+                src={FoodXchangeLogo} 
+                alt="FoodXchange" 
+                style={{ height: 32 }}
+                onError={(e) => {
+                  // Fallback if logo not found
+                  const target = e.currentTarget as HTMLImageElement;
+                  target.style.display = 'none';
+                  const nextElement = target.nextElementSibling as HTMLElement;
+                  if (nextElement) nextElement.style.display = 'flex';
+                }}
+              />
+              <Box 
+                sx={{ 
+                  display: 'none',
+                  alignItems: 'center',
+                  gap: 1
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    bgcolor: 'primary.main',
+                    borderRadius: 1.5,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontWeight: 700,
+                    fontSize: '1rem'
+                  }}
+                >
+                  F
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  FoodXchange
+                </Typography>
+              </Box>
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 320 }}>
               The global platform connecting food importers with verified suppliers worldwide.
-            </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">LinkedIn</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">Twitter</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">Facebook</a>
-            </div>
-          </div>
+            </Typography>
+          </Box>
           
-          <div>
-            <h3 className="font-bold mb-4">Solutions</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">For Importers</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">For Suppliers</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Compliance</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Logistics</a></li>
-            </ul>
-          </div>
+          {/* Solutions Column */}
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+              Solutions
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Link href="/importers" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                For Importers
+              </Link>
+              <Link href="/suppliers" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                For Suppliers
+              </Link>
+              <Link href="/compliance" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Compliance
+              </Link>
+              <Link href="/logistics" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Logistics
+              </Link>
+            </Box>
+          </Box>
           
-          <div>
-            <h3 className="font-bold mb-4">Resources</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">API Reference</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Case Studies</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-            </ul>
-          </div>
+          {/* Resources Column */}
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+              Resources
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Link href="/documentation" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Documentation
+              </Link>
+              <Link href="/api" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                API Reference
+              </Link>
+              <Link href="/case-studies" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Case Studies
+              </Link>
+              <Link href="/blog" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Blog
+              </Link>
+            </Box>
+          </Box>
           
-          <div>
-            <h3 className="font-bold mb-4">Support</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">System Status</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
-            </ul>
-          </div>
-        </div>
+          {/* Support Column */}
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+              Support
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Link href="/help" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Help Center
+              </Link>
+              <Link href="/contact" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Contact Us
+              </Link>
+              <Link href="/status" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                System Status
+              </Link>
+              <Link href="/security" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Security
+              </Link>
+            </Box>
+          </Box>
+          
+          {/* Legal Column */}
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+              Legal
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Link href="/privacy" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Privacy Policy
+              </Link>
+              <Link href="/terms" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Terms of Service
+              </Link>
+              <Link href="/cookies" color="text.secondary" underline="hover" sx={{ fontSize: '0.875rem' }}>
+                Cookie Policy
+              </Link>
+            </Box>
+          </Box>
+        </Box>
         
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">
+        <Box sx={{ pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>
+          <Typography variant="body2" color="text.secondary" align="center">
             © 2024 FoodXchange. All rights reserved.
-          </p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">
-              Privacy Policy
-            </Link>
-            <Link to="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">
-              Terms of Service
-            </Link>
-            <Link to="/cookies" className="text-gray-400 hover:text-white text-sm transition-colors">
-              Cookie Policy
-            </Link>
-          </div>
-        </div>
-      </div>
-    </footer>
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
   );
 };

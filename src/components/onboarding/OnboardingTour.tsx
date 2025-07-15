@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { cn } from '../../utils/cn';
 import { Button } from '../ui/Button';
 
 export interface TourStep {
@@ -168,14 +167,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
             {steps.map((_, index) => (
               <div
                 key={index}
-                className={cn(
-                  'w-2 h-2 rounded-full mx-1 transition-all',
-                  index === currentStep
-                    ? 'w-8 bg-gradient-to-r from-[#1E4C8A] to-[#2E6BB8]'
-                    : index < currentStep
-                    ? 'bg-[#1E4C8A]'
-                    : 'bg-gray-300'
-                )}
+                className={`w-2 h-2 rounded-full mx-1 transition-all ${index === currentStep ? 'w-8 bg-gradient-to-r from-[#1E4C8A] to-[#2E6BB8]' : index < currentStep ? 'bg-[#1E4C8A]' : 'bg-gray-300'}`}
               />
             ))}
           </div>
@@ -209,7 +201,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
               size="sm"
               onClick={handlePrevious}
               disabled={isFirstStep}
-              className={cn(isFirstStep && 'invisible')}
+              className={isFirstStep ? 'invisible' : ''}
             >
               <ChevronLeftIcon className="w-4 h-4 mr-1" />
               Previous
@@ -332,7 +324,7 @@ export const OnboardingChecklist: React.FC<{
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={cn('glass-morphism rounded-xl p-6', className)}
+      className={`glass-morphism rounded-xl p-6 ${className || ''}`}
     >
       <h3 className="text-lg font-semibold mb-4">Getting Started</h3>
       
@@ -360,19 +352,11 @@ export const OnboardingChecklist: React.FC<{
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
-            className={cn(
-              'flex items-center justify-between p-3 rounded-lg transition-all',
-              item.completed ? 'bg-green-50' : 'bg-gray-50 hover:bg-gray-100'
-            )}
+            className={`flex items-center justify-between p-3 rounded-lg transition-all ${item.completed ? 'bg-green-50' : 'bg-gray-50 hover:bg-gray-100'}`}
           >
             <div className="flex items-center">
               <div
-                className={cn(
-                  'w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center',
-                  item.completed
-                    ? 'border-green-500 bg-green-500'
-                    : 'border-gray-300'
-                )}
+                className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${item.completed ? 'border-green-500 bg-green-500' : 'border-gray-300'}`}
               >
                 {item.completed && (
                   <motion.svg
@@ -393,10 +377,7 @@ export const OnboardingChecklist: React.FC<{
                 )}
               </div>
               <span
-                className={cn(
-                  'text-sm',
-                  item.completed ? 'text-gray-600 line-through' : 'text-gray-900'
-                )}
+                className={`text-sm ${item.completed ? 'text-gray-600 line-through' : 'text-gray-900'}`}
               >
                 {item.label}
               </span>

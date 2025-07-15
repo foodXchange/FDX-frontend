@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { cn } from '../../utils/cn';
 
 interface DropdownMenuProps {
   children: React.ReactNode;
@@ -100,11 +99,7 @@ export const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({
 
   return (
     <div
-      className={cn(
-        'absolute top-full mt-1 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md',
-        alignmentClasses[align],
-        className
-      )}
+      className={`absolute top-full mt-1 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md ${alignmentClasses[align]} ${className || ''}`}
     >
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child) && child.type === DropdownMenuItem) {
@@ -146,11 +141,7 @@ export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
 
   return (
     <button
-      className={cn(
-        'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-        disabled && 'pointer-events-none opacity-50',
-        className
-      )}
+      className={`relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ${disabled ? 'pointer-events-none opacity-50' : ''} ${className || ''}`}
       disabled={disabled}
       onClick={handleClick}
     >
@@ -169,12 +160,12 @@ export const DropdownMenuLabel: React.FC<DropdownMenuLabelProps> = ({
   className,
 }) => {
   return (
-    <div className={cn('px-2 py-1.5 text-sm font-semibold', className)}>
+    <div className={`px-2 py-1.5 text-sm font-semibold ${className || ''}`}>
       {children}
     </div>
   );
 };
 
 export const DropdownMenuSeparator: React.FC<{ className?: string }> = ({ className }) => {
-  return <div className={cn('-mx-1 my-1 h-px bg-muted', className)} />;
+  return <div className={`-mx-1 my-1 h-px bg-muted ${className || ''}`} />;
 };

@@ -7,10 +7,7 @@ import { StoreProvider } from '@/components/providers/StoreProvider';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AsyncErrorBoundary } from '@/components/ErrorBoundary/AsyncErrorBoundary';
 import { theme } from '@/theme/muiTheme';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/600.css';
-import '@fontsource/inter/700.css';
+// NO CSS IMPORTS ALLOWED - Fonts are imported in theme file
 
 const App: FC = () => {
   return (

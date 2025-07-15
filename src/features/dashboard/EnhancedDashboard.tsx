@@ -13,7 +13,6 @@ import {
 import { Card, CardContent } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
-import { cn } from '../../utils/cn';
 
 interface StatCardProps {
   title: string;
@@ -50,7 +49,7 @@ const StatCard: React.FC<StatCardProps> = ({
       transition={{ delay, duration: 0.5 }}
       whileHover={{ y: -4 }}
       onClick={onClick}
-      className={cn('cursor-pointer', onClick && 'group')}
+      className={`cursor-pointer ${onClick ? 'group' : ''}`}
     >
       <Card className="glass-morphism hover:shadow-xl transition-all duration-300 h-full">
         <CardContent className="p-6">
@@ -73,10 +72,7 @@ const StatCard: React.FC<StatCardProps> = ({
                   ) : (
                     <ArrowDownIcon className="w-4 h-4 text-red-500 mr-1" />
                   )}
-                  <span className={cn(
-                    'text-sm font-medium',
-                    isPositive ? 'text-green-600' : 'text-red-600'
-                  )}>
+                  <span className={`text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
                     {Math.abs(change)}%
                   </span>
                   <span className="text-sm text-gray-500 ml-1">vs last month</span>
@@ -84,11 +80,7 @@ const StatCard: React.FC<StatCardProps> = ({
               )}
             </div>
             
-            <div className={cn(
-              'p-3 rounded-lg bg-gradient-to-br',
-              colorClasses[color],
-              'group-hover:scale-110 transition-transform duration-300'
-            )}>
+            <div className={`p-3 rounded-lg bg-gradient-to-br ${colorClasses[color]} group-hover:scale-110 transition-transform duration-300`}>
               <Icon className="w-6 h-6 text-white" />
             </div>
           </div>
@@ -138,7 +130,7 @@ const ActivityFeed: React.FC<{ activities: ActivityItem[] }> = ({ activities }) 
               transition={{ delay: index * 0.1 }}
               className="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0"
             >
-              <div className={cn('mt-1', getStatusColor(activity.status))}>
+              <div className={`mt-1 ${getStatusColor(activity.status)}`}>
                 <CheckCircleIcon className="w-5 h-5" />
               </div>
               
@@ -227,7 +219,7 @@ const QuickActions: React.FC = () => {
                 whileTap={{ scale: 0.95 }}
                 className="flex flex-col items-center p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-all"
               >
-                <div className={cn('p-3 rounded-lg mb-2', action.color)}>
+                <div className={`p-3 rounded-lg mb-2 ${action.color}`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">{action.label}</span>

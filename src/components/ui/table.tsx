@@ -1,89 +1,149 @@
 import React from 'react';
-import { cn } from '../../utils/cn';
+import { 
+  Table as MuiTable, 
+  TableHead as MuiTableHead, 
+  TableBody as MuiTableBody, 
+  TableRow as MuiTableRow, 
+  TableCell as MuiTableCell,
+  Box,
+  SxProps,
+  Theme
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 interface TableProps {
   children: React.ReactNode;
-  className?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const Table: React.FC<TableProps> = ({ children, className }) => {
+export const Table: React.FC<TableProps> = ({ children, sx }) => {
   return (
-    <div className="relative w-full overflow-auto">
-      <table className={cn('w-full caption-bottom text-sm', className)}>
+    <Box sx={{ position: 'relative', width: '100%', overflow: 'auto' }}>
+      <MuiTable 
+        sx={{ 
+          width: '100%', 
+          captionSide: 'bottom', 
+          fontSize: '0.875rem',
+          ...sx 
+        }}
+      >
         {children}
-      </table>
-    </div>
+      </MuiTable>
+    </Box>
   );
 };
 
 interface TableHeaderProps {
   children: React.ReactNode;
-  className?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const TableHeader: React.FC<TableHeaderProps> = ({ children, className }) => {
+export const TableHeader: React.FC<TableHeaderProps> = ({ children, sx }) => {
+  const theme = useTheme();
+  
   return (
-    <thead className={cn('[&_tr]:border-b', className)}>
+    <MuiTableHead 
+      sx={{ 
+        '& tr': { 
+          borderBottom: `1px solid ${theme.palette.divider}` 
+        },
+        ...sx 
+      }}
+    >
       {children}
-    </thead>
+    </MuiTableHead>
   );
 };
 
 interface TableBodyProps {
   children: React.ReactNode;
-  className?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const TableBody: React.FC<TableBodyProps> = ({ children, className }) => {
+export const TableBody: React.FC<TableBodyProps> = ({ children, sx }) => {
   return (
-    <tbody className={cn('[&_tr:last-child]:border-0', className)}>
+    <MuiTableBody 
+      sx={{ 
+        '& tr:last-child': { 
+          border: 0 
+        },
+        ...sx 
+      }}
+    >
       {children}
-    </tbody>
+    </MuiTableBody>
   );
 };
 
 interface TableRowProps {
   children: React.ReactNode;
-  className?: string;
+  sx?: SxProps<Theme>;
+  selected?: boolean;
 }
 
-export const TableRow: React.FC<TableRowProps> = ({ children, className }) => {
+export const TableRow: React.FC<TableRowProps> = ({ children, sx, selected }) => {
+  const theme = useTheme();
+  
   return (
-    <tr className={cn(
-      'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
-      className
-    )}>
+    <MuiTableRow 
+      sx={{ 
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        transition: 'background-color 0.2s',
+        '&:hover': { 
+          bgcolor: 'action.hover' 
+        },
+        ...(selected && {
+          bgcolor: 'action.selected',
+        }),
+        ...sx 
+      }}
+    >
       {children}
-    </tr>
+    </MuiTableRow>
   );
 };
 
 interface TableHeadProps {
   children: React.ReactNode;
-  className?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const TableHead: React.FC<TableHeadProps> = ({ children, className }) => {
+export const TableHead: React.FC<TableHeadProps> = ({ children, sx }) => {
   return (
-    <th className={cn(
-      'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
-      className
-    )}>
+    <MuiTableCell 
+      component="th"
+      sx={{ 
+        height: 48,
+        px: 2,
+        textAlign: 'left',
+        verticalAlign: 'middle',
+        fontWeight: 500,
+        color: 'text.secondary',
+        ...sx 
+      }}
+    >
       {children}
-    </th>
+    </MuiTableCell>
   );
 };
 
 interface TableCellProps {
   children: React.ReactNode;
-  className?: string;
+  sx?: SxProps<Theme>;
   colSpan?: number;
 }
 
-export const TableCell: React.FC<TableCellProps> = ({ children, className, colSpan }) => {
+export const TableCell: React.FC<TableCellProps> = ({ children, sx, colSpan }) => {
   return (
-    <td className={cn('p-4 align-middle [&:has([role=checkbox])]:pr-0', className)} colSpan={colSpan}>
+    <MuiTableCell 
+      sx={{ 
+        p: 2, 
+        verticalAlign: 'middle',
+        ...sx 
+      }} 
+      colSpan={colSpan}
+    >
       {children}
-    </td>
+    </MuiTableCell>
   );
 };

@@ -30,7 +30,6 @@ import {
   FileText,
   Eye,
 } from 'lucide-react';
-import { cn } from '../../utils/cn';
 import { useOrderTracking } from '../../hooks/useOrderTracking';
 
 interface OrderLine {
@@ -92,7 +91,7 @@ const getTemperatureBadge = (temp?: OrderLine['temperature']) => {
   const Icon = config.icon;
   
   return (
-    <div className={cn('flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium', config.className)}>
+    <div className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${config.className}`}>
       <Icon className="h-3 w-3" />
       <span>{temp.current}°C</span>
     </div>
@@ -284,10 +283,7 @@ export const OrderLinesTable: React.FC = () => {
     <div className="space-y-4">
       {/* Connection Status */}
       <div className="flex items-center gap-2">
-        <div className={cn(
-          "w-2 h-2 rounded-full",
-          isConnected ? "bg-green-500" : "bg-red-500"
-        )} />
+        <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`} />
         <span className="text-sm text-muted-foreground">
           {isConnected ? "Real-time order updates active" : "Disconnected"}
         </span>
@@ -343,7 +339,7 @@ export const OrderLinesTable: React.FC = () => {
             <TableBody>
               {selectedOrder.lines.map((line) => (
                 <React.Fragment key={line.id}>
-                  <TableRow className={cn(expandedLines.has(line.id) && "border-b-0")}>
+                  <TableRow className={expandedLines.has(line.id) ? "border-b-0" : ""}>
                     <TableCell className="font-medium">{line.lineNumber}</TableCell>
                     <TableCell>
                       <div>
@@ -468,12 +464,7 @@ export const OrderLinesTable: React.FC = () => {
                                 <div className="text-xs text-muted-foreground">
                                   <p>Required: {line.temperature.required.min}°C to {line.temperature.required.max}°C</p>
                                   <p>Current: {line.temperature.current}°C</p>
-                                  <p className={cn(
-                                    "font-medium",
-                                    line.temperature.status === 'normal' && "text-green-600",
-                                    line.temperature.status === 'warning' && "text-yellow-600",
-                                    line.temperature.status === 'critical' && "text-red-600"
-                                  )}>
+                                  <p className={`font-medium ${line.temperature.status === 'normal' ? "text-green-600" : line.temperature.status === 'warning' ? "text-yellow-600" : "text-red-600"}`}>
                                     Status: {line.temperature.status.toUpperCase()}
                                   </p>
                                 </div>

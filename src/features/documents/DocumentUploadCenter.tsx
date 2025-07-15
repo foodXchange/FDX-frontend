@@ -40,7 +40,6 @@ import {
   Archive,
   Trash2,
 } from 'lucide-react';
-import { cn } from '../../utils/cn';
 import { format, isAfter, isBefore, addDays } from 'date-fns';
 
 interface DocumentFile {
@@ -492,19 +491,13 @@ export const DocumentUploadCenter: React.FC = () => {
 
       {/* Upload Area */}
       <Card
-        className={cn(
-          "border-2 border-dashed transition-colors",
-          dragOver ? "border-primary bg-primary/5" : "border-muted-foreground/25"
-        )}
+        className={`border-2 border-dashed transition-colors ${dragOver ? "border-primary bg-primary/5" : "border-muted-foreground/25"}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         <CardContent className="flex flex-col items-center justify-center py-6">
-          <Upload className={cn(
-            "h-10 w-10 mb-4",
-            dragOver ? "text-primary" : "text-muted-foreground"
-          )} />
+          <Upload className={`h-10 w-10 mb-4 ${dragOver ? "text-primary" : "text-muted-foreground"}`} />
           <div className="text-center">
             <p className="text-lg font-medium mb-2">
               {dragOver ? "Drop files here" : "Drag and drop files here"}

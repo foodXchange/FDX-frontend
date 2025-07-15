@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useNotificationStore } from '@/store/useNotificationStore';
 import { Toast } from './Toast';
+import { Box } from '@mui/material';
 
 export const NotificationContainer: React.FC = () => {
   const allNotifications = useNotificationStore((state) => state.notifications);
@@ -12,9 +13,24 @@ export const NotificationContainer: React.FC = () => {
   );
 
   return (
-    <div className="fixed bottom-0 right-0 p-4 space-y-2 z-50 pointer-events-none">
+    <Box 
+      sx={{ 
+        position: 'fixed', 
+        bottom: 0, 
+        right: 0, 
+        p: 4, 
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        zIndex: 'tooltip', 
+        pointerEvents: 'none' 
+      }}
+    >
       {notifications.map((notification) => (
-        <div key={notification.id} className="pointer-events-auto">
+        <Box 
+          key={notification.id} 
+          sx={{ pointerEvents: 'auto' }}
+        >
           <Toast
             id={notification.id}
             title={notification.title || notification.message || 'Notification'}
@@ -22,8 +38,8 @@ export const NotificationContainer: React.FC = () => {
             type={notification.type === 'error' ? 'error' : notification.type === 'success' ? 'success' : 'info'}
             onClose={() => removeNotification(notification.id)}
           />
-        </div>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 };

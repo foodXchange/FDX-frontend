@@ -1,8 +1,8 @@
 import React from 'react';
-import { cn } from '../../utils/cn';
+import { Skeleton, Box, SxProps, Theme } from '@mui/material';
 
 interface SkeletonLoaderProps {
-  className?: string;
+  sx?: SxProps<Theme>;
   variant?: 'text' | 'circular' | 'rectangular' | 'card';
   width?: string | number;
   height?: string | number;
@@ -10,41 +10,33 @@ interface SkeletonLoaderProps {
 }
 
 export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
-  className,
+  sx,
   variant = 'text',
   width,
   height,
   count = 1,
 }) => {
-  const baseClasses = 'skeleton animate-pulse bg-gray-200';
-  
-  const variantClasses = {
-    text: 'h-4 rounded',
-    circular: 'rounded-full',
-    rectangular: 'rounded-lg',
-    card: 'rounded-xl',
-  };
-
   const defaultSizes = {
-    text: { width: '100%', height: '1rem' },
-    circular: { width: '3rem', height: '3rem' },
-    rectangular: { width: '100%', height: '10rem' },
-    card: { width: '100%', height: '20rem' },
+    text: { width: '100%', height: 16 },
+    circular: { width: 48, height: 48 },
+    rectangular: { width: '100%', height: 160 },
+    card: { width: '100%', height: 320 },
   };
 
-  const style = {
+  const skeletonProps = {
+    variant: variant === 'card' ? 'rectangular' as const : variant,
     width: width || defaultSizes[variant].width,
     height: height || defaultSizes[variant].height,
+    sx: {
+      borderRadius: variant === 'card' ? 3 : variant === 'rectangular' ? 2 : undefined,
+      ...sx,
+    },
   };
 
   return (
     <>
       {Array.from({ length: count }).map((_, index) => (
-        <div
-          key={index}
-          className={cn(baseClasses, variantClasses[variant], className)}
-          style={style}
-        />
+        <Skeleton key={index} {...skeletonProps} />
       ))}
     </>
   );
@@ -52,39 +44,69 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
 
 // Product Card Skeleton
 export const ProductCardSkeleton: React.FC = () => (
-  <div className="glass-morphism rounded-xl p-6 space-y-4">
-    <SkeletonLoader variant="rectangular" height="200px" className="mb-4" />
-    <SkeletonLoader variant="text" className="w-3/4" />
-    <SkeletonLoader variant="text" className="w-1/2" />
-    <div className="flex justify-between items-center mt-4">
-      <SkeletonLoader variant="text" width="80px" />
-      <SkeletonLoader variant="circular" width="40px" height="40px" />
-    </div>
-  </div>
+  <Box
+    sx={{
+      borderRadius: 3,
+      p: 3,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 2,
+      bgcolor: 'background.paper',
+      boxShadow: 1,
+    }}
+  >
+    <SkeletonLoader variant="rectangular" height={200} sx={{ mb: 2 }} />
+    <SkeletonLoader variant="text" width="75%" />
+    <SkeletonLoader variant="text" width="50%" />
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+      <SkeletonLoader variant="text" width={80} />
+      <SkeletonLoader variant="circular" width={40} height={40} />
+    </Box>
+  </Box>
 );
 
 // RFQ List Item Skeleton
 export const RFQListItemSkeleton: React.FC = () => (
-  <div className="glass-morphism rounded-lg p-4 flex items-center space-x-4">
-    <SkeletonLoader variant="circular" width="48px" height="48px" />
-    <div className="flex-1 space-y-2">
-      <SkeletonLoader variant="text" className="w-1/3" />
-      <SkeletonLoader variant="text" className="w-1/2" />
-    </div>
-    <SkeletonLoader variant="rectangular" width="100px" height="32px" />
-  </div>
+  <Box
+    sx={{
+      borderRadius: 2,
+      p: 2,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 2,
+      bgcolor: 'background.paper',
+      boxShadow: 1,
+    }}
+  >
+    <SkeletonLoader variant="circular" width={48} height={48} />
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <SkeletonLoader variant="text" width="33%" />
+      <SkeletonLoader variant="text" width="50%" />
+    </Box>
+    <SkeletonLoader variant="rectangular" width={100} height={32} />
+  </Box>
 );
 
 // Dashboard Card Skeleton
 export const DashboardCardSkeleton: React.FC = () => (
-  <div className="glass-morphism rounded-xl p-6 space-y-4">
-    <div className="flex justify-between items-start">
-      <SkeletonLoader variant="circular" width="48px" height="48px" />
-      <SkeletonLoader variant="text" width="60px" />
-    </div>
-    <SkeletonLoader variant="text" className="w-1/2" />
-    <SkeletonLoader variant="text" width="120px" height="32px" />
-  </div>
+  <Box
+    sx={{
+      borderRadius: 3,
+      p: 3,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 2,
+      bgcolor: 'background.paper',
+      boxShadow: 1,
+    }}
+  >
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <SkeletonLoader variant="circular" width={48} height={48} />
+      <SkeletonLoader variant="text" width={60} />
+    </Box>
+    <SkeletonLoader variant="text" width="50%" />
+    <SkeletonLoader variant="text" width={120} height={32} />
+  </Box>
 );
 
 // Table Skeleton
@@ -92,21 +114,40 @@ export const TableSkeleton: React.FC<{ rows?: number; columns?: number }> = ({
   rows = 5,
   columns = 4,
 }) => (
-  <div className="space-y-2">
+  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
     {/* Header */}
-    <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 rounded-t-lg">
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+        gap: 2,
+        p: 2,
+        bgcolor: 'grey.50',
+        borderRadius: '8px 8px 0 0',
+      }}
+    >
       {Array.from({ length: columns }).map((_, i) => (
         <SkeletonLoader key={i} variant="text" />
       ))}
-    </div>
+    </Box>
     
     {/* Rows */}
     {Array.from({ length: rows }).map((_, rowIndex) => (
-      <div key={rowIndex} className="grid grid-cols-4 gap-4 p-4 border-b">
+      <Box
+        key={rowIndex}
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${columns}, 1fr)`,
+          gap: 2,
+          p: 2,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
         {Array.from({ length: columns }).map((_, colIndex) => (
           <SkeletonLoader key={colIndex} variant="text" />
         ))}
-      </div>
+      </Box>
     ))}
-  </div>
+  </Box>
 );

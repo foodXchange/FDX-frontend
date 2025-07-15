@@ -201,7 +201,7 @@ export const CTA: React.FC = () => {
                   },
                 }}
               >
-                <CalendarDaysIcon style={{ width: 16, height: 16, marginRight: 6 }} />
+                <CalendarDaysIcon className="h-6 w-6" style={{ marginRight: 8 }} />
                 Schedule Demo
               </Button>
             </Box>
@@ -218,15 +218,15 @@ export const CTA: React.FC = () => {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <CheckCircleIcon style={{ width: 16, height: 16, marginRight: 6, color: theme.palette.success.main }} />
+                <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
                 <Typography variant="body2">No credit card required</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <CheckCircleIcon style={{ width: 16, height: 16, marginRight: 6, color: theme.palette.success.main }} />
+                <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
                 <Typography variant="body2">Free trial</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <CheckCircleIcon style={{ width: 16, height: 16, marginRight: 6, color: theme.palette.success.main }} />
+                <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
                 <Typography variant="body2">Cancel anytime</Typography>
               </Box>
             </Box>

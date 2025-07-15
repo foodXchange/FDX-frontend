@@ -12,7 +12,6 @@ import {
   SparklesIcon,
   XMarkIcon 
 } from '@heroicons/react/24/outline';
-import { cn } from '../../utils/cn';
 
 interface OnboardingManagerProps {
   forceShow?: boolean;
@@ -174,10 +173,7 @@ export const OnboardingManager: React.FC<OnboardingManagerProps> = ({
               repeat: Infinity,
               repeatDelay: 3
             }}
-            className={cn(
-              'w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center',
-              `bg-gradient-to-r ${roleContent.color}`
-            )}
+            className={`w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center bg-gradient-to-r ${roleContent.color}`}
           >
             <IconComponent className="w-10 h-10 text-white" />
           </motion.div>
@@ -279,11 +275,7 @@ export const OnboardingFloatingButton: React.FC = () => {
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ delay: index * 0.1 }}
                       onClick={action.onClick}
-                      className={cn(
-                        'flex items-center px-4 py-2 rounded-lg text-white font-medium text-sm',
-                        'shadow-lg hover:shadow-xl transition-all hover-lift',
-                        `bg-gradient-to-r ${action.color}`
-                      )}
+                      className={`flex items-center px-4 py-2 rounded-lg text-white font-medium text-sm shadow-lg hover:shadow-xl transition-all hover-lift bg-gradient-to-r ${action.color}`}
                     >
                       <IconComponent className="w-4 h-4 mr-2" />
                       {action.label}
@@ -299,11 +291,7 @@ export const OnboardingFloatingButton: React.FC = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsExpanded(!isExpanded)}
-            className={cn(
-              'w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-all',
-              'bg-gradient-to-r from-purple-500 to-pink-600 text-white',
-              'flex items-center justify-center hover-lift'
-            )}
+            className="w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-purple-500 to-pink-600 text-white flex items-center justify-center hover-lift"
           >
             <motion.div
               animate={{ rotate: isExpanded ? 45 : 0 }}

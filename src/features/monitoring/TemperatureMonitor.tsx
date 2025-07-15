@@ -35,7 +35,6 @@ import {
   Eye,
   CheckCircle,
 } from 'lucide-react';
-import { cn } from '../../utils/cn';
 import { format, subHours } from 'date-fns';
 
 interface TemperatureReading {
@@ -367,7 +366,7 @@ export const TemperatureMonitor: React.FC = () => {
   const getAlertIcon = (alertType: TemperatureAlert['alertType']) => {
     const config = alertTypeConfig[alertType];
     const Icon = config.icon;
-    return <Icon className={cn("h-4 w-4", config.color)} />;
+    return <Icon className={`h-4 w-4 ${config.color}`} />;
   };
 
   if (loading) {
@@ -490,10 +489,7 @@ export const TemperatureMonitor: React.FC = () => {
                       </TableCell>
                       <TableCell>{getTypeBadge(sensor.type)}</TableCell>
                       <TableCell>
-                        <span className={cn(
-                          "text-lg font-bold",
-                          getTemperatureColor(sensor.currentTemp, sensor.targetRange)
-                        )}>
+                        <span className={`text-lg font-bold ${getTemperatureColor(sensor.currentTemp, sensor.targetRange)}`}>
                           {sensor.currentTemp}°C
                         </span>
                       </TableCell>
@@ -505,11 +501,7 @@ export const TemperatureMonitor: React.FC = () => {
                       <TableCell>{getStatusBadge(sensor.status)}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span className={cn(
-                            "text-sm",
-                            sensor.batteryLevel > 50 ? "text-green-600" :
-                            sensor.batteryLevel > 20 ? "text-yellow-600" : "text-red-600"
-                          )}>
+                          <span className={`text-sm ${sensor.batteryLevel > 50 ? "text-green-600" : sensor.batteryLevel > 20 ? "text-yellow-600" : "text-red-600"}`}>
                             {sensor.batteryLevel}%
                           </span>
                         </div>
@@ -571,11 +563,7 @@ export const TemperatureMonitor: React.FC = () => {
                 {alerts.map((alert) => (
                   <div
                     key={alert.id}
-                    className={cn(
-                      "flex items-start gap-4 p-4 rounded-lg border",
-                      alert.acknowledged ? "bg-muted/30" : "bg-muted/50",
-                      alert.severity === 'high' && !alert.acknowledged && "border-red-200 bg-red-50"
-                    )}
+                    className={`flex items-start gap-4 p-4 rounded-lg border ${alert.acknowledged ? "bg-muted/30" : "bg-muted/50"} ${alert.severity === 'high' && !alert.acknowledged ? "border-red-200 bg-red-50" : ""}`}
                   >
                     <div className="flex-shrink-0 mt-1">
                       {getAlertIcon(alert.alertType)}
@@ -588,11 +576,7 @@ export const TemperatureMonitor: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge 
-                            className={cn(
-                              alert.severity === 'high' ? "bg-red-100 text-red-700" :
-                              alert.severity === 'medium' ? "bg-yellow-100 text-yellow-700" :
-                              "bg-blue-100 text-blue-700"
-                            )}
+                            className={alert.severity === 'high' ? "bg-red-100 text-red-700" : alert.severity === 'medium' ? "bg-yellow-100 text-yellow-700" : "bg-blue-100 text-blue-700"}
                           >
                             {alert.severity}
                           </Badge>
@@ -669,11 +653,7 @@ export const TemperatureMonitor: React.FC = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className={cn(
-                          "font-bold",
-                          reading.status === 'critical' ? "text-red-600" :
-                          reading.status === 'warning' ? "text-yellow-600" : "text-green-600"
-                        )}>
+                        <span className={`font-bold ${reading.status === 'critical' ? "text-red-600" : reading.status === 'warning' ? "text-yellow-600" : "text-green-600"}`}>
                           {reading.temperature}°C
                         </span>
                       </TableCell>
@@ -681,11 +661,7 @@ export const TemperatureMonitor: React.FC = () => {
                         {reading.humidity ? `${reading.humidity}%` : '—'}
                       </TableCell>
                       <TableCell>
-                        <Badge className={cn(
-                          reading.status === 'critical' ? "bg-red-100 text-red-700" :
-                          reading.status === 'warning' ? "bg-yellow-100 text-yellow-700" :
-                          "bg-green-100 text-green-700"
-                        )}>
+                        <Badge className={reading.status === 'critical' ? "bg-red-100 text-red-700" : reading.status === 'warning' ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}>
                           {reading.status}
                         </Badge>
                       </TableCell>

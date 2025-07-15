@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '../../utils/cn';
+import { Box, SxProps, Theme } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 interface TooltipProps {
   content: React.ReactNode;
   children: React.ReactNode;
   placement?: 'top' | 'bottom' | 'left' | 'right';
   delay?: number;
-  className?: string;
+  sx?: SxProps<Theme>;
   interactive?: boolean;
 }
 
@@ -16,9 +17,10 @@ export const Tooltip: React.FC<TooltipProps> = ({
   children,
   placement = 'top',
   delay = 300,
-  className,
+  sx,
   interactive = false,
 }) => {
+  const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const timeoutRef = useRef<NodeJS.Timeout>();
@@ -142,18 +144,19 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <>
-      <div
+      <Box
         ref={triggerRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="inline-block"
+        sx={{ display: 'inline-block' }}
       >
         {children}
-      </div>
+      </Box>
 
       <AnimatePresence>
         {isVisible && (
-          <motion.div
+          <Box
+            component={motion.div}
             ref={tooltipRef}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -161,16 +164,24 @@ export const Tooltip: React.FC<TooltipProps> = ({
             transition={{ duration: 0.15 }}
             onMouseEnter={handleTooltipMouseEnter}
             onMouseLeave={handleTooltipMouseLeave}
-            className={cn(
-              'fixed z-tooltip bg-white rounded-lg shadow-lg px-3 py-2 text-sm text-gray-700 pointer-events-none',
-              interactive && 'pointer-events-auto',
-              className
-            )}
+            sx={{
+              position: 'fixed',
+              zIndex: 'tooltip',
+              bgcolor: 'background.paper',
+              borderRadius: 2,
+              boxShadow: theme.shadows[8],
+              px: 1.5,
+              py: 1,
+              fontSize: '0.875rem',
+              color: 'text.primary',
+              pointerEvents: interactive ? 'auto' : 'none',
+              ...sx,
+            }}
             style={{ top: position.top, left: position.left }}
           >
             {content}
             <div style={getArrowStyles()} />
-          </motion.div>
+          </Box>
         )}
       </AnimatePresence>
     </>
@@ -180,60 +191,114 @@ export const Tooltip: React.FC<TooltipProps> = ({
 // Help Icon with Tooltip
 export const HelpTooltip: React.FC<{
   content: string;
-  className?: string;
-}> = ({ content, className }) => (
-  <Tooltip content={content} placement="top">
-    <button
-      type="button"
-      className={cn(
-        'inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors',
-        className
-      )}
-    >
-      <span className="text-xs font-semibold">?</span>
-    </button>
-  </Tooltip>
-);
+  sx?: SxProps<Theme>;
+}> = ({ content, sx }) => {
+  
+  return (
+    <Tooltip content={content} placement="top">
+      <Box
+        component="button"
+        type="button"
+        sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 16,
+          height: 16,
+          borderRadius: '50%',
+          bgcolor: 'grey.200',
+          color: 'text.secondary',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s',
+          '&:hover': {
+            bgcolor: 'grey.300',
+          },
+          ...sx,
+        }}
+      >
+        <Box
+          component="span"
+          sx={{
+            fontSize: '0.75rem',
+            fontWeight: 600,
+          }}
+        >
+          ?
+        </Box>
+      </Box>
+    </Tooltip>
+  );
+};
 
 // Info Tooltip Component
 export const InfoTooltip: React.FC<{
   title?: string;
   content: React.ReactNode;
   learnMoreUrl?: string;
-  className?: string;
-}> = ({ title, content, learnMoreUrl, className }) => (
-  <Tooltip
-    interactive={!!learnMoreUrl}
-    content={
-      <div className="max-w-xs">
-        {title && <div className="font-semibold mb-1">{title}</div>}
-        <div className="text-gray-600">{content}</div>
-        {learnMoreUrl && (
-          <a
-            href={learnMoreUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block mt-2 text-[#1E4C8A] hover:underline text-xs"
-          >
-            Learn more →
-          </a>
-        )}
-      </div>
-    }
-    placement="top"
-  >
-    <svg
-      className={cn('w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help', className)}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
+  sx?: SxProps<Theme>;
+}> = ({ title, content, learnMoreUrl, sx }) => {
+  
+  return (
+    <Tooltip
+      interactive={!!learnMoreUrl}
+      content={(
+        <Box sx={{ maxWidth: 300 }}>
+          {title && (
+            <Box sx={{ fontWeight: 600, mb: 0.5 }}>
+              {title}
+            </Box>
+          )}
+          <Box sx={{ color: 'text.secondary' }}>
+            {content}
+          </Box>
+          {learnMoreUrl && (
+            <Box
+              component="a"
+              href={learnMoreUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                display: 'inline-block',
+                mt: 1,
+                color: 'primary.main',
+                fontSize: '0.75rem',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Learn more →
+            </Box>
+          )}
+        </Box>
+      )}
+      placement="top"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-  </Tooltip>
-);
+      <Box
+        component="svg"
+        sx={{
+          width: 16,
+          height: 16,
+          color: 'text.disabled',
+          cursor: 'help',
+          '&:hover': {
+            color: 'text.secondary',
+          },
+          ...sx,
+        }}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </Box>
+    </Tooltip>
+  );
+};

@@ -16,7 +16,6 @@ import {
   ArrowDown,
   RefreshCw,
 } from 'lucide-react';
-import { cn } from '../../utils/cn';
 import { SampleTracker } from '../tracking';
 import { OrderLinesTable } from '../orders';
 import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';
@@ -126,10 +125,7 @@ export const TrackingDashboard: React.FC = () => {
         <div className="flex items-center gap-4">
           {/* Connection Status */}
           <div className="flex items-center gap-2">
-            <div className={cn(
-              "w-2 h-2 rounded-full",
-              isConnected ? "bg-green-500" : "bg-red-500"
-            )} />
+            <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`} />
             <span className="text-sm text-muted-foreground">
               {isConnected ? "Live data" : "Offline"}
             </span>
@@ -163,7 +159,7 @@ export const TrackingDashboard: React.FC = () => {
                 <CardTitle className="text-sm font-medium">
                   {metric.title}
                 </CardTitle>
-                <Icon className={cn("h-4 w-4", metric.color)} />
+                <Icon className={`h-4 w-4 ${metric.color}`} />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{metric.value}</div>
@@ -174,10 +170,7 @@ export const TrackingDashboard: React.FC = () => {
                 )}
                 {metric.change !== undefined && (
                   <div
-                    className={cn(
-                      "flex items-center gap-1 text-xs mt-2",
-                      metric.changeType === 'increase' ? "text-green-600" : "text-red-600"
-                    )}
+                    className={`flex items-center gap-1 text-xs mt-2 ${metric.changeType === 'increase' ? "text-green-600" : "text-red-600"}`}
                   >
                     {getChangeIcon(metric.changeType)}
                     <span>{Math.abs(metric.change)}%</span>
