@@ -15,7 +15,9 @@ import {
   Cog6ToothIcon,
   UserCircleIcon,
   ArrowLeftOnRectangleIcon,
-  XMarkIcon
+  XMarkIcon,
+  BriefcaseIcon,
+  CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
 
 interface NavItem {
@@ -24,6 +26,7 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
   permission?: string;
   role?: string;
+  agentOnly?: boolean;
   children?: NavItem[];
 }
 
@@ -38,6 +41,13 @@ const navigation: NavItem[] = [
       { name: 'All RFQs', href: '/rfq', icon: DocumentTextIcon },
       { name: 'Create RFQ', href: '/rfq/create', icon: DocumentTextIcon, permission: PERMISSIONS.RFQ_CREATE },
     ],
+  },
+  // Agent-specific navigation items
+  { 
+    name: 'My Leads', 
+    href: '/agent/leads', 
+    icon: BriefcaseIcon, 
+    agentOnly: true 
   },
   {
     name: 'Orders',
@@ -71,6 +81,13 @@ const navigation: NavItem[] = [
   { name: 'Documents', href: '/documents', icon: FolderIcon, permission: PERMISSIONS.DOCUMENT_VIEW },
   { name: 'Monitoring', href: '/monitoring', icon: ChartPieIcon },
   { name: 'Samples', href: '/samples', icon: BeakerIcon },
+  // Agent-specific navigation items
+  { 
+    name: 'Earnings', 
+    href: '/agent/earnings', 
+    icon: CurrencyDollarIcon, 
+    agentOnly: true 
+  },
   {
     name: 'Admin',
     href: '/admin',
@@ -100,6 +117,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
   const canViewNavItem = (item: NavItem): boolean => {
     if (item.permission && !can(item.permission as any)) return false;
     if (item.role && !isRole(item.role)) return false;
+    if (item.agentOnly && (!user?.isAgent && user?.role !== 'agent')) return false;
     return true;
   };
 

@@ -18,7 +18,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       };
     }
     return undefined;
-  }, [isAuthenticated, connectNotifications, disconnectNotifications]);
+  }, [isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

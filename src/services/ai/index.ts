@@ -20,7 +20,7 @@ export { naturalLanguageInterface } from './nlp/naturalLanguageInterface';
 export * from './types';
 
 // Configuration
-export { AI_CONFIG, AI_ENDPOINTS } from '../config/ai.config';
+export { AI_CONFIG, AI_ENDPOINTS } from '../../config/ai.config';
 
 // Unified AI Service Manager
 import { aiService } from './aiService';
@@ -33,7 +33,7 @@ import { marketIntelligenceService } from './analytics/marketIntelligenceService
 import { searchService } from './nlp/searchService';
 import { documentIntelligenceService } from './nlp/documentIntelligenceService';
 import { naturalLanguageInterface } from './nlp/naturalLanguageInterface';
-import { AI_CONFIG } from '../config/ai.config';
+import { AI_CONFIG } from '../../config/ai.config';
 import { logger } from '../logger';
 
 export class AIServiceManager {
@@ -86,7 +86,7 @@ export class AIServiceManager {
       logger.info('AI services initialization complete');
       return true;
     } catch (error) {
-      logger.error('AI services initialization failed:', error);
+      logger.error('AI services initialization failed:', error as Error);
       return false;
     }
   }
@@ -242,7 +242,7 @@ export class AIServiceManager {
         const analysis = await this.analyzeDocument(doc.content, doc.options);
         results.push({ id: doc.id, status: 'success', analysis });
       } catch (error) {
-        results.push({ id: doc.id, status: 'error', error: error.message });
+        results.push({ id: doc.id, status: 'error', error: (error as Error).message });
       }
     }
     return results;
@@ -255,7 +255,7 @@ export class AIServiceManager {
         const insights = await this.generateInsights(point.data, point.context);
         results.push({ status: 'success', insights });
       } catch (error) {
-        results.push({ status: 'error', error: error.message });
+        results.push({ status: 'error', error: (error as Error).message });
       }
     }
     return results;

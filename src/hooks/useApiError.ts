@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Toast } from '@components/ui/Toast';
+// import { Toast } from '@components/ui/Toast'; // Uncomment when needed
 import { ApiError } from '@/services/api-client';
 
 interface ApiErrorHandlerOptions {

@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { AxiosError } from 'axios';
 import { ApiError, ApiResponse } from '@/services/api-client';
 
 interface UseApiOptions<T> {
@@ -72,9 +71,9 @@ export function useApi<T = any>(
         const response = await apiFunction(...args);
         const responseData = response.data;
 
-        if (!mountedRef.current) return responseData;
+        if (!mountedRef.current) return responseData as T;
 
-        setData(responseData);
+        setData(responseData ?? null);
         setIsSuccess(true);
         
         // Cache the result
@@ -83,8 +82,8 @@ export function useApi<T = any>(
           cache.set(cacheKey, { data: responseData, timestamp: Date.now() });
         }
 
-        options.onSuccess?.(responseData);
-        return responseData;
+        options.onSuccess?.(responseData as T);
+        return responseData as T;
       } catch (err) {
         if (!mountedRef.current) throw err;
 
@@ -144,6 +143,7 @@ export function useQuery<T = any>(
       }, refetchInterval);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [refetchInterval, enabled]);
 
   return {

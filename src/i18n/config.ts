@@ -8,8 +8,8 @@ import { logger } from '@/services/logger';
 import enTranslations from './locales/en';
 import esTranslations from './locales/es';
 import frTranslations from './locales/fr';
-import deTranslations from './locales/de';
-import zhTranslations from './locales/zh';
+import deTranslations from './locales/de.json';
+import zhTranslations from './locales/zh.json';
 
 export const defaultNS = 'common';
 export const resources = {
@@ -56,8 +56,6 @@ i18n
         
         // Date formatting
         if (value instanceof Date) {
-          const options: Intl.DateTimeFormatOptions = {};
-          
           switch (format) {
             case 'short':
               return new Intl.DateTimeFormat(lng, { 

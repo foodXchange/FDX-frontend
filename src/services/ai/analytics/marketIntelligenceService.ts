@@ -47,7 +47,7 @@ interface MarketOpportunity {
 
 export class MarketIntelligenceService {
   private static instance: MarketIntelligenceService;
-  private marketData: Map<string, any> = new Map();
+  // private _marketData: Map<string, any> = new Map();
   private analysisCache: Map<string, { data: any; timestamp: number }> = new Map();
 
   private constructor() {}
@@ -62,17 +62,17 @@ export class MarketIntelligenceService {
   async getMarketIntelligence(
     category: string,
     region?: string,
-    timeframe?: string
+    _timeframe?: string
   ): Promise<MarketIntelligence> {
     try {
-      const cacheKey = `market-${category}-${region}-${timeframe}`;
+      const cacheKey = `market-${category}-${region}-${_timeframe}`;
       const cached = this.getFromCache(cacheKey);
       if (cached) return cached;
 
       // Gather market data from multiple sources
       const [priceAnalysis, demandAnalysis, competitorAnalysis] = await Promise.all([
-        this.analyzePricing(category, region, timeframe),
-        this.analyzeDemand(category, region, timeframe),
+        this.analyzePricing(category, region, _timeframe),
+        this.analyzeDemand(category, region, _timeframe),
         this.analyzeCompetitors(category, region),
       ]);
 
@@ -87,7 +87,7 @@ export class MarketIntelligenceService {
       this.setCache(cacheKey, intelligence);
       return intelligence;
     } catch (error) {
-      logger.error('Market intelligence error:', error);
+      logger.error('Market intelligence error:', error as Error);
       throw error;
     }
   }
@@ -135,7 +135,7 @@ export class MarketIntelligenceService {
         ],
       };
     } catch (error) {
-      logger.error('Price analysis error:', error);
+      logger.error('Price analysis error:', error as Error);
       return this.getFallbackPriceAnalysis(category);
     }
   }
@@ -143,7 +143,7 @@ export class MarketIntelligenceService {
   private async analyzeDemand(
     category: string,
     region?: string,
-    timeframe?: string
+    _timeframe?: string
   ): Promise<DemandAnalysis> {
     const prompt = `
       Analyze demand patterns for ${category} in ${region || 'global'} market:
@@ -183,7 +183,7 @@ export class MarketIntelligenceService {
         futureProjections: analysis.projections || this.generateDemandProjections(),
       };
     } catch (error) {
-      logger.error('Demand analysis error:', error);
+      logger.error('Demand analysis error:', error as Error);
       return this.getFallbackDemandAnalysis(category);
     }
   }
@@ -221,7 +221,7 @@ export class MarketIntelligenceService {
         ? competitors 
         : this.generateMockCompetitorAnalysis();
     } catch (error) {
-      logger.error('Competitor analysis error:', error);
+      logger.error('Competitor analysis error:', error as Error);
       return this.generateMockCompetitorAnalysis();
     }
   }
@@ -277,7 +277,7 @@ export class MarketIntelligenceService {
         ],
       };
     } catch (error) {
-      logger.error('Market intelligence synthesis error:', error);
+      logger.error('Market intelligence synthesis error:', error as Error);
       return this.getFallbackMarketIntelligence(category);
     }
   }
@@ -331,7 +331,7 @@ export class MarketIntelligenceService {
           }))
         : [];
     } catch (error) {
-      logger.error('Opportunity identification error:', error);
+      logger.error('Opportunity identification error:', error as Error);
       return this.generateMockOpportunities();
     }
   }
@@ -379,7 +379,7 @@ export class MarketIntelligenceService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Market entry strategy error:', error);
+      logger.error('Market entry strategy error:', error as Error);
       return {
         strategy: 'Gradual market penetration',
         entryMode: 'partnership',
@@ -419,7 +419,7 @@ export class MarketIntelligenceService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Sentiment tracking error:', error);
+      logger.error('Sentiment tracking error:', error as Error);
       return {
         overallSentiment: 'neutral',
         sentimentScore: 0.1,

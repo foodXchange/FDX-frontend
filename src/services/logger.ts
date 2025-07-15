@@ -14,9 +14,11 @@ const LOG_LEVELS: LogLevel = {
   FATAL: 'fatal',
 };
 
+type LogLevelValue = LogLevel[keyof LogLevel];
+
 interface LogEntry {
   timestamp: string;
-  level: keyof LogLevel;
+  level: LogLevelValue;
   message: string;
   context?: Record<string, any>;
   error?: Error;
@@ -28,7 +30,7 @@ interface LogEntry {
 interface LoggerConfig {
   enableConsole: boolean;
   enableRemote: boolean;
-  minLevel: keyof LogLevel;
+  minLevel: LogLevelValue;
   maxLogSize: number;
   remoteEndpoint?: string;
   includeStackTrace: boolean;
@@ -44,7 +46,7 @@ class Logger {
     this.config = {
       enableConsole: process.env.NODE_ENV !== 'production',
       enableRemote: process.env.NODE_ENV === 'production',
-      minLevel: process.env.NODE_ENV === 'production' ? LOG_LEVELS.INFO : LOG_LEVELS.DEBUG,
+      minLevel: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
       maxLogSize: 1000,
       remoteEndpoint: process.env.REACT_APP_LOG_ENDPOINT,
       includeStackTrace: process.env.NODE_ENV !== 'production',
@@ -80,7 +82,7 @@ class Logger {
     });
   }
 
-  private shouldLog(level: keyof LogLevel): boolean {
+  private shouldLog(level: LogLevelValue): boolean {
     const levels = Object.values(LOG_LEVELS);
     const currentLevelIndex = levels.indexOf(this.config.minLevel);
     const messageLevelIndex = levels.indexOf(level);
@@ -109,7 +111,7 @@ class Logger {
   }
 
   private createLogEntry(
-    level: keyof LogLevel,
+    level: LogLevelValue,
     message: string,
     context?: Record<string, any>,
     error?: Error
@@ -156,8 +158,12 @@ class Logger {
 
     // Console logging
     if (this.config.enableConsole) {
-      const consoleMethod = console[entry.level] || console.log;
-      consoleMethod(this.formatMessage(entry), entry.context, entry.error);
+      const methodName = entry.level.toLowerCase();
+      if (methodName === 'debug' || methodName === 'info' || methodName === 'warn' || methodName === 'error') {
+        console[methodName](this.formatMessage(entry), entry.context, entry.error);
+      } else {
+        console.log(this.formatMessage(entry), entry.context, entry.error);
+      }
     }
 
     // Remote logging

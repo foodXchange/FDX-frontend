@@ -1,6 +1,6 @@
 import { SearchResult, SupplierMatch, RecommendationEngine } from '../types';
 import { aiService } from '../aiService';
-import { searchService } from '../nlp/searchService';
+// import { searchService } from '../nlp/searchService';
 import { supplierMatchingService } from './supplierMatchingService';
 import { logger } from '../../logger';
 
@@ -33,7 +33,7 @@ export class IntelligentRecommendationEngine implements RecommendationEngine {
   private static instance: IntelligentRecommendationEngine;
   private userProfiles: Map<string, UserProfile> = new Map();
   private productInteractions: Map<string, any[]> = new Map();
-  private categoryTrends: Map<string, any> = new Map();
+  // private _categoryTrends: Map<string, any> = new Map();
 
   private constructor() {}
 
@@ -67,7 +67,7 @@ export class IntelligentRecommendationEngine implements RecommendationEngine {
 
       return rankedRecs.slice(0, 20);
     } catch (error) {
-      logger.error('User recommendations error:', error);
+      logger.error('User recommendations error:', error as Error);
       return [];
     }
   }
@@ -101,7 +101,7 @@ export class IntelligentRecommendationEngine implements RecommendationEngine {
       const uniqueRecs = this.deduplicateRecommendations(allRecommendations);
       return uniqueRecs.slice(0, 15);
     } catch (error) {
-      logger.error('Product recommendations error:', error);
+      logger.error('Product recommendations error:', error as Error);
       return [];
     }
   }
@@ -110,7 +110,7 @@ export class IntelligentRecommendationEngine implements RecommendationEngine {
     try {
       return await supplierMatchingService.getSupplierRecommendations(criteria);
     } catch (error) {
-      logger.error('Supplier recommendations error:', error);
+      logger.error('Supplier recommendations error:', error as Error);
       return [];
     }
   }
@@ -159,7 +159,7 @@ export class IntelligentRecommendationEngine implements RecommendationEngine {
         interactions: [],
       };
     } catch (error) {
-      logger.error('User profile building error:', error);
+      logger.error('User profile building error:', error as Error);
       return this.getDefaultUserProfile(userId);
     }
   }
@@ -203,7 +203,7 @@ export class IntelligentRecommendationEngine implements RecommendationEngine {
       const response = await aiService.generateCompletion(prompt);
       return this.parseRecommendationResponse(response);
     } catch (error) {
-      logger.error('Personalized recommendations error:', error);
+      logger.error('Personalized recommendations error:', error as Error);
       return this.getFallbackRecommendations('personalized');
     }
   }
@@ -345,7 +345,7 @@ export class IntelligentRecommendationEngine implements RecommendationEngine {
     }
   }
 
-  private async getFrequentlyBoughtTogether(productId: string): Promise<SearchResult[]> {
+  private async getFrequentlyBoughtTogether(_productId: string): Promise<SearchResult[]> {
     // In real implementation, analyze order data
     // For now, return mock frequently bought together items
     return [
@@ -405,7 +405,7 @@ export class IntelligentRecommendationEngine implements RecommendationEngine {
       }
       return [];
     } catch (error) {
-      logger.error('Recommendation response parsing error:', error);
+      logger.error('Recommendation response parsing error:', error as Error);
       return [];
     }
   }

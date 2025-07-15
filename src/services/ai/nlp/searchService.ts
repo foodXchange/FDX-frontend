@@ -44,7 +44,7 @@ export class IntelligentSearchService {
       // Apply post-processing and re-ranking
       return this.reRankResults(allResults, query);
     } catch (error) {
-      logger.error('Intelligent search error:', error);
+      logger.error('Intelligent search error:', error as Error);
       return [];
     }
   }
@@ -66,7 +66,7 @@ export class IntelligentSearchService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Query enhancement error:', error);
+      logger.error('Query enhancement error:', error as Error);
       return { original: query };
     }
   }
@@ -88,9 +88,9 @@ export class IntelligentSearchService {
   }
 
   private async searchProducts(
-    embedding: number[],
-    enhancedQuery: any,
-    filters?: any
+    _embedding: number[],
+    _enhancedQuery: any,
+    _filters?: any
   ): Promise<SearchResult[]> {
     // This would typically query a vector database
     // For now, return mock data
@@ -112,9 +112,9 @@ export class IntelligentSearchService {
   }
 
   private async searchSuppliers(
-    embedding: number[],
-    enhancedQuery: any,
-    filters?: any
+    _embedding: number[],
+    _enhancedQuery: any,
+    _filters?: any
   ): Promise<SearchResult[]> {
     return [
       {
@@ -134,43 +134,43 @@ export class IntelligentSearchService {
   }
 
   private async searchOrders(
-    embedding: number[],
-    enhancedQuery: any,
-    filters?: any
+    _embedding: number[],
+    _enhancedQuery: any,
+    _filters?: any
   ): Promise<SearchResult[]> {
     return [];
   }
 
   private async searchDocuments(
-    embedding: number[],
-    enhancedQuery: any,
-    filters?: any
+    _embedding: number[],
+    _enhancedQuery: any,
+    _filters?: any
   ): Promise<SearchResult[]> {
     return [];
   }
 
   private async reRankResults(
     results: SearchResult[],
-    originalQuery: string
+    _originalQuery: string
   ): Promise<SearchResult[]> {
     if (results.length === 0) return results;
 
     // Use AI to re-rank based on user intent and context
-    const prompt = `
+    /* const prompt = `
       Re-rank these search results based on relevance to the query: "${originalQuery}"
       Consider user intent, practical relevance, and business value.
       
       Results: ${JSON.stringify(results.slice(0, 10))}
       
       Return the IDs in order of relevance.
-    `;
+    `; */
 
     try {
-      const response = await aiService.generateCompletion(prompt);
+      // const response = await aiService.generateCompletion(prompt);
       // Parse and reorder results
       return results; // Simplified - implement actual reordering
     } catch (error) {
-      logger.error('Re-ranking error:', error);
+      logger.error('Re-ranking error:', error as Error);
       return results;
     }
   }
@@ -193,7 +193,7 @@ export class IntelligentSearchService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Suggestion generation error:', error);
+      logger.error('Suggestion generation error:', error as Error);
       return [];
     }
   }

@@ -90,7 +90,7 @@ class ErrorReporter {
     } catch (error) {
       // Put reports back in queue for retry
       this.queue.unshift(...reports);
-      logger.error('Failed to send error reports', error);
+      logger.error('Failed to send error reports', error as Error);
     } finally {
       this.isReporting = false;
     }
@@ -224,8 +224,10 @@ class ErrorReporter {
         message,
         type: 'error',
       });
+    } else if (level === 'warning') {
+      logger.warn(message);
     } else {
-      logger[level](message);
+      logger.info(message);
     }
   }
 

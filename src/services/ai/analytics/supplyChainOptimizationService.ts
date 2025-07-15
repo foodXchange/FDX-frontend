@@ -93,7 +93,7 @@ export class SupplyChainOptimizationService {
 
       return optimizedRoutes;
     } catch (error) {
-      logger.error('Route optimization error:', error);
+      logger.error('Route optimization error:', error as Error);
       throw error;
     }
   }
@@ -163,7 +163,7 @@ export class SupplyChainOptimizationService {
         efficiency: optimization.efficiency || 0.85,
       };
     } catch (error) {
-      logger.error('Single route optimization error:', error);
+      logger.error('Single route optimization error:', error as Error);
       return this.getFallbackRoute(deliveries, temperatureType);
     }
   }
@@ -234,13 +234,13 @@ export class SupplyChainOptimizationService {
 
       return optimizations;
     } catch (error) {
-      logger.error('Inventory optimization error:', error);
+      logger.error('Inventory optimization error:', error as Error);
       throw error;
     }
   }
 
   private async optimizeSingleProduct(product: any): Promise<InventoryOptimization> {
-    const prompt = `
+    /* const prompt = `
       Calculate optimal inventory levels for this product:
       
       Product: ${JSON.stringify(product)}
@@ -260,11 +260,11 @@ export class SupplyChainOptimizationService {
       - Service level (95%)
       
       Use standard inventory optimization formulas with adjustments for perishability.
-    `;
+    `; */
 
     try {
-      const response = await aiService.generateCompletion(prompt);
-      const calc = JSON.parse(response);
+      // const response = await aiService.generateCompletion(prompt);
+      // const calc = JSON.parse(response);
 
       // Calculate EOQ: sqrt(2 * D * S / H)
       const eoq = Math.sqrt(
@@ -294,7 +294,7 @@ export class SupplyChainOptimizationService {
         orderingCost: (product.dailyDemand * 365 / adjustedEOQ) * product.orderingCost,
       };
     } catch (error) {
-      logger.error('Product inventory optimization error:', error);
+      logger.error('Product inventory optimization error:', error as Error);
       return this.getFallbackInventoryOptimization(product);
     }
   }
@@ -335,7 +335,7 @@ export class SupplyChainOptimizationService {
 
       return risks;
     } catch (error) {
-      logger.error('Temperature risk prediction error:', error);
+      logger.error('Temperature risk prediction error:', error as Error);
       throw error;
     }
   }
@@ -376,7 +376,7 @@ export class SupplyChainOptimizationService {
         alternativeRoutes: analysis.alternatives || [],
       };
     } catch (error) {
-      logger.error('Shipment risk analysis error:', error);
+      logger.error('Shipment risk analysis error:', error as Error);
       return {
         shipmentId: shipment.id,
         riskLevel: 'medium',
@@ -428,7 +428,7 @@ export class SupplyChainOptimizationService {
         sustainabilityScore: metrics.sustainabilityScore || 0.78,
       };
     } catch (error) {
-      logger.error('Metrics calculation error:', error);
+      logger.error('Metrics calculation error:', error as Error);
       return this.getDefaultMetrics();
     }
   }
@@ -478,7 +478,7 @@ export class SupplyChainOptimizationService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Sustainability optimization error:', error);
+      logger.error('Sustainability optimization error:', error as Error);
       return {
         carbonReduction: 0.15,
         costSavings: 10000,

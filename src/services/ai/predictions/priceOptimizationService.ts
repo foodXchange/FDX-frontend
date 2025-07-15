@@ -71,7 +71,7 @@ export class PriceOptimizationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Price optimization error:', error);
+      logger.error('Price optimization error:', error as Error);
       throw error;
     }
   }
@@ -123,14 +123,14 @@ export class PriceOptimizationService {
     productId: string,
     currentPrice: number,
     historicalData: any,
-    elasticity: number
+    _elasticity: number
   ): Promise<any> {
     const prompt = `
       Analyze pricing data and recommend optimal price for maximum revenue.
       
       Product ID: ${productId}
       Current Price: $${currentPrice}
-      Price Elasticity: ${elasticity}
+      Price Elasticity: ${_elasticity}
       Competitor Prices: ${historicalData.competitorPrices.join(', ')}
       
       Recent Sales Summary:
@@ -167,9 +167,9 @@ export class PriceOptimizationService {
         alternatives: parsed.alternatives || [],
       };
     } catch (error) {
-      logger.error('AI price recommendation error:', error);
+      logger.error('AI price recommendation error:', error as Error);
       // Fallback to rule-based pricing
-      return this.getRuleBasedPrice(currentPrice, historicalData, elasticity);
+      return this.getRuleBasedPrice(currentPrice, historicalData, _elasticity);
     }
   }
 
@@ -244,7 +244,7 @@ export class PriceOptimizationService {
   private getRuleBasedPrice(
     currentPrice: number,
     historicalData: any,
-    elasticity: number
+    _elasticity: number
   ): any {
     const avgCompetitorPrice = historicalData.competitorPrices.length > 0
       ? historicalData.competitorPrices.reduce((a: number, b: number) => a + b, 0) / historicalData.competitorPrices.length
@@ -299,7 +299,7 @@ export class PriceOptimizationService {
       const multiplier = parseFloat(response);
       return Math.max(0.8, Math.min(1.2, multiplier));
     } catch (error) {
-      logger.error('Dynamic pricing error:', error);
+      logger.error('Dynamic pricing error:', error as Error);
       return 1.0; // No adjustment
     }
   }

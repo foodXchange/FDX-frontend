@@ -1,8 +1,8 @@
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 
 // Transform dates in API responses
-export const transformDates = <T extends Record<string, any>>(data: T): T => {
-  const transformed = { ...data };
+export const transformDates = <T extends Record<string, any>>(data: T): any => {
+  const transformed: any = { ...data };
   
   Object.keys(transformed).forEach(key => {
     const value = transformed[key];
@@ -33,8 +33,8 @@ const isISODateString = (value: string): boolean => {
 };
 
 // Transform data for API requests (dates to strings)
-export const transformForRequest = <T extends Record<string, any>>(data: T): T => {
-  const transformed = { ...data };
+export const transformForRequest = <T extends Record<string, any>>(data: T): any => {
+  const transformed: any = { ...data };
   
   Object.keys(transformed).forEach(key => {
     const value = transformed[key];

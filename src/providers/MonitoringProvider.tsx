@@ -87,6 +87,7 @@ export const MonitoringProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       const memoryInterval = setInterval(checkMemory, 30000); // Check every 30 seconds
       return () => clearInterval(memoryInterval);
     }
+    return undefined;
   }, []);
 
   return <>{children}</>;

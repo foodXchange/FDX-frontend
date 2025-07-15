@@ -251,7 +251,7 @@ export const useDashboardMetrics = (options: UseDashboardMetricsOptions = {}) =>
         type: priceChange > 0 ? 'success' : 'info',
         category: 'pricing',
         title: `Price Optimization for Product ${productId}`,
-        description: `Suggested price: $${optimization.prediction.suggestedPrice} (${changePercent > 0 ? '+' : ''}${changePercent}%). Expected revenue impact: ${optimization.prediction.expectedRevenue > currentPrice ? '+' : ''}$${(optimization.prediction.expectedRevenue - currentPrice).toFixed(2)}`,
+        description: `Suggested price: $${optimization.prediction.suggestedPrice} (${parseFloat(changePercent) > 0 ? '+' : ''}${changePercent}%). Expected revenue impact: ${optimization.prediction.expectedRevenue > currentPrice ? '+' : ''}$${(optimization.prediction.expectedRevenue - currentPrice).toFixed(2)}`,
         priority: Math.abs(parseFloat(changePercent)) > 10 ? 'high' : 'medium',
         timestamp: new Date(),
         confidence: optimization.confidence,

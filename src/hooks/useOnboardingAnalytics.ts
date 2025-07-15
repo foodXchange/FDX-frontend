@@ -306,7 +306,7 @@ export const useOnboardingAnalytics = (): OnboardingAnalytics => {
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'onboarding_feedback', {
         event_category: 'onboarding',
-        rating: feedback.rating,
+        rating: feedback?.rating,
         session_id: currentSession.id
       });
     }

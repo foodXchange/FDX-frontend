@@ -88,7 +88,7 @@ class DebugUtils {
   setLogLevel(level: DebugConfig['logLevel']): void {
     this.config.logLevel = level;
     this.saveConfig();
-    logger.setConfig({ minLevel: level });
+    logger.setConfig({ minLevel: level as any });
   }
 
   togglePerformanceMetrics(): void {

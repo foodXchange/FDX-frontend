@@ -136,7 +136,9 @@ class PerformanceMonitor {
 
   private getElementSelector(element: HTMLElement): string {
     if (element.id) return `#${element.id}`;
-    if (element.className) return `.${element.className.split(' ')[0]}`;
+    if (element.className && typeof element.className === 'string') {
+      return `.${element.className.split(' ')[0]}`;
+    }
     return element.tagName.toLowerCase();
   }
 
@@ -184,8 +186,8 @@ class PerformanceMonitor {
       request: navigation.responseStart - navigation.requestStart,
       response: navigation.responseEnd - navigation.responseStart,
       domProcessing: navigation.domContentLoadedEventEnd - navigation.responseEnd,
-      domContentLoaded: navigation.domContentLoadedEventEnd - navigation.navigationStart,
-      loadComplete: navigation.loadEventEnd - navigation.navigationStart,
+      domContentLoaded: navigation.domContentLoadedEventEnd - navigation.fetchStart,
+      loadComplete: navigation.loadEventEnd - navigation.fetchStart,
       totalTime: navigation.loadEventEnd - navigation.fetchStart,
     };
   }

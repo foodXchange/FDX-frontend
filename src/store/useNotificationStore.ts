@@ -178,6 +178,10 @@ function playNotificationSound() {
   }
 }
 
+// Selectors
+export const selectUnreadNotifications = (state: NotificationState) => 
+  state.notifications.filter((n) => !n.read).slice(0, 5);
+
 // Global notification handlers
 export const notify = {
   success: (title: string, message?: string) =>

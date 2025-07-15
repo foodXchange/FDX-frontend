@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+// import { useAuth } from '@/contexts/AuthContext'; // Uncomment when needed
 import { Card } from '@components/ui/Card';
 import { Button } from '@components/ui/Button';
 import { Toast } from '@components/ui/Toast';
@@ -13,7 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Settings: React.FC = () => {
-  const { updateProfile } = useAuth();
+  // const { updateProfile } = useAuth(); // Uncomment when profile update is needed
   // const user = useAuth().user; // Uncomment when user data is needed
   const [activeTab, setActiveTab] = useState('notifications');
   const [showToast, setShowToast] = useState(false);

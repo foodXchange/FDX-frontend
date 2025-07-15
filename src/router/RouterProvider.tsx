@@ -5,11 +5,7 @@ import { SkeletonLoader } from '@components/ui/SkeletonLoader';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Create router instance
-const router = createBrowserRouter(routes, {
-  future: {
-    v7_normalizeFormMethod: true,
-  },
-});
+const router = createBrowserRouter(routes);
 
 // Loading component
 const RouterLoading: React.FC = () => (

@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 import { ProtectedRoute } from '@components/auth/ProtectedRoute';
 import { PERMISSIONS } from '@hooks/usePermissions';
@@ -6,6 +6,9 @@ import { PERMISSIONS } from '@hooks/usePermissions';
 // Layouts
 const MainLayout = lazy(() => import('@/layouts/MainLayout'));
 const AuthLayout = lazy(() => import('@/layouts/AuthLayout'));
+
+// Landing Page
+const LandingPage = lazy(() => import('@/pages/LandingPage'));
 
 // Auth Pages
 const Login = lazy(() => import('@features/auth/Login').then(m => ({ default: m.Login })));
@@ -54,19 +57,26 @@ const DataImport = lazy(() => import('@features/admin/DataImport').then(m => ({ 
 const Profile = lazy(() => import('@features/profile/Profile'));
 const Settings = lazy(() => import('@features/profile/Settings'));
 
+// Agent Features
+const AgentDashboard = lazy(() => import('@features/agents/components/AgentDashboard').then(m => ({ default: m.AgentDashboard })));
+const LeadManagement = lazy(() => import('@features/agents/components/LeadManagement').then(m => ({ default: m.LeadManagement })));
+const CommissionDashboard = lazy(() => import('@features/agents/components/CommissionDashboard').then(m => ({ default: m.CommissionDashboard })));
+
 // Error Pages
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 export const routes: RouteObject[] = [
+  // Landing page (public)
+  {
+    path: '/',
+    element: <LandingPage />,
+  },
+  
   // Auth routes (public)
   {
     path: '/',
     element: <AuthLayout />,
     children: [
-      {
-        index: true,
-        element: <Login />,
-      },
       {
         path: 'login',
         element: <Login />,
@@ -226,6 +236,37 @@ export const routes: RouteObject[] = [
         ],
       },
 
+      // Agent Routes
+      {
+        path: 'agent',
+        children: [
+          {
+            index: true,
+            element: (
+              <ProtectedRoute requiredRole="agent">
+                <AgentDashboard />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: 'leads',
+            element: (
+              <ProtectedRoute requiredRole="agent">
+                <LeadManagement />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: 'earnings',
+            element: (
+              <ProtectedRoute requiredRole="agent">
+                <CommissionDashboard />
+              </ProtectedRoute>
+            ),
+          },
+        ],
+      },
+
       // Profile
       {
         path: 'profile',
@@ -263,6 +304,9 @@ export const routeMetadata: Record<string, { title: string; icon?: string }> = {
   '/monitoring': { title: 'Monitoring', icon: 'monitor' },
   '/samples': { title: 'Sample Tracking', icon: 'science' },
   '/admin/import': { title: 'Data Import', icon: 'upload' },
+  '/agent': { title: 'Agent Dashboard', icon: 'badge' },
+  '/agent/leads': { title: 'Lead Management', icon: 'work' },
+  '/agent/earnings': { title: 'Earnings', icon: 'payments' },
   '/profile': { title: 'Profile', icon: 'person' },
   '/settings': { title: 'Settings', icon: 'settings' },
 };

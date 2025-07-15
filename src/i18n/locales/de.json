@@ -1,0 +1,16 @@
+{
+  "common": {
+    "welcome": "Willkommen bei FoodXchange",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "noData": "Keine Daten verfügbar"
+  }
+}

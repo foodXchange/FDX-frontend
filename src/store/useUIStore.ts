@@ -29,7 +29,7 @@ interface UIState {
   closeAllModals: () => void;
 
   // Global loading
-  loadingTasks: Map<string, string>;
+  loadingTasks: Record<string, string>;
   startLoading: (taskId: string, message?: string) => void;
   stopLoading: (taskId: string) => void;
   isLoading: () => boolean;
@@ -109,16 +109,16 @@ export const useUIStore = create<UIState>()(
         }),
 
       // Loading
-      loadingTasks: new Map(),
+      loadingTasks: {},
       startLoading: (taskId, message = 'Loading...') =>
         set((state) => {
-          state.loadingTasks.set(taskId, message);
+          state.loadingTasks[taskId] = message;
         }),
       stopLoading: (taskId) =>
         set((state) => {
-          state.loadingTasks.delete(taskId);
+          delete state.loadingTasks[taskId];
         }),
-      isLoading: () => get().loadingTasks.size > 0,
+      isLoading: () => Object.keys(get().loadingTasks).length > 0,
 
       // Breadcrumbs
       breadcrumbs: [],

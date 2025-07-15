@@ -51,7 +51,7 @@ export const useErrorHandler = () => {
         try {
           onError(errorObj);
         } catch (handlerError) {
-          logger.error('Error in custom error handler', handlerError);
+          logger.error('Error in custom error handler', handlerError as Error);
         }
       }
 
@@ -62,7 +62,7 @@ export const useErrorHandler = () => {
           notify.success('Success', 'Action completed successfully after retry');
           return;
         } catch (retryError) {
-          logger.error('Retry failed', retryError);
+          logger.error('Retry failed', retryError as Error);
         }
       }
 
@@ -71,7 +71,7 @@ export const useErrorHandler = () => {
         try {
           fallbackAction();
         } catch (fallbackError) {
-          logger.error('Fallback action failed', fallbackError);
+          logger.error('Fallback action failed', fallbackError as Error);
         }
       }
 
@@ -167,7 +167,7 @@ export const errorRecoveryStrategies = {
         }),
       });
     } catch (reportError) {
-      logger.error('Failed to report error', reportError);
+      logger.error('Failed to report error', reportError as Error);
     }
   },
 };

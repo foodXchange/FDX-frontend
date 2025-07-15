@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNotificationStore } from '@/store/useNotificationStore';
 import { Toast } from './Toast';
 
 export const NotificationContainer: React.FC = () => {
-  const notifications = useNotificationStore((state) => 
-    state.notifications.filter((n) => !n.read).slice(0, 5)
-  );
+  const allNotifications = useNotificationStore((state) => state.notifications);
   const removeNotification = useNotificationStore((state) => state.removeNotification);
+  
+  const notifications = useMemo(() => 
+    allNotifications.filter((n) => !n.read).slice(0, 5),
+    [allNotifications]
+  );
 
   return (
     <div className="fixed bottom-0 right-0 p-4 space-y-2 z-50 pointer-events-none">

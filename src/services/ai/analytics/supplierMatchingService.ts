@@ -60,7 +60,7 @@ export class SupplierMatchingService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Supplier matching error:', error);
+      logger.error('Supplier matching error:', error as Error);
       throw error;
     }
   }
@@ -91,7 +91,7 @@ export class SupplierMatchingService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Supplier profile generation error:', error);
+      logger.error('Supplier profile generation error:', error as Error);
       return this.generateBasicProfile(supplier);
     }
   }
@@ -156,7 +156,7 @@ export class SupplierMatchingService {
       });
       return JSON.parse(response);
     } catch (error) {
-      logger.error('AI supplier matching error:', error);
+      logger.error('AI supplier matching error:', error as Error);
       return this.getFallbackMatches(requirements, suppliers);
     }
   }
@@ -359,6 +359,10 @@ export class SupplierMatchingService {
       const scoreDiff = topScore - matches[1].score;
       if (scoreDiff > 10) confidence *= 1.1; // Clear winner
       if (scoreDiff < 5) confidence *= 0.9; // Close competition
+      
+      // Also consider how much better top score is than average
+      const topToAvgRatio = topScore / avgScore;
+      if (topToAvgRatio > 1.3) confidence *= 1.05; // Top score significantly better than average
     }
 
     return Math.min(0.95, Math.max(0.5, confidence));
@@ -419,7 +423,7 @@ export class SupplierMatchingService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Supplier recommendation error:', error);
+      logger.error('Supplier recommendation error:', error as Error);
       return [];
     }
   }

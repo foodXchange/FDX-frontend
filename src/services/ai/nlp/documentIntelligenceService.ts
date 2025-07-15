@@ -78,7 +78,7 @@ export class DocumentIntelligenceService {
         ],
       };
     } catch (error) {
-      logger.error('Document analysis error:', error);
+      logger.error('Document analysis error:', error as Error);
       throw error;
     }
   }
@@ -176,7 +176,7 @@ export class DocumentIntelligenceService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Document classification error:', error);
+      logger.error('Document classification error:', error as Error);
       return {
         type: 'other',
         confidence: 0.5,
@@ -235,7 +235,7 @@ export class DocumentIntelligenceService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Data extraction error:', error);
+      logger.error('Data extraction error:', error as Error);
       return { content: text };
     }
   }
@@ -263,7 +263,7 @@ export class DocumentIntelligenceService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Data validation error:', error);
+      logger.error('Data validation error:', error as Error);
       return { warnings: [], suggestions: [] };
     }
   }
@@ -300,7 +300,7 @@ export class DocumentIntelligenceService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('AI analysis error:', error);
+      logger.error('AI analysis error:', error as Error);
       return {
         enhancedData: {},
         suggestions: ['Consider manual review of extracted data'],
@@ -327,7 +327,7 @@ export class DocumentIntelligenceService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Table extraction error:', error);
+      logger.error('Table extraction error:', error as Error);
       return [];
     }
   }
@@ -351,7 +351,7 @@ export class DocumentIntelligenceService {
     try {
       return await aiService.generateCompletion(prompt);
     } catch (error) {
-      logger.error('Document summarization error:', error);
+      logger.error('Document summarization error:', error as Error);
       return 'Unable to generate summary';
     }
   }
@@ -386,7 +386,7 @@ export class DocumentIntelligenceService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Document comparison error:', error);
+      logger.error('Document comparison error:', error as Error);
       return {
         differences: ['Unable to compare documents'],
         similarities: [],
@@ -423,7 +423,7 @@ export class DocumentIntelligenceService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Compliance analysis error:', error);
+      logger.error('Compliance analysis error:', error as Error);
       return {
         compliant: false,
         violations: ['Unable to assess compliance'],
@@ -460,7 +460,7 @@ export class DocumentIntelligenceService {
           anomalies,
         });
       } catch (error) {
-        logger.error(`Invoice processing error for ${invoice.id}:`, error);
+        logger.error(`Invoice processing error for ${invoice.id}:`, error as Error);
         results.push({
           id: invoice.id,
           analysis: {

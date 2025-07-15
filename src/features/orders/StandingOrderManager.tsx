@@ -35,7 +35,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
-import { format, /* addDays, */ addWeeks, addMonths } from 'date-fns';
+import { format } from 'date-fns';
 
 interface StandingOrder {
   id: string;
@@ -83,21 +83,6 @@ const statusConfig = {
   expired: { label: 'Expired', color: 'bg-gray-100 text-gray-700', icon: Clock },
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getNextDeliveryDate = (lastDate: Date, frequency: StandingOrder['frequency']): Date => {
-  switch (frequency) {
-    case 'weekly':
-      return addWeeks(lastDate, 1);
-    case 'bi-weekly':
-      return addWeeks(lastDate, 2);
-    case 'monthly':
-      return addMonths(lastDate, 1);
-    case 'quarterly':
-      return addMonths(lastDate, 3);
-    default:
-      return addWeeks(lastDate, 1);
-  }
-};
 
 const getDaysUntilDelivery = (nextDelivery: Date): number => {
   const today = new Date();

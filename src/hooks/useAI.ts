@@ -11,9 +11,6 @@ import {
 } from '../services/ai';
 import type {
   SearchResult,
-  DemandForecast,
-  PriceOptimization,
-  SupplierMatch,
   DocumentAnalysis,
   ChatMessage,
   AIInsight,
@@ -33,7 +30,7 @@ interface AIState {
 }
 
 export const useAI = (options: UseAIOptions = {}) => {
-  const { autoInitialize = true, enableCaching = true, userId } = options;
+  const { autoInitialize = true, userId } = options;
 
   const [state, setState] = useState<AIState>({
     initialized: false,
@@ -91,7 +88,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   const search = useCallback(async (
     query: string,
     filters?: any,
-    options?: { useCache?: boolean }
+    _options?: { useCache?: boolean }
   ): Promise<SearchResult[]> => {
     setSearchLoading(true);
     

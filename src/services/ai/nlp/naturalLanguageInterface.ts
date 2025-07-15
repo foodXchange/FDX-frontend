@@ -76,7 +76,7 @@ export class NaturalLanguageInterface {
 
       return assistantMessage;
     } catch (error) {
-      logger.error('NL processing error:', error);
+      logger.error('NL processing error:', error as Error);
       return this.createErrorResponse();
     }
   }
@@ -99,7 +99,7 @@ export class NaturalLanguageInterface {
 
   private async analyzeIntent(
     message: string,
-    context: ConversationContext
+    _context: ConversationContext
   ): Promise<Intent> {
     const prompt = `
       Analyze the user's intent and extract entities from this message:
@@ -107,7 +107,7 @@ export class NaturalLanguageInterface {
       Message: "${message}"
       
       Conversation History:
-      ${context.history.slice(-5).map(msg => `${msg.role}: ${msg.content}`).join('\n')}
+      ${_context.history.slice(-5).map((msg: ChatMessage) => `${msg.role}: ${msg.content}`).join('\n')}
       
       Business Context: FoodXchange platform - food supply chain management
       
@@ -143,7 +143,7 @@ export class NaturalLanguageInterface {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Intent analysis error:', error);
+      logger.error('Intent analysis error:', error as Error);
       return {
         name: 'ask_question',
         confidence: 0.5,
@@ -154,48 +154,48 @@ export class NaturalLanguageInterface {
   }
 
   private async generateResponse(
-    intent: Intent,
+    _intent: Intent,
     context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
-    switch (intent.name) {
+    switch (_intent.name) {
       case 'search_products':
-        return await this.handleProductSearch(intent, context);
+        return await this.handleProductSearch(_intent, context);
       
       case 'find_suppliers':
-        return await this.handleSupplierSearch(intent, context);
+        return await this.handleSupplierSearch(_intent, context);
       
       case 'get_recommendations':
-        return await this.handleRecommendations(intent, context);
+        return await this.handleRecommendations(_intent, context);
       
       case 'demand_forecast':
-        return await this.handleDemandForecast(intent, context);
+        return await this.handleDemandForecast(_intent, context);
       
       case 'price_optimization':
-        return await this.handlePriceOptimization(intent, context);
+        return await this.handlePriceOptimization(_intent, context);
       
       case 'place_order':
-        return await this.handleOrderPlacement(intent, context);
+        return await this.handleOrderPlacement(_intent, context);
       
       case 'track_order':
-        return await this.handleOrderTracking(intent, context);
+        return await this.handleOrderTracking(_intent, context);
       
       case 'get_analytics':
-        return await this.handleAnalytics(intent, context);
+        return await this.handleAnalytics(_intent, context);
       
       case 'check_compliance':
-        return await this.handleComplianceCheck(intent, context);
+        return await this.handleComplianceCheck(_intent, context);
       
       case 'get_help':
-        return await this.handleHelp(intent, context);
+        return await this.handleHelp(_intent, context);
       
       default:
-        return await this.handleGeneral(intent, context);
+        return await this.handleGeneral(_intent, context);
     }
   }
 
   private async handleProductSearch(
     intent: Intent,
-    context: ConversationContext
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     const query = intent.parameters.query || intent.entities.product_names?.join(' ') || 'products';
     const filters = {
@@ -238,7 +238,7 @@ export class NaturalLanguageInterface {
 
   private async handleSupplierSearch(
     intent: Intent,
-    context: ConversationContext
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     const requirements = {
       productCategories: intent.entities.categories || [],
@@ -293,7 +293,7 @@ export class NaturalLanguageInterface {
   }
 
   private async handleRecommendations(
-    intent: Intent,
+    _intent: Intent,
     context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     const recommendations = await recommendationEngine.getUserRecommendations(context.userId);
@@ -330,7 +330,7 @@ export class NaturalLanguageInterface {
 
   private async handleDemandForecast(
     intent: Intent,
-    context: ConversationContext
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     const productId = intent.entities.product_names?.[0] || 'default-product';
     
@@ -379,7 +379,7 @@ export class NaturalLanguageInterface {
 
   private async handlePriceOptimization(
     intent: Intent,
-    context: ConversationContext
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     const productId = intent.entities.product_names?.[0] || 'default-product';
     const currentPrice = intent.entities.price_ranges?.[0]?.min || 10.99;
@@ -433,8 +433,8 @@ export class NaturalLanguageInterface {
   }
 
   private async handleOrderPlacement(
-    intent: Intent,
-    context: ConversationContext
+    _intent: Intent,
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     return {
       content: 'I can help you place an order! However, order placement requires accessing our secure ordering system. Let me guide you through the process or connect you with the ordering interface.',
@@ -449,7 +449,7 @@ export class NaturalLanguageInterface {
 
   private async handleOrderTracking(
     intent: Intent,
-    context: ConversationContext
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     const orderId = intent.entities.order_id || intent.parameters.order_number;
 
@@ -476,10 +476,10 @@ export class NaturalLanguageInterface {
   }
 
   private async handleAnalytics(
-    intent: Intent,
-    context: ConversationContext
+    _intent: Intent,
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
-    const analyticsType = intent.entities.analytics_type || 'general';
+    // const analyticsType = intent.entities.analytics_type || 'general';
 
     return {
       content: `I can provide various analytics insights! What specific metrics would you like to see?\n\n**Available Analytics:**\n• Sales performance\n• Demand trends\n• Supplier metrics\n• Price analysis\n• Inventory levels\n• Customer insights`,
@@ -493,8 +493,8 @@ export class NaturalLanguageInterface {
   }
 
   private async handleComplianceCheck(
-    intent: Intent,
-    context: ConversationContext
+    _intent: Intent,
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     return {
       content: 'I can help you check compliance for various requirements:\n\n• Food safety certifications\n• Organic standards\n• Import/export regulations\n• Quality standards\n• Sustainability metrics\n\nWhat specific compliance area do you need help with?',
@@ -508,8 +508,8 @@ export class NaturalLanguageInterface {
   }
 
   private async handleHelp(
-    intent: Intent,
-    context: ConversationContext
+    _intent: Intent,
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     return {
       content: `I'm your AI assistant for FoodXchange! I can help you with:\n\n**🔍 Search & Discovery**\n• Find products and suppliers\n• Get personalized recommendations\n\n**📊 Analytics & Insights**\n• Demand forecasting\n• Price optimization\n• Market analysis\n\n**📝 Orders & Tracking**\n• Place and track orders\n• Manage inventory\n\n**✅ Compliance & Quality**\n• Check certifications\n• Regulatory compliance\n\nJust ask me naturally, like "Find organic apples" or "What's the forecast for salmon demand?"`,
@@ -524,7 +524,7 @@ export class NaturalLanguageInterface {
 
   private async handleGeneral(
     intent: Intent,
-    context: ConversationContext
+    _context: ConversationContext
   ): Promise<{ content: string; suggestions?: string[] }> {
     const prompt = `
       Generate a helpful response for this food industry platform user:
@@ -571,7 +571,7 @@ export class NaturalLanguageInterface {
     };
   }
 
-  private getUserProfile(userId: string): any {
+  private getUserProfile(_userId: string): any {
     // In real implementation, fetch from user service
     return {
       preferences: ['organic', 'local'],
@@ -580,7 +580,7 @@ export class NaturalLanguageInterface {
     };
   }
 
-  private getBusinessContext(userId: string): any {
+  private getBusinessContext(_userId: string): any {
     return {
       industry: 'food_service',
       size: 'medium',

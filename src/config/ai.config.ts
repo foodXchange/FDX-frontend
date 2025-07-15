@@ -1,76 +1,39 @@
 export const AI_CONFIG = {
-  // OpenAI Configuration
+  providers: {
+    openai: {
+      apiKey: process.env.REACT_APP_OPENAI_API_KEY || '',
+      model: 'gpt-4',
+      temperature: 0.7,
+      maxTokens: 2000,
+    },
+  },
   openai: {
     apiKey: process.env.REACT_APP_OPENAI_API_KEY || '',
-    model: 'gpt-4-turbo-preview',
+    model: 'gpt-4',
     temperature: 0.7,
     maxTokens: 2000,
   },
-
-  // Claude Configuration
   claude: {
     apiKey: process.env.REACT_APP_CLAUDE_API_KEY || '',
     model: 'claude-3-opus-20240229',
     maxTokens: 2000,
   },
-
-  // Vector Database Configuration (for semantic search)
-  vectorDB: {
-    provider: 'pinecone',
-    apiKey: process.env.REACT_APP_PINECONE_API_KEY || '',
-    environment: process.env.REACT_APP_PINECONE_ENV || 'gcp-starter',
-    indexName: 'foodxchange-products',
-  },
-
-  // ML Model Configuration
-  mlModels: {
-    demandForecasting: {
-      modelPath: '/models/demand-forecast.onnx',
-      inputShape: [1, 30, 5], // 30 days of history, 5 features
-      outputShape: [1, 7], // 7 days forecast
-    },
-    priceOptimization: {
-      modelPath: '/models/price-optimization.onnx',
-      inputShape: [1, 10], // 10 features
-      outputShape: [1, 1], // optimal price
-    },
-    supplierMatching: {
-      modelPath: '/models/supplier-match.onnx',
-      inputShape: [1, 20], // 20 features
-      outputShape: [1, 10], // top 10 suppliers
-    },
-  },
-
-  // Feature Flags
   features: {
-    enableNLP: true,
-    enablePredictiveAnalytics: true,
-    enableDocumentAI: true,
-    enableRecommendations: true,
-    enableVoiceInterface: false,
-    enableMarketIntelligence: true,
+    search: true,
+    predictions: true,
+    analytics: true,
+    nlp: true,
   },
-
-  // Rate Limiting
-  rateLimit: {
-    requestsPerMinute: 60,
-    requestsPerDay: 1000,
-  },
-
-  // Caching
   cache: {
-    ttl: 3600, // 1 hour
-    maxSize: 100, // MB
+    enabled: true,
+    ttl: 3600000, // 1 hour
   },
 };
 
 export const AI_ENDPOINTS = {
-  openai: 'https://api.openai.com/v1',
-  claude: 'https://api.anthropic.com/v1',
-  internal: {
-    predictions: '/api/ai/predictions',
-    analytics: '/api/ai/analytics',
-    recommendations: '/api/ai/recommendations',
-    nlp: '/api/ai/nlp',
-  },
+  completion: '/api/ai/completion',
+  embedding: '/api/ai/embedding',
+  analysis: '/api/ai/analysis',
+  openai: process.env.REACT_APP_OPENAI_ENDPOINT || 'https://api.openai.com/v1',
+  claude: process.env.REACT_APP_CLAUDE_ENDPOINT || 'https://api.anthropic.com/v1',
 };

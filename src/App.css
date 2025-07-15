@@ -10,7 +10,4 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Smooth transitions */
-* {
-  transition: all 0.2s ease-in-out;
-}
+/* Smooth transitions - removed universal selector that was overriding inline styles */

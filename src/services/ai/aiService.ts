@@ -1,5 +1,5 @@
 import { AI_CONFIG, AI_ENDPOINTS } from '../../config/ai.config';
-import { AIProvider, PredictionResult, AIInsight } from './types';
+import { AIProvider, AIInsight } from './types';
 import { logger } from '../logger';
 
 class AIService {
@@ -59,7 +59,7 @@ class AIService {
       this.setCache(cacheKey, response);
       return response;
     } catch (error) {
-      logger.error('AI completion error:', error);
+      logger.error('AI completion error:', error as Error);
       throw error;
     }
   }
@@ -140,7 +140,7 @@ class AIService {
       this.setCache(cacheKey, embedding);
       return embedding;
     } catch (error) {
-      logger.error('Embedding generation error:', error);
+      logger.error('Embedding generation error:', error as Error);
       throw error;
     }
   }
@@ -171,7 +171,7 @@ class AIService {
       // This is a simplified version - in production, you'd want more robust parsing
       return this.parseInsights(response);
     } catch (error) {
-      logger.error('Insight generation error:', error);
+      logger.error('Insight generation error:', error as Error);
       return [];
     }
   }

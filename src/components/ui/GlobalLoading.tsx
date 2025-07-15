@@ -3,11 +3,12 @@ import { useUIStore } from '@/store/useUIStore';
 
 export const GlobalLoading: React.FC = () => {
   const loadingTasks = useUIStore((state) => state.loadingTasks);
-  const isLoading = loadingTasks.size > 0;
+  const taskCount = Object.keys(loadingTasks).length;
+  const isLoading = taskCount > 0;
 
   if (!isLoading) return null;
 
-  const loadingMessage = Array.from(loadingTasks.values())[0] || 'Loading...';
+  const loadingMessage = Object.values(loadingTasks)[0] || 'Loading...';
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50">

@@ -51,7 +51,7 @@ export class DemandForecastingService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Demand forecasting error:', error);
+      logger.error('Demand forecasting error:', error as Error);
       throw error;
     }
   }
@@ -124,7 +124,7 @@ export class DemandForecastingService {
         },
       };
     } catch (error) {
-      logger.error('AI forecast generation error:', error);
+      logger.error('AI forecast generation error:', error as Error);
       // Fallback to statistical forecast
       return this.generateStatisticalForecast(productId, analysisData, daysToForecast);
     }
@@ -205,7 +205,7 @@ export class DemandForecastingService {
     };
   }
 
-  private identifyExternalFactors(orders: any[]): any {
+  private identifyExternalFactors(_orders: any[]): any {
     return {
       holidays: [],
       events: [],
@@ -312,7 +312,7 @@ export class DemandForecastingService {
       const response = await aiService.generateCompletion(prompt);
       return JSON.parse(response);
     } catch (error) {
-      logger.error('Anomaly detection error:', error);
+      logger.error('Anomaly detection error:', error as Error);
       return [];
     }
   }

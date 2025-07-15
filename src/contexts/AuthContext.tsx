@@ -5,7 +5,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'supplier' | 'buyer' | 'viewer';
+  role: 'admin' | 'supplier' | 'buyer' | 'viewer' | 'agent';
   company: string;
   permissions: string[];
   avatar?: string;
@@ -14,6 +14,14 @@ export interface User {
     theme?: 'light' | 'dark';
     language?: string;
     notifications?: boolean;
+  };
+  // Agent-specific properties
+  isAgent?: boolean;
+  agentProfile?: {
+    tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+    specializations: string[];
+    territories: string[];
+    verified: boolean;
   };
 }
 
@@ -234,7 +242,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, 15 * 60 * 1000); // Refresh every 15 minutes
 
     return () => clearInterval(refreshInterval);
-  }, [state.isAuthenticated, refreshToken]);
+  }, [state.isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const value: AuthContextType = {
     ...state,
