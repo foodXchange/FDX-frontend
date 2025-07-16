@@ -1,0 +1,272 @@
+name: Expert Marketplace CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'src/features/expert-marketplace/**'
+      - 'src/components/**'
+      - 'src/hooks/**'
+      - 'src/services/**'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'src/features/expert-marketplace/**'
+      - 'src/components/**'
+      - 'src/hooks/**'
+      - 'src/services/**'
+
+env:
+  NODE_VERSION: '18'
+  CACHE_KEY: expert-marketplace-cache
+
+jobs:
+  # Quality Checks
+  quality:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Prettier check
+        run: npm run format:check
+
+      - name: TypeScript check
+        run: npm run type-check
+
+      - name: Verify MUI-only styling
+        run: npm run check:mui-only
+
+  # Unit Tests
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:ci
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: expert-marketplace
+          name: expert-marketplace-coverage
+
+  # Build Test
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: [quality, test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
+          REACT_APP_STRIPE_PUBLISHABLE_KEY: ${{ secrets.REACT_APP_STRIPE_PUBLISHABLE_KEY }}
+          REACT_APP_VAPID_PUBLIC_KEY: ${{ secrets.REACT_APP_VAPID_PUBLIC_KEY }}
+
+      - name: Analyze bundle size
+        run: npm run analyze
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-files
+          path: build/
+
+  # E2E Tests
+  e2e:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-files
+          path: build/
+
+      - name: Start application
+        run: |
+          npm install -g serve
+          serve -s build -l 3000 &
+          sleep 10
+
+      - name: Run E2E tests
+        run: npx playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+
+      - name: Upload E2E test results
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: e2e-test-results
+          path: playwright-report/
+
+  # Security Scan
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run security audit
+        run: npm audit --audit-level moderate
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+  # Deploy to Staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [quality, test, build]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for staging
+        run: npm run build
+        env:
+          REACT_APP_API_BASE_URL: ${{ secrets.STAGING_API_BASE_URL }}
+          REACT_APP_STRIPE_PUBLISHABLE_KEY: ${{ secrets.STAGING_STRIPE_PUBLISHABLE_KEY }}
+          REACT_APP_VAPID_PUBLIC_KEY: ${{ secrets.STAGING_VAPID_PUBLIC_KEY }}
+          REACT_APP_ENVIRONMENT: staging
+
+      - name: Deploy to staging
+        run: |
+          # Add your staging deployment script here
+          echo "Deploying to staging environment"
+          # Example: aws s3 sync build/ s3://staging-bucket --delete
+
+  # Deploy to Production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [quality, test, build, security]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for production
+        run: npm run build
+        env:
+          REACT_APP_API_BASE_URL: ${{ secrets.PROD_API_BASE_URL }}
+          REACT_APP_STRIPE_PUBLISHABLE_KEY: ${{ secrets.PROD_STRIPE_PUBLISHABLE_KEY }}
+          REACT_APP_VAPID_PUBLIC_KEY: ${{ secrets.PROD_VAPID_PUBLIC_KEY }}
+          REACT_APP_ENVIRONMENT: production
+
+      - name: Deploy to production
+        run: |
+          # Add your production deployment script here
+          echo "Deploying to production environment"
+          # Example: aws s3 sync build/ s3://production-bucket --delete
+
+      - name: Notify deployment
+        if: success()
+        run: |
+          echo "✅ Expert Marketplace deployed successfully to production"
+          # Add notification to Slack, Discord, etc.
+
+  # Lighthouse Performance Audit
+  lighthouse:
+    name: Lighthouse Audit
+    runs-on: ubuntu-latest
+    needs: [deploy-staging]
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Lighthouse audit
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          urls: |
+            https://staging.yourdomain.com/experts
+            https://staging.yourdomain.com/experts/discover
+          budgetPath: .lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true

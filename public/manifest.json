@@ -1,6 +1,15 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "name": "FDX Agent Portal",
+  "short_name": "FDX Agent",
+  "description": "Mobile-first agent portal for managing leads, commissions, and WhatsApp communication",
+  "start_url": "/agents",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity"],
+  "lang": "en-US",
+  "scope": "/agents/",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,16 +19,68 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "maskable any"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "maskable any"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your agent dashboard",
+      "url": "/agents/dashboard",
+      "icons": [
+        {
+          "src": "logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "short_name": "Leads",
+      "description": "Manage your leads",
+      "url": "/agents/leads",
+      "icons": [
+        {
+          "src": "logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "WhatsApp",
+      "short_name": "WhatsApp",
+      "description": "WhatsApp conversations",
+      "url": "/agents/whatsapp",
+      "icons": [
+        {
+          "src": "logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Commissions",
+      "short_name": "Commissions",
+      "description": "Track your commissions",
+      "url": "/agents/commissions",
+      "icons": [
+        {
+          "src": "logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

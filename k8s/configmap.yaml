@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fdx-config
+  namespace: fdx-agents
+data:
+  NODE_ENV: "production"
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "fdx_agents"
+  REDIS_URL: "redis://redis-service:6379"
+  BACKUP_ENABLED: "true"
+  BACKUP_ENCRYPTION: "true"
+  REACT_APP_API_URL: "https://api.fdx-agents.com"
+  REACT_APP_ENVIRONMENT: "production"
