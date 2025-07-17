@@ -1,3 +1,4 @@
+// WebSocket service for real-time communication and live updates
 import config from '../config/environment';
 
 export class WebSocketService {
@@ -5,7 +6,7 @@ export class WebSocketService {
   private ws: WebSocket | null = null;
   private reconnectInterval = 5000;
   private shouldReconnect = true;
-  private listeners: Map<string, Set<Function>> = new Map();
+  private listeners: Map<string, Set<(data?: unknown) => void>> = new Map();
 
   private constructor() {}
 
@@ -56,24 +57,24 @@ export class WebSocketService {
     this.ws = null;
   }
 
-  send(type: string, data: any): void {
+  send(type: string, data: Record<string, unknown>): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify({ type, ...data }));
     }
   }
 
-  on(event: string, callback: Function): void {
+  on(event: string, callback: (data?: unknown) => void): void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
     }
     this.listeners.get(event)!.add(callback);
   }
 
-  off(event: string, callback: Function): void {
+  off(event: string, callback: (data?: unknown) => void): void {
     this.listeners.get(event)?.delete(callback);
   }
 
-  private emit(event: string, data?: any): void {
+  private emit(event: string, data?: unknown): void {
     this.listeners.get(event)?.forEach(callback => callback(data));
   }
 }

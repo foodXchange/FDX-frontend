@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName": {
+      "value": "rg-foodxchange-dev"
+    },
+    "location": {
+      "value": "eastus2"
+    },
+    "environmentName": {
+      "value": "development"
+    },
+    "baseName": {
+      "value": "fdx"
+    },
+    "customDomain": {
+      "value": ""
+    },
+    "costCenter": {
+      "value": "IT-Development"
+    },
+    "ownerEmail": {
+      "value": "devteam@foodxchange.com"
+    },
+    "githubRepoUrl": {
+      "value": "https://github.com/yourusername/FDX-frontend"
+    }
+  }
+}

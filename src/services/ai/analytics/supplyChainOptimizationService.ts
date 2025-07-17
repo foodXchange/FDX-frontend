@@ -1,3 +1,4 @@
+// Service for optimizing supply chain operations including delivery routes, inventory, and temperature risk management
 import { aiService } from '../aiService';
 import { logger } from '../../logger';
 

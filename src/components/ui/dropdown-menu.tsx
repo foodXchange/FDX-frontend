@@ -1,55 +1,47 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Box, Button, Menu, MenuItem, Typography, Divider, MenuProps } from '@mui/material';
 
 interface DropdownMenuProps {
   children: React.ReactNode;
 }
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const isOpen = Boolean(anchorEl);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <div className="relative inline-block" ref={dropdownRef}>
+    <>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           if (child.type === DropdownMenuTrigger) {
-            return React.cloneElement(child as React.ReactElement<any>, {
-              onClick: () => setIsOpen(!isOpen),
+            return React.cloneElement(child as React.ReactElement<{ onClick?: (event: React.MouseEvent<HTMLElement>) => void }>, {
+              onClick: (event: React.MouseEvent<HTMLElement>) => {
+                setAnchorEl(event.currentTarget);
+              },
             });
           }
           if (child.type === DropdownMenuContent) {
-            return React.cloneElement(child as React.ReactElement<any>, {
-              isOpen,
-              onClose: () => setIsOpen(false),
+            return React.cloneElement(child as React.ReactElement<{ anchorEl?: null | HTMLElement; open?: boolean; onClose?: () => void }>, {
+              anchorEl,
+              open: isOpen,
+              onClose: handleClose,
             });
           }
         }
         return child;
       })}
-    </div>
+    </>
   );
 };
 
 interface DropdownMenuTriggerProps {
   children: React.ReactNode;
   asChild?: boolean;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
 export const DropdownMenuTrigger: React.FC<DropdownMenuTriggerProps> = ({
@@ -60,60 +52,88 @@ export const DropdownMenuTrigger: React.FC<DropdownMenuTriggerProps> = ({
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children, {
       ...children.props,
-      onClick: (e: React.MouseEvent) => {
-        onClick?.();
-        children.props.onClick?.(e);
+      onClick: (e: React.MouseEvent<HTMLElement>) => {
+        onClick?.(e);
+        (children.props as any).onClick?.(e);
       },
-    } as any);
+    });
   }
 
   return (
-    <button onClick={onClick} className="inline-flex items-center justify-center">
+    <Button 
+      onClick={onClick}
+      sx={{ 
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minWidth: 'auto',
+        p: 1
+      }}
+    >
       {children}
-    </button>
+    </Button>
   );
 };
 
-interface DropdownMenuContentProps {
+interface DropdownMenuContentProps extends Partial<MenuProps> {
   children: React.ReactNode;
   align?: 'start' | 'center' | 'end';
   className?: string;
-  isOpen?: boolean;
+  anchorEl?: null | HTMLElement;
+  open?: boolean;
   onClose?: () => void;
 }
 
 export const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({
   children,
   align = 'start',
-  className,
-  isOpen = false,
+  anchorEl,
+  open = false,
   onClose,
+  ...menuProps
 }) => {
-  if (!isOpen) return null;
+  const transformOrigin = {
+    start: { vertical: 'top', horizontal: 'left' },
+    center: { vertical: 'top', horizontal: 'center' },
+    end: { vertical: 'top', horizontal: 'right' },
+  };
 
-  const alignmentClasses = {
-    start: 'left-0',
-    center: 'left-1/2 transform -translate-x-1/2',
-    end: 'right-0',
+  const anchorOrigin = {
+    start: { vertical: 'bottom', horizontal: 'left' },
+    center: { vertical: 'bottom', horizontal: 'center' },
+    end: { vertical: 'bottom', horizontal: 'right' },
   };
 
   return (
-    <div
-      className={`absolute top-full mt-1 z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md ${alignmentClasses[align]} ${className || ''}`}
+    <Menu
+      anchorEl={anchorEl}
+      open={open}
+      onClose={onClose}
+      transformOrigin={transformOrigin[align] as { vertical: 'top'; horizontal: 'left' | 'center' | 'right' }}
+      anchorOrigin={anchorOrigin[align] as { vertical: 'bottom'; horizontal: 'left' | 'center' | 'right' }}
+      sx={{
+        '& .MuiPaper-root': {
+          minWidth: 128,
+          mt: 0.5,
+          borderRadius: 2,
+          boxShadow: 2,
+        }
+      }}
+      {...menuProps}
     >
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child) && child.type === DropdownMenuItem) {
-          return React.cloneElement(child as React.ReactElement<any>, {
-            onSelect: () => {
-              child.props.onSelect?.();
-              child.props.onClick?.();
+          return React.cloneElement(child as React.ReactElement<{ onClick?: () => void; onSelect?: () => void }>, {
+            onClick: () => {
+              (child.props as any).onClick?.();
+              (child.props as any).onSelect?.();
               onClose?.();
             },
           });
         }
         return child;
       })}
-    </div>
+    </Menu>
   );
 };
 
@@ -127,26 +147,29 @@ interface DropdownMenuItemProps {
 
 export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
   children,
-  className,
   disabled = false,
   onClick,
-  onSelect,
 }) => {
-  const handleClick = () => {
-    if (!disabled) {
-      onClick?.();
-      onSelect?.();
-    }
-  };
-
   return (
-    <button
-      className={`relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ${disabled ? 'pointer-events-none opacity-50' : ''} ${className || ''}`}
+    <MenuItem
       disabled={disabled}
-      onClick={handleClick}
+      onClick={onClick}
+      sx={{
+        fontSize: '0.875rem',
+        px: 2,
+        py: 1,
+        borderRadius: 1,
+        mx: 0.5,
+        '&:hover': {
+          bgcolor: 'action.hover',
+        },
+        '&.Mui-disabled': {
+          opacity: 0.5,
+        }
+      }}
     >
       {children}
-    </button>
+    </MenuItem>
   );
 };
 
@@ -157,15 +180,16 @@ interface DropdownMenuLabelProps {
 
 export const DropdownMenuLabel: React.FC<DropdownMenuLabelProps> = ({
   children,
-  className,
 }) => {
   return (
-    <div className={`px-2 py-1.5 text-sm font-semibold ${className || ''}`}>
-      {children}
-    </div>
+    <Box sx={{ px: 2, py: 1.5 }}>
+      <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.875rem' }}>
+        {children}
+      </Typography>
+    </Box>
   );
 };
 
-export const DropdownMenuSeparator: React.FC<{ className?: string }> = ({ className }) => {
-  return <div className={`-mx-1 my-1 h-px bg-muted ${className || ''}`} />;
+export const DropdownMenuSeparator: React.FC<{ className?: string }> = () => {
+  return <Divider sx={{ my: 0.5, mx: -1 }} />;
 };

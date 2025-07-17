@@ -1,45 +1,56 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  IconButton,
+  Chip,
+  Grid,
+  Tabs,
+  Tab,
+  LinearProgress,
+  Stack,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
-  TableHeader,
   TableRow,
-} from '../../components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
+  Paper,
+  Menu,
+  MenuItem,
+  Divider,
+  TextField,
+  InputAdornment,
+  Select,
+  FormControl,
+  InputLabel,
+  CircularProgress,
+  Avatar
+} from '@mui/material';
 import {
   Upload,
-  File,
-  FileText,
-  FileImage,
-  FileCheck,
-  FolderOpen,
   Download,
-  Eye,
-  MoreHorizontal,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  X,
-  Plus,
+  Add as Plus,
+  FolderOpen,
+  Description as FileText,
+  Close as X,
   Search,
   Shield,
+  Checklist as FileCheck,
+  CheckCircle,
   Archive,
-  Trash2,
-} from 'lucide-react';
+  Warning as AlertTriangle,
+  Schedule as Clock,
+  Image as FileImage,
+  InsertDriveFile as File,
+  RemoveRedEye as Eye,
+  Delete as Trash2,
+  MoreHoriz as MoreHorizontal
+} from '@mui/icons-material';
 import { format, isAfter, isBefore, addDays } from 'date-fns';
 
 interface DocumentFile {
@@ -72,6 +83,27 @@ interface UploadProgress {
   error?: string;
 }
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
 interface DocumentStats {
   totalDocuments: number;
   expiringThisMonth: number;
@@ -83,32 +115,32 @@ interface DocumentStats {
 const documentTypeConfig = {
   certificate: {
     label: 'Certificate',
-    color: 'bg-blue-100 text-blue-700',
+    color: 'info' as const,
     icon: Shield,
   },
   invoice: {
     label: 'Invoice',
-    color: 'bg-green-100 text-green-700',
+    color: 'success' as const,
     icon: FileText,
   },
   compliance: {
     label: 'Compliance',
-    color: 'bg-purple-100 text-purple-700',
+    color: 'secondary' as const,
     icon: FileCheck,
   },
   quality: {
     label: 'Quality Doc',
-    color: 'bg-orange-100 text-orange-700',
+    color: 'warning' as const,
     icon: CheckCircle,
   },
   shipping: {
     label: 'Shipping',
-    color: 'bg-cyan-100 text-cyan-700',
+    color: 'info' as const,
     icon: Archive,
   },
   other: {
     label: 'Other',
-    color: 'bg-gray-100 text-gray-700',
+    color: 'default' as const,
     icon: File,
   },
 };
@@ -116,22 +148,22 @@ const documentTypeConfig = {
 const statusConfig = {
   active: {
     label: 'Active',
-    color: 'bg-green-100 text-green-700',
+    color: 'success' as const,
     icon: CheckCircle,
   },
   expired: {
     label: 'Expired',
-    color: 'bg-red-100 text-red-700',
+    color: 'error' as const,
     icon: AlertTriangle,
   },
   expiring_soon: {
     label: 'Expiring Soon',
-    color: 'bg-yellow-100 text-yellow-700',
+    color: 'warning' as const,
     icon: Clock,
   },
   draft: {
     label: 'Draft',
-    color: 'bg-gray-100 text-gray-700',
+    color: 'default' as const,
     icon: File,
   },
 };
@@ -394,370 +426,447 @@ export const DocumentUploadCenter: React.FC = () => {
     return matchesSearch && matchesType;
   });
 
-  const getStatusBadge = (status: DocumentFile['status']) => {
+  const getStatusChip = (status: DocumentFile['status']) => {
     const config = statusConfig[status];
     const Icon = config.icon;
     return (
-      <Badge className={config.color}>
-        <Icon className="h-3 w-3 mr-1" />
-        {config.label}
-      </Badge>
+      <Chip
+        icon={<Icon />}
+        label={config.label}
+        color={config.color}
+        size="small"
+      />
     );
   };
 
-  const getTypeBadge = (type: DocumentFile['type']) => {
+  const getTypeChip = (type: DocumentFile['type']) => {
     const config = documentTypeConfig[type];
     const Icon = config.icon;
     return (
-      <Badge className={config.color}>
-        <Icon className="h-3 w-3 mr-1" />
-        {config.label}
-      </Badge>
+      <Chip
+        icon={<Icon />}
+        label={config.label}
+        color={config.color}
+        size="small"
+        variant="outlined"
+      />
     );
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading documents...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Stack spacing={2} alignItems="center">
+          <CircularProgress />
+          <Typography>Loading documents...</Typography>
+        </Stack>
+      </Box>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Document Upload Center</h1>
-          <p className="text-muted-foreground">
-            Manage compliance documents and certifications
-          </p>
-        </div>
-        <Button onClick={handleFileSelect}>
-          <Plus className="h-4 w-4 mr-2" />
-          Upload Document
-        </Button>
-      </div>
+    <Box sx={{ p: 3 }}>
+      <Stack spacing={4}>
+        {/* Header */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Document Upload Center
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Manage compliance documents and certifications
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            onClick={handleFileSelect}
+            startIcon={<Plus />}
+          >
+            Upload Document
+          </Button>
+        </Box>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Documents</CardTitle>
-            <FolderOpen className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalDocuments}</div>
-            <p className="text-xs text-muted-foreground">All document types</p>
-          </CardContent>
-        </Card>
+        {/* Stats Cards */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardHeader
+                title="Total Documents"
+                titleTypographyProps={{ variant: 'body2' }}
+                avatar={<FolderOpen color="primary" />}
+              />
+              <CardContent>
+                <Typography variant="h4" component="div">
+                  {stats.totalDocuments}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  All document types
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.expiringThisMonth}</div>
-            <p className="text-xs text-muted-foreground">Need attention</p>
-          </CardContent>
-        </Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardHeader
+                title="Expiring Soon"
+                titleTypographyProps={{ variant: 'body2' }}
+                avatar={<AlertTriangle sx={{ color: 'warning.main' }} />}
+              />
+              <CardContent>
+                <Typography variant="h4" component="div">
+                  {stats.expiringThisMonth}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Need attention
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Recent Uploads</CardTitle>
-            <Upload className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.recentUploads}</div>
-            <p className="text-xs text-muted-foreground">Last 30 days</p>
-          </CardContent>
-        </Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardHeader
+                title="Recent Uploads"
+                titleTypographyProps={{ variant: 'body2' }}
+                avatar={<Upload sx={{ color: 'success.main' }} />}
+              />
+              <CardContent>
+                <Typography variant="h4" component="div">
+                  {stats.recentUploads}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Last 30 days
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Storage Used</CardTitle>
-            <Archive className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.storageUsed} MB</div>
-            <p className="text-xs text-muted-foreground">
-              of {stats.storageLimit} MB limit
-            </p>
-            <ProgressIndicator 
-              value={(stats.storageUsed / stats.storageLimit) * 100} 
-              className="h-2 mt-2" 
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardHeader
+                title="Storage Used"
+                titleTypographyProps={{ variant: 'body2' }}
+                avatar={<Archive sx={{ color: 'secondary.main' }} />}
+              />
+              <CardContent>
+                <Typography variant="h4" component="div">
+                  {stats.storageUsed} MB
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  of {stats.storageLimit} MB limit
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={(stats.storageUsed / stats.storageLimit) * 100}
+                  sx={{ mt: 1, height: 8, borderRadius: 1 }}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* Upload Area */}
+        <Paper
+          sx={{
+            border: 2,
+            borderStyle: 'dashed',
+            borderColor: dragOver ? 'primary.main' : 'divider',
+            bgcolor: dragOver ? 'primary.light' : 'background.paper',
+            transition: 'all 0.2s',
+            cursor: 'pointer'
+          }}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <Box sx={{ p: 8, textAlign: 'center' }}>
+            <Upload
+              sx={{
+                fontSize: 48,
+                color: dragOver ? 'primary.main' : 'text.disabled',
+                mb: 2
+              }}
             />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Upload Area */}
-      <Card
-        className={`border-2 border-dashed transition-colors ${dragOver ? "border-primary bg-primary/5" : "border-muted-foreground/25"}`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <CardContent className="flex flex-col items-center justify-center py-6">
-          <Upload className={`h-10 w-10 mb-4 ${dragOver ? "text-primary" : "text-muted-foreground"}`} />
-          <div className="text-center">
-            <p className="text-lg font-medium mb-2">
+            <Typography variant="h6" gutterBottom>
               {dragOver ? "Drop files here" : "Drag and drop files here"}
-            </p>
-            <p className="text-sm text-muted-foreground mb-4">
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               or click to browse files (PDF, Images, Documents)
-            </p>
-            <Button variant="outline" onClick={handleFileSelect}>
+            </Typography>
+            <Button variant="outlined" onClick={handleFileSelect}>
               Select Files
             </Button>
-          </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-        </CardContent>
-      </Card>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
+          </Box>
+        </Paper>
 
-      {/* Upload Progress */}
-      {uploadingFiles.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Uploading Files</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {uploadingFiles.map((upload) => (
-                <div key={upload.id} className="flex items-center gap-4">
-                  <File className="h-5 w-5 text-muted-foreground" />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">{upload.name}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeUploadingFile(upload.id)}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ProgressIndicator value={upload.progress} className="h-2 flex-1" />
-                      <span className="text-xs text-muted-foreground">
-                        {Math.round(upload.progress)}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+        {/* Upload Progress */}
+        {uploadingFiles.length > 0 && (
+          <Card>
+            <CardHeader title="Uploading Files" />
+            <CardContent>
+              <Stack spacing={2}>
+                {uploadingFiles.map((upload) => (
+                  <Box key={upload.id} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <File sx={{ color: 'text.secondary' }} />
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                        <Typography variant="body2" fontWeight="medium">
+                          {upload.name}
+                        </Typography>
+                        <IconButton
+                          size="small"
+                          onClick={() => removeUploadingFile(upload.id)}
+                        >
+                          <X fontSize="small" />
+                        </IconButton>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={upload.progress}
+                          sx={{ flex: 1, height: 6, borderRadius: 1 }}
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          {Math.round(upload.progress)}%
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Search and Filters */}
-      <div className="flex gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
+        {/* Search and Filters */}
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <TextField
             placeholder="Search documents..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            sx={{ flex: 1 }}
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
           />
-        </div>
-        <select
-          value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
-          className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option value="all">All Types</option>
-          {Object.entries(documentTypeConfig).map(([key, config]) => (
-            <option key={key} value={key}>{config.label}</option>
-          ))}
-        </select>
-      </div>
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel>Document Type</InputLabel>
+            <Select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              label="Document Type"
+            >
+              <MenuItem value="all">All Types</MenuItem>
+              {Object.entries(documentTypeConfig).map(([key, config]) => (
+                <MenuItem key={key} value={key}>{config.label}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
 
-      {/* Documents Table */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">All Documents</TabsTrigger>
-          <TabsTrigger value="expiring">Expiring Soon</TabsTrigger>
-          <TabsTrigger value="certificates">Certificates</TabsTrigger>
-          <TabsTrigger value="invoices">Invoices</TabsTrigger>
-        </TabsList>
+        {/* Documents Table */}
+        <Paper sx={{ width: '100%' }}>
+          <Tabs defaultValue={0}>
+            <Tab label="All Documents" />
+            <Tab label="Expiring Soon" />
+            <Tab label="Certificates" />
+            <Tab label="Invoices" />
+          </Tabs>
 
-        <TabsContent value="all">
-          <Card>
-            <CardHeader>
-              <CardTitle>Document Library</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {filteredDocuments.length} documents found
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Document</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Size</TableHead>
-                    <TableHead>Upload Date</TableHead>
-                    <TableHead>Expiry Date</TableHead>
-                    <TableHead>Uploaded By</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredDocuments.map((doc) => {
-                    const FileIcon = getFileIcon(doc.mimeType);
-                    
-                    return (
-                      <TableRow key={doc.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <FileIcon className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                              <p className="font-medium">{doc.name}</p>
-                              {doc.description && (
-                                <p className="text-xs text-muted-foreground">
-                                  {doc.description}
-                                </p>
-                              )}
-                              {doc.tags.length > 0 && (
-                                <div className="flex gap-1 mt-1">
-                                  {doc.tags.slice(0, 2).map((tag, index) => (
-                                    <span
-                                      key={index}
-                                      className="text-xs bg-muted px-1 py-0.5 rounded"
-                                    >
-                                      {tag}
-                                    </span>
-                                  ))}
-                                  {doc.tags.length > 2 && (
-                                    <span className="text-xs text-muted-foreground">
-                                      +{doc.tags.length - 2} more
-                                    </span>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>{getTypeBadge(doc.type)}</TableCell>
-                        <TableCell>{getStatusBadge(doc.status)}</TableCell>
-                        <TableCell>{formatFileSize(doc.size)}</TableCell>
-                        <TableCell>
-                          {format(doc.uploadDate, 'MMM dd, yyyy')}
-                        </TableCell>
-                        <TableCell>
-                          {doc.expiryDate ? (
-                            <div>
-                              <p className="text-sm">
-                                {format(doc.expiryDate, 'MMM dd, yyyy')}
-                              </p>
-                              {doc.status === 'expiring_soon' && (
-                                <p className="text-xs text-yellow-600">
-                                  Expires soon
-                                </p>
-                              )}
-                              {doc.status === 'expired' && (
-                                <p className="text-xs text-red-600">
-                                  Expired
-                                </p>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell>{doc.uploadedBy}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem 
-                                onClick={() => handleDocumentAction('view', doc.id)}
-                              >
-                                <Eye className="h-4 w-4 mr-2" />
-                                View
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => handleDocumentAction('download', doc.id)}
-                              >
-                                <Download className="h-4 w-4 mr-2" />
-                                Download
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem 
-                                onClick={() => handleDocumentAction('delete', doc.id)}
-                                className="text-red-600"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+          <TabPanel value={0} index={0}>
+            <Card>
+              <CardHeader
+                title="Document Library"
+                subheader={`${filteredDocuments.length} documents found`}
+              />
+              <CardContent sx={{ p: 0 }}>
+                <TableContainer>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Document</TableCell>
+                        <TableCell>Type</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Size</TableCell>
+                        <TableCell>Upload Date</TableCell>
+                        <TableCell>Expiry Date</TableCell>
+                        <TableCell>Uploaded By</TableCell>
+                        <TableCell>Actions</TableCell>
                       </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                    </TableHead>
+                    <TableBody>
+                      {filteredDocuments.map((doc) => {
+                        const FileIcon = getFileIcon(doc.mimeType);
+                        const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+                        
+                        return (
+                          <TableRow key={doc.id}>
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <FileIcon sx={{ color: 'text.secondary' }} />
+                                <Box>
+                                  <Typography variant="body2" fontWeight="medium">
+                                    {doc.name}
+                                  </Typography>
+                                  {doc.description && (
+                                    <Typography variant="caption" color="text.secondary">
+                                      {doc.description}
+                                    </Typography>
+                                  )}
+                                  {doc.tags.length > 0 && (
+                                    <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5 }}>
+                                      {doc.tags.slice(0, 2).map((tag, index) => (
+                                        <Chip
+                                          key={index}
+                                          label={tag}
+                                          size="small"
+                                          variant="outlined"
+                                        />
+                                      ))}
+                                      {doc.tags.length > 2 && (
+                                        <Typography variant="caption" color="text.secondary">
+                                          +{doc.tags.length - 2} more
+                                        </Typography>
+                                      )}
+                                    </Box>
+                                  )}
+                                </Box>
+                              </Box>
+                            </TableCell>
+                            <TableCell>{getTypeChip(doc.type)}</TableCell>
+                            <TableCell>{getStatusChip(doc.status)}</TableCell>
+                            <TableCell>{formatFileSize(doc.size)}</TableCell>
+                            <TableCell>
+                              {format(doc.uploadDate, 'MMM dd, yyyy')}
+                            </TableCell>
+                            <TableCell>
+                              {doc.expiryDate ? (
+                                <Box>
+                                  <Typography variant="body2">
+                                    {format(doc.expiryDate, 'MMM dd, yyyy')}
+                                  </Typography>
+                                  {doc.status === 'expiring_soon' && (
+                                    <Typography variant="caption" color="warning.main">
+                                      Expires soon
+                                    </Typography>
+                                  )}
+                                  {doc.status === 'expired' && (
+                                    <Typography variant="caption" color="error">
+                                      Expired
+                                    </Typography>
+                                  )}
+                                </Box>
+                              ) : (
+                                <Typography color="text.secondary">—</Typography>
+                              )}
+                            </TableCell>
+                            <TableCell>{doc.uploadedBy}</TableCell>
+                            <TableCell>
+                              <IconButton
+                                size="small"
+                                onClick={(e) => setAnchorEl(e.currentTarget)}
+                              >
+                                <MoreHorizontal />
+                              </IconButton>
+                              <Menu
+                                anchorEl={anchorEl}
+                                open={Boolean(anchorEl)}
+                                onClose={() => setAnchorEl(null)}
+                              >
+                                <MenuItem onClick={() => {
+                                  handleDocumentAction('view', doc.id);
+                                  setAnchorEl(null);
+                                }}>
+                                  <Eye sx={{ mr: 1, fontSize: 18 }} />
+                                  View
+                                </MenuItem>
+                                <MenuItem onClick={() => {
+                                  handleDocumentAction('download', doc.id);
+                                  setAnchorEl(null);
+                                }}>
+                                  <Download sx={{ mr: 1, fontSize: 18 }} />
+                                  Download
+                                </MenuItem>
+                                <Divider />
+                                <MenuItem 
+                                  onClick={() => {
+                                    handleDocumentAction('delete', doc.id);
+                                    setAnchorEl(null);
+                                  }}
+                                  sx={{ color: 'error.main' }}
+                                >
+                                  <Trash2 sx={{ mr: 1, fontSize: 18 }} />
+                                  Delete
+                                </MenuItem>
+                              </Menu>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </CardContent>
+            </Card>
+          </TabPanel>
 
-        <TabsContent value="expiring">
-          <Card>
-            <CardHeader>
-              <CardTitle>Expiring Documents</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <AlertTriangle className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Expiring documents view would show filtered content</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabPanel value={1} index={1}>
+            <Card>
+              <CardHeader title="Expiring Documents" />
+              <CardContent>
+                <Box sx={{ textAlign: 'center', py: 8 }}>
+                  <AlertTriangle sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                  <Typography color="text.secondary">
+                    Expiring documents view would show filtered content
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </TabPanel>
 
-        <TabsContent value="certificates">
-          <Card>
-            <CardHeader>
-              <CardTitle>Certificates</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Shield className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Certificates view would show filtered content</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabPanel value={2} index={2}>
+            <Card>
+              <CardHeader title="Certificates" />
+              <CardContent>
+                <Box sx={{ textAlign: 'center', py: 8 }}>
+                  <Shield sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                  <Typography color="text.secondary">
+                    Certificates view would show filtered content
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </TabPanel>
 
-        <TabsContent value="invoices">
-          <Card>
-            <CardHeader>
-              <CardTitle>Invoices</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Invoices view would show filtered content</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+          <TabPanel value={3} index={3}>
+            <Card>
+              <CardHeader title="Invoices" />
+              <CardContent>
+                <Box sx={{ textAlign: 'center', py: 8 }}>
+                  <FileText sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                  <Typography color="text.secondary">
+                    Invoices view would show filtered content
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </TabPanel>
+        </Paper>
+      </Stack>
+    </Box>
   );
 };

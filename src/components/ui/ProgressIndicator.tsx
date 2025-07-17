@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Box, Typography, LinearProgress, CircularProgress } from '@mui/material';
 
 interface ProgressIndicatorProps {
   value: number;
@@ -21,143 +22,144 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   color = 'primary',
   showLabel = false,
   label,
-  className,
   animated = true,
 }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
-  const sizeClasses = {
+  const sizeMap = {
     linear: {
-      sm: 'h-1',
-      md: 'h-2',
-      lg: 'h-4',
+      sm: 2,
+      md: 6,
+      lg: 12,
     },
     circular: {
-      sm: 'w-12 h-12',
-      md: 'w-16 h-16',
-      lg: 'w-24 h-24',
-    },
-    steps: {
-      sm: 'h-8',
-      md: 'h-10',
-      lg: 'h-12',
+      sm: 48,
+      md: 64,
+      lg: 96,
     },
   };
 
-  const colorClasses = {
-    primary: 'from-[#1E4C8A] to-[#2E6BB8]',
-    success: 'from-green-500 to-green-600',
-    warning: 'from-yellow-500 to-yellow-600',
-    danger: 'from-red-500 to-red-600',
+  const colorMap = {
+    primary: 'primary',
+    success: 'success',
+    warning: 'warning',
+    danger: 'error',
   };
 
   if (variant === 'linear') {
     return (
-      <div className={`w-full ${className || ''}`}>
+      <Box sx={{ width: '100%' }}>
         {(showLabel || label) && (
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+            <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               {label || 'Progress'}
-            </span>
-            <span className="text-sm font-medium text-gray-700">
+            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               {Math.round(percentage)}%
-            </span>
-          </div>
+            </Typography>
+          </Box>
         )}
-        <div className={`w-full bg-gray-200 rounded-full overflow-hidden ${sizeClasses.linear[size]}`}>
-          <motion.div
-            className={`h-full bg-gradient-to-r rounded-full ${colorClasses[color]}`}
-            initial={animated ? { width: 0 } : { width: `${percentage}%` }}
-            animate={{ width: `${percentage}%` }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-          />
-        </div>
-      </div>
+        <LinearProgress
+          variant="determinate"
+          value={percentage}
+          color={colorMap[color] as any}
+          sx={{
+            height: sizeMap.linear[size],
+            borderRadius: 1,
+            '& .MuiLinearProgress-bar': {
+              borderRadius: 1,
+              background: color === 'primary' 
+                ? 'linear-gradient(to right, #1E4C8A, #2E6BB8)'
+                : undefined,
+            }
+          }}
+        />
+      </Box>
     );
   }
 
   if (variant === 'circular') {
-    const radius = size === 'sm' ? 20 : size === 'md' ? 28 : 40;
-    const strokeWidth = size === 'sm' ? 3 : size === 'md' ? 4 : 5;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (percentage / 100) * circumference;
-
     return (
-      <div className={`relative inline-flex ${sizeClasses.circular[size]} ${className || ''}`}>
-        <svg className="transform -rotate-90 w-full h-full">
-          <circle
-            cx="50%"
-            cy="50%"
-            r={radius}
-            stroke="currentColor"
-            strokeWidth={strokeWidth}
-            fill="none"
-            className="text-gray-200"
-          />
-          <motion.circle
-            cx="50%"
-            cy="50%"
-            r={radius}
-            strokeWidth={strokeWidth}
-            fill="none"
-            strokeLinecap="round"
-            className="text-[#1E4C8A]"
-            style={{
-              strokeDasharray: circumference,
-              stroke: `url(#gradient-${color})`,
-            }}
-            initial={animated ? { strokeDashoffset: circumference } : { strokeDashoffset }}
-            animate={{ strokeDashoffset }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-          />
-          <defs>
-            <linearGradient id={`gradient-${color}`} x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" className="text-[#1E4C8A]" stopColor="currentColor" />
-              <stop offset="100%" className="text-[#2E6BB8]" stopColor="currentColor" />
-            </linearGradient>
-          </defs>
-        </svg>
+      <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+        <CircularProgress
+          variant="determinate"
+          value={percentage}
+          size={sizeMap.circular[size]}
+          thickness={size === 'sm' ? 3.6 : size === 'md' ? 3.2 : 2.8}
+          color={colorMap[color] as any}
+          sx={{
+            '& .MuiCircularProgress-circle': {
+              strokeLinecap: 'round',
+            }
+          }}
+        />
         {showLabel && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className={`font-semibold ${size === 'sm' ? 'text-xs' : size === 'md' ? 'text-sm' : 'text-lg'}`}>
-              {Math.round(percentage)}%
-            </span>
-          </div>
+          <Box
+            sx={{
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+              position: 'absolute',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography 
+              variant={size === 'sm' ? 'caption' : size === 'md' ? 'body2' : 'h6'} 
+              component="div" 
+              sx={{ fontWeight: 600 }}
+            >
+              {`${Math.round(percentage)}%`}
+            </Typography>
+          </Box>
         )}
-      </div>
+      </Box>
     );
   }
 
   if (variant === 'steps') {
     const steps = 5;
-    const activeSteps = Math.ceil((percentage / 100) * steps);
+    const activeStep = Math.floor((percentage / 100) * steps);
 
     return (
-      <div className={`w-full ${className || ''}`}>
+      <Box sx={{ width: '100%' }}>
         {label && (
-          <div className="mb-2">
-            <span className="text-sm font-medium text-gray-700">{label}</span>
-          </div>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary' }}>
+              {label}
+            </Typography>
+          </Box>
         )}
-        <div className="flex space-x-2">
+        <Box sx={{ display: 'flex', gap: 1 }}>
           {Array.from({ length: steps }).map((_, index) => (
-            <motion.div
+            <Box
               key={index}
-              className={`flex-1 rounded-full ${sizeClasses.steps[size]} ${index < activeSteps ? `bg-gradient-to-r ${colorClasses[color]}` : 'bg-gray-200'}`}
+              component={animated ? motion.div : 'div'}
+              sx={{
+                flex: 1,
+                height: size === 'sm' ? 32 : size === 'md' ? 40 : 48,
+                borderRadius: 2,
+                bgcolor: index < activeStep ? colorMap[color] + '.main' : 'grey.200',
+                background: index < activeStep && color === 'primary' 
+                  ? 'linear-gradient(to right, #1E4C8A, #2E6BB8)'
+                  : undefined,
+              }}
               initial={animated ? { scale: 0.8, opacity: 0 } : {}}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: index * 0.1, duration: 0.3 }}
             />
           ))}
-        </div>
+        </Box>
         {showLabel && (
-          <div className="mt-2 text-center">
-            <span className="text-sm font-medium text-gray-700">
-              Step {activeSteps} of {steps}
-            </span>
-          </div>
+          <Box sx={{ mt: 1, textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary' }}>
+              Step {activeStep} of {steps}
+            </Typography>
+          </Box>
         )}
-      </div>
+      </Box>
     );
   }
 
@@ -169,45 +171,45 @@ export const LoadingSpinner: React.FC<{
   size?: 'sm' | 'md' | 'lg';
   color?: string;
   className?: string;
-}> = ({ size = 'md', color = 'text-[#1E4C8A]', className }) => {
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
+}> = ({ size = 'md', color = 'primary' }) => {
+  const sizeMap = {
+    sm: 16,
+    md: 32,
+    lg: 48,
   };
 
   return (
-    <svg
-      className={`animate-spin ${sizeClasses[size]} ${color} ${className || ''}`}
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      />
-    </svg>
+    <CircularProgress
+      size={sizeMap[size]}
+      color={color as any}
+      sx={{
+        color: color === 'text-[#1E4C8A]' ? '#1E4C8A' : undefined
+      }}
+    />
   );
 };
 
 // Page Loading Component
 export const PageLoader: React.FC<{ message?: string }> = ({ message = 'Loading...' }) => {
   return (
-    <div className="fixed inset-0 bg-white bg-opacity-90 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="text-center">
-        <LoadingSpinner size="lg" className="mx-auto mb-4" />
-        <p className="text-gray-600 font-medium">{message}</p>
-      </div>
-    </div>
+    <Box
+      sx={{
+        position: 'fixed',
+        inset: 0,
+        bgcolor: 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(4px)',
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <Box sx={{ textAlign: 'center' }}>
+        <LoadingSpinner size="lg" />
+        <Typography sx={{ mt: 2, color: 'text.secondary', fontWeight: 500 }}>
+          {message}
+        </Typography>
+      </Box>
+    </Box>
   );
 };

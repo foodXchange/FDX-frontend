@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useCallback } from 'react';
 import { useErrorReporting } from '../components/utils/ErrorBoundary';
 
@@ -14,6 +15,19 @@ interface ErrorContext {
   userId?: string;
   sessionId?: string;
   additionalData?: Record<string, any>;
+  // Error event specific properties
+  filename?: string;
+  lineno?: number;
+  colno?: number;
+  // Resource error specific properties
+  tagName?: string;
+  src?: string;
+  // Console override specific properties
+  args?: string[];
+  // API error specific properties
+  endpoint?: string;
+  method?: string;
+  timestamp?: string;
 }
 
 export function useGlobalErrorHandler(config: GlobalErrorConfig = {}) {
@@ -46,7 +60,7 @@ export function useGlobalErrorHandler(config: GlobalErrorConfig = {}) {
     context: ErrorContext = {}
   ) => {
     console.error('Async Error:', error);
-    return handleError(error, { ...context, type: 'async' });
+    return handleError(error, context);
   }, [handleError]);
 
   const handleAPIError = useCallback((
@@ -57,7 +71,6 @@ export function useGlobalErrorHandler(config: GlobalErrorConfig = {}) {
   ) => {
     const apiContext = {
       ...context,
-      type: 'api',
       endpoint,
       method,
       timestamp: new Date().toISOString(),
@@ -74,11 +87,10 @@ export function useGlobalErrorHandler(config: GlobalErrorConfig = {}) {
       error.stack = `${event.filename}:${event.lineno}:${event.colno}`;
       
       handleError(error, {
-        type: 'global',
         filename: event.filename,
         lineno: event.lineno,
         colno: event.colno,
-      });
+      } as ErrorContext);
     };
 
     // Capture unhandled promise rejections
@@ -88,9 +100,7 @@ export function useGlobalErrorHandler(config: GlobalErrorConfig = {}) {
           ? event.reason 
           : new Error(String(event.reason));
         
-        handleError(error, {
-          type: 'unhandled_promise_rejection',
-        });
+        handleError(error, {});
       }
     };
 
@@ -101,10 +111,9 @@ export function useGlobalErrorHandler(config: GlobalErrorConfig = {}) {
         const error = new Error(`Failed to load resource: ${target.tagName}`);
         
         handleError(error, {
-          type: 'resource',
           tagName: target.tagName,
           src: (target as any).src || (target as any).href,
-        });
+        } as ErrorContext);
       }
     };
 
@@ -137,9 +146,8 @@ export function useGlobalErrorHandler(config: GlobalErrorConfig = {}) {
       
       const error = new Error(message);
       handleError(error, {
-        type: 'console_error',
         args: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)),
-      });
+      } as ErrorContext);
     };
 
     console.warn = (...args: any[]) => {

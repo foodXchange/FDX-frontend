@@ -10,9 +10,6 @@ import {
   Chip,
   TextField,
   InputAdornment,
-  List,
-  ListItem,
-  ListItemText,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -21,7 +18,6 @@ import {
   CardContent,
   IconButton,
   Tooltip,
-  Divider,
   Alert,
   Badge,
 } from '@mui/material';
@@ -338,7 +334,7 @@ const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
               <AccordionDetails>
                 <Grid container spacing={1}>
                   {categoryShortcuts.map((shortcut, index) => (
-                    <Grid item xs={12} md={6} key={index}>
+                    <Grid size={{ xs: 12, md: 6 }} key={index}>
                       <Card variant="outlined" sx={{ height: '100%' }}>
                         <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                           <Box display="flex" alignItems="flex-start" gap={2}>
@@ -375,7 +371,7 @@ const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
               <Typography variant="h6">Most Used Shortcuts</Typography>
             </Box>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="body2" gutterBottom>
                   <strong>Search:</strong> Ctrl+K / ⌘K
                 </Typography>
@@ -386,7 +382,7 @@ const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
                   <strong>Help:</strong> ?
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="body2" gutterBottom>
                   <strong>Dashboard:</strong> G then D
                 </Typography>

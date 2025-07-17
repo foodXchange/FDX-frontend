@@ -20,8 +20,8 @@ export interface ApiRequest {
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   url: string;
   headers?: Record<string, string>;
-  params?: Record<string, any>;
-  data?: any;
+  params?: Record<string, unknown>;
+  data?: unknown;
   timeout?: number;
   retries?: number;
 }
@@ -331,7 +331,7 @@ export interface CreateAgentRequest {
   type: Agent['type'];
   description: string;
   capabilities: string[];
-  configuration: Record<string, any>;
+  configuration: Record<string, unknown>;
 }
 
 export interface UpdateAgentRequest extends Partial<CreateAgentRequest> {
@@ -356,14 +356,14 @@ export interface ExecuteAgentTaskRequest {
   title: string;
   description: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
-  input: Record<string, any>;
-  metadata?: Record<string, any>;
+  input: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ExecuteAgentTaskResponse {
   taskId: string;
   status: 'pending' | 'in_progress' | 'completed' | 'failed';
-  output?: Record<string, any>;
+  output?: Record<string, unknown>;
   error?: string;
   duration?: number;
 }
@@ -431,7 +431,7 @@ export interface UploadFileRequest {
   file: File;
   category?: string;
   tags?: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UploadFileResponse {
@@ -477,8 +477,8 @@ export interface GetDashboardMetricsResponse {
   charts: Array<{
     type: 'line' | 'bar' | 'pie' | 'area';
     title: string;
-    data: any;
-    config?: Record<string, any>;
+    data: unknown;
+    config?: Record<string, unknown>;
   }>;
   summary: {
     totalOrders: number;
@@ -498,7 +498,7 @@ export interface GetNotificationsRequest {
   dateTo?: string;
 }
 
-export interface GetNotificationsResponse extends PaginatedResponse<any> {}
+export interface GetNotificationsResponse extends PaginatedResponse<{ id: string; type: string; title: string; message: string; createdAt: string; read: boolean; }> {}
 
 export interface MarkNotificationReadRequest {
   notificationIds: string[];
@@ -509,7 +509,7 @@ export interface CreateNotificationRequest {
   title: string;
   message: string;
   recipients: string[];
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   scheduledFor?: string;
 }
 
@@ -611,8 +611,8 @@ export type ApiRequestConfig = {
   method: ApiMethod;
   url: string;
   headers?: Record<string, string>;
-  params?: Record<string, any>;
-  data?: any;
+  params?: Record<string, unknown>;
+  data?: unknown;
   timeout?: number;
   retries?: number;
   auth?: boolean;
@@ -623,30 +623,32 @@ export type ApiRequestConfig = {
 export type ApiResponseType<T> = ApiResponse<T> | ApiError;
 
 // Type Guards
-export const isApiError = (response: any): response is ApiError => {
-  return response && !response.success && typeof response.message === 'string';
+export const isApiError = (response: unknown): response is ApiError => {
+  return typeof response === 'object' && response !== null && 
+         'success' in response && !(response as any).success && 
+         'message' in response && typeof (response as any).message === 'string';
 };
 
-export const isValidationError = (error: any): error is ValidationError => {
+export const isValidationError = (error: unknown): error is ValidationError => {
   return isApiError(error) && error.code === 'VALIDATION_ERROR';
 };
 
-export const isAuthenticationError = (error: any): error is AuthenticationError => {
+export const isAuthenticationError = (error: unknown): error is AuthenticationError => {
   return isApiError(error) && error.code === 'AUTHENTICATION_ERROR';
 };
 
-export const isAuthorizationError = (error: any): error is AuthorizationError => {
+export const isAuthorizationError = (error: unknown): error is AuthorizationError => {
   return isApiError(error) && error.code === 'AUTHORIZATION_ERROR';
 };
 
-export const isNotFoundError = (error: any): error is NotFoundError => {
+export const isNotFoundError = (error: unknown): error is NotFoundError => {
   return isApiError(error) && error.code === 'NOT_FOUND';
 };
 
-export const isConflictError = (error: any): error is ConflictError => {
+export const isConflictError = (error: unknown): error is ConflictError => {
   return isApiError(error) && error.code === 'CONFLICT';
 };
 
-export const isRateLimitError = (error: any): error is RateLimitError => {
+export const isRateLimitError = (error: unknown): error is RateLimitError => {
   return isApiError(error) && error.code === 'RATE_LIMIT_EXCEEDED';
 };

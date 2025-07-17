@@ -1,11 +1,16 @@
 import React from 'react';
+import { Box, Typography } from '@mui/material';
 
 export const ComplianceHistory: React.FC = () => {
   return (
-    <div className="p-4">
-      <h3 className="text-lg font-semibold mb-4">Compliance History</h3>
-      <p className="text-gray-600">Compliance history will be displayed here.</p>
-    </div>
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6" sx={{ fontWeight: 'semibold', mb: 2 }}>
+        Compliance History
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'grey.600' }}>
+        Compliance history will be displayed here.
+      </Typography>
+    </Box>
   );
 };
 

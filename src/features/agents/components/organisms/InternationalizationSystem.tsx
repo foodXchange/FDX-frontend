@@ -7,7 +7,6 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
   Switch,
   FormControlLabel,
   Button,
@@ -22,7 +21,6 @@ import {
   TextField,
   IconButton,
   Tooltip,
-  Badge,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -30,15 +28,12 @@ import {
 } from '@mui/material';
 import {
   Language,
-  Translate,
   CheckCircle,
   Warning,
   Edit,
-  Add,
   Download,
   Upload,
   Sync,
-  Settings,
 } from '@mui/icons-material';
 
 // Internationalization types
@@ -213,8 +208,8 @@ const I18nContext = createContext<I18nContextType | null>(null);
 // I18n Provider
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentLanguage, setCurrentLanguage] = useState('en');
-  const [availableLanguages, setAvailableLanguages] = useState(defaultLanguages);
-  const [translations, setTranslations] = useState(sampleTranslations);
+  const [availableLanguages] = useState(defaultLanguages);
+  const [translations] = useState(sampleTranslations);
 
   const setLanguage = useCallback((languageCode: string) => {
     setCurrentLanguage(languageCode);
@@ -309,8 +304,8 @@ interface InternationalizationSystemProps {
   onClose?: () => void;
 }
 
-const InternationalizationSystem: React.FC<InternationalizationSystemProps> = ({ onClose }) => {
-  const { availableLanguages, currentLanguage, translations, t } = useI18n();
+const InternationalizationSystem: React.FC<InternationalizationSystemProps> = () => {
+  const { availableLanguages, currentLanguage, translations } = useI18n();
   const [selectedLanguage, setSelectedLanguage] = useState(currentLanguage);
   const [translationDialogOpen, setTranslationDialogOpen] = useState(false);
   const [editingTranslation, setEditingTranslation] = useState<Translation | null>(null);

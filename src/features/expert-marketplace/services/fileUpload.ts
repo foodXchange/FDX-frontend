@@ -1,3 +1,4 @@
+import React from 'react';
 interface UploadConfig {
   maxFileSize: number; // in bytes
   allowedTypes: string[];

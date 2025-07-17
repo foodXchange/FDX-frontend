@@ -1,8 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@components/ui/Button';
-import { HomeIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Box, Typography, Container } from '@mui/material';
+import { 
+  Box, 
+  Typography, 
+  Container, 
+  Button,
+  Stack
+} from '@mui/material';
+import { 
+  Home as HomeIcon, 
+  ArrowBack as ArrowLeftIcon,
+  SentimentVeryDissatisfied
+} from '@mui/icons-material';
 
 const NotFound: React.FC = () => {
   
@@ -36,24 +45,12 @@ const NotFound: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <Box
-            component="svg"
+          <SentimentVeryDissatisfied
             sx={{
-              width: '100%',
-              height: '100%',
+              fontSize: 160,
               color: 'text.disabled',
             }}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"
-            />
-          </Box>
+          />
         </Box>
 
         {/* Error Message */}
@@ -89,33 +86,28 @@ const NotFound: React.FC = () => {
         </Typography>
 
         {/* Action Buttons */}
-        <Box
-          sx={{
-            mt: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1.5,
-          }}
-        >
-          <Link to="/dashboard" style={{ textDecoration: 'none' }}>
-            <Button
-              variant="default"
-              sx={{ width: '100%' }}
-              leftIcon={<HomeIcon className="h-6 w-6" />}
-            >
-              Go to Dashboard
-            </Button>
-          </Link>
+        <Stack spacing={2} sx={{ mt: 4 }}>
+          <Button
+            component={Link}
+            to="/dashboard"
+            variant="contained"
+            size="large"
+            startIcon={<HomeIcon />}
+            sx={{ width: '100%' }}
+          >
+            Go to Dashboard
+          </Button>
           
           <Button
-            variant="outline"
-            sx={{ width: '100%' }}
+            variant="outlined"
+            size="large"
             onClick={() => window.history.back()}
-            leftIcon={<ArrowLeftIcon className="h-6 w-6" />}
+            startIcon={<ArrowLeftIcon />}
+            sx={{ width: '100%' }}
           >
             Go Back
           </Button>
-        </Box>
+        </Stack>
 
         {/* Help Text */}
         <Typography

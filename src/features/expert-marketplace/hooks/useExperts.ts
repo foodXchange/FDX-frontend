@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useCallback } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { Expert, ExpertSearchFilters, ExpertSearchResult } from '../types';
 import { expertApi } from '../services/api';
@@ -10,7 +11,7 @@ interface UseExpertsOptions {
 }
 
 export const useExperts = (options: UseExpertsOptions = {}) => {
-  const { initialFilters = {}, pageSize = 20, autoSearch = true } = options;
+  const { initialFilters = {}, autoSearch = true } = options;
   
   const [experts, setExperts] = useState<Expert[]>([]);
   const [filters, setFilters] = useState<ExpertSearchFilters>(initialFilters);
@@ -52,7 +53,6 @@ export const useExperts = (options: UseExpertsOptions = {}) => {
       const result = await expertApi.searchExperts({
         ...filters,
         query: debouncedQuery,
-        page: nextPage,
       });
       
       setSearchResult(result);

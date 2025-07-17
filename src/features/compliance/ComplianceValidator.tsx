@@ -1,11 +1,16 @@
 import React from 'react';
+import { Box, Typography, Paper } from '@mui/material';
 
 export const ComplianceValidator: React.FC = () => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h3 className="text-lg font-semibold mb-4">Compliance Validator</h3>
-      <p className="text-gray-600">Upload documents for compliance validation.</p>
-    </div>
+    <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 'semibold' }}>
+        Compliance Validator
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'grey.600' }}>
+        Upload documents for compliance validation.
+      </Typography>
+    </Paper>
   );
 };
 

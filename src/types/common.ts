@@ -2,6 +2,8 @@
 // COMMON TYPES - Shared type definitions across the application
 // =============================================================================
 
+import React from 'react';
+
 // Base Types
 export type ID = string | number;
 

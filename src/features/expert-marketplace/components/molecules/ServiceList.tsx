@@ -1,3 +1,4 @@
+import React from 'react';
 import { FC } from 'react';
 import {
   Box,
@@ -7,7 +8,6 @@ import {
   Chip,
   Button,
   Stack,
-  Grid,
   Divider,
 } from '@mui/material';
 import {
@@ -15,6 +15,7 @@ import {
   CheckCircle,
   TrendingUp,
 } from '@mui/icons-material';
+import { Grid } from '@mui/material';
 import { Service } from '../../types';
 import { PriceDisplay } from '../atoms';
 
@@ -26,7 +27,7 @@ interface ServiceListProps {
 
 export const ServiceList: FC<ServiceListProps> = ({
   services,
-  expertId,
+  expertId: _expertId,
   onServiceSelect,
 }) => {
   if (services.length === 0) {
@@ -42,7 +43,7 @@ export const ServiceList: FC<ServiceListProps> = ({
   return (
     <Grid container spacing={3}>
       {services.map((service) => (
-        <Grid item xs={12} md={6} key={service.id}>
+        <Grid size={{ xs: 12, md: 6 }} key={service.id}>
           <Card
             sx={{
               height: '100%',

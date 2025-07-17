@@ -1,10 +1,10 @@
+import React from 'react';
 import { FC } from 'react';
 import {
   Container,
   Box,
   Typography,
   Button,
-  Grid,
   Card,
   CardContent,
   Stack,
@@ -13,12 +13,12 @@ import {
   Avatar,
   Rating,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   Search,
   TrendingUp,
   Security,
   Schedule,
-  Star,
   ArrowForward,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -101,7 +101,7 @@ export const ExpertMarketplace: FC = () => {
 
       {/* Value Propositions */}
       <Grid container spacing={4} mb={8}>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ height: '100%', textAlign: 'center', p: 3 }}>
             <Security sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
             <Typography variant="h6" gutterBottom>
@@ -112,7 +112,7 @@ export const ExpertMarketplace: FC = () => {
             </Typography>
           </Card>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ height: '100%', textAlign: 'center', p: 3 }}>
             <Schedule sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
             <Typography variant="h6" gutterBottom>
@@ -123,7 +123,7 @@ export const ExpertMarketplace: FC = () => {
             </Typography>
           </Card>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ height: '100%', textAlign: 'center', p: 3 }}>
             <TrendingUp sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
             <Typography variant="h6" gutterBottom>
@@ -152,7 +152,7 @@ export const ExpertMarketplace: FC = () => {
         
         <Grid container spacing={3}>
           {featuredExperts.map((expert) => (
-            <Grid item xs={12} md={4} key={expert.id}>
+            <Grid size={{ xs: 12, md: 4 }} key={expert.id}>
               <Card
                 sx={{
                   cursor: 'pointer',
@@ -217,7 +217,7 @@ export const ExpertMarketplace: FC = () => {
         
         <Grid container spacing={2}>
           {expertiseCategories.map((category) => (
-            <Grid item xs={12} sm={6} md={3} key={category}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={category}>
               <Paper
                 sx={{
                   p: 2,
@@ -273,3 +273,5 @@ export const ExpertMarketplace: FC = () => {
     </Container>
   );
 };
+
+export default ExpertMarketplace;

@@ -3,7 +3,6 @@ import {
   Box,
   Container,
   Typography,
-  Grid,
   Card,
   CardContent,
   Button,
@@ -11,22 +10,15 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  ListItemSecondaryAction,
   Avatar,
   Badge,
-  Chip,
-  IconButton,
   TextField,
   InputAdornment,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Alert,
   useTheme,
-  Divider,
   Paper,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   WhatsApp,
   Search,
@@ -41,18 +33,16 @@ import {
   Business,
 } from '@mui/icons-material';
 import { useAgentStore } from '../store';
-import { Lead, WhatsAppMessage, WhatsAppTemplate } from '../types';
+import { Lead } from '../types';
 import WhatsAppChat from '../components/organisms/WhatsAppChat';
 
 const WhatsAppIntegration: React.FC = () => {
   const theme = useTheme();
-  const { leads, whatsappMessages, currentAgent } = useAgentStore();
+  const { leads, whatsappMessages } = useAgentStore();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [showChat, setShowChat] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(false);
-  const [templates, setTemplates] = useState<WhatsAppTemplate[]>([]);
   const [metrics, setMetrics] = useState({
     totalMessages: 0,
     responseRate: 0,
@@ -202,7 +192,7 @@ const WhatsAppIntegration: React.FC = () => {
 
         {/* Metrics */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <MetricCard
               title="Total Messages"
               value={metrics.totalMessages}
@@ -210,7 +200,7 @@ const WhatsAppIntegration: React.FC = () => {
               color={theme.palette.primary.main}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <MetricCard
               title="Response Rate"
               value={`${metrics.responseRate.toFixed(1)}%`}
@@ -218,7 +208,7 @@ const WhatsAppIntegration: React.FC = () => {
               color={theme.palette.success.main}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <MetricCard
               title="Avg Response Time"
               value={`${metrics.avgResponseTime}m`}
@@ -226,7 +216,7 @@ const WhatsAppIntegration: React.FC = () => {
               color={theme.palette.warning.main}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <MetricCard
               title="Active Chats"
               value={metrics.activeChats}
@@ -239,7 +229,7 @@ const WhatsAppIntegration: React.FC = () => {
 
       <Grid container spacing={3}>
         {/* Chat List */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ height: '70vh', display: 'flex', flexDirection: 'column' }}>
             {/* Search */}
             <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
@@ -291,8 +281,7 @@ const WhatsAppIntegration: React.FC = () => {
                     return (
                       <ListItem
                         key={lead.id}
-                        button
-                        selected={isSelected}
+                        className={isSelected ? "Mui-selected" : ""}
                         onClick={() => {
                           setSelectedLead(lead);
                           setShowChat(true);
@@ -302,6 +291,7 @@ const WhatsAppIntegration: React.FC = () => {
                           '&.Mui-selected': {
                             backgroundColor: theme.palette.primary.light + '20',
                           },
+                          cursor: 'pointer',
                         }}
                       >
                         <ListItemAvatar>
@@ -367,7 +357,7 @@ const WhatsAppIntegration: React.FC = () => {
         </Grid>
 
         {/* Chat Window */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           {showChat && selectedLead ? (
             <WhatsAppChat
               lead={selectedLead}

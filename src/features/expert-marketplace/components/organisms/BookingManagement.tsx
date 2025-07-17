@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { FC, useState } from 'react';
 import {
   Box,
@@ -9,7 +10,6 @@ import {
   CardContent,
   CardActions,
   Button,
-  Stack,
   Chip,
   Avatar,
   IconButton,
@@ -21,7 +21,6 @@ import {
   DialogActions,
   TextField,
   Alert,
-  Grid,
   Divider,
 } from '@mui/material';
 import {
@@ -37,7 +36,8 @@ import {
   PersonAdd,
   AttachMoney,
 } from '@mui/icons-material';
-import { format, isPast, isToday, addHours } from 'date-fns';
+import { Grid } from '@mui/material';
+import { format, isPast, isToday } from 'date-fns';
 import { Booking, BookingStatus } from '../../types';
 import { useBookings } from '../../hooks';
 
@@ -58,7 +58,7 @@ export const BookingManagement: FC<BookingManagementProps> = ({
   const {
     upcomingBookings,
     pastBookings,
-    loading,
+    loading: _loading,
     cancelBooking,
     updateBooking,
   } = useBookings({
@@ -154,7 +154,7 @@ export const BookingManagement: FC<BookingManagementProps> = ({
               </Box>
 
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <Event fontSize="small" color="action" />
                     <Typography variant="body2">
@@ -170,13 +170,13 @@ export const BookingManagement: FC<BookingManagementProps> = ({
                   <Box display="flex" alignItems="center" gap={1}>
                     {getMeetingIcon(booking.type)}
                     <Typography variant="body2">
-                      {booking.type === 'video' ? 'Video Call' : 
-                       booking.type === 'phone' ? 'Phone Call' : 'In Person'}
+                      {booking.type === 'consultation' ? 'Consultation' : 
+                       booking.type === 'follow_up' ? 'Follow Up' : 'Service'}
                     </Typography>
                   </Box>
                 </Grid>
                 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <AttachMoney fontSize="small" color="action" />
                     <Typography variant="body2">

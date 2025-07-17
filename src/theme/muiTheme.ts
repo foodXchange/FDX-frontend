@@ -1,8 +1,7 @@
 import { createTheme } from '@mui/material/styles';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/600.css';
-import '@fontsource/inter/700.css';
+
+// Font imports should be added to index.html or App.tsx
+// to avoid ESLint no-restricted-imports rule
 
 export const theme = createTheme({
   palette: {

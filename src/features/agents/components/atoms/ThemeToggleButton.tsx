@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   IconButton,
   Tooltip,
@@ -15,14 +15,11 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import {
-  Brightness4,
-  Brightness7,
   SettingsBrightness,
   DarkMode,
   LightMode,
   Computer,
   Palette,
-  ContrastSharp,
 } from '@mui/icons-material';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -41,12 +38,11 @@ const ThemeToggleButton: React.FC<ThemeToggleButtonProps> = ({
   position = 'static',
   className,
 }) => {
-  const { mode, actualMode, toggleTheme, setThemeMode, isDarkMode } = useTheme();
+  const { mode, actualMode, toggleTheme, setThemeMode } = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const open = Boolean(anchorEl);
   
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
   const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -90,15 +86,6 @@ const ThemeToggleButton: React.FC<ThemeToggleButtonProps> = ({
       case 'dark': return 'Dark';
       case 'system': return 'System';
       default: return 'Unknown';
-    }
-  };
-
-  const getModeDescription = (themeMode: string) => {
-    switch (themeMode) {
-      case 'light': return 'Always use light theme';
-      case 'dark': return 'Always use dark theme';
-      case 'system': return 'Follow system preference';
-      default: return '';
     }
   };
 

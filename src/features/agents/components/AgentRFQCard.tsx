@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import {
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Stack,
+  Divider,
+  LinearProgress
+} from '@mui/material';
+import {
+  Schedule as ClockIcon,
+  BarChart as ChartBarIcon,
+  LocationOn as MapPinIcon,
+  Tag as TagIcon,
+  Whatshot as FireIcon
+} from '@mui/icons-material';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  ClockIcon,
-  ChartBarIcon,
-  MapPinIcon,
-  TagIcon,
-  FireIcon
-} from '@heroicons/react/24/outline';
 import { formatCurrency } from '@/utils/format';
 
 interface RFQ {
@@ -93,123 +104,165 @@ export const AgentRFQCard: React.FC<AgentRFQCardProps> = ({
 
   // Determine border color based on match score
   const getBorderColor = () => {
-    if (!matchScore) return 'border-gray-200';
-    if (matchScore >= 90) return 'border-green-500';
-    if (matchScore >= 70) return 'border-orange-500';
-    return 'border-gray-300';
+    if (!matchScore) return 'grey.300';
+    if (matchScore >= 90) return 'success.main';
+    if (matchScore >= 70) return 'warning.main';
+    return 'grey.400';
   };
 
-  const getMatchBadgeColor = () => {
-    if (!matchScore) return '';
-    if (matchScore >= 90) return 'bg-green-100 text-green-800';
-    if (matchScore >= 70) return 'bg-orange-100 text-orange-800';
-    return 'bg-gray-100 text-gray-800';
+  const getMatchBadgeColor = (): 'success' | 'warning' | 'default' => {
+    if (!matchScore) return 'default';
+    if (matchScore >= 90) return 'success';
+    if (matchScore >= 70) return 'warning';
+    return 'default';
   };
 
   return (
     <motion.div
       whileHover={{ y: -2 }}
-      className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border-2 ${getBorderColor()}`}
+      style={{ width: '100%' }}
     >
-      <div className="p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              {rfq.title}
-              {timeLeft === 'Expired' && (
-                <FireIcon className="h-5 w-5 text-red-500" />
-              )}
-            </h3>
-            <p className="text-sm text-gray-600 mt-1">{rfq.buyerName}</p>
-          </div>
-          
-          {/* Match Score Badge */}
-          {showAgentFeatures && (
-            <div className={`px-3 py-1 rounded-full text-sm font-semibold ${getMatchBadgeColor()}`}>
-              {matchScore}% Match
-            </div>
-          )}
-        </div>
-
-        {/* Description */}
-        <p className="text-gray-700 mb-4 line-clamp-2">{rfq.description}</p>
-
-        {/* Details */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <MapPinIcon className="h-4 w-4 mr-1.5 text-gray-400" />
-            {rfq.buyerLocation}
-          </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <TagIcon className="h-4 w-4 mr-1.5 text-gray-400" />
-            {rfq.category}
-          </div>
-        </div>
-
-        {/* Value and Commission */}
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <p className="text-sm text-gray-500">Estimated Value</p>
-            <p className="text-lg font-semibold text-gray-900">
-              {formatCurrency(rfq.estimatedValue)}
-            </p>
-          </div>
-          
-          {showAgentFeatures && estimatedCommission && (
-            <div className="text-right">
-              <p className="text-sm text-gray-500">Your Commission</p>
-              <p className="text-lg font-semibold text-green-600">
-                {formatCurrency(estimatedCommission)}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Agent Action Bar */}
-        {showAgentFeatures && onClaim && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center text-sm">
-                {timeLeft !== 'Expired' ? (
-                  <>
-                    <ClockIcon className="h-4 w-4 mr-1.5 text-gray-400" />
-                    <span className="text-gray-600">Claim in</span>
-                    <span className="ml-1 font-semibold text-orange-600">
-                      {timeLeft}
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-red-600 font-medium">
-                    Claiming period expired
-                  </span>
-                )}
-              </div>
-              
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleClaim}
-                disabled={claiming || timeLeft === 'Expired'}
-                className={`
-                  px-4 py-2 rounded-lg font-medium transition-colors
-                  flex items-center gap-2
-                  ${timeLeft === 'Expired' 
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-orange-600 text-white hover:bg-orange-700'
-                  }
-                `}
+      <Card 
+        sx={{ 
+          border: 2, 
+          borderColor: getBorderColor(),
+          '&:hover': { boxShadow: 6 },
+          transition: 'all 0.2s ease-in-out'
+        }}
+      >
+        <CardContent sx={{ p: 3 }}>
+          {/* Header */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography 
+                variant="h6" 
+                component="h3" 
+                sx={{ 
+                  color: 'grey.900', 
+                  fontWeight: 'bold',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  mb: 1
+                }}
               >
-                <ChartBarIcon className="h-4 w-4" />
-                {claiming ? 'Claiming...' : 'Claim Lead'}
-              </motion.button>
-            </div>
-          </div>
-        )}
+                {rfq.title}
+                {timeLeft === 'Expired' && (
+                  <FireIcon sx={{ color: 'error.main', fontSize: 20 }} />
+                )}
+              </Typography>
+              <Typography variant="body2" color="grey.600">
+                {rfq.buyerName}
+              </Typography>
+            </Box>
+            
+            {/* Match Score Badge */}
+            {showAgentFeatures && (
+              <Chip
+                label={`${matchScore}% Match`}
+                color={getMatchBadgeColor()}
+                sx={{ fontWeight: 'bold' }}
+              />
+            )}
+          </Box>
 
-        {/* Custom children (for non-agent view) */}
-        {children}
-      </div>
+          {/* Description */}
+          <Typography variant="body2" color="grey.700" sx={{ mb: 2 }}>
+            {rfq.description}
+          </Typography>
+
+          {/* Details */}
+          <Stack spacing={1} sx={{ mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', color: 'grey.600' }}>
+              <MapPinIcon sx={{ fontSize: 16, mr: 1.5, color: 'grey.400' }} />
+              <Typography variant="body2">
+                {rfq.buyerLocation}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', color: 'grey.600' }}>
+              <TagIcon sx={{ fontSize: 16, mr: 1.5, color: 'grey.400' }} />
+              <Typography variant="body2">
+                {rfq.category}
+              </Typography>
+            </Box>
+          </Stack>
+
+          {/* Value and Commission */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box>
+              <Typography variant="caption" color="grey.500">
+                Estimated Value
+              </Typography>
+              <Typography variant="h6" sx={{ color: 'grey.900', fontWeight: 'bold' }}>
+                {formatCurrency(rfq.estimatedValue)}
+              </Typography>
+            </Box>
+            
+            {showAgentFeatures && estimatedCommission && (
+              <Box sx={{ textAlign: 'right' }}>
+                <Typography variant="caption" color="grey.500">
+                  Your Commission
+                </Typography>
+                <Typography variant="h6" sx={{ color: 'success.main', fontWeight: 'bold' }}>
+                  {formatCurrency(estimatedCommission)}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+
+          {/* Agent Action Bar */}
+          {showAgentFeatures && onClaim && (
+            <Box sx={{ mt: 2 }}>
+              <Divider sx={{ mb: 2 }} />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {timeLeft !== 'Expired' ? (
+                    <>
+                      <ClockIcon sx={{ fontSize: 16, mr: 1.5, color: 'grey.400' }} />
+                      <Typography variant="body2" sx={{ color: 'grey.600', mr: 1 }}>
+                        Claim in
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'warning.main', fontWeight: 'bold' }}>
+                        {timeLeft}
+                      </Typography>
+                    </>
+                  ) : (
+                    <Typography variant="body2" sx={{ color: 'error.main', fontWeight: 'medium' }}>
+                      Claiming period expired
+                    </Typography>
+                  )}
+                </Box>
+                
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="contained"
+                    color={timeLeft === 'Expired' ? 'inherit' : 'warning'}
+                    onClick={handleClaim}
+                    disabled={claiming || timeLeft === 'Expired'}
+                    startIcon={<ChartBarIcon />}
+                    sx={{ 
+                      minWidth: 120,
+                      bgcolor: timeLeft === 'Expired' ? 'grey.100' : undefined,
+                      color: timeLeft === 'Expired' ? 'grey.400' : undefined,
+                      '&:hover': {
+                        bgcolor: timeLeft === 'Expired' ? 'grey.100' : undefined,
+                      }
+                    }}
+                  >
+                    {claiming ? 'Claiming...' : 'Claim Lead'}
+                  </Button>
+                </motion.div>
+              </Box>
+            </Box>
+          )}
+
+          {/* Custom children (for non-agent view) */}
+          {children}
+        </CardContent>
+      </Card>
     </motion.div>
   );
 };

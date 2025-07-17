@@ -5,7 +5,6 @@ import {
   CardContent,
   Typography,
   Chip,
-  Avatar,
   IconButton,
   Menu,
   MenuItem,
@@ -28,16 +27,14 @@ import {
   WhatsApp,
   Email,
   LocationOn,
-  Business,
   AttachMoney,
   Add,
   Edit,
   Delete,
   Schedule,
-  TrendingUp,
 } from '@mui/icons-material';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Lead, LeadStatus, CreateLeadRequest, UpdateLeadRequest } from '../../types';
+import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DroppableStateSnapshot, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
+import { Lead, LeadStatus, CreateLeadRequest } from '../../types';
 import { useAgentStore } from '../../store';
 import { agentApi } from '../../services';
 
@@ -50,13 +47,12 @@ interface LeadColumn {
 
 const LeadKanban: React.FC = () => {
   const theme = useTheme();
-  const { leads, setLeads, updateLead, addLead, selectedLead, setSelectedLead } = useAgentStore();
+  const { leads, setLeads, updateLead, addLead } = useAgentStore();
   
   const [columns, setColumns] = useState<LeadColumn[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [createFormData, setCreateFormData] = useState<CreateLeadRequest>({
@@ -139,8 +135,8 @@ const LeadKanban: React.FC = () => {
   const handleEditLead = () => {
     const lead = leads.find(l => l.id === selectedLeadId);
     if (lead) {
-      setSelectedLead(lead);
-      setIsEditDialogOpen(true);
+      // TODO: Implement edit lead functionality
+      console.log('Edit lead:', lead);
     }
     handleMenuClose();
   };
@@ -206,7 +202,7 @@ const LeadKanban: React.FC = () => {
 
   const LeadCard: React.FC<{ lead: Lead; index: number }> = ({ lead, index }) => (
     <Draggable draggableId={lead.id} index={index}>
-      {(provided, snapshot) => (
+      {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
         <Card
           ref={provided.innerRef}
           {...provided.draggableProps}
@@ -318,7 +314,7 @@ const LeadKanban: React.FC = () => {
               </Box>
               
               <Droppable droppableId={column.id}>
-                {(provided, snapshot) => (
+                {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
                   <Box
                     ref={provided.innerRef}
                     {...provided.droppableProps}

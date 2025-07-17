@@ -15,10 +15,9 @@ import {
   Select,
   MenuItem,
   Chip,
-  Grid,
   Alert,
-  useTheme,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   Search,
   FilterList,
@@ -29,7 +28,7 @@ import {
 } from '@mui/icons-material';
 import { useAgentStore } from '../store';
 import { agentApi } from '../services';
-import { LeadSearchFilters, LeadStatus, LeadPriority, BusinessType } from '../types';
+import { LeadSearchFilters } from '../types';
 import LeadKanban from '../components/organisms/LeadKanban';
 
 interface TabPanelProps {
@@ -51,20 +50,16 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => (
 );
 
 const LeadManagement: React.FC = () => {
-  const theme = useTheme();
   const {
     leads,
     setLeads,
     leadFilters,
     setLeadFilters,
-    leadLoading,
-    currentAgent,
   } = useAgentStore();
 
   const [currentTab, setCurrentTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -73,14 +68,12 @@ const LeadManagement: React.FC = () => {
 
   const loadLeads = async () => {
     try {
-      setIsLoading(true);
       setError(null);
       const result = await agentApi.searchLeads(leadFilters);
       setLeads(result.leads);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load leads');
     } finally {
-      setIsLoading(false);
     }
   };
 
@@ -148,7 +141,7 @@ const LeadManagement: React.FC = () => {
           Filters
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <FormControl fullWidth size="small">
               <InputLabel>Status</InputLabel>
               <Select
@@ -176,7 +169,7 @@ const LeadManagement: React.FC = () => {
             </FormControl>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <FormControl fullWidth size="small">
               <InputLabel>Priority</InputLabel>
               <Select
@@ -200,7 +193,7 @@ const LeadManagement: React.FC = () => {
             </FormControl>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <FormControl fullWidth size="small">
               <InputLabel>Business Type</InputLabel>
               <Select
@@ -228,7 +221,7 @@ const LeadManagement: React.FC = () => {
             </FormControl>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <TextField
               fullWidth
               size="small"

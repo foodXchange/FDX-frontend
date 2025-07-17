@@ -1,3 +1,4 @@
+// Service for intelligent product and supplier recommendations based on user behavior and preferences
 import { SearchResult, SupplierMatch, RecommendationEngine } from '../types';
 import { aiService } from '../aiService';
 // import { searchService } from '../nlp/searchService';
@@ -271,8 +272,8 @@ export class IntelligentRecommendationEngine implements RecommendationEngine {
     const categories1 = new Set(user1.preferences.categories);
     const categories2 = new Set(user2.preferences.categories);
     
-    const intersection = new Set([...categories1].filter(x => categories2.has(x)));
-    const union = new Set([...categories1, ...categories2]);
+    const intersection = new Set(Array.from(categories1).filter(x => categories2.has(x)));
+    const union = new Set(Array.from(categories1).concat(Array.from(categories2)));
     
     const categoryScore = intersection.size / union.size;
     

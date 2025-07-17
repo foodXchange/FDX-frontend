@@ -1,7 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { Button } from '../ui/Button';
+import {
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  Paper,
+  Backdrop,
+  Stack,
+  LinearProgress,
+  Checkbox,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemButton,
+  Divider
+} from '@mui/material';
+import {
+  Close as XMarkIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  Check as CheckIcon
+} from '@mui/icons-material';
 
 export interface TourStep {
   id: string;
@@ -118,13 +139,17 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[2000]">
+      <Backdrop open={true} sx={{ zIndex: 2000 }}>
         {/* Backdrop with spotlight effect */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black bg-opacity-60"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)'
+          }}
           onClick={handleSkip}
         >
           {targetRect && currentStepData.highlight && (
@@ -132,12 +157,13 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="absolute bg-transparent border-4 border-[#B08D57] rounded-lg"
               style={{
+                position: 'absolute',
                 top: targetRect.top - 8,
                 left: targetRect.left - 8,
                 width: targetRect.width + 16,
                 height: targetRect.height + 16,
+                borderRadius: 8,
                 boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.6)',
               }}
             />
@@ -150,83 +176,103 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="absolute glass-morphism rounded-xl p-6 max-w-sm shadow-2xl"
-          style={getTooltipPosition()}
+          style={{
+            position: 'absolute',
+            maxWidth: 320,
+            zIndex: 2001,
+            ...getTooltipPosition()
+          }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close button */}
-          <button
-            onClick={handleSkip}
-            className="absolute top-2 right-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <XMarkIcon className="w-5 h-5 text-gray-500" />
-          </button>
-
-          {/* Step indicator */}
-          <div className="flex items-center justify-center mb-4">
-            {steps.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full mx-1 transition-all ${index === currentStep ? 'w-8 bg-gradient-to-r from-[#1E4C8A] to-[#2E6BB8]' : index < currentStep ? 'bg-[#1E4C8A]' : 'bg-gray-300'}`}
-              />
-            ))}
-          </div>
-
-          {/* Content */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2 gradient-text">
-              {currentStepData.title}
-            </h3>
-            <p className="text-sm text-gray-600">{currentStepData.content}</p>
-          </div>
-
-          {/* Custom action */}
-          {currentStepData.action && (
-            <div className="mb-4">
-              <Button
-                variant="gold"
-                size="sm"
-                onClick={currentStepData.action.onClick}
-                className="w-full"
-              >
-                {currentStepData.action.label}
-              </Button>
-            </div>
-          )}
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handlePrevious}
-              disabled={isFirstStep}
-              className={isFirstStep ? 'invisible' : ''}
-            >
-              <ChevronLeftIcon className="w-4 h-4 mr-1" />
-              Previous
-            </Button>
-
-            <Button
-              variant="link"
-              size="sm"
+          <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 6 }}>
+            {/* Close button */}
+            <IconButton
               onClick={handleSkip}
-              className="text-gray-500"
+              sx={{ position: 'absolute', top: 8, right: 8 }}
+              size="small"
             >
-              Skip tour
-            </Button>
+              <XMarkIcon sx={{ fontSize: 20 }} />
+            </IconButton>
 
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleNext}
-            >
-              {isLastStep ? 'Finish' : 'Next'}
-              {!isLastStep && <ChevronRightIcon className="w-4 h-4 ml-1" />}
-            </Button>
-          </div>
+            {/* Step indicator */}
+            <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+              {steps.map((_, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    width: index === currentStep ? 32 : 8,
+                    height: 8,
+                    borderRadius: 1,
+                    transition: 'all 0.3s ease',
+                    background: index === currentStep 
+                      ? 'linear-gradient(90deg, #1E4C8A, #2E6BB8)'
+                      : index < currentStep 
+                        ? '#1E4C8A' 
+                        : 'grey.300'
+                  }}
+                />
+              ))}
+            </Box>
+
+            {/* Content */}
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" sx={{ color: 'grey.900', mb: 1 }}>
+                {currentStepData.title}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                {currentStepData.content}
+              </Typography>
+            </Box>
+
+            {/* Custom action */}
+            {currentStepData.action && (
+              <Box sx={{ mb: 2 }}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={currentStepData.action.onClick}
+                  fullWidth
+                  sx={{ bgcolor: 'warning.main', '&:hover': { bgcolor: 'warning.dark' } }}
+                >
+                  {currentStepData.action.label}
+                </Button>
+              </Box>
+            )}
+
+            {/* Navigation */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Button
+                variant="text"
+                size="small"
+                onClick={handlePrevious}
+                disabled={isFirstStep}
+                startIcon={<ChevronLeftIcon />}
+                sx={{ visibility: isFirstStep ? 'hidden' : 'visible' }}
+              >
+                Previous
+              </Button>
+
+              <Button
+                variant="text"
+                size="small"
+                onClick={handleSkip}
+                sx={{ color: 'grey.500' }}
+              >
+                Skip tour
+              </Button>
+
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleNext}
+                endIcon={!isLastStep ? <ChevronRightIcon /> : null}
+              >
+                {isLastStep ? 'Finish' : 'Next'}
+              </Button>
+            </Box>
+          </Paper>
         </motion.div>
-      </div>
+      </Backdrop>
     </AnimatePresence>
   );
 };
@@ -242,67 +288,69 @@ export const WelcomeModal: React.FC<{
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1900] p-4"
-      >
+      <Backdrop open={true} sx={{ zIndex: 1300 }}>
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="glass-morphism rounded-2xl p-8 max-w-md w-full text-center"
-          onClick={(e) => e.stopPropagation()}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
         >
           <motion.div
-            animate={{
-              rotate: [0, 10, -10, 10, 0],
-            }}
-            transition={{
-              duration: 0.5,
-              delay: 0.5,
-            }}
-            className="text-6xl mb-6"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            onClick={(e) => e.stopPropagation()}
           >
-            👋
+            <Paper sx={{ p: 4, maxWidth: 480, borderRadius: 3, textAlign: 'center' }}>
+              <motion.div
+                animate={{
+                  rotate: [0, 10, -10, 10, 0],
+                }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.5,
+                }}
+                style={{ fontSize: '4rem', marginBottom: 24 }}
+              >
+                👋
+              </motion.div>
+
+              <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+                Welcome to FoodXchange{userName ? `, ${userName}` : ''}!
+              </Typography>
+
+              <Typography variant="body1" sx={{ color: 'grey.600', mb: 4 }}>
+                We're excited to have you here. FoodXchange is your all-in-one B2B food commerce platform 
+                designed to streamline procurement, ensure compliance, and connect you with trusted suppliers.
+              </Typography>
+
+              <Stack spacing={2}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={onStartTour}
+                  fullWidth
+                >
+                  Take a Quick Tour
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={onClose}
+                  fullWidth
+                >
+                  I'll Explore on My Own
+                </Button>
+              </Stack>
+
+              <Typography variant="caption" sx={{ color: 'grey.500', mt: 3, display: 'block' }}>
+                You can always access the tour later from the help menu
+              </Typography>
+            </Paper>
           </motion.div>
-
-          <h2 className="text-2xl font-bold mb-4 gradient-text">
-            Welcome to FoodXchange{userName ? `, ${userName}` : ''}!
-          </h2>
-
-          <p className="text-gray-600 mb-8">
-            We're excited to have you here. FoodXchange is your all-in-one B2B food commerce platform 
-            designed to streamline procurement, ensure compliance, and connect you with trusted suppliers.
-          </p>
-
-          <div className="space-y-4">
-            <Button
-              variant="default"
-              size="lg"
-              onClick={onStartTour}
-              className="w-full hover-lift"
-            >
-              Take a Quick Tour
-            </Button>
-
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={onClose}
-              className="w-full"
-            >
-              I'll Explore on My Own
-            </Button>
-          </div>
-
-          <p className="text-xs text-gray-500 mt-6">
-            You can always access the tour later from the help menu
-          </p>
         </motion.div>
-      </motion.div>
+      </Backdrop>
     </AnimatePresence>
   );
 };
@@ -324,78 +372,113 @@ export const OnboardingChecklist: React.FC<{
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`glass-morphism rounded-xl p-6 ${className || ''}`}
     >
-      <h3 className="text-lg font-semibold mb-4">Getting Started</h3>
-      
-      {/* Progress bar */}
-      <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-600 mb-2">
-          <span>{completedCount} of {items.length} completed</span>
-          <span>{Math.round(progress)}%</span>
-        </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+      <Paper 
+        sx={{ 
+          p: 4, 
+          borderRadius: 3, 
+          backdropFilter: 'blur(10px)', 
+          bgcolor: 'rgba(255, 255, 255, 0.9)' 
+        }}
+        className={className || ''}
+      >
+        <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+          Getting Started
+        </Typography>
+        
+        {/* Progress bar */}
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+            <Typography variant="body2" sx={{ color: 'grey.600' }}>
+              {completedCount} of {items.length} completed
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'grey.600' }}>
+              {Math.round(progress)}%
+            </Typography>
+          </Box>
           <motion.div
-            className="h-full bg-gradient-to-r from-[#1E4C8A] to-[#2E6BB8]"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-          />
-        </div>
-      </div>
-
-      {/* Checklist items */}
-      <div className="space-y-3">
-        {items.map((item, index) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className={`flex items-center justify-between p-3 rounded-lg transition-all ${item.completed ? 'bg-green-50' : 'bg-gray-50 hover:bg-gray-100'}`}
           >
-            <div className="flex items-center">
-              <div
-                className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${item.completed ? 'border-green-500 bg-green-500' : 'border-gray-300'}`}
-              >
-                {item.completed && (
-                  <motion.svg
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="w-3 h-3 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={3}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </motion.svg>
-                )}
-              </div>
-              <span
-                className={`text-sm ${item.completed ? 'text-gray-600 line-through' : 'text-gray-900'}`}
-              >
-                {item.label}
-              </span>
-            </div>
-            
-            {!item.completed && item.action && (
-              <Button
-                variant="link"
-                size="sm"
-                onClick={item.action}
-                className="text-[#1E4C8A]"
-              >
-                Start
-              </Button>
-            )}
+            <LinearProgress 
+              variant="determinate" 
+              value={progress} 
+              sx={{ height: 8, borderRadius: 1 }}
+            />
           </motion.div>
-        ))}
-      </div>
+        </Box>
+
+        {/* Checklist items */}
+        <List>
+          {items.map((item, index) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <ListItem
+                sx={{
+                  bgcolor: item.completed ? 'success.light' : 'grey.50',
+                  borderRadius: 2,
+                  mb: 1,
+                  '&:hover': {
+                    bgcolor: item.completed ? 'success.light' : 'grey.100'
+                  }
+                }}
+              >
+                <ListItemIcon>
+                  <Checkbox
+                    checked={item.completed}
+                    readOnly
+                    sx={{
+                      color: item.completed ? 'success.main' : 'grey.300',
+                      '&.Mui-checked': {
+                        color: 'success.main'
+                      }
+                    }}
+                    icon={<Box sx={{ width: 20, height: 20, border: 2, borderColor: 'grey.300', borderRadius: '50%' }} />}
+                    checkedIcon={
+                      <Box sx={{ width: 20, height: 20, bgcolor: 'success.main', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                        >
+                          <CheckIcon sx={{ color: 'white', fontSize: 16 }} />
+                        </motion.div>
+                      </Box>
+                    }
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography 
+                      variant="body2" 
+                      sx={{
+                        textDecoration: item.completed ? 'line-through' : 'none',
+                        color: item.completed ? 'grey.600' : 'grey.900'
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                  }
+                />
+                {!item.completed && item.action && (
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={item.action}
+                    sx={{ color: 'primary.main' }}
+                  >
+                    Start
+                  </Button>
+                )}
+              </ListItem>
+            </motion.div>
+          ))}
+        </List>
+      </Paper>
     </motion.div>
   );
 };

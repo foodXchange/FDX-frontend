@@ -1,9 +1,8 @@
 import React from 'react';
 import { useRouteError, useNavigate } from 'react-router-dom';
-import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
+import { Button, Card, CardContent, Box, Typography, Stack } from '@mui/material';
 import { logger } from '@/services/logger';
-import { ExclamationTriangleIcon, HomeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { Warning as ExclamationTriangleIcon, Home as HomeIcon, Refresh as ArrowPathIcon } from '@mui/icons-material';
 
 export const RouteErrorBoundary: React.FC = () => {
   const error = useRouteError() as Error;
@@ -26,62 +25,62 @@ export const RouteErrorBoundary: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="max-w-md w-full p-8">
-        <div className="text-center">
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100">
-            <ExclamationTriangleIcon className="h-8 w-8 text-red-600" />
-          </div>
+    <Box sx={{ bgcolor: 'grey.50', minHeight: '100vh', p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Card sx={{ maxWidth: 400, width: '100%' }}>
+        <CardContent sx={{ p: 4, textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+            <ExclamationTriangleIcon sx={{ color: 'error.main', fontSize: 48 }} />
+          </Box>
           
-          <h1 className="mt-4 text-2xl font-bold text-gray-900">
+          <Typography variant="h5" sx={{ color: 'grey.900', mb: 2 }}>
             Page Error
-          </h1>
+          </Typography>
           
-          <p className="mt-2 text-gray-600">
+          <Typography variant="body2" sx={{ color: 'grey.600', mb: 3 }}>
             Sorry, an error occurred while loading this page.
-          </p>
+          </Typography>
 
           {process.env.NODE_ENV === 'development' && error && (
-            <div className="mt-4 text-left">
-              <details className="bg-gray-100 rounded-lg p-4">
-                <summary className="cursor-pointer text-sm font-medium text-gray-700">
+            <Box sx={{ mt: 3, textAlign: 'left' }}>
+              <details>
+                <summary style={{ cursor: 'pointer', color: '#6b7280' }}>
                   Error Details
                 </summary>
-                <div className="mt-2 space-y-2">
-                  <p className="text-sm text-red-600 font-mono">
+                <Box sx={{ mt: 1, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+                  <Typography variant="body2" sx={{ color: 'error.main', mb: 1 }}>
                     {error.message || 'Unknown error'}
-                  </p>
+                  </Typography>
                   {error.stack && (
-                    <pre className="text-xs text-gray-600 overflow-auto max-h-40">
+                    <Box component="pre" sx={{ color: 'grey.600', fontSize: '0.75rem', overflow: 'auto' }}>
                       {error.stack}
-                    </pre>
+                    </Box>
                   )}
-                </div>
+                </Box>
               </details>
-            </div>
+            </Box>
           )}
 
-          <div className="mt-6 space-y-3">
+          <Stack spacing={2} sx={{ mt: 3 }}>
             <Button
-              variant="default"
-              className="w-full"
+              variant="contained"
+              fullWidth
               onClick={handleGoHome}
+              startIcon={<HomeIcon />}
             >
-              <HomeIcon className="h-4 w-4 mr-2" />
               Go to Home
             </Button>
             
             <Button
-              variant="outline"
-              className="w-full"
+              variant="outlined"
+              fullWidth
               onClick={handleReload}
+              startIcon={<ArrowPathIcon />}
             >
-              <ArrowPathIcon className="h-4 w-4 mr-2" />
               Reload Page
             </Button>
-          </div>
-        </div>
+          </Stack>
+        </CardContent>
       </Card>
-    </div>
+    </Box>
   );
 };

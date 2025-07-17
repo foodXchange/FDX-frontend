@@ -1,3 +1,4 @@
+import React from 'react';
 interface NotificationData {
   title: string;
   body: string;
@@ -16,7 +17,7 @@ interface NotificationAction {
   icon?: string;
 }
 
-interface PushSubscription {
+interface CustomPushSubscription {
   endpoint: string;
   keys: {
     p256dh: string;
@@ -65,7 +66,7 @@ class NotificationService {
     return permission;
   }
 
-  async subscribeToPush(): Promise<PushSubscription | null> {
+  async subscribeToPush(): Promise<CustomPushSubscription | null> {
     if (!this.swRegistration) {
       throw new Error('Service Worker not registered');
     }
@@ -125,7 +126,7 @@ class NotificationService {
         badge: data.badge || '/icons/badge-icon.png',
         tag: data.tag,
         data: data.data,
-        actions: data.actions,
+        // actions: data.actions, // Note: actions property is not supported in standard Notification API
         requireInteraction: data.requireInteraction,
         silent: data.silent,
       });
@@ -233,14 +234,15 @@ class NotificationService {
 
     return {
       endpoint: subscription.endpoint,
+      expirationTime: subscription.expirationTime,
       keys: {
         p256dh: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('p256dh')!))),
         auth: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('auth')!))),
       },
-    };
+    } as any;
   }
 
-  private async sendSubscriptionToServer(subscription: PushSubscriptionType): Promise<void> {
+  private async sendSubscriptionToServer(subscription: PushSubscription): Promise<void> {
     await fetch('/api/notifications/subscribe', {
       method: 'POST',
       headers: {
@@ -259,7 +261,7 @@ class NotificationService {
     });
   }
 
-  private async removeSubscriptionFromServer(subscription: PushSubscriptionType): Promise<void> {
+  private async removeSubscriptionFromServer(subscription: PushSubscription): Promise<void> {
     await fetch('/api/notifications/unsubscribe', {
       method: 'POST',
       headers: {
@@ -289,4 +291,4 @@ class NotificationService {
 }
 
 export const notificationService = new NotificationService();
-export type { NotificationData, NotificationAction, PushSubscription };
+export type { NotificationData, NotificationAction };

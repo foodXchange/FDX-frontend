@@ -1,3 +1,4 @@
+// API Client service for handling HTTP requests with authentication, retries, and error handling
 // API Client Configuration for Frontend
 // Copy this file to your frontend project: src/services/api-client.ts
 

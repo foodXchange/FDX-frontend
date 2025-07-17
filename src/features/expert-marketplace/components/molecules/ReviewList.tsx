@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { FC, useState } from 'react';
 import {
   Box,
@@ -10,8 +11,8 @@ import {
   Divider,
   Chip,
   LinearProgress,
-  Grid,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import { Rating as RatingType } from '../../types';
 
@@ -100,7 +101,7 @@ export const ReviewList: FC<ReviewListProps> = ({
       {/* Rating Summary */}
       <Paper sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Box textAlign="center">
               <Typography variant="h2" fontWeight="bold">
                 {avgRating.toFixed(1)}
@@ -112,7 +113,7 @@ export const ReviewList: FC<ReviewListProps> = ({
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Stack spacing={1}>
               {ratingDistribution.map(({ star, count, percentage }) => (
                 <Box key={star} display="flex" alignItems="center" gap={1}>
@@ -134,7 +135,7 @@ export const ReviewList: FC<ReviewListProps> = ({
             </Stack>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Stack spacing={1}>
               {breakdowns.map(({ category, value }) => (
                 <Box key={category} display="flex" justifyContent="space-between" alignItems="center">
@@ -219,25 +220,25 @@ export const ReviewList: FC<ReviewListProps> = ({
                 <Box mt={2}>
                   <Divider sx={{ mb: 2 }} />
                   <Grid container spacing={2}>
-                    <Grid item xs={6} sm={3}>
+                    <Grid size={{ xs: 6, sm: 3 }}>
                       <Typography variant="caption" color="text.secondary">
                         Communication
                       </Typography>
                       <Rating value={rating.communication} readOnly size="small" />
                     </Grid>
-                    <Grid item xs={6} sm={3}>
+                    <Grid size={{ xs: 6, sm: 3 }}>
                       <Typography variant="caption" color="text.secondary">
                         Expertise
                       </Typography>
                       <Rating value={rating.expertise} readOnly size="small" />
                     </Grid>
-                    <Grid item xs={6} sm={3}>
+                    <Grid size={{ xs: 6, sm: 3 }}>
                       <Typography variant="caption" color="text.secondary">
                         Professionalism
                       </Typography>
                       <Rating value={rating.professionalism} readOnly size="small" />
                     </Grid>
-                    <Grid item xs={6} sm={3}>
+                    <Grid size={{ xs: 6, sm: 3 }}>
                       <Typography variant="caption" color="text.secondary">
                         Value
                       </Typography>

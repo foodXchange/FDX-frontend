@@ -1,13 +1,28 @@
+import React from 'react';
 import { useState } from 'react';
-import { 
-  Bars3Icon, 
-  BellIcon, 
-  UserCircleIcon, 
-  Cog6ToothIcon,
-  ArrowRightOnRectangleIcon,
-  ChevronDownIcon
-} from '@heroicons/react/24/outline';
-import { Button } from '../ui/Button';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  IconButton,
+  Badge,
+  Avatar,
+  Menu,
+  MenuItem,
+  Divider,
+  Container,
+  Button,
+  Stack
+} from '@mui/material';
+import {
+  Menu as MenuIcon,
+  Notifications as NotificationsIcon,
+  AccountCircle as UserCircleIcon,
+  Settings as SettingsIcon,
+  Logout as LogoutIcon,
+  KeyboardArrowDown as ChevronDownIcon
+} from '@mui/icons-material';
 
 interface HeaderProps {
   currentUser?: {
@@ -20,8 +35,9 @@ interface HeaderProps {
 }
 
 export function Header({ currentUser, onLogout, onMenuToggle }: HeaderProps) {
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notifications] = useState(3); // Mock notification count
+  const isProfileOpen = Boolean(anchorEl);
 
   const defaultUser: {
     name: string;
@@ -34,121 +50,157 @@ export function Header({ currentUser, onLogout, onMenuToggle }: HeaderProps) {
 
   const user = currentUser || defaultUser;
 
+  const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    handleProfileClose();
+    onLogout();
+  };
+
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <AppBar position="static" sx={{ bgcolor: 'white', color: 'text.primary', boxShadow: 1 }}>
+      <Container maxWidth="xl">
+        <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, sm: 3, lg: 4 } }}>
           {/* Left side - Logo and Menu */}
-          <div className="flex items-center space-x-4">
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="icon"
+            <IconButton
               onClick={onMenuToggle}
-              className="md:hidden"
+              sx={{ 
+                display: { md: 'none' },
+                mr: 2,
+                color: 'text.primary'
+              }}
             >
-              <Bars3Icon className="h-5 w-5" />
-            </Button>
+              <MenuIcon />
+            </IconButton>
 
             {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <div className="text-2xl font-bold">
-                <span className="text-orange-500">X</span>
-                <span className="text-teal-600">FOOD</span>
-              </div>
-              <span className="hidden sm:block text-gray-300">|</span>
-              <h1 className="hidden sm:block text-lg font-semibold text-gray-800">
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="h4" component="div" sx={{ fontWeight: 'bold' }}>
+                <Box component="span" sx={{ color: 'orange.500' }}>X</Box>
+                <Box component="span" sx={{ color: 'teal.600' }}>FOOD</Box>
+              </Typography>
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  display: { xs: 'none', sm: 'block' },
+                  color: 'grey.300',
+                  mx: 1
+                }}
+              >
+                |
+              </Typography>
+              <Typography 
+                variant="h6" 
+                component="h1"
+                sx={{ 
+                  display: { xs: 'none', sm: 'block' },
+                  fontWeight: 600,
+                  color: 'grey.800'
+                }}
+              >
                 FoodXchange
-              </h1>
-            </div>
-          </div>
+              </Typography>
+            </Box>
+          </Box>
 
           {/* Right side - Actions and Profile */}
-          <div className="flex items-center space-x-4">
+          <Stack direction="row" spacing={1} alignItems="center">
             {/* Notifications */}
-            <div className="relative">
-              <Button variant="ghost" size="icon" className="relative">
-                <BellIcon className="h-5 w-5" />
-                {notifications > 0 && (
-                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {notifications}
-                  </span>
-                )}
-              </Button>
-            </div>
+            <IconButton sx={{ color: 'text.primary' }}>
+              <Badge badgeContent={notifications} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
 
             {/* Settings */}
-            <Button variant="ghost" size="icon">
-              <Cog6ToothIcon className="h-5 w-5" />
-            </Button>
+            <IconButton sx={{ color: 'text.primary' }}>
+              <SettingsIcon />
+            </IconButton>
 
             {/* Profile Dropdown */}
-            <div className="relative">
-              <Button
-                variant="ghost"
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center space-x-2 text-left"
-              >
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="h-8 w-8 rounded-full"
-                  />
-                ) : (
-                  <UserCircleIcon className="h-8 w-8 text-gray-400" />
-                )}
-                <div className="hidden md:block">
-                  <div className="text-sm font-medium text-gray-700">{user.name}</div>
-                  <div className="text-xs text-gray-500">{user.email}</div>
-                </div>
-                <ChevronDownIcon className="h-4 w-4 text-gray-400" />
-              </Button>
-
-              {/* Dropdown Menu */}
-              {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                    <div className="text-xs text-gray-500">{user.email}</div>
-                  </div>
-                  
-                  <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
-                    <UserCircleIcon className="h-4 w-4" />
-                    <span>Profile Settings</span>
-                  </button>
-                  
-                  <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
-                    <Cog6ToothIcon className="h-4 w-4" />
-                    <span>Account Settings</span>
-                  </button>
-                  
-                  <div className="border-t border-gray-100 mt-2 pt-2">
-                    <button
-                      onClick={() => {
-                        setIsProfileOpen(false);
-                        onLogout();
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
-                    >
-                      <ArrowRightOnRectangleIcon className="h-4 w-4" />
-                      <span>Sign Out</span>
-                    </button>
-                  </div>
-                </div>
+            <Button
+              onClick={handleProfileClick}
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center',
+                color: 'text.primary',
+                textTransform: 'none',
+                gap: 1
+              }}
+            >
+              {user.avatar ? (
+                <Avatar
+                  src={user.avatar}
+                  alt={user.name}
+                  sx={{ width: 32, height: 32 }}
+                />
+              ) : (
+                <UserCircleIcon sx={{ fontSize: 32, color: 'grey.400' }} />
               )}
-            </div>
-          </div>
-        </div>
-      </div>
+              <Box sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'left' }}>
+                <Typography variant="body2" sx={{ color: 'grey.700' }}>
+                  {user.name}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'grey.500' }}>
+                  {user.email}
+                </Typography>
+              </Box>
+              <ChevronDownIcon sx={{ fontSize: 16, color: 'grey.400' }} />
+            </Button>
 
-      {/* Click overlay to close dropdown */}
-      {isProfileOpen && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setIsProfileOpen(false)}
-        />
-      )}
-    </header>
+            {/* Dropdown Menu */}
+            <Menu
+              anchorEl={anchorEl}
+              open={isProfileOpen}
+              onClose={handleProfileClose}
+              sx={{
+                '& .MuiPaper-root': {
+                  mt: 1,
+                  minWidth: 200,
+                  borderRadius: 2,
+                  boxShadow: 3
+                }
+              }}
+            >
+              <Box sx={{ px: 2, py: 1 }}>
+                <Typography variant="body2" sx={{ color: 'grey.900', fontWeight: 'medium' }}>
+                  {user.name}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'grey.500' }}>
+                  {user.email}
+                </Typography>
+              </Box>
+              
+              <Divider />
+              
+              <MenuItem onClick={handleProfileClose}>
+                <UserCircleIcon sx={{ mr: 2, fontSize: 16 }} />
+                Profile Settings
+              </MenuItem>
+              
+              <MenuItem onClick={handleProfileClose}>
+                <SettingsIcon sx={{ mr: 2, fontSize: 16 }} />
+                Account Settings
+              </MenuItem>
+              
+              <Divider />
+              
+              <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
+                <LogoutIcon sx={{ mr: 2, fontSize: 16 }} />
+                Sign Out
+              </MenuItem>
+            </Menu>
+          </Stack>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 }

@@ -1,3 +1,4 @@
+// Authentication service for user login, registration, and session management
 import { User } from '@/contexts/AuthContext';
 import { apiClient } from './api-client';
 
@@ -25,8 +26,11 @@ class AuthService {
         password,
       });
       return response.data;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Invalid credentials');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error && 'response' in error 
+        ? (error as any).response?.data?.message || 'Invalid credentials'
+        : 'Invalid credentials';
+      throw new Error(errorMessage);
     }
   }
 
@@ -42,8 +46,11 @@ class AuthService {
     try {
       const response = await apiClient.post(`${this.baseURL}/register`, data);
       return response.data;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Registration failed');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error && 'response' in error 
+        ? (error as any).response?.data?.message || 'Registration failed'
+        : 'Registration failed';
+      throw new Error(errorMessage);
     }
   }
 
@@ -71,16 +78,22 @@ class AuthService {
     try {
       const response = await apiClient.patch(`${this.baseURL}/users/${userId}`, data);
       return response.data;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Profile update failed');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error && 'response' in error 
+        ? (error as any).response?.data?.message || 'Profile update failed'
+        : 'Profile update failed';
+      throw new Error(errorMessage);
     }
   }
 
   async resetPassword(email: string): Promise<void> {
     try {
       await apiClient.post(`${this.baseURL}/reset-password`, { email });
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Password reset failed');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error && 'response' in error 
+        ? (error as any).response?.data?.message || 'Password reset failed'
+        : 'Password reset failed';
+      throw new Error(errorMessage);
     }
   }
 
@@ -91,8 +104,11 @@ class AuthService {
         oldPassword,
         newPassword,
       });
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Password change failed');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error && 'response' in error 
+        ? (error as any).response?.data?.message || 'Password change failed'
+        : 'Password change failed';
+      throw new Error(errorMessage);
     }
   }
 

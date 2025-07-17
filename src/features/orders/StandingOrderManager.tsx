@@ -1,40 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  IconButton,
+  Chip,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
-  TableHeader,
   TableRow,
-} from '../../components/ui/table';
+  Paper,
+  Grid,
+  Tabs,
+  Tab,
+  LinearProgress,
+  Menu,
+  MenuItem,
+  Divider,
+  Stack,
+  CircularProgress
+} from '@mui/material';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
-import {
-  Calendar,
-  Clock,
-  Package,
+  CalendarMonth,
+  AccessTime,
+  Inventory,
   PlayCircle,
   PauseCircle,
   StopCircle,
   Settings,
-  Plus,
-  MoreHorizontal,
+  Add,
+  MoreHoriz,
   TrendingUp,
-  // CheckCircle, // Unused for now
-  RefreshCw,
-} from 'lucide-react';
+  Refresh
+} from '@mui/icons-material';
 import { format } from 'date-fns';
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
 
 interface StandingOrder {
   id: string;
@@ -69,19 +94,18 @@ interface StandingOrderStats {
 }
 
 const frequencyConfig = {
-  weekly: { label: 'Weekly', color: 'bg-blue-100 text-blue-700' },
-  'bi-weekly': { label: 'Bi-weekly', color: 'bg-purple-100 text-purple-700' },
-  monthly: { label: 'Monthly', color: 'bg-green-100 text-green-700' },
-  quarterly: { label: 'Quarterly', color: 'bg-orange-100 text-orange-700' },
+  weekly: { label: 'Weekly', color: 'primary' as const },
+  'bi-weekly': { label: 'Bi-weekly', color: 'secondary' as const },
+  monthly: { label: 'Monthly', color: 'success' as const },
+  quarterly: { label: 'Quarterly', color: 'warning' as const },
 };
 
 const statusConfig = {
-  active: { label: 'Active', color: 'bg-green-100 text-green-700', icon: PlayCircle },
-  paused: { label: 'Paused', color: 'bg-yellow-100 text-yellow-700', icon: PauseCircle },
-  cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-700', icon: StopCircle },
-  expired: { label: 'Expired', color: 'bg-gray-100 text-gray-700', icon: Clock },
+  active: { label: 'Active', color: 'success' as const, icon: PlayCircle },
+  paused: { label: 'Paused', color: 'warning' as const, icon: PauseCircle },
+  cancelled: { label: 'Cancelled', color: 'error' as const, icon: StopCircle },
+  expired: { label: 'Expired', color: 'default' as const, icon: AccessTime },
 };
-
 
 const getDaysUntilDelivery = (nextDelivery: Date): number => {
   const today = new Date();
@@ -92,6 +116,9 @@ const getDaysUntilDelivery = (nextDelivery: Date): number => {
 export const StandingOrderManager: React.FC = () => {
   const [standingOrders, setStandingOrders] = useState<StandingOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tabValue, setTabValue] = useState(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [stats, setStats] = useState<StandingOrderStats>({
     totalActive: 0,
     totalPaused: 0,
@@ -246,130 +273,177 @@ export const StandingOrderManager: React.FC = () => {
     return (order.completedDeliveries / order.totalDeliveries) * 100;
   };
 
-  const getStatusBadge = (status: StandingOrder['status']) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, orderId: string) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedOrderId(orderId);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedOrderId(null);
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const getStatusChip = (status: StandingOrder['status']) => {
     const config = statusConfig[status];
-    const Icon = config.icon;
+    const IconComponent = config.icon === AccessTime ? AccessTime : 
+                        config.icon === PlayCircle ? PlayCircle :
+                        config.icon === PauseCircle ? PauseCircle : StopCircle;
     return (
-      <Badge className={config.color}>
-        <Icon className="h-3 w-3 mr-1" />
-        {config.label}
-      </Badge>
+      <Chip
+        icon={<IconComponent />}
+        label={config.label}
+        color={config.color}
+        size="small"
+      />
     );
   };
 
-  const getFrequencyBadge = (frequency: StandingOrder['frequency']) => {
+  const getFrequencyChip = (frequency: StandingOrder['frequency']) => {
     const config = frequencyConfig[frequency];
-    return <Badge className={config.color}>{config.label}</Badge>;
+    return <Chip label={config.label} color={config.color} size="small" variant="outlined" />;
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading standing orders...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
-    <div className="space-y-6">
+    <Box sx={{ p: 3 }}>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Standing Order Manager</h1>
-          <p className="text-muted-foreground">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Standing Order Manager
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
             Manage recurring orders and subscription deliveries
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
+          </Typography>
+        </Box>
+        <Stack direction="row" spacing={2}>
+          <Button variant="outlined" size="small" startIcon={<Refresh />}>
             Refresh
           </Button>
-          <Button size="sm">
-            <Plus className="h-4 w-4 mr-2" />
+          <Button variant="contained" size="small" startIcon={<Add />}>
             New Standing Order
           </Button>
-        </div>
-      </div>
+        </Stack>
+      </Box>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Orders</CardTitle>
-            <PlayCircle className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalActive}</div>
-            <p className="text-xs text-muted-foreground">Currently running</p>
-          </CardContent>
-        </Card>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader
+              title="Active Orders"
+              titleTypographyProps={{ variant: 'body2' }}
+              avatar={<PlayCircle color="success" />}
+            />
+            <CardContent>
+              <Typography variant="h4" component="div">
+                {stats.totalActive}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Currently running
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Paused Orders</CardTitle>
-            <PauseCircle className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalPaused}</div>
-            <p className="text-xs text-muted-foreground">Temporarily stopped</p>
-          </CardContent>
-        </Card>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader
+              title="Paused Orders"
+              titleTypographyProps={{ variant: 'body2' }}
+              avatar={<PauseCircle color="warning" />}
+            />
+            <CardContent>
+              <Typography variant="h4" component="div">
+                {stats.totalPaused}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Temporarily stopped
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Upcoming Deliveries</CardTitle>
-            <Calendar className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.upcomingDeliveries}</div>
-            <p className="text-xs text-muted-foreground">Next 7 days</p>
-          </CardContent>
-        </Card>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader
+              title="Upcoming Deliveries"
+              titleTypographyProps={{ variant: 'body2' }}
+              avatar={<CalendarMonth color="primary" />}
+            />
+            <CardContent>
+              <Typography variant="h4" component="div">
+                {stats.upcomingDeliveries}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Next 7 days
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.currency} {stats.monthlyRevenue.toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">Estimated recurring</p>
-          </CardContent>
-        </Card>
-      </div>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader
+              title="Monthly Revenue"
+              titleTypographyProps={{ variant: 'body2' }}
+              avatar={<TrendingUp color="success" />}
+            />
+            <CardContent>
+              <Typography variant="h4" component="div">
+                {stats.currency} {stats.monthlyRevenue.toLocaleString()}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Estimated recurring
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
       {/* Main Content */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">All Orders</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="paused">Paused</TabsTrigger>
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-        </TabsList>
+      <Paper sx={{ width: '100%' }}>
+        <Tabs value={tabValue} onChange={handleTabChange} aria-label="standing orders tabs">
+          <Tab label="All Orders" />
+          <Tab label="Active" />
+          <Tab label="Paused" />
+          <Tab label="Upcoming" />
+        </Tabs>
 
-        <TabsContent value="all">
+        <TabPanel value={tabValue} index={0}>
           <Card>
-            <CardHeader>
-              <CardTitle>Standing Orders</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {standingOrders.length} total standing orders
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Order</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Frequency</TableHead>
-                    <TableHead>Progress</TableHead>
-                    <TableHead>Next Delivery</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Monthly Value</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+            <CardHeader
+              title="Standing Orders"
+              subheader={`${standingOrders.length} total standing orders`}
+            />
+            <CardContent sx={{ p: 0 }}>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Order</TableCell>
+                      <TableCell>Customer</TableCell>
+                      <TableCell>Product</TableCell>
+                      <TableCell>Frequency</TableCell>
+                      <TableCell>Progress</TableCell>
+                      <TableCell>Next Delivery</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Monthly Value</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
                   {standingOrders.map((order) => {
                     const daysUntil = getDaysUntilDelivery(order.nextDelivery);
                     const monthlyValue = (() => {
@@ -385,137 +459,180 @@ export const StandingOrderManager: React.FC = () => {
                     return (
                       <TableRow key={order.id}>
                         <TableCell>
-                          <div>
-                            <p className="font-medium">{order.orderNumber}</p>
-                            <p className="text-xs text-muted-foreground">{order.sku}</p>
-                          </div>
+                          <Box>
+                            <Typography variant="body2" fontWeight="medium">
+                              {order.orderNumber}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {order.sku}
+                            </Typography>
+                          </Box>
                         </TableCell>
                         <TableCell>{order.customerName}</TableCell>
                         <TableCell>
-                          <div>
-                            <p className="font-medium">{order.productName}</p>
-                            <p className="text-xs text-muted-foreground">
+                          <Box>
+                            <Typography variant="body2" fontWeight="medium">
+                              {order.productName}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
                               {order.quantity} {order.unit}
-                            </p>
-                          </div>
+                            </Typography>
+                          </Box>
                         </TableCell>
-                        <TableCell>{getFrequencyBadge(order.frequency)}</TableCell>
+                        <TableCell>{getFrequencyChip(order.frequency)}</TableCell>
                         <TableCell>
-                          <div className="space-y-1 min-w-[120px]">
-                            <div className="flex items-center justify-between text-sm">
-                              <span>{order.completedDeliveries}/{order.totalDeliveries}</span>
-                              <span className="text-xs text-muted-foreground">
+                          <Box sx={{ minWidth: 120 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                              <Typography variant="body2">
+                                {order.completedDeliveries}/{order.totalDeliveries}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
                                 {Math.round(getProgressPercentage(order))}%
-                              </span>
-                            </div>
-                            <ProgressIndicator value={getProgressPercentage(order)} className="h-2" />
-                          </div>
+                              </Typography>
+                            </Box>
+                            <LinearProgress
+                              variant="determinate"
+                              value={getProgressPercentage(order)}
+                              sx={{ height: 6, borderRadius: 1 }}
+                            />
+                          </Box>
                         </TableCell>
                         <TableCell>
-                          <div>
-                            <p className="text-sm">
+                          <Box>
+                            <Typography variant="body2">
                               {format(order.nextDelivery, 'MMM dd, yyyy')}
-                            </p>
-                            <p className={`text-xs ${daysUntil <= 3 ? "text-red-600" : daysUntil <= 7 ? "text-yellow-600" : "text-muted-foreground"}`}>
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              color={
+                                daysUntil <= 3 ? 'error.main' :
+                                daysUntil <= 7 ? 'warning.main' :
+                                'text.secondary'
+                              }
+                            >
                               {daysUntil > 0 ? `${daysUntil} days` : 'Overdue'}
-                            </p>
-                          </div>
+                            </Typography>
+                          </Box>
                         </TableCell>
-                        <TableCell>{getStatusBadge(order.status)}</TableCell>
+                        <TableCell>{getStatusChip(order.status)}</TableCell>
                         <TableCell>
                           {order.currency} {Math.round(monthlyValue).toLocaleString()}
                         </TableCell>
                         <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem>
-                                <Settings className="h-4 w-4 mr-2" />
-                                Edit Schedule
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              {order.status === 'active' && (
-                                <DropdownMenuItem 
-                                  onClick={() => handleOrderAction('pause', order.id)}
-                                >
-                                  <PauseCircle className="h-4 w-4 mr-2" />
-                                  Pause Order
-                                </DropdownMenuItem>
-                              )}
-                              {order.status === 'paused' && (
-                                <DropdownMenuItem 
-                                  onClick={() => handleOrderAction('resume', order.id)}
-                                >
-                                  <PlayCircle className="h-4 w-4 mr-2" />
-                                  Resume Order
-                                </DropdownMenuItem>
-                              )}
-                              <DropdownMenuItem 
-                                onClick={() => handleOrderAction('cancel', order.id)}
-                                className="text-red-600"
-                              >
-                                <StopCircle className="h-4 w-4 mr-2" />
-                                Cancel Order
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                          <IconButton
+                            size="small"
+                            onClick={(e) => handleMenuOpen(e, order.id)}
+                          >
+                            <MoreHoriz />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     );
                   })}
-                </TableBody>
-              </Table>
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="active">
+        <TabPanel value={tabValue} index={1}>
           <Card>
-            <CardHeader>
-              <CardTitle>Active Standing Orders</CardTitle>
-            </CardHeader>
+            <CardHeader title="Active Standing Orders" />
             <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Active orders view would show filtered content</p>
-              </div>
+              <Box sx={{ textAlign: 'center', py: 8 }}>
+                <Inventory sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                <Typography color="text.secondary">
+                  Active orders view would show filtered content
+                </Typography>
+              </Box>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="paused">
+        <TabPanel value={tabValue} index={2}>
           <Card>
-            <CardHeader>
-              <CardTitle>Paused Standing Orders</CardTitle>
-            </CardHeader>
+            <CardHeader title="Paused Standing Orders" />
             <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <PauseCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Paused orders view would show filtered content</p>
-              </div>
+              <Box sx={{ textAlign: 'center', py: 8 }}>
+                <PauseCircle sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                <Typography color="text.secondary">
+                  Paused orders view would show filtered content
+                </Typography>
+              </Box>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="upcoming">
+        <TabPanel value={tabValue} index={3}>
           <Card>
-            <CardHeader>
-              <CardTitle>Upcoming Deliveries</CardTitle>
-            </CardHeader>
+            <CardHeader title="Upcoming Deliveries" />
             <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Upcoming deliveries view would show filtered content</p>
-              </div>
+              <Box sx={{ textAlign: 'center', py: 8 }}>
+                <CalendarMonth sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                <Typography color="text.secondary">
+                  Upcoming deliveries view would show filtered content
+                </Typography>
+              </Box>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+        </TabPanel>
+      </Paper>
+
+      {/* Action Menu */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleMenuClose}>
+          <Settings sx={{ mr: 1, fontSize: 18 }} />
+          Edit Schedule
+        </MenuItem>
+        <Divider />
+        {selectedOrderId && (() => {
+          const order = standingOrders.find(o => o.id === selectedOrderId);
+          if (!order) return null;
+          
+          if (order.status === 'active') {
+            return (
+              <MenuItem onClick={() => {
+                handleOrderAction('pause', order.id);
+                handleMenuClose();
+              }}>
+                <PauseCircle sx={{ mr: 1, fontSize: 18 }} />
+                Pause Order
+              </MenuItem>
+            );
+          }
+          
+          if (order.status === 'paused') {
+            return (
+              <MenuItem onClick={() => {
+                handleOrderAction('resume', order.id);
+                handleMenuClose();
+              }}>
+                <PlayCircle sx={{ mr: 1, fontSize: 18 }} />
+                Resume Order
+              </MenuItem>
+            );
+          }
+          
+          return null;
+        })()}
+        <MenuItem 
+          onClick={() => {
+            if (selectedOrderId) {
+              handleOrderAction('cancel', selectedOrderId);
+              handleMenuClose();
+            }
+          }}
+          sx={{ color: 'error.main' }}
+        >
+          <StopCircle sx={{ mr: 1, fontSize: 18 }} />
+          Cancel Order
+        </MenuItem>
+      </Menu>
+    </Box>
   );
 };

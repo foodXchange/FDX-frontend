@@ -1,41 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  IconButton,
+  Chip,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
-  TableHeader,
   TableRow,
-} from '../../components/ui/table';
+  Paper,
+  Grid,
+  Tabs,
+  Tab,
+  Stack,
+  Menu,
+  MenuItem,
+  Divider,
+  LinearProgress,
+  Alert,
+  AlertTitle,
+  Badge,
+  CircularProgress
+} from '@mui/material';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
-import {
-  Thermometer,
-  AlertTriangle,
-  Activity,
-  RefreshCw,
+  Thermostat,
+  Warning,
+  ShowChart,
+  Refresh,
   Settings,
-  MoreHorizontal,
-  MapPin,
-  Clock,
+  MoreHoriz,
+  LocationOn,
+  Schedule,
   Shield,
-  Zap,
-  Snowflake,
-  Flame,
-  Eye,
+  Bolt,
+  AcUnit,
+  LocalFireDepartment,
+  Visibility,
   CheckCircle,
-} from 'lucide-react';
+  Battery20,
+  Battery50,
+  Battery80,
+  BatteryFull
+} from '@mui/icons-material';
 import { format, subHours } from 'date-fns';
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
 
 interface TemperatureReading {
   id: string;
@@ -91,45 +125,45 @@ interface TemperatureStats {
   complianceRate: number;
 }
 
-const sensorTypeConfig = {
+const sensorTypeConfig: Record<string, { label: string; color: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success'; icon: React.ReactElement; defaultRange?: { min: number; max: number } }> = {
   cold_storage: {
     label: 'Cold Storage',
-    color: 'bg-blue-100 text-blue-700',
-    icon: Snowflake,
+    color: 'info',
+    icon: <AcUnit />,
     defaultRange: { min: 2, max: 8 },
   },
   transport: {
     label: 'Transport',
-    color: 'bg-green-100 text-green-700',
-    icon: Activity,
+    color: 'success',
+    icon: <ShowChart />,
     defaultRange: { min: 0, max: 4 },
   },
   ambient: {
     label: 'Ambient',
-    color: 'bg-yellow-100 text-yellow-700',
-    icon: Thermometer,
+    color: 'warning',
+    icon: <Thermostat />,
     defaultRange: { min: 18, max: 25 },
   },
   freezer: {
     label: 'Freezer',
-    color: 'bg-purple-100 text-purple-700',
-    icon: Snowflake,
+    color: 'secondary',
+    icon: <AcUnit />,
     defaultRange: { min: -25, max: -18 },
   },
 };
 
-const statusConfig = {
-  online: { label: 'Online', color: 'bg-green-100 text-green-700', icon: CheckCircle },
-  offline: { label: 'Offline', color: 'bg-gray-100 text-gray-700', icon: Clock },
-  warning: { label: 'Warning', color: 'bg-yellow-100 text-yellow-700', icon: AlertTriangle },
-  critical: { label: 'Critical', color: 'bg-red-100 text-red-700', icon: AlertTriangle },
+const statusConfig: Record<string, { label: string; color: 'success' | 'default' | 'warning' | 'error'; icon: React.ReactElement }> = {
+  online: { label: 'Online', color: 'success', icon: <CheckCircle /> },
+  offline: { label: 'Offline', color: 'default', icon: <Schedule /> },
+  warning: { label: 'Warning', color: 'warning', icon: <Warning /> },
+  critical: { label: 'Critical', color: 'error', icon: <Warning /> },
 };
 
-const alertTypeConfig = {
-  high_temp: { label: 'High Temperature', icon: Flame, color: 'text-red-600' },
-  low_temp: { label: 'Low Temperature', icon: Snowflake, color: 'text-blue-600' },
-  sensor_offline: { label: 'Sensor Offline', icon: Zap, color: 'text-gray-600' },
-  battery_low: { label: 'Low Battery', icon: Zap, color: 'text-yellow-600' },
+const alertTypeConfig: Record<string, { label: string; color: string; icon: React.ReactElement }> = {
+  high_temp: { label: 'High Temperature', icon: <LocalFireDepartment />, color: 'error.main' },
+  low_temp: { label: 'Low Temperature', icon: <AcUnit />, color: 'info.main' },
+  sensor_offline: { label: 'Sensor Offline', icon: <Bolt />, color: 'text.secondary' },
+  battery_low: { label: 'Low Battery', icon: <Bolt />, color: 'warning.main' },
 };
 
 const getTemperatureStatus = (temp: number, range: { min: number; max: number }): 'normal' | 'warning' | 'critical' => {
@@ -332,370 +366,498 @@ export const TemperatureMonitor: React.FC = () => {
     // TODO: Implement sensor actions
   };
 
-  const getStatusBadge = (status: TemperatureSensor['status']) => {
+  const getStatusChip = (status: TemperatureSensor['status']) => {
     const config = statusConfig[status];
-    const Icon = config.icon;
     return (
-      <Badge className={config.color}>
-        <Icon className="h-3 w-3 mr-1" />
-        {config.label}
-      </Badge>
+      <Chip
+        icon={config.icon}
+        label={config.label}
+        color={config.color}
+        size="small"
+      />
     );
   };
 
-  const getTypeBadge = (type: TemperatureSensor['type']) => {
+  const getTypeChip = (type: TemperatureSensor['type']) => {
     const config = sensorTypeConfig[type];
-    const Icon = config.icon;
     return (
-      <Badge className={config.color}>
-        <Icon className="h-3 w-3 mr-1" />
-        {config.label}
-      </Badge>
+      <Chip
+        icon={config.icon}
+        label={config.label}
+        color={config.color}
+        size="small"
+        variant="outlined"
+      />
     );
   };
 
   const getTemperatureColor = (temp: number, range: { min: number; max: number }) => {
     const status = getTemperatureStatus(temp, range);
     switch (status) {
-      case 'critical': return 'text-red-600';
-      case 'warning': return 'text-yellow-600';
-      default: return 'text-green-600';
+      case 'critical': return 'error.main';
+      case 'warning': return 'warning.main';
+      default: return 'success.main';
     }
   };
 
   const getAlertIcon = (alertType: TemperatureAlert['alertType']) => {
     const config = alertTypeConfig[alertType];
-    const Icon = config.icon;
-    return <Icon className={`h-4 w-4 ${config.color}`} />;
+    return React.cloneElement(config.icon, { sx: { fontSize: 16, color: config.color } });
+  };
+
+  const [tabValue, setTabValue] = useState(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedSensorId, setSelectedSensorId] = useState<string | null>(null);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, sensorId: string) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedSensorId(sensorId);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedSensorId(null);
+  };
+
+  const getBatteryIcon = (level: number) => {
+    if (level > 80) return <BatteryFull />;
+    if (level > 50) return <Battery80 />;
+    if (level > 20) return <Battery50 />;
+    return <Battery20 />;
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading temperature data...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Stack spacing={2} alignItems="center">
+          <CircularProgress />
+          <Typography>Loading temperature data...</Typography>
+        </Stack>
+      </Box>
+    );
   }
 
   return (
-    <div className="space-y-6">
+    <Box sx={{ p: 3 }}>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Temperature Monitor</h1>
-          <p className="text-muted-foreground">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Temperature Monitor
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
             Real-time cold chain monitoring and compliance
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
+          </Typography>
+        </Box>
+        <Stack direction="row" spacing={2}>
+          <Button variant="outlined" size="small" startIcon={<Refresh />}>
             Refresh
           </Button>
-          <Button variant="outline" size="sm">
-            <Settings className="h-4 w-4 mr-2" />
+          <Button variant="outlined" size="small" startIcon={<Settings />}>
             Settings
           </Button>
-        </div>
-      </div>
+        </Stack>
+      </Box>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Sensors</CardTitle>
-            <Thermometer className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalSensors}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.activeSensors} currently online
-            </p>
-          </CardContent>
-        </Card>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader
+              title="Total Sensors"
+              titleTypographyProps={{ variant: 'body2' }}
+              avatar={<Thermostat color="primary" />}
+            />
+            <CardContent>
+              <Typography variant="h4" component="div">
+                {stats.totalSensors}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {stats.activeSensors} currently online
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.activeAlerts}</div>
-            <p className="text-xs text-muted-foreground">Require attention</p>
-          </CardContent>
-        </Card>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader
+              title="Active Alerts"
+              titleTypographyProps={{ variant: 'body2' }}
+              avatar={<Warning color="error" />}
+            />
+            <CardContent>
+              <Typography variant="h4" component="div">
+                {stats.activeAlerts}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Require attention
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Temperature</CardTitle>
-            <Activity className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.avgTemperature}°C</div>
-            <p className="text-xs text-muted-foreground">Across all sensors</p>
-          </CardContent>
-        </Card>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader
+              title="Avg Temperature"
+              titleTypographyProps={{ variant: 'body2' }}
+              avatar={<ShowChart color="success" />}
+            />
+            <CardContent>
+              <Typography variant="h4" component="div">
+                {stats.avgTemperature}°C
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Across all sensors
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Compliance Rate</CardTitle>
-            <Shield className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.complianceRate}%</div>
-            <p className="text-xs text-muted-foreground">Within target range</p>
-          </CardContent>
-        </Card>
-      </div>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader
+              title="Compliance Rate"
+              titleTypographyProps={{ variant: 'body2' }}
+              avatar={<Shield color="success" />}
+            />
+            <CardContent>
+              <Typography variant="h4" component="div">
+                {stats.complianceRate}%
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Within target range
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
       {/* Main Content */}
-      <Tabs defaultValue="sensors" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="sensors">Sensors</TabsTrigger>
-          <TabsTrigger value="alerts">Alerts</TabsTrigger>
-          <TabsTrigger value="readings">Recent Readings</TabsTrigger>
-          <TabsTrigger value="charts">Charts</TabsTrigger>
-        </TabsList>
+      <Paper sx={{ width: '100%' }}>
+        <Tabs value={tabValue} onChange={handleTabChange} aria-label="temperature monitor tabs">
+          <Tab label="Sensors" />
+          <Tab label="Alerts" />
+          <Tab label="Recent Readings" />
+          <Tab label="Charts" />
+        </Tabs>
 
-        <TabsContent value="sensors">
+        <TabPanel value={tabValue} index={0}>
           <Card>
-            <CardHeader>
-              <CardTitle>Temperature Sensors</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Monitor all temperature sensors across your facilities
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Sensor</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Current Temp</TableHead>
-                    <TableHead>Target Range</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Battery</TableHead>
-                    <TableHead>Last Reading</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sensors.map((sensor) => (
-                    <TableRow key={sensor.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{sensor.name}</p>
-                          <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            <MapPin className="h-3 w-3" />
-                            {sensor.location}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>{getTypeBadge(sensor.type)}</TableCell>
-                      <TableCell>
-                        <span className={`text-lg font-bold ${getTemperatureColor(sensor.currentTemp, sensor.targetRange)}`}>
-                          {sensor.currentTemp}°C
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {sensor.targetRange.min}°C to {sensor.targetRange.max}°C
-                        </span>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(sensor.status)}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className={`text-sm ${sensor.batteryLevel > 50 ? "text-green-600" : sensor.batteryLevel > 20 ? "text-yellow-600" : "text-red-600"}`}>
-                            {sensor.batteryLevel}%
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs text-muted-foreground">
-                          {format(sensor.lastReading, 'MMM dd, HH:mm')}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem 
-                              onClick={() => handleSensorAction('view', sensor.id)}
-                            >
-                              <Eye className="h-4 w-4 mr-2" />
-                              View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => handleSensorAction('configure', sensor.id)}
-                            >
-                              <Settings className="h-4 w-4 mr-2" />
-                              Configure
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem 
-                              onClick={() => handleSensorAction('calibrate', sensor.id)}
-                            >
-                              <Activity className="h-4 w-4 mr-2" />
-                              Calibrate
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+            <CardHeader
+              title="Temperature Sensors"
+              subheader="Monitor all temperature sensors across your facilities"
+            />
+            <CardContent sx={{ p: 0 }}>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Sensor</TableCell>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Current Temp</TableCell>
+                      <TableCell>Target Range</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Battery</TableCell>
+                      <TableCell>Last Reading</TableCell>
+                      <TableCell>Actions</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHead>
+                  <TableBody>
+                    {sensors.map((sensor) => (
+                      <TableRow key={sensor.id}>
+                        <TableCell>
+                          <Box>
+                            <Typography variant="body2" fontWeight="medium">
+                              {sensor.name}
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <LocationOn sx={{ fontSize: 14 }} />
+                              <Typography variant="caption" color="text.secondary">
+                                {sensor.location}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>{getTypeChip(sensor.type)}</TableCell>
+                        <TableCell>
+                          <Typography
+                            variant="body1"
+                            fontWeight="bold"
+                            color={getTemperatureColor(sensor.currentTemp, sensor.targetRange)}
+                          >
+                            {sensor.currentTemp}°C
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" color="text.secondary">
+                            {sensor.targetRange.min}°C to {sensor.targetRange.max}°C
+                          </Typography>
+                        </TableCell>
+                        <TableCell>{getStatusChip(sensor.status)}</TableCell>
+                        <TableCell>
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            {React.cloneElement(getBatteryIcon(sensor.batteryLevel), {
+                              sx: {
+                                fontSize: 20,
+                                color: sensor.batteryLevel > 50 ? 'success.main' :
+                                       sensor.batteryLevel > 20 ? 'warning.main' : 'error.main'
+                              }
+                            })}
+                            <Typography
+                              variant="body2"
+                              color={
+                                sensor.batteryLevel > 50 ? 'success.main' :
+                                sensor.batteryLevel > 20 ? 'warning.main' : 'error.main'
+                              }
+                            >
+                              {sensor.batteryLevel}%
+                            </Typography>
+                          </Stack>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="caption" color="text.secondary">
+                            {format(sensor.lastReading, 'MMM dd, HH:mm')}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            size="small"
+                            onClick={(e) => handleMenuOpen(e, sensor.id)}
+                          >
+                            <MoreHoriz />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="alerts">
+        <TabPanel value={tabValue} index={1}>
           <Card>
-            <CardHeader>
-              <CardTitle>Temperature Alerts</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Active alerts and notifications requiring attention
-              </p>
-            </CardHeader>
+            <CardHeader
+              title="Temperature Alerts"
+              subheader="Active alerts and notifications requiring attention"
+            />
             <CardContent>
-              <div className="space-y-4">
+              <Stack spacing={2}>
                 {alerts.map((alert) => (
-                  <div
+                  <Alert
                     key={alert.id}
-                    className={`flex items-start gap-4 p-4 rounded-lg border ${alert.acknowledged ? "bg-muted/30" : "bg-muted/50"} ${alert.severity === 'high' && !alert.acknowledged ? "border-red-200 bg-red-50" : ""}`}
+                    severity={
+                      alert.severity === 'high' ? 'error' :
+                      alert.severity === 'medium' ? 'warning' : 'info'
+                    }
+                    icon={getAlertIcon(alert.alertType)}
+                    sx={{
+                      opacity: alert.acknowledged ? 0.7 : 1,
+                      bgcolor: alert.acknowledged ? 'action.disabledBackground' : undefined
+                    }}
+                    action={
+                      !alert.acknowledged && (
+                        <Button
+                          size="small"
+                          onClick={() => handleAlertAction('acknowledge', alert.id)}
+                          startIcon={<CheckCircle />}
+                        >
+                          Acknowledge
+                        </Button>
+                      )
+                    }
                   >
-                    <div className="flex-shrink-0 mt-1">
-                      {getAlertIcon(alert.alertType)}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium">{alertTypeConfig[alert.alertType].label}</h4>
-                          <p className="text-sm text-muted-foreground">{alert.sensorName}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge 
-                            className={alert.severity === 'high' ? "bg-red-100 text-red-700" : alert.severity === 'medium' ? "bg-yellow-100 text-yellow-700" : "bg-blue-100 text-blue-700"}
-                          >
-                            {alert.severity}
-                          </Badge>
-                          {!alert.acknowledged && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleAlertAction('acknowledge', alert.id)}
-                            >
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Acknowledge
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                      <p className="text-sm mt-2">{alert.message}</p>
-                      {alert.currentTemp && alert.thresholdTemp && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Current: {alert.currentTemp}°C | Threshold: {alert.thresholdTemp}°C
-                        </p>
-                      )}
-                      <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
+                    <AlertTitle>
+                      {alertTypeConfig[alert.alertType].label}
+                      <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                        {alert.sensorName}
+                      </Typography>
+                      <Chip
+                        label={alert.severity}
+                        size="small"
+                        color={
+                          alert.severity === 'high' ? 'error' :
+                          alert.severity === 'medium' ? 'warning' : 'info'
+                        }
+                        sx={{ ml: 2 }}
+                      />
+                    </AlertTitle>
+                    <Typography variant="body2">
+                      {alert.message}
+                    </Typography>
+                    {alert.currentTemp && alert.thresholdTemp && (
+                      <Typography variant="caption" color="text.secondary">
+                        Current: {alert.currentTemp}°C | Threshold: {alert.thresholdTemp}°C
+                      </Typography>
+                    )}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                      <Schedule sx={{ fontSize: 14 }} />
+                      <Typography variant="caption">
                         {format(alert.timestamp, 'MMM dd, yyyy HH:mm')}
-                        {alert.acknowledged && (
-                          <span className="ml-2 text-green-600">• Acknowledged</span>
-                        )}
-                      </p>
-                    </div>
-                  </div>
+                      </Typography>
+                      {alert.acknowledged && (
+                        <Typography variant="caption" color="success.main">
+                          • Acknowledged
+                        </Typography>
+                      )}
+                    </Box>
+                  </Alert>
                 ))}
                 {alerts.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <CheckCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p>No active alerts</p>
-                    <p className="text-xs">All temperature sensors are operating normally</p>
-                  </div>
+                  <Box sx={{ textAlign: 'center', py: 8 }}>
+                    <CheckCircle sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                    <Typography color="text.secondary">
+                      No active alerts
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      All temperature sensors are operating normally
+                    </Typography>
+                  </Box>
                 )}
-              </div>
+              </Stack>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="readings">
+        <TabPanel value={tabValue} index={2}>
           <Card>
-            <CardHeader>
-              <CardTitle>Recent Temperature Readings</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Latest temperature and humidity readings from all sensors
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Sensor</TableHead>
-                    <TableHead>Temperature</TableHead>
-                    <TableHead>Humidity</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Timestamp</TableHead>
-                    <TableHead>Battery</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {readings.slice(0, 20).map((reading) => (
-                    <TableRow key={reading.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{reading.sensorName}</p>
-                          <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            <MapPin className="h-3 w-3" />
-                            {reading.location}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className={`font-bold ${reading.status === 'critical' ? "text-red-600" : reading.status === 'warning' ? "text-yellow-600" : "text-green-600"}`}>
-                          {reading.temperature}°C
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        {reading.humidity ? `${reading.humidity}%` : '—'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={reading.status === 'critical' ? "bg-red-100 text-red-700" : reading.status === 'warning' ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}>
-                          {reading.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs text-muted-foreground">
-                          {format(reading.timestamp, 'MMM dd, HH:mm:ss')}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        {reading.batteryLevel ? `${reading.batteryLevel}%` : '—'}
-                      </TableCell>
+            <CardHeader
+              title="Recent Temperature Readings"
+              subheader="Latest temperature and humidity readings from all sensors"
+            />
+            <CardContent sx={{ p: 0 }}>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Sensor</TableCell>
+                      <TableCell>Temperature</TableCell>
+                      <TableCell>Humidity</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Timestamp</TableCell>
+                      <TableCell>Battery</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHead>
+                  <TableBody>
+                    {readings.slice(0, 20).map((reading) => (
+                      <TableRow key={reading.id}>
+                        <TableCell>
+                          <Box>
+                            <Typography variant="body2" fontWeight="medium">
+                              {reading.sensorName}
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <LocationOn sx={{ fontSize: 14 }} />
+                              <Typography variant="caption" color="text.secondary">
+                                {reading.location}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography
+                            variant="body2"
+                            fontWeight="bold"
+                            color={
+                              reading.status === 'critical' ? 'error.main' :
+                              reading.status === 'warning' ? 'warning.main' :
+                              'success.main'
+                            }
+                          >
+                            {reading.temperature}°C
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          {reading.humidity ? `${reading.humidity}%` : '—'}
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={reading.status}
+                            size="small"
+                            color={
+                              reading.status === 'critical' ? 'error' :
+                              reading.status === 'warning' ? 'warning' :
+                              'success'
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="caption" color="text.secondary">
+                            {format(reading.timestamp, 'MMM dd, HH:mm:ss')}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          {reading.batteryLevel ? `${reading.batteryLevel}%` : '—'}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="charts">
+        <TabPanel value={tabValue} index={3}>
           <Card>
-            <CardHeader>
-              <CardTitle>Temperature Charts</CardTitle>
-            </CardHeader>
+            <CardHeader title="Temperature Charts" />
             <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Temperature charts would be displayed here</p>
-                <p className="text-xs">Integrates with charting library for historical data visualization</p>
-              </div>
+              <Box sx={{ textAlign: 'center', py: 8 }}>
+                <ShowChart sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                <Typography color="text.secondary">
+                  Temperature charts would be displayed here
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Integrates with charting library for historical data visualization
+                </Typography>
+              </Box>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+        </TabPanel>
+      </Paper>
+
+      {/* Action Menu */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={() => {
+          if (selectedSensorId) {
+            handleSensorAction('view', selectedSensorId);
+            handleMenuClose();
+          }
+        }}>
+          <Visibility sx={{ mr: 1, fontSize: 18 }} />
+          View Details
+        </MenuItem>
+        <MenuItem onClick={() => {
+          if (selectedSensorId) {
+            handleSensorAction('configure', selectedSensorId);
+            handleMenuClose();
+          }
+        }}>
+          <Settings sx={{ mr: 1, fontSize: 18 }} />
+          Configure
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={() => {
+          if (selectedSensorId) {
+            handleSensorAction('calibrate', selectedSensorId);
+            handleMenuClose();
+          }
+        }}>
+          <ShowChart sx={{ mr: 1, fontSize: 18 }} />
+          Calibrate
+        </MenuItem>
+      </Menu>
+    </Box>
   );
 };

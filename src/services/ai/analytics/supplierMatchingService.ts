@@ -1,3 +1,4 @@
+// Service for AI-driven supplier matching and recommendation based on requirements and business context
 import { SupplierMatch, PredictionResult } from '../types';
 import { aiService } from '../aiService';
 import { logger } from '../../logger';

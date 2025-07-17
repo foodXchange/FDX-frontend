@@ -5,7 +5,6 @@ import {
   Box,
   Alert,
   Skeleton,
-  Paper,
   Fab,
   Dialog,
 } from '@mui/material';
@@ -202,3 +201,5 @@ export const ExpertProfile: FC = () => {
     </Container>
   );
 };
+
+export default ExpertProfile;

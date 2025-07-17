@@ -77,7 +77,7 @@ export const CTA: React.FC = () => {
           >
             {/* Badge */}
             <Chip
-              icon={<RocketLaunchIcon style={{ width: 14, height: 14 }} />}
+              icon={<Box component={RocketLaunchIcon} sx={{ width: 14, height: 14 }} />}
               label="Ready to Get Started?"
               sx={{
                 background: `${theme.palette.info.main}10`,
@@ -201,7 +201,7 @@ export const CTA: React.FC = () => {
                   },
                 }}
               >
-                <CalendarDaysIcon className="h-6 w-6" style={{ marginRight: 8 }} />
+                <Box component={CalendarDaysIcon} sx={{ width: 24, height: 24, mr: 1 }} />
                 Schedule Demo
               </Button>
             </Box>
@@ -218,15 +218,15 @@ export const CTA: React.FC = () => {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
+                <Box component={CheckCircleIcon} sx={{ width: 24, height: 24, mr: 1, color: 'success.main' }} />
                 <Typography variant="body2">No credit card required</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
+                <Box component={CheckCircleIcon} sx={{ width: 24, height: 24, mr: 1, color: 'success.main' }} />
                 <Typography variant="body2">Free trial</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
+                <Box component={CheckCircleIcon} sx={{ width: 24, height: 24, mr: 1, color: 'success.main' }} />
                 <Typography variant="body2">Cancel anytime</Typography>
               </Box>
             </Box>

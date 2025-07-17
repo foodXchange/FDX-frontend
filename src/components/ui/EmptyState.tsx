@@ -9,12 +9,13 @@ import {
   PlusCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from './Button';
+import { Box, Typography } from '@mui/material';
 
 export type EmptyStateType = 'no-data' | 'no-results' | 'error' | 'coming-soon';
 
 interface EmptyStateProps {
   type?: EmptyStateType;
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<any>;
   title: string;
   description?: string;
   action?: {
@@ -38,20 +39,37 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   description,
   action,
-  className,
 }) => {
   const Icon = icon || defaultIcons[type];
 
   return (
-    <motion.div
+    <Box
+      component={motion.div}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`flex flex-col items-center justify-center py-12 px-4 text-center ${className || ''}`}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        py: 6,
+        px: 2,
+        textAlign: 'center'
+      }}
     >
-      <div className="relative mb-6">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#B08D57] to-[#1E4C8A] opacity-10 blur-3xl rounded-full" />
-        <motion.div
+      <Box sx={{ position: 'relative', mb: 3 }}>
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to right, rgba(176, 141, 87, 0.1), rgba(30, 76, 138, 0.1))',
+            filter: 'blur(24px)',
+            borderRadius: '50%'
+          }}
+        />
+        <Box
+          component={motion.div}
           animate={{
             y: [0, -10, 0],
           }}
@@ -61,14 +79,18 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
             ease: 'easeInOut',
           }}
         >
-          <Icon className="relative w-24 h-24 text-gray-400" />
-        </motion.div>
-      </div>
+          <Box component={Icon} sx={{ position: 'relative', width: 96, height: 96, color: 'grey.400' }} />
+        </Box>
+      </Box>
 
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+        {title}
+      </Typography>
       
       {description && (
-        <p className="text-sm text-gray-600 mb-6 max-w-sm">{description}</p>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3, maxWidth: '24rem' }}>
+          {description}
+        </Typography>
       )}
 
       {action && (
@@ -80,7 +102,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           {action.label}
         </Button>
       )}
-    </motion.div>
+    </Box>
   );
 };
 
@@ -170,7 +192,7 @@ export const IllustratedEmptyState: React.FC<{
 }> = ({ illustration, title, description, action }) => {
   const illustrations = {
     products: (
-      <svg viewBox="0 0 200 200" className="w-full h-full">
+      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
         <motion.rect
           x="50"
           y="50"
@@ -196,7 +218,7 @@ export const IllustratedEmptyState: React.FC<{
       </svg>
     ),
     orders: (
-      <svg viewBox="0 0 200 200" className="w-full h-full">
+      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
         <motion.path
           d="M50 100 L100 50 L150 100 L100 150 Z"
           fill="none"
@@ -218,7 +240,7 @@ export const IllustratedEmptyState: React.FC<{
       </svg>
     ),
     analytics: (
-      <svg viewBox="0 0 200 200" className="w-full h-full">
+      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
         <motion.line
           x1="40"
           y1="160"
@@ -255,20 +277,33 @@ export const IllustratedEmptyState: React.FC<{
   };
 
   return (
-    <motion.div
+    <Box
+      component={motion.div}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="flex flex-col items-center justify-center py-12 px-4 text-center"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        py: 6,
+        px: 2,
+        textAlign: 'center'
+      }}
     >
-      <div className="w-48 h-48 mb-8">
+      <Box sx={{ width: 192, height: 192, mb: 4 }}>
         {illustrations[illustration]}
-      </div>
+      </Box>
 
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
+      <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+        {title}
+      </Typography>
       
       {description && (
-        <p className="text-gray-600 mb-6 max-w-md">{description}</p>
+        <Typography sx={{ color: 'text.secondary', mb: 3, maxWidth: '28rem' }}>
+          {description}
+        </Typography>
       )}
 
       {action && (
@@ -280,6 +315,6 @@ export const IllustratedEmptyState: React.FC<{
           {action.label}
         </Button>
       )}
-    </motion.div>
+    </Box>
   );
 };

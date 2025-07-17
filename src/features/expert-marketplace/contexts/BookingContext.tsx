@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode, FC } from 'react';
-import { Booking, BookingStatus, Service, TimeSlot } from '../types';
+import { Booking, TimeSlot } from '../types';
 
 interface BookingContextValue {
   // State
@@ -148,7 +148,7 @@ export const BookingProvider: FC<BookingProviderProps> = ({ children }) => {
     });
   }, [updateBooking]);
 
-  const checkAvailability = useCallback(async (expertId: string, date: string): Promise<TimeSlot[]> => {
+  const checkAvailability = useCallback(async (_expertId: string, _date: string): Promise<TimeSlot[]> => {
     setLoading(true);
     setError(null);
     try {
@@ -170,9 +170,9 @@ export const BookingProvider: FC<BookingProviderProps> = ({ children }) => {
   }, []);
 
   const getExpertSchedule = useCallback(async (
-    expertId: string, 
-    startDate: string, 
-    endDate: string
+    _expertId: string, 
+    _startDate: string, 
+    _endDate: string
   ): Promise<TimeSlot[]> => {
     setLoading(true);
     setError(null);

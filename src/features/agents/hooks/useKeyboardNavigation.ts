@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useEffect, useCallback, useRef, useState } from 'react';
 
 interface KeyboardNavigationConfig {
@@ -50,7 +51,8 @@ export function useKeyboardNavigation(config: KeyboardNavigationConfig = {}) {
     const items = Array.from(container.querySelectorAll(itemSelector)) as HTMLElement[];
     const visibleItems = items.filter(item => {
       const style = window.getComputedStyle(item);
-      return style.display !== 'none' && style.visibility !== 'hidden' && !item.disabled;
+      const isDisabled = item.hasAttribute('disabled') || item.getAttribute('aria-disabled') === 'true';
+      return style.display !== 'none' && style.visibility !== 'hidden' && !isDisabled;
     });
 
     setNavigationState(prev => ({

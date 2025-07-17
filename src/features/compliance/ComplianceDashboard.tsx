@@ -1,569 +1,629 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
 import {
-  ShieldCheckIcon,
-  ExclamationTriangleIcon,
-  ClockIcon,
-  DocumentTextIcon,
-  GlobeAmericasIcon,
-  CheckCircleIcon,
-  ArrowTrendingUpIcon,
-  CalendarDaysIcon,
-  BellIcon,
-  EyeIcon,
-  PlusIcon,
-  ArrowPathIcon,
-} from '@heroicons/react/24/outline';
-import { ComplianceCheck, Certification, ComplianceStatus } from '../../shared/types';
-import { StatusBadge } from '../../components/ui/StatusBadge';
-import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
-import { formatDistanceToNow, format, addDays } from 'date-fns';
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  Card,
+  CardContent,
+  CardHeader,
+  Button,
+  IconButton,
+  Stack,
+  Chip,
+  Avatar,
+  Alert,
+  AlertTitle,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemSecondaryAction,
+  Badge,
+  Tabs,
+  Tab,
+  LinearProgress,
+  Divider,
+  Tooltip,
+  useTheme,
+  alpha,
+} from '@mui/material';
+import {
+  Dashboard,
+  VerifiedUser,
+  Assignment,
+  Warning,
+  CheckCircle,
+  Schedule,
+  TrendingUp,
+  TrendingDown,
+  Assessment,
+  Flag,
+  Security,
+  Gavel,
+  Rule,
+  Policy,
+  Notifications,
+  CalendarToday,
+  Business,
+  LocationOn,
+  Person,
+  Email,
+  Phone,
+  Download,
+  Upload,
+  Add,
+  Refresh,
+  Settings,
+  Timeline,
+  Analytics,
+  Report,
+  Task,
+  DocumentScanner,
+  FindInPage,
+  FactCheck,
+  RateReview,
+  Feedback,
+  Error as ErrorIcon,
+  Info,
+  CloudUpload,
+  AttachFile,
+  Visibility,
+  Edit,
+  Delete,
+  MoreVert,
+  NotificationsActive,
+  TrendingFlat,
+} from '@mui/icons-material';
+import { motion, AnimatePresence } from 'framer-motion';
+import { format, addDays, differenceInDays, startOfMonth, endOfMonth, isToday, isPast, isFuture, isThisWeek, isThisMonth } from 'date-fns';
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  Cell,
+  PieChart,
+  Pie,
+  Legend,
+  RadialBarChart,
+  RadialBar,
+} from 'recharts';
 
-interface ComplianceStats {
-  totalProducts: number;
-  compliantProducts: number;
-  pendingChecks: number;
-  expiringCertifications: number;
-  averageComplianceScore: number;
-  recentChecks: ComplianceCheck[];
-  upcomingDeadlines: Certification[];
-  regionalCompliance: {
-    region: string;
-    compliant: number;
-    total: number;
-    percentage: number;
-  }[];
-}
+// Import the existing components we'll integrate
+import { ComplianceTracker } from './ComplianceTracker';
+import { CertificationManager } from './CertificationManager';
+import { AuditManager } from './AuditManager';
 
-const mockComplianceStats: ComplianceStats = {
-  totalProducts: 156,
-  compliantProducts: 142,
-  pendingChecks: 8,
-  expiringCertifications: 3,
-  averageComplianceScore: 94.2,
-  recentChecks: [
-    {
-      id: '1',
-      productName: 'Organic Cornflakes',
-      checkType: 'Food Safety',
-      status: ComplianceStatus.VALID,
-      score: 98,
-      checkedAt: new Date(),
-      checkedBy: 'John Doe',
-      region: 'EU',
-      notes: 'All requirements met',
-    },
-    {
-      id: '2',
-      productName: 'Gluten-Free Pasta',
-      checkType: 'Labeling',
-      status: ComplianceStatus.INVALID,
-      score: 76,
-      checkedAt: new Date(Date.now() - 3600000),
-      checkedBy: 'Jane Smith',
-      region: 'US',
-      notes: 'Issues found with labeling',
-    },
-  ],
-  upcomingDeadlines: [
-    {
-      id: '1',
-      name: 'Organic Certification',
-      issuingBody: 'USDA',
-      certificateNumber: 'ORG-2024-001',
-      issueDate: new Date('2023-06-01'),
-      expiryDate: addDays(new Date(), 30),
-      status: 'active',
-    },
-    {
-      id: '2',
-      name: 'HACCP Certificate',
-      issuingBody: 'FDA',
-      certificateNumber: 'HACCP-2024-002',
-      issueDate: new Date('2023-07-01'),
-      expiryDate: addDays(new Date(), 15),
-      status: 'active',
-    },
-  ],
-  regionalCompliance: [
-    { region: 'EU', compliant: 45, total: 50, percentage: 90 },
-    { region: 'US', compliant: 38, total: 42, percentage: 90.5 },
-    { region: 'Asia-Pacific', compliant: 35, total: 40, percentage: 87.5 },
-    { region: 'Canada', compliant: 24, total: 24, percentage: 100 },
-  ],
+// Glassmorphism styles
+const glassmorphismStyle = {
+  background: (theme: any) => alpha(theme.palette.background.paper, 0.8),
+  backdropFilter: 'blur(20px)',
+  borderRadius: 2,
+  border: (theme: any) => `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+  boxShadow: (theme: any) => `0 8px 32px 0 ${alpha(theme.palette.common.black, 0.1)}`,
 };
 
-export const ComplianceDashboard: React.FC = () => {
-  const [stats, setStats] = useState<ComplianceStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
+// Compliance Metric Card Component
+const ComplianceMetricCard: React.FC<{
+  title: string;
+  value: number | string;
+  change?: number;
+  icon: React.ReactNode;
+  color: string;
+  subtitle?: string;
+  trend?: 'up' | 'down' | 'stable';
+}> = ({ title, value, change, icon, color, subtitle, trend }) => {
+  const theme = useTheme();
 
-  useEffect(() => {
-    fetchComplianceData();
-  }, []);
-
-  const fetchComplianceData = async () => {
-    try {
-      setLoading(true);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setStats(mockComplianceStats);
-    } catch (err) {
-      setError('Failed to load compliance data');
-      console.error('Compliance data error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await fetchComplianceData();
-    setRefreshing(false);
-  };
-
-  const getComplianceColor = (percentage: number) => {
-    if (percentage >= 95) return 'text-green-600 bg-green-100';
-    if (percentage >= 80) return 'text-yellow-600 bg-yellow-100';
-    return 'text-red-600 bg-red-100';
-  };
-
-  const getUrgencyLevel = (expiryDate: string | Date) => {
-    const expiry = typeof expiryDate === 'string' ? new Date(expiryDate) : expiryDate;
-    const now = new Date();
-    const daysUntilExpiry = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysUntilExpiry < 0) return 'expired';
-    if (daysUntilExpiry <= 7) return 'urgent';
-    if (daysUntilExpiry <= 30) return 'warning';
-    return 'normal';
-  };
-
-  const getUrgencyDisplay = (urgency: string) => {
-    switch (urgency) {
-      case 'expired':
-        return { text: 'Expired', color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-200' };
-      case 'urgent':
-        return { text: 'Urgent', color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-200' };
-      case 'warning':
-        return { text: 'Soon', color: 'text-yellow-500', bg: 'bg-yellow-50', border: 'border-yellow-200' };
+  const getTrendIcon = () => {
+    switch (trend) {
+      case 'up':
+        return <TrendingUp sx={{ fontSize: 16, color: theme.palette.success.main }} />;
+      case 'down':
+        return <TrendingDown sx={{ fontSize: 16, color: theme.palette.error.main }} />;
+      case 'stable':
+        return <TrendingFlat sx={{ fontSize: 16, color: theme.palette.grey[500] }} />;
       default:
-        return { text: 'Normal', color: 'text-green-500', bg: 'bg-green-50', border: 'border-green-200' };
+        return null;
     }
   };
-
-  if (loading) {
-    return (
-      <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <SkeletonLoader width="300px" height="32px" />
-          <SkeletonLoader width="120px" height="40px" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map(i => (
-            <SkeletonLoader key={i} width="100%" height="140px" />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <SkeletonLoader width="100%" height="400px" />
-          <SkeletonLoader width="100%" height="400px" />
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <ExclamationTriangleIcon className="h-6 w-6 text-red-500 mr-2" />
-            <span className="text-red-700">{error}</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Compliance Dashboard</h1>
-          <p className="text-gray-600 mt-1">Monitor and manage product compliance across all markets</p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <button
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-          >
-            <ArrowPathIcon className={`h-5 w-5 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </button>
-          <Link
-            to="/compliance/check"
-            className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-          >
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Run Compliance Check
-          </Link>
-        </div>
-      </div>
-
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          {
-            title: 'Compliance Score',
-            value: `${stats?.averageComplianceScore}%`,
-            icon: ShieldCheckIcon,
-            color: getComplianceColor(stats?.averageComplianceScore || 0),
-            trend: '+2.1%',
-            description: 'Average across all products'
-          },
-          {
-            title: 'Compliant Products',
-            value: `${stats?.compliantProducts}/${stats?.totalProducts}`,
-            icon: CheckCircleIcon,
-            color: 'text-green-600 bg-green-100',
-            trend: '+5',
-            description: 'Products meeting requirements'
-          },
-          {
-            title: 'Pending Checks',
-            value: stats?.pendingChecks || 0,
-            icon: ClockIcon,
-            color: 'text-yellow-600 bg-yellow-100',
-            trend: '-2',
-            description: 'Awaiting compliance verification'
-          },
-          {
-            title: 'Expiring Soon',
-            value: stats?.expiringCertifications || 0,
-            icon: ExclamationTriangleIcon,
-            color: 'text-red-600 bg-red-100',
-            trend: '0',
-            description: 'Certifications expiring within 30 days'
-          }
-        ].map((metric, index) => (
-          <motion.div
-            key={metric.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className={`p-3 rounded-lg ${metric.color}`}>
-                  <metric.icon className="h-6 w-6" />
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-sm font-medium text-gray-500">{metric.title}</h3>
-                  <p className="text-2xl font-semibold text-gray-900">{metric.value}</p>
-                </div>
-              </div>
-              <div className="flex items-center text-sm text-green-600">
-                <ArrowTrendingUpIcon className="h-4 w-4 mr-1" />
-                {metric.trend}
-              </div>
-            </div>
-            <p className="text-sm text-gray-600 mt-2">{metric.description}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Regional Compliance & Recent Checks */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Regional Compliance */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Regional Compliance</h2>
-              <GlobeAmericasIcon className="h-5 w-5 text-gray-400" />
-            </div>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              {stats?.regionalCompliance.map((region) => (
-                <div key={region.region} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900">{region.region}</span>
-                    <span className={`px-2 py-1 rounded-full text-sm font-medium ${getComplianceColor(region.percentage)}`}>
-                      {region.percentage}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full ${
-                        region.percentage >= 95 ? 'bg-green-500' :
-                        region.percentage >= 80 ? 'bg-yellow-500' : 'bg-red-500'
-                      }`}
-                      style={{ width: `${region.percentage}%` }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>{region.compliant} compliant</span>
-                    <span>{region.total} total products</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Compliance Checks */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Recent Checks</h2>
-              <Link
-                to="/compliance/check"
-                className="text-orange-500 hover:text-orange-600 text-sm font-medium"
-              >
-                View All
-              </Link>
-            </div>
-          </div>
-          <div className="divide-y divide-gray-200">
-            {stats?.recentChecks.length === 0 ? (
-              <div className="p-8 text-center">
-                <DocumentTextIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No recent checks</h3>
-                <p className="text-gray-500 mb-4">Start by running your first compliance check</p>
-                <Link
-                  to="/compliance/check"
-                  className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-                >
-                  <PlusIcon className="h-5 w-5 mr-2" />
-                  Run Check
-                </Link>
-              </div>
-            ) : (
-              stats?.recentChecks.map((check) => (
-                <motion.div
-                  key={check.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="p-6 hover:bg-gray-50"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-3">
-                        <h3 className="text-sm font-medium text-gray-900 truncate">
-                          {check.productName}
-                        </h3>
-                        <StatusBadge status={check.status} type="compliance" />
-                        <span className="text-sm text-gray-500">{check.region}</span>
-                      </div>
-                      <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                        <span>Score: {check.score}%</span>
-                        <span>•</span>
-                        <span>Checked {formatDistanceToNow(new Date(check.checkedAt))} ago</span>
-                      </div>
-                      {check.issues && check.issues.length > 0 && (
-                        <div className="mt-2">
-                          <div className="flex items-center text-sm text-red-600">
-                            <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
-                            <span>{check.issues?.length} issue{check.issues?.length !== 1 ? 's' : ''}</span>
-                          </div>
-                          <ul className="mt-1 text-sm text-red-600 space-y-1">
-                            {check.issues?.slice(0, 2).map((issue, index) => (
-                              <li key={index} className="flex items-center">
-                                <span className="w-1 h-1 bg-red-400 rounded-full mr-2" />
-                                {typeof issue === 'string' ? issue : issue.description}
-                              </li>
-                            ))}
-                            {check.issues && check.issues.length > 2 && (
-                              <li className="text-sm text-gray-500">
-                                +{check.issues?.length - 2} more issues
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                    <button className="p-2 text-gray-400 hover:text-blue-500 rounded-lg hover:bg-blue-50">
-                      <EyeIcon className="h-5 w-5" />
-                    </button>
-                  </div>
-                </motion.div>
-              ))
+    <Card sx={glassmorphismStyle}>
+      <CardContent>
+        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+          <Box>
+            <Typography variant="h3" fontWeight="bold" sx={{ color }}>
+              {value}
+            </Typography>
+            <Typography variant="h6" color="text.primary" gutterBottom>
+              {title}
+            </Typography>
+            {subtitle && (
+              <Typography variant="body2" color="text.secondary">
+                {subtitle}
+              </Typography>
             )}
-          </div>
-        </div>
-      </div>
-
-      {/* Upcoming Deadlines & Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Upcoming Certification Deadlines */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Upcoming Deadlines</h2>
-              <BellIcon className="h-5 w-5 text-gray-400" />
-            </div>
-          </div>
-          <div className="divide-y divide-gray-200">
-            {stats?.upcomingDeadlines.length === 0 ? (
-              <div className="p-8 text-center">
-                <CalendarDaysIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No upcoming deadlines</h3>
-                <p className="text-gray-500">All certifications are up to date</p>
-              </div>
-            ) : (
-              stats?.upcomingDeadlines.map((cert) => {
-                const urgency = getUrgencyLevel(cert.expiryDate);
-                const urgencyDisplay = getUrgencyDisplay(urgency);
-                
-                return (
-                  <motion.div
-                    key={cert.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="p-6"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="font-medium text-gray-900">{cert.name}</h3>
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${urgencyDisplay.color} ${urgencyDisplay.bg} ${urgencyDisplay.border} border`}>
-                            {urgencyDisplay.text}
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <span>Issuer: {cert.issuingBody}</span>
-                          <span>•</span>
-                          <span>
-                            Expires: {format(new Date(cert.expiryDate), 'MMM dd, yyyy')}
-                          </span>
-                          <span>•</span>
-                          <span>
-                            Certificate: {cert.certificateNumber}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2 ml-4">
-                        <button className="p-2 text-gray-400 hover:text-blue-500 rounded-lg hover:bg-blue-50">
-                          <EyeIcon className="h-5 w-5" />
-                        </button>
-                        <Link
-                          to={`/compliance/certs/${cert.id}/renew`}
-                          className="text-sm bg-orange-500 text-white px-3 py-1 rounded-lg hover:bg-orange-600"
-                        >
-                          Renew
-                        </Link>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })
+            {change !== undefined && (
+              <Box display="flex" alignItems="center" gap={0.5} mt={1}>
+                {getTrendIcon()}
+                <Typography
+                  variant="body2"
+                  color={change > 0 ? 'success.main' : change < 0 ? 'error.main' : 'text.secondary'}
+                >
+                  {Math.abs(change)}% vs last month
+                </Typography>
+              </Box>
             )}
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 gap-4">
-              <Link
-                to="/compliance/check"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
-              >
-                <div className="flex-shrink-0">
-                  <ShieldCheckIcon className="h-8 w-8 text-orange-500 group-hover:text-orange-600" />
-                </div>
-                <div className="ml-4">
-                  <h3 className="font-medium text-gray-900">Run Compliance Check</h3>
-                  <p className="text-sm text-gray-500">Check products against market requirements</p>
-                </div>
-              </Link>
-
-              <Link
-                to="/compliance/certs"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
-              >
-                <div className="flex-shrink-0">
-                  <DocumentTextIcon className="h-8 w-8 text-blue-500 group-hover:text-blue-600" />
-                </div>
-                <div className="ml-4">
-                  <h3 className="font-medium text-gray-900">Manage Certifications</h3>
-                  <p className="text-sm text-gray-500">Upload and track certificate status</p>
-                </div>
-              </Link>
-
-              <Link
-                to="/validation"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
-              >
-                <div className="flex-shrink-0">
-                  <CheckCircleIcon className="h-8 w-8 text-green-500 group-hover:text-green-600" />
-                </div>
-                <div className="ml-4">
-                  <h3 className="font-medium text-gray-900">Validate Specifications</h3>
-                  <p className="text-sm text-gray-500">Ensure product specs meet requirements</p>
-                </div>
-              </Link>
-
-              <Link
-                to="/compliance/reports"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
-              >
-                <div className="flex-shrink-0">
-                  <DocumentTextIcon className="h-8 w-8 text-purple-500 group-hover:text-purple-600" />
-                </div>
-                <div className="ml-4">
-                  <h3 className="font-medium text-gray-900">Generate Reports</h3>
-                  <p className="text-sm text-gray-500">Create compliance reports for audits</p>
-                </div>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Compliance Alerts */}
-      {(stats?.pendingChecks && stats.pendingChecks > 0) || (stats?.expiringCertifications && stats.expiringCertifications > 0) ? (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-start">
-            <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500 mt-0.5 mr-3" />
-            <div className="flex-1">
-              <h3 className="font-medium text-yellow-800">Action Required</h3>
-              <div className="mt-2 text-sm text-yellow-700">
-                <ul className="space-y-1">
-                  {stats?.pendingChecks > 0 && (
-                    <li>• {stats.pendingChecks} products pending compliance verification</li>
-                  )}
-                  {stats?.expiringCertifications > 0 && (
-                    <li>• {stats.expiringCertifications} certifications expiring within 30 days</li>
-                  )}
-                </ul>
-              </div>
-              <div className="mt-3 flex space-x-3">
-                <Link
-                  to="/compliance/check"
-                  className="text-sm bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600"
-                >
-                  Run Checks
-                </Link>
-                <Link
-                  to="/compliance/certs"
-                  className="text-sm border border-yellow-300 text-yellow-700 px-3 py-1 rounded-lg hover:bg-yellow-100"
-                >
-                  Review Certifications
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </div>
+          </Box>
+          <Avatar
+            sx={{
+              bgcolor: alpha(color, 0.1),
+              color,
+              width: 64,
+              height: 64,
+            }}
+          >
+            {icon}
+          </Avatar>
+        </Box>
+      </CardContent>
+    </Card>
   );
 };
+
+// Critical Alerts Component
+const CriticalAlerts: React.FC = () => {
+  const theme = useTheme();
+  
+  const alerts = [
+    {
+      id: '1',
+      type: 'certification',
+      severity: 'error' as const,
+      title: 'HACCP Certification Expired',
+      message: 'HACCP certification expired 3 days ago. Production may be affected.',
+      timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      actionRequired: 'Immediate renewal required',
+      responsible: 'Quality Assurance Team',
+    },
+    {
+      id: '2',
+      type: 'audit',
+      severity: 'warning' as const,
+      title: 'Upcoming Regulatory Audit',
+      message: 'FDA audit scheduled in 5 days. Ensure all documentation is ready.',
+      timestamp: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      actionRequired: 'Prepare documentation',
+      responsible: 'Compliance Manager',
+    },
+    {
+      id: '3',
+      type: 'violation',
+      severity: 'warning' as const,
+      title: 'Temperature Log Gap',
+      message: 'Missing temperature logs for cold storage area for 2 hours.',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      actionRequired: 'Investigate and document',
+      responsible: 'Operations Team',
+    },
+  ];
+
+  return (
+    <Paper sx={glassmorphismStyle}>
+      <Box p={3}>
+        <Box display="flex" alignItems="center" gap={1} mb={2}>
+          <Warning color="error" />
+          <Typography variant="h6" fontWeight="bold">
+            Critical Alerts
+          </Typography>
+          <Badge badgeContent={alerts.length} color="error" sx={{ ml: 'auto' }} />
+        </Box>
+        
+        <List>
+          {alerts.map((alert, index) => (
+            <ListItem key={alert.id} divider={index < alerts.length - 1}>
+              <ListItemIcon>
+                <Avatar
+                  sx={{
+                    bgcolor: alpha(
+                      alert.severity === 'error' ? theme.palette.error.main : theme.palette.warning.main,
+                      0.1
+                    ),
+                    color: alert.severity === 'error' ? theme.palette.error.main : theme.palette.warning.main,
+                    width: 32,
+                    height: 32,
+                  }}
+                >
+                  {alert.severity === 'error' ? <ErrorIcon /> : <Warning />}
+                </Avatar>
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  <Typography variant="subtitle2" fontWeight="bold">
+                    {alert.title}
+                  </Typography>
+                }
+                secondary={
+                  <Stack spacing={0.5}>
+                    <Typography variant="body2">{alert.message}</Typography>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Chip
+                        label={alert.actionRequired}
+                        size="small"
+                        color={alert.severity === 'error' ? 'error' : 'warning'}
+                      />
+                      <Typography variant="caption" color="text.secondary">
+                        {alert.responsible}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                }
+              />
+              <ListItemSecondaryAction>
+                <IconButton size="small">
+                  <MoreVert />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </Paper>
+  );
+};
+
+// Compliance Timeline Component
+const ComplianceTimeline: React.FC = () => {
+  const theme = useTheme();
+  
+  const timelineData = [
+    {
+      date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      title: 'ISO 22000 Surveillance Audit',
+      type: 'audit',
+      status: 'scheduled',
+      description: 'Annual surveillance audit by Bureau Veritas',
+    },
+    {
+      date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      title: 'Organic Certification Renewal',
+      type: 'certification',
+      status: 'pending',
+      description: 'USDA Organic certification renewal application',
+    },
+    {
+      date: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000),
+      title: 'FDA Facility Inspection',
+      type: 'regulatory',
+      status: 'scheduled',
+      description: 'Routine FDA facility inspection',
+    },
+    {
+      date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      title: 'HACCP Plan Review',
+      type: 'review',
+      status: 'due',
+      description: 'Annual HACCP plan review and update',
+    },
+  ];
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'scheduled':
+        return theme.palette.info.main;
+      case 'pending':
+        return theme.palette.warning.main;
+      case 'due':
+        return theme.palette.error.main;
+      default:
+        return theme.palette.grey[500];
+    }
+  };
+
+  return (
+    <Paper sx={glassmorphismStyle}>
+      <Box p={3}>
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          Upcoming Compliance Events
+        </Typography>
+        
+        <List>
+          {timelineData.map((event, index) => (
+            <ListItem key={index} alignItems="flex-start">
+              <ListItemIcon>
+                <Avatar
+                  sx={{
+                    bgcolor: alpha(getStatusColor(event.status), 0.1),
+                    color: getStatusColor(event.status),
+                    width: 32,
+                    height: 32,
+                  }}
+                >
+                  {event.type === 'audit' ? <Assignment /> : 
+                   event.type === 'certification' ? <VerifiedUser /> :
+                   event.type === 'regulatory' ? <Gavel /> : <Rule />}
+                </Avatar>
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  <Typography variant="subtitle2" fontWeight="bold">
+                    {event.title}
+                  </Typography>
+                }
+                secondary={
+                  <Stack spacing={0.5}>
+                    <Typography variant="body2">{event.description}</Typography>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <CalendarToday sx={{ fontSize: 14 }} />
+                      <Typography variant="caption">
+                        {format(event.date, 'MMM dd, yyyy')}
+                      </Typography>
+                      <Chip
+                        label={event.status}
+                        size="small"
+                        sx={{
+                          bgcolor: alpha(getStatusColor(event.status), 0.1),
+                          color: getStatusColor(event.status),
+                        }}
+                      />
+                    </Box>
+                  </Stack>
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </Paper>
+  );
+};
+
+// Main Compliance Dashboard Component
+export const ComplianceDashboard: React.FC = () => {
+  const theme = useTheme();
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  // Mock compliance data
+  const complianceScore = 92;
+  const totalCertifications = 24;
+  const activeCertifications = 20;
+  const expiringSoon = 3;
+  const totalAudits = 18;
+  const completedAudits = 15;
+  const upcomingAudits = 3;
+  const totalViolations = 7;
+  const resolvedViolations = 4;
+
+  const complianceData = [
+    { month: 'Oct', score: 88, violations: 12, audits: 3 },
+    { month: 'Nov', score: 91, violations: 8, audits: 2 },
+    { month: 'Dec', score: 89, violations: 10, audits: 4 },
+    { month: 'Jan', score: 92, violations: 7, audits: 3 },
+  ];
+
+  const certificationTypes = [
+    { name: 'Food Safety', count: 8, color: theme.palette.error.main },
+    { name: 'Quality', count: 6, color: theme.palette.warning.main },
+    { name: 'Environmental', count: 4, color: theme.palette.success.main },
+    { name: 'Organic', count: 3, color: theme.palette.info.main },
+    { name: 'Other', count: 3, color: theme.palette.secondary.main },
+  ];
+
+  return (
+    <Box sx={{ p: 3 }}>
+      {/* Header */}
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Box>
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
+            Compliance Dashboard
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Comprehensive compliance monitoring and management
+          </Typography>
+        </Box>
+        <Stack direction="row" spacing={2}>
+          <Button variant="outlined" startIcon={<Download />}>
+            Export Report
+          </Button>
+          <Button variant="outlined" startIcon={<Settings />}>
+            Settings
+          </Button>
+          <Button variant="contained" startIcon={<Refresh />}>
+            Refresh
+          </Button>
+        </Stack>
+      </Box>
+
+      {/* Key Metrics */}
+      <Grid container spacing={3} mb={3}>
+        <Grid item xs={12} sm={6} md={3}>
+          <ComplianceMetricCard
+            title="Compliance Score"
+            value={`${complianceScore}%`}
+            change={3}
+            icon={<CheckCircle />}
+            color={theme.palette.success.main}
+            subtitle="Excellent standing"
+            trend="up"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <ComplianceMetricCard
+            title="Active Certifications"
+            value={`${activeCertifications}/${totalCertifications}`}
+            change={0}
+            icon={<VerifiedUser />}
+            color={theme.palette.primary.main}
+            subtitle={`${expiringSoon} expiring soon`}
+            trend="stable"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <ComplianceMetricCard
+            title="Completed Audits"
+            value={`${completedAudits}/${totalAudits}`}
+            change={8}
+            icon={<Assignment />}
+            color={theme.palette.info.main}
+            subtitle={`${upcomingAudits} upcoming`}
+            trend="up"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <ComplianceMetricCard
+            title="Open Violations"
+            value={totalViolations - resolvedViolations}
+            change={-15}
+            icon={<Flag />}
+            color={theme.palette.warning.main}
+            subtitle={`${resolvedViolations} resolved`}
+            trend="down"
+          />
+        </Grid>
+      </Grid>
+
+      {/* Main Content */}
+      <Grid container spacing={3} mb={3}>
+        {/* Compliance Trends */}
+        <Grid item xs={12} md={8}>
+          <Card sx={glassmorphismStyle}>
+            <CardHeader
+              title="Compliance Trends"
+              subheader="Monthly performance overview"
+              action={
+                <IconButton>
+                  <MoreVert />
+                </IconButton>
+              }
+            />
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={complianceData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={alpha(theme.palette.divider, 0.3)} />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <RechartsTooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="score"
+                    stroke={theme.palette.primary.main}
+                    strokeWidth={2}
+                    name="Compliance Score"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="violations"
+                    stroke={theme.palette.error.main}
+                    strokeWidth={2}
+                    name="Violations"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="audits"
+                    stroke={theme.palette.info.main}
+                    strokeWidth={2}
+                    name="Audits"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Certification Distribution */}
+        <Grid item xs={12} md={4}>
+          <Card sx={glassmorphismStyle}>
+            <CardHeader title="Certification Types" />
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={certificationTypes}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="count"
+                  >
+                    {certificationTypes.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Alerts and Timeline */}
+      <Grid container spacing={3} mb={3}>
+        <Grid item xs={12} md={6}>
+          <CriticalAlerts />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <ComplianceTimeline />
+        </Grid>
+      </Grid>
+
+      {/* Detailed Views */}
+      <Paper sx={{ ...glassmorphismStyle, mb: 3 }}>
+        <Tabs
+          value={selectedTab}
+          onChange={(_, value) => setSelectedTab(value)}
+          variant="fullWidth"
+        >
+          <Tab label="Overview" icon={<Dashboard />} iconPosition="start" />
+          <Tab label="Certifications" icon={<VerifiedUser />} iconPosition="start" />
+          <Tab label="Audits" icon={<Assignment />} iconPosition="start" />
+          <Tab label="Compliance Tracker" icon={<Assessment />} iconPosition="start" />
+        </Tabs>
+      </Paper>
+
+      {/* Tab Content */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedTab}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+        >
+          {selectedTab === 0 && (
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Card sx={glassmorphismStyle}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Compliance Overview
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Your organization maintains excellent compliance standards with a score of {complianceScore}%.
+                      Continue monitoring upcoming certifications and audit schedules to maintain this performance.
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          )}
+          
+          {selectedTab === 1 && <CertificationManager />}
+          {selectedTab === 2 && <AuditManager />}
+          {selectedTab === 3 && <ComplianceTracker />}
+        </motion.div>
+      </AnimatePresence>
+    </Box>
+  );
+};
+
+export default ComplianceDashboard;

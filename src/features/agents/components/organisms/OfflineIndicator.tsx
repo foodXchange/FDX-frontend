@@ -31,7 +31,6 @@ import {
   ExpandLess,
   Delete,
   Warning,
-  CheckCircle,
   Schedule,
   InstallMobile,
   GetApp,
@@ -312,7 +311,7 @@ const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
                     <Typography variant="caption" display="block" gutterBottom>
                       Syncing...
                     </Typography>
-                    <LinearProgress size="small" />
+                    <LinearProgress />
                   </Box>
                 )}
 

@@ -18,29 +18,25 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
+  Alert,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  ListItemSecondaryAction,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Alert,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListItemSecondaryAction,
   Avatar,
   Badge,
   Tabs,
   Tab,
   Switch,
-  FormControlLabel,
   Grid,
   LinearProgress,
-  Divider,
   useTheme,
   alpha,
-  Tooltip,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -49,36 +45,24 @@ import {
   Security,
   ExpandMore,
   Shield,
-  Lock,
   Visibility,
-  VpnKey,
   Warning,
-  CheckCircle,
-  Error,
-  Info,
   History,
   Person,
   Computer,
-  LocationOn,
-  Schedule,
   Download,
   Upload,
   Delete,
   Edit,
   Add,
   Refresh,
-  Assessment,
   VerifiedUser,
-  AdminPanelSettings,
-  Fingerprint,
   Logout,
   Login,
   PhoneAndroid,
   Laptop,
   DesktopWindows,
   Smartphone,
-  AccessTime,
-  CreditCard,
   Key,
   PolicySharp,
 } from '@mui/icons-material';
@@ -191,7 +175,7 @@ type SecurityEventType =
 
 const SecurityAuditSystem: React.FC = () => {
   const theme = useTheme();
-  const { currentAgent } = useAgentStore();
+  const { } = useAgentStore();
   
   const [selectedTab, setSelectedTab] = useState(0);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
@@ -430,7 +414,7 @@ const SecurityAuditSystem: React.FC = () => {
   const SecurityOverview = () => (
     <Grid container spacing={3}>
       {/* Metrics Cards */}
-      <Grid item xs={12} sm={6} md={3}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <Card>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -451,7 +435,7 @@ const SecurityAuditSystem: React.FC = () => {
         </Card>
       </Grid>
       
-      <Grid item xs={12} sm={6} md={3}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <Card>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -470,7 +454,7 @@ const SecurityAuditSystem: React.FC = () => {
         </Card>
       </Grid>
       
-      <Grid item xs={12} sm={6} md={3}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <Card>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -489,7 +473,7 @@ const SecurityAuditSystem: React.FC = () => {
         </Card>
       </Grid>
       
-      <Grid item xs={12} sm={6} md={3}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <Card>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -509,7 +493,7 @@ const SecurityAuditSystem: React.FC = () => {
       </Grid>
 
       {/* Risk Distribution */}
-      <Grid item xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>Risk Distribution</Typography>
@@ -540,7 +524,7 @@ const SecurityAuditSystem: React.FC = () => {
       </Grid>
 
       {/* Recent Security Events */}
-      <Grid item xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>Recent Security Events</Typography>

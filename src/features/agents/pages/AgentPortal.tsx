@@ -70,7 +70,7 @@ const AgentPortal: React.FC = () => {
     setError(null);
 
     try {
-      const { agent, token } = await agentApi.login(formData.email, formData.password);
+      const { agent } = await agentApi.login(formData.email, formData.password);
       setAgent(agent);
       
       // Connect to WebSocket for real-time updates

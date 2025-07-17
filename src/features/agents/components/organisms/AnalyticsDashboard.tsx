@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
   CardContent,
   Typography,
-  Grid,
-  LinearProgress,
   Chip,
   IconButton,
-  Tooltip,
   Menu,
   MenuItem,
   Switch,
@@ -20,13 +17,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   List,
   ListItem,
   ListItemText,
   ListItemIcon,
-  Divider,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   Analytics,
   TrendingUp,
@@ -35,10 +31,8 @@ import {
   Mouse,
   Timer,
   People,
-  Assignment,
   ExitToApp,
   Error,
-  Warning,
   CheckCircle,
   MoreVert,
   Refresh,
@@ -46,7 +40,6 @@ import {
   Settings,
   Timeline,
   Assessment,
-  Speed,
   Person,
 } from '@mui/icons-material';
 import useAnalytics from '../../hooks/useAnalytics';
@@ -141,11 +134,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     return `${(value * 100).toFixed(1)}%`;
   };
 
-  const getEngagementLevel = (score: number): { level: string; color: string } => {
-    if (score >= 80) return { level: 'High', color: 'success' };
-    if (score >= 50) return { level: 'Medium', color: 'warning' };
-    return { level: 'Low', color: 'error' };
-  };
+  // const getEngagementLevel = (score: number): { level: string; color: string } => {
+  //   if (score >= 80) return { level: 'High', color: 'success' };
+  //   if (score >= 50) return { level: 'Medium', color: 'warning' };
+  //   return { level: 'Low', color: 'error' };
+  // };
 
   const MetricCard = ({ 
     title, 
@@ -272,11 +265,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               {analytics.currentJourney.pages.length} pages • 
               {analytics.currentJourney.actions.length} actions
             </Typography>
-            {insights && (
+            {insights && insights.length > 0 && (
               <Chip 
-                label={`${insights.engagementScore.toFixed(0)}% engaged`}
+                label="Analytics Active"
                 size="small"
-                color={getEngagementLevel(insights.engagementScore).color as any}
+                color="success"
               />
             )}
           </Box>
@@ -285,7 +278,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
       {/* Key Metrics */}
       <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricCard
             title="Page Views"
             value={analyticsData.pageViews.toLocaleString()}
@@ -294,7 +287,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             subtitle="Today"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricCard
             title="Unique Visitors"
             value={analyticsData.uniqueVisitors.toLocaleString()}
@@ -304,7 +297,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             color="secondary"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricCard
             title="Avg. Session"
             value={formatDuration(analyticsData.averageSessionDuration)}
@@ -314,7 +307,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             color="warning"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricCard
             title="Conversion Rate"
             value={formatPercentage(analyticsData.conversionRate)}
@@ -328,7 +321,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
       <Grid container spacing={3}>
         {/* Real-time Events */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -377,7 +370,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </Grid>
 
         {/* Top Pages */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -410,7 +403,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </Grid>
 
         {/* User Journeys */}
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -462,14 +455,14 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
         {/* Debug Information */}
         {showDebugInfo && (
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
                   Debug Information
                 </Typography>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Typography variant="subtitle2">Analytics State</Typography>
                     <Box component="pre" sx={{ fontSize: '0.75rem', overflow: 'auto' }}>
                       {JSON.stringify({
@@ -481,7 +474,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                       }, null, 2)}
                     </Box>
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Typography variant="subtitle2">Current Insights</Typography>
                     <Box component="pre" sx={{ fontSize: '0.75rem', overflow: 'auto' }}>
                       {JSON.stringify(insights, null, 2)}

@@ -1,17 +1,27 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card } from '@components/ui/Card';
-import { Button } from '@components/ui/Button';
-import { Badge } from '@components/ui/Badge';
 import { format } from 'date-fns';
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Button,
+  Box,
+  Avatar,
+  Chip,
+  Stack,
+  Divider
+} from '@mui/material';
 import { 
-  UserCircleIcon, 
-  EnvelopeIcon, 
-  BuildingOfficeIcon, 
-  CalendarIcon,
-  ShieldCheckIcon,
-  PencilIcon
-} from '@heroicons/react/24/outline';
+  AccountCircle as UserCircleIcon, 
+  Email as EnvelopeIcon, 
+  Business as BuildingOfficeIcon, 
+  Schedule as CalendarIcon,
+  VerifiedUser as ShieldCheckIcon,
+  Edit as PencilIcon
+} from '@mui/icons-material';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -21,103 +31,151 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Profile</h1>
+    <Container maxWidth="lg">
+      <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'grey.900', mb: 4 }}>
+        Profile
+      </Typography>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <Grid container spacing={3}>
         {/* Profile Card */}
-        <Card className="lg:col-span-1 p-6">
-          <div className="text-center">
-            {user.avatar ? (
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-32 h-32 rounded-full mx-auto mb-4"
+        <Grid item xs={12} lg={4}>
+          <Card>
+            <CardContent sx={{ p: 3, textAlign: 'center' }}>
+              {user.avatar ? (
+                <Avatar
+                  src={user.avatar}
+                  alt={user.name}
+                  sx={{ width: 128, height: 128, mx: 'auto', mb: 2 }}
+                />
+              ) : (
+                <UserCircleIcon sx={{ fontSize: 128, color: 'grey.400', mx: 'auto', mb: 2 }} />
+              )}
+              <Typography variant="h6" sx={{ fontWeight: 'semibold', color: 'grey.900' }}>
+                {user.name}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'grey.600', mb: 1 }}>
+                {user.email}
+              </Typography>
+              <Chip
+                label={user.role}
+                variant="filled"
+                size="small"
+                sx={{ mt: 1 }}
               />
-            ) : (
-              <UserCircleIcon className="w-32 h-32 text-gray-400 mx-auto mb-4" />
-            )}
-            <h2 className="text-xl font-semibold text-gray-900">{user.name}</h2>
-            <p className="text-gray-600">{user.email}</p>
-            <Badge variant="default" className="mt-2">
-              {user.role}
-            </Badge>
-          </div>
 
-          <div className="mt-6 space-y-2">
-            <Button variant="default" className="w-full">
-              <PencilIcon className="h-4 w-4 mr-2" />
-              Edit Profile
-            </Button>
-            <Button variant="outline" className="w-full">
-              Change Password
-            </Button>
-          </div>
-        </Card>
+              <Stack spacing={1} sx={{ mt: 3 }}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  startIcon={<PencilIcon />}
+                >
+                  Edit Profile
+                </Button>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                >
+                  Change Password
+                </Button>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
 
         {/* Details Card */}
-        <Card className="lg:col-span-2 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Details</h3>
-          
-          <div className="space-y-4">
-            <div className="flex items-start">
-              <EnvelopeIcon className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-gray-700">Email</p>
-                <p className="text-sm text-gray-900">{user.email}</p>
-              </div>
-            </div>
+        <Grid item xs={12} lg={8}>
+          <Card>
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'semibold', color: 'grey.900', mb: 3 }}>
+                Account Details
+              </Typography>
+              
+              <Stack spacing={3}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                  <EnvelopeIcon sx={{ fontSize: 20, color: 'grey.400', mt: 0.5, mr: 1.5 }} />
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'grey.700' }}>
+                      Email
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'grey.900' }}>
+                      {user.email}
+                    </Typography>
+                  </Box>
+                </Box>
 
-            <div className="flex items-start">
-              <BuildingOfficeIcon className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-gray-700">Company</p>
-                <p className="text-sm text-gray-900">{user.company}</p>
-              </div>
-            </div>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                  <BuildingOfficeIcon sx={{ fontSize: 20, color: 'grey.400', mt: 0.5, mr: 1.5 }} />
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'grey.700' }}>
+                      Company
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'grey.900' }}>
+                      {user.company}
+                    </Typography>
+                  </Box>
+                </Box>
 
-            <div className="flex items-start">
-              <ShieldCheckIcon className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
-              <div>
-                <p className="text-sm font-medium text-gray-700">Role</p>
-                <p className="text-sm text-gray-900 capitalize">{user.role}</p>
-              </div>
-            </div>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                  <ShieldCheckIcon sx={{ fontSize: 20, color: 'grey.400', mt: 0.5, mr: 1.5 }} />
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'grey.700' }}>
+                      Role
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'grey.900', textTransform: 'capitalize' }}>
+                      {user.role}
+                    </Typography>
+                  </Box>
+                </Box>
 
-            {user.lastLogin && (
-              <div className="flex items-start">
-                <CalendarIcon className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Last Login</p>
-                  <p className="text-sm text-gray-900">
-                    {format(new Date(user.lastLogin), 'PPpp')}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
+                {user.lastLogin && (
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <CalendarIcon sx={{ fontSize: 20, color: 'grey.400', mt: 0.5, mr: 1.5 }} />
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'grey.700' }}>
+                        Last Login
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'grey.900' }}>
+                        {format(new Date(user.lastLogin), 'PPpp')}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+              </Stack>
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Permissions</h4>
-            <div className="flex flex-wrap gap-2">
-              {user.permissions.map((permission) => (
-                <Badge key={permission} variant="default">
-                  {permission.replace(/\./g, ' ').toUpperCase()}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </Card>
-      </div>
+              <Divider sx={{ mt: 3, mb: 3 }} />
+              
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'grey.700', mb: 2 }}>
+                  Permissions
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {user.permissions.map((permission) => (
+                    <Chip
+                      key={permission}
+                      label={permission.replace(/\./g, ' ').toUpperCase()}
+                      variant="outlined"
+                      size="small"
+                    />
+                  ))}
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
       {/* Activity Card */}
-      <Card className="mt-6 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600">No recent activity to display.</p>
-        </div>
+      <Card sx={{ mt: 3 }}>
+        <CardContent sx={{ p: 3 }}>
+          <Typography variant="h6" sx={{ fontWeight: 'semibold', color: 'grey.900', mb: 3 }}>
+            Recent Activity
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'grey.600' }}>
+            No recent activity to display.
+          </Typography>
+        </CardContent>
       </Card>
-    </div>
+    </Container>
   );
 };
 

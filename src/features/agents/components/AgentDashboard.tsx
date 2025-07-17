@@ -1,375 +1,478 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
-import { useAgentStore } from '@/store/useAgentStore';
-import { 
-  CurrencyDollarIcon, 
-  BriefcaseIcon, 
-  TrophyIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
-  ClockIcon,
-  ChartBarIcon
-} from '@heroicons/react/24/outline';
+import { useAgentStore } from '../store/useAgentStore';
+import {
+  Box,
+  Card,
+  CardContent,
+  Container,
+  Typography,
+  Grid,
+  Chip,
+  LinearProgress,
+  Avatar,
+  Button,
+  Stack,
+  Paper,
+} from '@mui/material';
+import {
+  AttachMoney as CurrencyDollarIcon,
+  Work as BriefcaseIcon,
+  EmojiEvents as TrophyIcon,
+  TrendingUp as ArrowUpIcon,
+  TrendingDown as ArrowDownIcon,
+  Schedule as ClockIcon,
+  BarChart as ChartBarIcon
+} from '@mui/icons-material';
 import { formatCurrency } from '@/utils/format';
-import { EarningsChart } from './EarningsChart';
 import { PerformanceBadge } from './PerformanceBadge';
+import { Lead } from '../types';
 
 export const AgentDashboard: React.FC = () => {
   const { user } = useAuth();
   const { 
-    agent, 
-    availableLeads, 
-    earnings, 
-    performance,
-    setEarnings,
-    setPerformance
+    currentAgent: agent, 
+    leads
   } = useAgentStore();
 
   const [todayEarnings] = useState(0);
   const [animatedEarnings, setAnimatedEarnings] = useState(0);
 
+  // Mock data - replace with actual API calls
+  const mockEarnings = {
+    today: 345.50,
+    thisWeek: 1250.00,
+    thisMonth: 4580.00,
+    pending: 890.00,
+    lifetime: 45200.00,
+    recentTransactions: [],
+    totalEarnings: 45200.00,
+    monthlyEarnings: 4580.00,
+    pendingCommissions: 890.00,
+    projectedEarnings: 5200.00,
+    conversionRate: 0.68
+  };
+
+  const mockPerformance = {
+    leadsGenerated: 85,
+    leadsConverted: 58,
+    revenue: 725000,
+    commissionEarned: 18125,
+    activeDays: 30,
+    conversionRate: 0.68,
+    averageDealSize: 12500,
+    rank: 12
+  };
+
   // Animate earnings ticker
   useEffect(() => {
-    if (earnings?.today) {
+    if (mockEarnings.today) {
       const duration = 2000;
       const steps = 60;
-      const stepValue = earnings.today / steps;
+      const stepValue = mockEarnings.today / steps;
       let currentStep = 0;
 
       const interval = setInterval(() => {
         currentStep++;
-        setAnimatedEarnings(prev => Math.min(prev + stepValue, earnings.today));
+        setAnimatedEarnings(prev => Math.min(prev + stepValue, mockEarnings.today));
         
         if (currentStep >= steps) {
           clearInterval(interval);
-          setAnimatedEarnings(earnings.today);
+          setAnimatedEarnings(mockEarnings.today);
         }
       }, duration / steps);
 
       return () => clearInterval(interval);
     }
     return undefined;
-  }, [earnings?.today]);
+  }, [mockEarnings.today]);
 
-  // Mock data loading - replace with actual API calls
-  useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setEarnings({
-        today: 345.50,
-        thisWeek: 1250.00,
-        thisMonth: 4580.00,
-        pending: 890.00,
-        lifetime: 45200.00,
-        recentTransactions: []
-      });
-
-      setPerformance({
-        conversionRate: 0.68,
-        averageDealSize: 12500,
-        responseTime: 2.5,
-        customerSatisfaction: 4.8,
-        rank: 12,
-        totalAgents: 150
-      });
-    }, 1000);
-  }, [setEarnings, setPerformance]);
-
-  const urgentLeads = availableLeads.filter(lead => lead.priority === 'urgent');
-  const expiringLeads = availableLeads.filter(lead => {
+  const urgentLeads = leads.filter((lead: Lead) => lead.priority === 'urgent');
+  const expiringLeads = leads.filter((lead: Lead) => {
     const hoursUntilExpiry = (new Date(lead.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60);
     return hoursUntilExpiry < 2 && hoursUntilExpiry > 0;
   });
 
   return (
-    <div className="space-y-6">
-      {/* Hero Section with Glassmorphic overlay */}
-      <div className="relative bg-gradient-to-r from-blue-600 to-orange-600 rounded-2xl p-8 overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }} />
-        </div>
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Stack spacing={3}>
+        {/* Hero Section */}
+        <Card sx={{ 
+          background: 'linear-gradient(135deg, #1976d2 0%, #ed6c02 100%)',
+          color: 'white',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <CardContent sx={{ p: 4 }}>
+            <Box sx={{ 
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              opacity: 0.1,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            }} />
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Grid container spacing={3} alignItems="center">
+                <Grid size={{ xs: 12, lg: 6 }}>
+                  <Box sx={{ mb: { xs: 3, lg: 0 } }}>
+                    <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', color: 'white', mb: 1 }}>
+                      Welcome back, {user?.name}!
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                      Here's your performance overview for today
+                    </Typography>
+                  </Box>
+                </Grid>
 
-        <div className="relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <div className="mb-6 lg:mb-0">
-              <h1 className="text-3xl font-bold text-white mb-2">
-                Welcome back, {user?.name}!
-              </h1>
-              <p className="text-blue-100">
-                Here's your performance overview for today
-              </p>
-            </div>
+                <Grid size={{ xs: 12, lg: 6 }}>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="flex-end">
+                    {/* Earnings Ticker */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      <Paper sx={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: 2,
+                        p: 2,
+                        color: 'white',
+                        minWidth: 160
+                      }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                            Today's Earnings
+                          </Typography>
+                          <CurrencyDollarIcon sx={{ fontSize: 20, color: 'rgba(255, 255, 255, 0.6)' }} />
+                        </Box>
+                        <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'white', mb: 1 }}>
+                          {formatCurrency(animatedEarnings)}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          {mockEarnings.today > todayEarnings ? (
+                            <>
+                              <ArrowUpIcon sx={{ fontSize: 16, color: '#4caf50', mr: 0.5 }} />
+                              <Typography variant="body2" sx={{ color: '#4caf50' }}>+12% from yesterday</Typography>
+                            </>
+                          ) : (
+                            <>
+                              <ArrowDownIcon sx={{ fontSize: 16, color: '#f44336', mr: 0.5 }} />
+                              <Typography variant="body2" sx={{ color: '#f44336' }}>-5% from yesterday</Typography>
+                            </>
+                          )}
+                        </Box>
+                      </Paper>
+                    </motion.div>
 
-            <div className="flex flex-wrap gap-4">
-              {/* Earnings Ticker */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/80 text-sm">Today's Earnings</span>
-                  <CurrencyDollarIcon className="h-5 w-5 text-white/60" />
-                </div>
-                <div className="text-3xl font-bold text-white">
-                  {formatCurrency(animatedEarnings)}
-                </div>
-                <div className="flex items-center mt-2 text-sm">
-                  {earnings && earnings.today > todayEarnings ? (
-                    <>
-                      <ArrowUpIcon className="h-4 w-4 text-green-300 mr-1" />
-                      <span className="text-green-300">+12% from yesterday</span>
-                    </>
-                  ) : (
-                    <>
-                      <ArrowDownIcon className="h-4 w-4 text-red-300 mr-1" />
-                      <span className="text-red-300">-5% from yesterday</span>
-                    </>
-                  )}
-                </div>
-              </motion.div>
+                    {/* Active Leads */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <Paper sx={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: 2,
+                        p: 2,
+                        color: 'white',
+                        minWidth: 160
+                      }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                            Active Leads
+                          </Typography>
+                          <BriefcaseIcon sx={{ fontSize: 20, color: 'rgba(255, 255, 255, 0.6)' }} />
+                        </Box>
+                        <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'white', mb: 1 }}>
+                          {agent?.activeLeads || 0}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <ClockIcon sx={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.8)', mr: 0.5 }} />
+                          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                            {expiringLeads.length} expiring soon
+                          </Typography>
+                        </Box>
+                      </Paper>
+                    </motion.div>
 
-              {/* Active Leads */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/80 text-sm">Active Leads</span>
-                  <BriefcaseIcon className="h-5 w-5 text-white/60" />
-                </div>
-                <div className="text-3xl font-bold text-white">
-                  {agent?.activeLeads || 0}
-                </div>
-                <div className="flex items-center mt-2 text-sm text-white/80">
-                  <ClockIcon className="h-4 w-4 mr-1" />
-                  <span>{expiringLeads.length} expiring soon</span>
-                </div>
-              </motion.div>
+                    {/* Performance Tier */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <Paper sx={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: 2,
+                        p: 2,
+                        color: 'white',
+                        minWidth: 160
+                      }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                            Your Tier
+                          </Typography>
+                          <TrophyIcon sx={{ fontSize: 20, color: 'rgba(255, 255, 255, 0.6)' }} />
+                        </Box>
+                        <PerformanceBadge tier={agent?.tier || 'bronze'} size="large" />
+                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                          <ChartBarIcon sx={{ fontSize: 16, color: 'rgba(255, 255, 255, 0.8)', mr: 0.5 }} />
+                          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                            Rank #{mockPerformance.rank || '-'}
+                          </Typography>
+                        </Box>
+                      </Paper>
+                    </motion.div>
+                  </Stack>
+                </Grid>
+              </Grid>
 
-              {/* Performance Tier */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/80 text-sm">Your Tier</span>
-                  <TrophyIcon className="h-5 w-5 text-white/60" />
-                </div>
-                <PerformanceBadge tier={agent?.tier || 'bronze'} size="large" />
-                <div className="flex items-center mt-2 text-sm text-white/80">
-                  <ChartBarIcon className="h-4 w-4 mr-1" />
-                  <span>Rank #{performance?.rank || '-'}</span>
-                </div>
-              </motion.div>
-            </div>
-          </div>
+              {/* Quick Actions */}
+              <Box sx={{ mt: 3 }}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="contained"
+                      color="inherit"
+                      sx={{ 
+                        backgroundColor: 'white',
+                        color: 'primary.main',
+                        fontWeight: 'bold',
+                        '&:hover': { backgroundColor: 'grey.100' },
+                        borderRadius: 2,
+                        px: 3,
+                        py: 1.5
+                      }}
+                      onClick={() => window.location.href = '/agent/leads'}
+                    >
+                      View Available Leads ({leads.length})
+                    </Button>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="outlined"
+                      sx={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        color: 'white',
+                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                        fontWeight: 'bold',
+                        '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.25)' },
+                        borderRadius: 2,
+                        px: 3,
+                        py: 1.5
+                      }}
+                      onClick={() => window.location.href = '/agent/earnings'}
+                    >
+                      Track Commissions
+                    </Button>
+                  </motion.div>
+                </Stack>
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
 
-          {/* Quick Actions */}
-          <div className="mt-6 flex flex-wrap gap-3">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
-              onClick={() => window.location.href = '/agent/leads'}
-            >
-              View Available Leads ({availableLeads.length})
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition-colors border border-white/30"
-              onClick={() => window.location.href = '/agent/earnings'}
-            >
-              Track Commissions
-            </motion.button>
-          </div>
-        </div>
-      </div>
+        {/* Statistics Cards */}
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar sx={{ bgcolor: 'success.light', mr: 2 }}>
+                    <CurrencyDollarIcon sx={{ color: 'success.main' }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Commission Earnings
+                    </Typography>
+                    <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+                      {formatCurrency(mockEarnings.thisMonth || 0)}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <ArrowUpIcon sx={{ fontSize: 16, color: 'success.main', mr: 0.5 }} />
+                  <Typography variant="body2" color="success.main">
+                    +18% from last month
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
 
-      {/* 3-Column Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Today's Opportunities */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl shadow-lg p-6"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-between">
-            Today's Opportunities
-            <span className="text-sm text-gray-500 font-normal">
-              {urgentLeads.length} urgent
-            </span>
-          </h2>
-          
-          <div className="space-y-3">
-            {availableLeads.slice(0, 5).map((lead, index) => (
-              <motion.div
-                key={lead.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 + index * 0.1 }}
-                className="border-l-4 border-blue-500 pl-4 py-2"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{lead.rfqTitle}</p>
-                    <p className="text-sm text-gray-600">
-                      {lead.category} • {lead.buyerLocation}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-green-600">
-                      {lead.matchScore}% match
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Expires in {Math.round((new Date(lead.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60))}h
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar sx={{ bgcolor: 'primary.light', mr: 2 }}>
+                    <BriefcaseIcon sx={{ color: 'primary.main' }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Active Opportunities
+                    </Typography>
+                    <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+                      {agent?.activeLeads || 0}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <ClockIcon sx={{ fontSize: 16, color: 'warning.main', mr: 0.5 }} />
+                  <Typography variant="body2" color="warning.main">
+                    {urgentLeads.length} urgent
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
 
-          {availableLeads.length > 5 && (
-            <button className="mt-4 text-blue-600 text-sm font-medium hover:text-blue-700">
-              View all {availableLeads.length} opportunities →
-            </button>
-          )}
-        </motion.div>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar sx={{ bgcolor: 'secondary.light', mr: 2 }}>
+                    <ChartBarIcon sx={{ color: 'secondary.main' }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Conversion Rate
+                    </Typography>
+                    <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+                      {((mockPerformance.conversionRate || 0) * 100).toFixed(1)}%
+                    </Typography>
+                  </Box>
+                </Box>
+                <LinearProgress
+                  variant="determinate"
+                  value={(mockPerformance.conversionRate || 0) * 100}
+                  sx={{ 
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: 'grey.200',
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: 'secondary.main'
+                    }
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
 
-        {/* Your Active Leads */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-xl shadow-lg p-6"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Your Active Leads
-          </h2>
-          
-          <div className="space-y-3">
-            {/* Mock active leads - replace with actual data */}
-            <div className="p-4 border border-gray-200 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-900">Dairy RFQ #123</span>
-                <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
-                  Negotiating
-                </span>
-              </div>
-              <p className="text-sm text-gray-600">MegaMart Ltd.</p>
-              <div className="mt-2 flex items-center justify-between">
-                <span className="text-sm text-gray-500">Est. value: $12,000</span>
-                <button className="text-sm text-blue-600 hover:text-blue-700">
-                  Update →
-                </button>
-              </div>
-            </div>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar sx={{ bgcolor: 'warning.light', mr: 2 }}>
+                    <TrophyIcon sx={{ color: 'warning.main' }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Performance Rank
+                    </Typography>
+                    <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+                      #{mockPerformance.rank || '-'}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <PerformanceBadge tier={agent?.tier || 'bronze'} size="small" />
+                  <Typography variant="body2" color="text.secondary" sx={{ ml: 1, textTransform: 'capitalize' }}>
+                    {agent?.tier || 'bronze'} tier
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
 
-            <div className="p-4 border border-gray-200 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-900">Produce RFQ #456</span>
-                <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                  Contacted
-                </span>
-              </div>
-              <p className="text-sm text-gray-600">FoodCo International</p>
-              <div className="mt-2 flex items-center justify-between">
-                <span className="text-sm text-gray-500">Est. value: $8,500</span>
-                <button className="text-sm text-blue-600 hover:text-blue-700">
-                  Update →
-                </button>
-              </div>
-            </div>
-          </div>
+        {/* Charts and Data */}
+        <Grid container spacing={3}>
+          {/* Earnings Chart */}
+          <Grid size={{ xs: 12, lg: 6 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                  <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold' }}>
+                    Earnings Overview
+                  </Typography>
+                  <Stack direction="row" spacing={1}>
+                    <Chip label="7D" variant="filled" color="primary" size="small" />
+                    <Chip label="30D" variant="outlined" size="small" />
+                    <Chip label="90D" variant="outlined" size="small" />
+                  </Stack>
+                </Box>
+                <Box sx={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Earnings Chart Component
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
 
-          <button className="mt-4 w-full py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
-            View All Active Leads
-          </button>
-        </motion.div>
-
-        {/* Recent Earnings */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-white rounded-xl shadow-lg p-6"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-between">
-            Recent Earnings
-            <span className="text-sm text-gray-500 font-normal">
-              ${earnings?.pending || 0} pending
-            </span>
-          </h2>
-          
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-900">Order #789</p>
-                <p className="text-sm text-gray-600">Dairy Products</p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-green-600">+$245</p>
-                <p className="text-xs text-gray-500">2 hours ago</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-900">Order #654</p>
-                <p className="text-sm text-gray-600">Fresh Produce</p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-green-600">+$180</p>
-                <p className="text-xs text-gray-500">Yesterday</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-900">Monthly Bonus</p>
-                <p className="text-sm text-gray-600">Performance Tier</p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-blue-600">+$420</p>
-                <p className="text-xs text-gray-500">3 days ago</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">This Month Total</span>
-              <span className="text-lg font-bold text-gray-900">
-                {formatCurrency(earnings?.thisMonth || 0)}
-              </span>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Performance Chart */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="bg-white rounded-xl shadow-lg p-6"
-      >
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Performance Overview
-        </h2>
-        <EarningsChart />
-      </motion.div>
-    </div>
+          {/* Recent Activity */}
+          <Grid size={{ xs: 12, lg: 6 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', mb: 3 }}>
+                  Recent Activity
+                </Typography>
+                <Stack spacing={2}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <Avatar sx={{ bgcolor: 'primary.light', mr: 2, width: 32, height: 32 }}>
+                      <BriefcaseIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+                    </Avatar>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                        New lead assigned: Premium Restaurant Chain
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        2 hours ago
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <Avatar sx={{ bgcolor: 'success.light', mr: 2, width: 32, height: 32 }}>
+                      <CurrencyDollarIcon sx={{ fontSize: 16, color: 'success.main' }} />
+                    </Avatar>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                        Commission earned: $1,250
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        5 hours ago
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <Avatar sx={{ bgcolor: 'secondary.light', mr: 2, width: 32, height: 32 }}>
+                      <TrophyIcon sx={{ fontSize: 16, color: 'secondary.main' }} />
+                    </Avatar>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                        Achieved Gold tier status
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        1 day ago
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Stack>
+    </Container>
   );
 };
+
+export default AgentDashboard;

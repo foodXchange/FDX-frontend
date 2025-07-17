@@ -100,7 +100,7 @@ export function useImageOptimization(
 // Generate optimized image URL (would integrate with image CDN)
 function generateOptimizedUrl(
   src: string,
-  options: {
+  _options: {
     quality: number;
     maxWidth: number;
     maxHeight: number;

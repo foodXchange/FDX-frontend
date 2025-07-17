@@ -87,7 +87,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   // Smart Search
   const search = useCallback(async (
     query: string,
-    filters?: any,
+    filters?: Record<string, unknown>,
     _options?: { useCache?: boolean }
   ): Promise<SearchResult[]> => {
     setSearchLoading(true);
@@ -117,7 +117,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   // Demand Forecasting
   const forecastDemand = useCallback(async (
     productId: string,
-    historicalOrders: any[],
+    historicalOrders: unknown[],
     daysToForecast?: number
   ) => {
     try {
@@ -136,7 +136,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   const optimizePrice = useCallback(async (
     productId: string,
     currentPrice: number,
-    historicalData: any
+    historicalData: Record<string, unknown>
   ) => {
     try {
       return await priceOptimizationService.optimizePrice(
@@ -153,7 +153,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   // Dynamic Pricing
   const getDynamicPrice = useCallback(async (
     productId: string,
-    context: any
+    context: Record<string, unknown>
   ): Promise<number> => {
     try {
       return await priceOptimizationService.getDynamicPricing(productId, context);
@@ -165,8 +165,8 @@ export const useAI = (options: UseAIOptions = {}) => {
 
   // Supplier Matching
   const findSuppliers = useCallback(async (
-    requirements: any,
-    availableSuppliers: any[]
+    requirements: Record<string, unknown>,
+    availableSuppliers: unknown[]
   ) => {
     try {
       return await supplierMatchingService.matchSuppliers(requirements, availableSuppliers);
@@ -179,7 +179,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   // Recommendations
   const getUserRecommendations = useCallback(async (
     targetUserId?: string,
-    context?: any
+    context?: Record<string, unknown>
   ) => {
     if (!targetUserId && !userId) {
       console.warn('No user ID provided for recommendations');
@@ -205,7 +205,7 @@ export const useAI = (options: UseAIOptions = {}) => {
 
   const getProductRecommendations = useCallback(async (
     productId: string,
-    context?: any
+    context?: Record<string, unknown>
   ) => {
     try {
       return await recommendationEngine.getProductRecommendations(productId, context);
@@ -219,7 +219,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   const recordInteraction = useCallback(async (
     productId: string,
     interactionType: 'view' | 'add_to_cart' | 'purchase' | 'search',
-    metadata?: any
+    metadata?: Record<string, unknown>
   ) => {
     if (!userId) return;
     
@@ -238,7 +238,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   // Document Analysis
   const analyzeDocument = useCallback(async (
     file: File | string,
-    options?: any
+    options?: Record<string, unknown>
   ): Promise<DocumentAnalysis | null> => {
     try {
       return await documentIntelligenceService.analyzeDocument(file, options);
@@ -328,7 +328,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   // Anomaly Detection
   const detectAnomalies = useCallback(async (
     productId: string,
-    recentOrders: any[]
+    recentOrders: unknown[]
   ) => {
     try {
       return await demandForecastingService.detectAnomalies(productId, recentOrders);
@@ -340,7 +340,7 @@ export const useAI = (options: UseAIOptions = {}) => {
 
   // AI Insights Generation
   const generateInsights = useCallback(async (
-    data: any,
+    data: Record<string, unknown>,
     context: string
   ): Promise<AIInsight[]> => {
     try {
@@ -366,7 +366,7 @@ export const useAI = (options: UseAIOptions = {}) => {
   }, []);
 
   // Batch Operations
-  const processBatchDocuments = useCallback(async (documents: any[]) => {
+  const processBatchDocuments = useCallback(async (documents: Array<{ id: string; content: string | File; options?: Record<string, unknown> }>) => {
     try {
       return await aiServiceManager.processDocumentBatch(documents);
     } catch (error) {
@@ -434,7 +434,7 @@ export const useAI = (options: UseAIOptions = {}) => {
     isFeatureAvailable,
 
     // Convenience methods for common workflows
-    analyzeProductDemand: useCallback(async (productId: string, orders: any[]) => {
+    analyzeProductDemand: useCallback(async (productId: string, orders: unknown[]) => {
       const [forecast, anomalies] = await Promise.all([
         forecastDemand(productId, orders),
         detectAnomalies(productId, orders),
@@ -445,8 +445,8 @@ export const useAI = (options: UseAIOptions = {}) => {
     optimizeProductStrategy: useCallback(async (
       productId: string,
       currentPrice: number,
-      orders: any[],
-      competitors: any[]
+      orders: unknown[],
+      competitors: unknown[]
     ) => {
       const [priceOpt, forecast] = await Promise.all([
         optimizePrice(productId, currentPrice, {
@@ -459,7 +459,7 @@ export const useAI = (options: UseAIOptions = {}) => {
       return { priceOptimization: priceOpt, demandForecast: forecast };
     }, [optimizePrice, forecastDemand]),
 
-    searchAndRecommend: useCallback(async (query: string, filters?: any) => {
+    searchAndRecommend: useCallback(async (query: string, filters?: Record<string, unknown>) => {
       const [searchResults, userRecs] = await Promise.all([
         search(query, filters),
         userId ? getUserRecommendations() : Promise.resolve([]),

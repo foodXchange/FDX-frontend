@@ -1,3 +1,4 @@
+import React from 'react';
 import { useCallback } from 'react';
 import { useUIStore } from '@/store/useUIStore';
 
@@ -12,7 +13,7 @@ export function useModal() {
   const { openModal, closeModal, closeAllModals } = useUIStore();
 
   const open = useCallback(
-    <T extends Record<string, any>>(
+    <T extends Record<string, unknown>>(
       component: React.ComponentType<T>,
       props?: T,
       options?: UseModalOptions

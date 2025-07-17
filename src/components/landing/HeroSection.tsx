@@ -19,8 +19,9 @@ const FloatingParticle: React.FC<ParticleProps> = React.memo(({ shouldAnimate })
   if (!shouldAnimate) return null;
 
   return (
-    <motion.div
-      style={{
+    <Box
+      component={motion.div}
+      sx={{
         position: 'absolute',
         width: 8,
         height: 8,
@@ -132,8 +133,9 @@ export const HeroSection: React.FC = () => {
       }}
     >
       {/* Animated Orbs */}
-      <motion.div
-        style={{
+      <Box
+        component={motion.div}
+        sx={{
           position: 'absolute',
           top: theme.spacing(10),
           left: theme.spacing(10),
@@ -148,8 +150,9 @@ export const HeroSection: React.FC = () => {
         transition={orbAnimations.orb1.transition}
         initial={{ scale: 1, opacity: 0.3 }}
       />
-      <motion.div
-        style={{
+      <Box
+        component={motion.div}
+        sx={{
           position: 'absolute',
           bottom: theme.spacing(10),
           right: theme.spacing(10),
@@ -164,8 +167,9 @@ export const HeroSection: React.FC = () => {
         transition={orbAnimations.orb2.transition}
         initial={{ scale: 1, opacity: 0.2 }}
       />
-      <motion.div
-        style={{
+      <Box
+        component={motion.div}
+        sx={{
           position: 'absolute',
           top: '50%',
           left: '50%',
@@ -228,11 +232,11 @@ export const HeroSection: React.FC = () => {
               backdropFilter: 'blur(8px)',
             }}
           >
-            <StarIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.warning.main }} aria-hidden="true" />
+            <Box component={StarIcon} sx={{ width: 24, height: 24, mr: 1, color: 'warning.main' }} aria-hidden="true" />
             <Typography variant="body2" component="span" sx={{ fontWeight: 600 }}>
               #1 B2B Food Marketplace
             </Typography>
-            <SparklesIcon className="h-6 w-6" style={{ marginLeft: 8, color: theme.palette.warning.main }} aria-hidden="true" />
+            <Box component={SparklesIcon} sx={{ width: 24, height: 24, ml: 1, color: 'warning.main' }} aria-hidden="true" />
           </Paper>
 
           {/* Main Headlines */}
@@ -397,7 +401,7 @@ export const HeroSection: React.FC = () => {
                 },
               }}
             >
-              <PlayCircleIcon className="h-6 w-6" style={{ marginRight: 8 }} aria-hidden="true" />
+              <Box component={PlayCircleIcon} sx={{ width: 24, height: 24, mr: 1 }} aria-hidden="true" />
               Watch Demo
             </Button>
           </Box>
@@ -418,15 +422,15 @@ export const HeroSection: React.FC = () => {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
+              <Box component={CheckCircleIcon} sx={{ width: 24, height: 24, mr: 1, color: 'success.main' }} />
               <Typography variant="body2">No credit card required</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
+              <Box component={CheckCircleIcon} sx={{ width: 24, height: 24, mr: 1, color: 'success.main' }} />
               <Typography variant="body2">Free 14-day trial</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <CheckCircleIcon className="h-6 w-6" style={{ marginRight: 8, color: theme.palette.success.main }} />
+              <Box component={CheckCircleIcon} sx={{ width: 24, height: 24, mr: 1, color: 'success.main' }} />
               <Typography variant="body2">60% faster sourcing</Typography>
             </Box>
           </Box>

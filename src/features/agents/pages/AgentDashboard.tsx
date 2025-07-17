@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Container,
-  Grid,
   Card,
   CardContent,
   Typography,
@@ -12,9 +11,7 @@ import {
   LinearProgress,
   IconButton,
   Badge,
-  useTheme,
-  useMediaQuery,
-  Alert,
+  useTheme,Alert,
   Skeleton,
   List,
   ListItem,
@@ -22,11 +19,10 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Divider,
-  Paper,
+  Grid,
 } from '@mui/material';
 import {
   TrendingUp,
-  TrendingDown,
   People,
   AttachMoney,
   Notifications,
@@ -41,11 +37,10 @@ import {
 } from '@mui/icons-material';
 import { useAgentStore } from '../store';
 import { agentApi } from '../services';
-import { AgentDashboardData, Lead, AgentNotification, AgentTask } from '../types';
+import { Lead, AgentNotification, AgentTask } from '../types';
 
 const AgentDashboard: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
   const {
     currentAgent,
@@ -165,7 +160,7 @@ const AgentDashboard: React.FC = () => {
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Grid container spacing={3}>
           {[...Array(8)].map((_, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
               <Card>
                 <CardContent>
                   <Skeleton variant="text" width="60%" />
@@ -196,7 +191,6 @@ const AgentDashboard: React.FC = () => {
 
   const metrics = dashboardData?.metrics;
   const recentLeads = dashboardData?.recentLeads || [];
-  const recentCommissions = dashboardData?.commissions || [];
   const leaderboard = dashboardData?.leaderboard || [];
 
   return (
@@ -220,7 +214,7 @@ const AgentDashboard: React.FC = () => {
 
       <Grid container spacing={3}>
         {/* Metrics Cards */}
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -242,7 +236,7 @@ const AgentDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -263,7 +257,7 @@ const AgentDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -282,7 +276,7 @@ const AgentDashboard: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -302,7 +296,7 @@ const AgentDashboard: React.FC = () => {
         </Grid>
 
         {/* Recent Leads */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'between', alignItems: 'center', mb: 2 }}>
@@ -385,7 +379,7 @@ const AgentDashboard: React.FC = () => {
         </Grid>
 
         {/* Tasks & Notifications */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ mb: 3 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 2 }}>
@@ -457,7 +451,7 @@ const AgentDashboard: React.FC = () => {
         </Grid>
 
         {/* Performance Chart */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 2 }}>
@@ -473,7 +467,7 @@ const AgentDashboard: React.FC = () => {
         </Grid>
 
         {/* Leaderboard */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 2 }}>

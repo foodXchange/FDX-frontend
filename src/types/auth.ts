@@ -2,6 +2,7 @@
 // AUTH TYPES - Authentication and authorization type definitions
 // =============================================================================
 
+import React from 'react';
 import { User } from './business';
 
 // Authentication State Types

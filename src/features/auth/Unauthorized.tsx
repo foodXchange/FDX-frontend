@@ -1,47 +1,51 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
-import { ShieldExclamationIcon } from '@heroicons/react/24/outline';
+import { Button, Card, CardContent, Box, Typography, Stack } from '@mui/material';
+import { GppBad as ShieldExclamationIcon } from '@mui/icons-material';
 
 export const Unauthorized: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="max-w-md w-full p-8 text-center">
-        <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-red-100">
-          <ShieldExclamationIcon className="h-12 w-12 text-red-600" />
-        </div>
-        
-        <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-          Access Denied
-        </h2>
-        
-        <p className="mt-2 text-sm text-gray-600">
-          You don't have permission to access this page.
-        </p>
-        
-        <p className="mt-4 text-sm text-gray-500">
-          If you believe this is an error, please contact your administrator or try logging in with a different account.
-        </p>
-        
-        <div className="mt-8 space-y-3">
-          <Button
-            variant="default"
-            className="w-full"
-            onClick={() => navigate(-1)}
-          >
-            Go Back
-          </Button>
+    <Box sx={{ bgcolor: 'grey.50', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Card sx={{ maxWidth: 400, width: '100%' }}>
+        <CardContent sx={{ p: 4, textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+            <ShieldExclamationIcon sx={{ color: 'error.main', fontSize: 48 }} />
+          </Box>
           
-          <Link to="/dashboard">
-            <Button variant="outline" className="w-full">
+          <Typography variant="h5" sx={{ color: 'grey.900', mb: 2 }}>
+            Access Denied
+          </Typography>
+          
+          <Typography variant="body2" sx={{ color: 'grey.600', mb: 2 }}>
+            You don't have permission to access this page.
+          </Typography>
+          
+          <Typography variant="body2" sx={{ color: 'grey.600', mb: 4 }}>
+            If you believe this is an error, please contact your administrator or try logging in with a different account.
+          </Typography>
+          
+          <Stack spacing={2}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => navigate(-1)}
+            >
+              Go Back
+            </Button>
+            
+            <Button
+              component={Link}
+              to="/dashboard"
+              variant="outlined"
+              fullWidth
+            >
               Go to Dashboard
             </Button>
-          </Link>
-        </div>
+          </Stack>
+        </CardContent>
       </Card>
-    </div>
+    </Box>
   );
 };

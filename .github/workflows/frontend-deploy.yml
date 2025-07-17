@@ -1,0 +1,227 @@
+name: Deploy Frontend to Azure Static Web Apps
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - development
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+      - staging
+
+env:
+  NODE_VERSION: '18.x'
+  BUILD_ARTIFACT_NAME: 'frontend-build'
+
+jobs:
+  build:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build Frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run type checking
+        run: npm run type-check
+
+      - name: Run tests
+        run: npm run test:ci
+        env:
+          CI: true
+
+      - name: Set environment variables
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "ENVIRONMENT=production" >> $GITHUB_ENV
+            echo "Using production environment"
+          elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            echo "ENVIRONMENT=staging" >> $GITHUB_ENV
+            echo "Using staging environment"
+          else
+            echo "ENVIRONMENT=development" >> $GITHUB_ENV
+            echo "Using development environment"
+          fi
+
+      - name: Build application
+        run: npm run build
+        env:
+          CI: true
+          REACT_APP_ENVIRONMENT: ${{ env.ENVIRONMENT }}
+          REACT_APP_API_URL: ${{ secrets[format('REACT_APP_API_URL_{0}', env.ENVIRONMENT)] }}
+          REACT_APP_WS_URL: ${{ secrets[format('REACT_APP_WS_URL_{0}', env.ENVIRONMENT)] }}
+          REACT_APP_APP_INSIGHTS_KEY: ${{ secrets.APP_INSIGHTS_KEY }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.BUILD_ARTIFACT_NAME }}
+          path: build/
+          retention-days: 1
+
+  deploy_static_web_app:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    needs: build
+    name: Deploy to Static Web App
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.BUILD_ARTIFACT_NAME }}
+          path: build/
+
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/" 
+          output_location: "build"
+          skip_app_build: true
+          skip_api_build: true
+
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - name: Close Pull Request
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: "close"
+
+  purge_cdn:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
+    runs-on: ubuntu-latest
+    needs: deploy_static_web_app
+    name: Purge CDN Cache
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Purge CDN endpoint
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+              az cdn endpoint purge \
+                --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_PROD }} \
+                --profile-name ${{ secrets.CDN_PROFILE_NAME_PROD }} \
+                --name ${{ secrets.CDN_ENDPOINT_NAME_PROD }} \
+                --content-paths "/*"
+            else
+              az cdn endpoint purge \
+                --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_STAGING }} \
+                --profile-name ${{ secrets.CDN_PROFILE_NAME_STAGING }} \
+                --name ${{ secrets.CDN_ENDPOINT_NAME_STAGING }} \
+                --content-paths "/*"
+            fi
+
+  smoke_tests:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
+    runs-on: ubuntu-latest
+    needs: [deploy_static_web_app, purge_cdn]
+    name: Run Smoke Tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install test dependencies
+        run: |
+          npm install -g newman
+          npm install -g @playwright/test
+          npx playwright install chromium
+
+      - name: Wait for deployment
+        run: sleep 60
+
+      - name: Set test URL
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "TEST_URL=${{ secrets.PRODUCTION_URL }}" >> $GITHUB_ENV
+          else
+            echo "TEST_URL=${{ secrets.STAGING_URL }}" >> $GITHUB_ENV
+          fi
+
+      - name: Run API smoke tests
+        run: |
+          newman run tests/smoke/api-smoke-tests.json \
+            --environment tests/smoke/environment-${{ env.ENVIRONMENT }}.json \
+            --reporters cli,json \
+            --reporter-json-export newman-results.json
+        continue-on-error: true
+
+      - name: Run UI smoke tests
+        run: |
+          npx playwright test tests/smoke/ui-smoke-tests.spec.ts \
+            --config=tests/smoke/playwright.config.ts
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ env.TEST_URL }}
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: smoke-test-results
+          path: |
+            newman-results.json
+            test-results/
+            playwright-report/
+
+  notify:
+    if: always()
+    runs-on: ubuntu-latest
+    needs: [build, deploy_static_web_app, purge_cdn, smoke_tests]
+    name: Send Notifications
+    steps:
+      - name: Send deployment notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Frontend Deployment Status: ${{ job.status }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()

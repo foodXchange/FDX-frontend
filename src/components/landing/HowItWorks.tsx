@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Box, Container, Typography, Paper } from '@mui/material';
 
 export const HowItWorks: React.FC = () => {
   const steps = [
@@ -38,97 +39,102 @@ export const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="container mx-auto px-6">
-        <motion.div
+    <Box component="section" sx={{ py: 10, bgcolor: 'grey.50' }}>
+      <Container maxWidth="xl">
+        <Box
+          component={motion.div}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          sx={{ textAlign: 'center', mb: 6 }}
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '3rem' }, fontWeight: 700, color: 'text.primary', mb: 2 }}>
             Start Sourcing in 4 Simple Steps
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          </Typography>
+          <Typography variant="h6" sx={{ color: 'text.secondary', maxWidth: 'md', mx: 'auto' }}>
             From profile creation to delivery tracking - see how FoodXchange transforms your supply chain in minutes
-          </p>
-        </motion.div>
+          </Typography>
+        </Box>
 
         {/* Interactive Timeline */}
-        <div className="relative max-w-6xl mx-auto">
+        <Box sx={{ position: 'relative', maxWidth: '6xl', mx: 'auto' }}>
           {/* Timeline line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-blue-200 via-green-200 via-orange-200 to-amber-200 hidden lg:block"></div>
+          <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', height: '100%', width: 4, background: 'linear-gradient(to bottom, #bfdbfe, #bbf7d0, #fed7aa, #fde68a)', display: { xs: 'none', lg: 'block' } }} />
           
           {/* Steps */}
-          <div className="space-y-16">
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {steps.map((step, index) => (
-              <motion.div
+              <Box
+                component={motion.div}
                 key={index}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
-                className={`flex items-center ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} flex-col gap-8`}
+                sx={{ display: 'flex', alignItems: 'center', flexDirection: { xs: 'column', lg: index % 2 === 0 ? 'row' : 'row-reverse' }, gap: 4 }}
               >
                 {/* Content */}
-                <div className={`flex-1 ${index % 2 === 0 ? 'lg:text-right lg:pr-8' : 'lg:text-left lg:pl-8'} text-center`}>
-                  <motion.div
+                <Box sx={{ flex: 1, textAlign: { xs: 'center', lg: index % 2 === 0 ? 'right' : 'left' }, pr: { lg: index % 2 === 0 ? 4 : 0 }, pl: { lg: index % 2 === 0 ? 0 : 4 } }}>
+                  <Paper
+                    component={motion.div}
                     whileHover={{ scale: 1.05 }}
-                    className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300"
+                    elevation={3}
+                    sx={{ p: 4, borderRadius: 4, transition: 'all 0.3s', '&:hover': { boxShadow: 6 } }}
                   >
-                    <div className="flex items-center justify-center mb-4">
-                      <span className="text-4xl mr-3">{step.icon}</span>
-                      <h3 className="text-2xl font-bold text-gray-900">{step.title}</h3>
-                    </div>
-                    <p className="text-gray-600 mb-6 leading-relaxed">{step.description}</p>
-                    <div className="flex items-center justify-center space-x-2 text-sm font-medium" style={{ color: step.color }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                      <Typography component="span" sx={{ fontSize: '2rem', mr: 1.5 }}>{step.icon}</Typography>
+                      <Typography variant="h5" component="h3" sx={{ fontWeight: 700, color: 'text.primary' }}>{step.title}</Typography>
+                    </Box>
+                    <Typography sx={{ color: 'text.secondary', mb: 3, lineHeight: 1.8 }}>{step.description}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, fontSize: '0.875rem', fontWeight: 500, color: step.color }}>
                       <span>Step {step.step}</span>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                    </div>
-                  </motion.div>
-                </div>
+                    </Box>
+                  </Paper>
+                </Box>
                 
                 {/* Timeline dot */}
-                <div className="relative z-10 flex-shrink-0">
-                  <motion.div
+                <Box sx={{ position: 'relative', zIndex: 10, flexShrink: 0 }}>
+                  <Box
+                    component={motion.div}
                     whileHover={{ scale: 1.1 }}
-                    className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg"
-                    style={{ backgroundColor: step.color }}
+                    sx={{ width: 64, height: 64, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.25rem', boxShadow: 3, backgroundColor: step.color }}
                   >
                     {step.step}
-                  </motion.div>
-                </div>
+                  </Box>
+                </Box>
                 
                 {/* Visual/GIF */}
-                <div className={`flex-1 ${index % 2 === 0 ? 'lg:pl-8' : 'lg:pr-8'}`}>
-                  <motion.div
+                <Box sx={{ flex: 1, pl: { lg: index % 2 === 0 ? 4 : 0 }, pr: { lg: index % 2 === 0 ? 0 : 4 } }}>
+                  <Box
+                    component={motion.div}
                     whileHover={{ scale: 1.02 }}
-                    className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                    sx={{ position: 'relative', borderRadius: 4, overflow: 'hidden', boxShadow: 3, transition: 'all 0.3s', '&:hover': { boxShadow: 6 } }}
                   >
                     <img 
                       src={step.gif} 
                       alt={step.title}
-                      className="w-full h-64 object-cover"
+                      style={{ width: '100%', height: 256, objectFit: 'cover' }}
                       onError={(e) => {
                         // Fallback to placeholder if GIF fails
                         const target = e.target as HTMLImageElement;
                         target.src = `data:image/svg+xml,%3Csvg width='400' height='256' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad${index}' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='${step.color}' stop-opacity='0.3'/%3E%3Cstop offset='100%25' stop-color='${step.color}' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grad${index})'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='${step.color}'%3E${step.icon}%3C/text%3E%3C/svg%3E`;
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3">
-                        <p className="text-sm font-medium text-gray-800">{step.title}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-              </motion.div>
+                    <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.2), transparent)' }} />
+                    <Box sx={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
+                      <Paper sx={{ bgcolor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(4px)', borderRadius: 2, p: 1.5 }}>
+                        <Typography sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'grey.800' }}>{step.title}</Typography>
+                      </Paper>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
             ))}
-          </div>
-        </div>
-      </div>
-    </section>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 };

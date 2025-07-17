@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useEffect, useCallback, useRef, useState } from 'react';
 
 interface AccessibilityConfig {
@@ -19,8 +20,6 @@ interface AccessibilityState {
 export function useAccessibility(config: AccessibilityConfig = {}) {
   const {
     announceChanges = true,
-    respectMotionPreferences = true,
-    enableHighContrast = true,
     enableFocusManagement = true,
     skipLinksEnabled = true,
   } = config;
@@ -199,7 +198,8 @@ export function useAccessibility(config: AccessibilityConfig = {}) {
         whiteSpace: 'nowrap',
         border: '0',
       }}
-    />
+    >
+    </div>
   );
 
   return {

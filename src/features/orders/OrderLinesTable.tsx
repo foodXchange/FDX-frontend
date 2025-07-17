@@ -1,36 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
-  TableHeader,
   TableRow,
-} from '../../components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
+  Paper,
+  Chip,
+  Button,
+  IconButton,
+  LinearProgress,
+  Menu,
+  MenuItem,
+  Divider,
+  Stack,
+  Grid
+} from '@mui/material';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
-import {
-  Thermometer,
-  Package,
-  Truck,
-  MoreHorizontal,
-  AlertTriangle,
+  Thermostat,
+  Inventory,
+  LocalShipping,
+  MoreHoriz,
+  Warning,
   CheckCircle,
-  Clock,
-  FileText,
-  Eye,
-} from 'lucide-react';
+  Schedule,
+  Description,
+  Visibility
+} from '@mui/icons-material';
 import { useOrderTracking } from '../../hooks/useOrderTracking';
+
 
 interface OrderLine {
   id: string;
@@ -66,41 +70,45 @@ interface Order {
   lines: OrderLine[];
 }
 
-const getStatusBadge = (status: OrderLine['status']) => {
+const getStatusChip = (status: OrderLine['status']) => {
   const configs = {
-    pending: { label: 'Pending', className: 'bg-gray-100 text-gray-700' },
-    partial: { label: 'Partial', className: 'bg-yellow-100 text-yellow-700' },
-    fulfilled: { label: 'Fulfilled', className: 'bg-green-100 text-green-700' },
-    cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-700' },
+    pending: { label: 'Pending', color: 'default' as const },
+    partial: { label: 'Partial', color: 'warning' as const },
+    fulfilled: { label: 'Fulfilled', color: 'success' as const },
+    cancelled: { label: 'Cancelled', color: 'error' as const },
   };
   
   const config = configs[status];
-  return <Badge className={config.className}>{config.label}</Badge>;
+  return <Chip label={config.label} color={config.color} size="small" />;
 };
 
-const getTemperatureBadge = (temp?: OrderLine['temperature']) => {
+const getTemperatureChip = (temp?: OrderLine['temperature']) => {
   if (!temp) return null;
   
   const configs = {
-    normal: { icon: Thermometer, className: 'text-green-600 bg-green-50' },
-    warning: { icon: AlertTriangle, className: 'text-yellow-600 bg-yellow-50' },
-    critical: { icon: AlertTriangle, className: 'text-red-600 bg-red-50' },
+    normal: { icon: <Thermostat />, color: 'success' as const },
+    warning: { icon: <Warning />, color: 'warning' as const },
+    critical: { icon: <Warning />, color: 'error' as const },
   };
   
   const config = configs[temp.status];
-  const Icon = config.icon;
   
   return (
-    <div className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${config.className}`}>
-      <Icon className="h-3 w-3" />
-      <span>{temp.current}°C</span>
-    </div>
+    <Chip
+      icon={config.icon}
+      label={`${temp.current}°C`}
+      color={config.color}
+      size="small"
+      variant="outlined"
+    />
   );
 };
 
 export const OrderLinesTable: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [expandedLines, setExpandedLines] = useState<Set<string>>(new Set());
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedLineId, setSelectedLineId] = useState<string | null>(null);
 
   // WebSocket integration for real-time updates
   const { 
@@ -275,228 +283,353 @@ export const OrderLinesTable: React.FC = () => {
     // TODO: Implement line actions
   };
 
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, lineId: string) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedLineId(lineId);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedLineId(null);
+  };
+
   if (!selectedOrder) {
-    return <div>No order selected</div>;
+    return (
+      <Box sx={{ textAlign: 'center', py: 4 }}>
+        <Typography color="text.secondary">No order selected</Typography>
+      </Box>
+    );
   }
 
   return (
-    <div className="space-y-4">
+    <Box sx={{ p: 3 }}>
       {/* Connection Status */}
-      <div className="flex items-center gap-2">
-        <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`} />
-        <span className="text-sm text-muted-foreground">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+        <Box
+          sx={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            bgcolor: isConnected ? 'success.main' : 'error.main'
+          }}
+        />
+        <Typography variant="caption" color="text.secondary">
           {isConnected ? "Real-time order updates active" : "Disconnected"}
-        </span>
+        </Typography>
         {connectionError && (
-          <span className="text-sm text-red-600">
+          <Typography variant="caption" color="error">
             ({connectionError})
-          </span>
+          </Typography>
         )}
-      </div>
+      </Box>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Order Lines - {selectedOrder.orderNumber}</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
+        <CardHeader
+          title={`Order Lines - ${selectedOrder.orderNumber}`}
+          subheader={
+            <Box>
+              <Typography variant="body2" color="text.secondary">
                 Customer: {selectedOrder.customerName} | Total Value: {selectedOrder.currency} {selectedOrder.totalValue.toLocaleString()}
                 {isConnected && (
-                  <span className="ml-2 text-xs text-green-600">
+                  <Typography component="span" variant="caption" color="success.main" sx={{ ml: 2 }}>
                     • Live updates enabled
-                  </span>
+                  </Typography>
                 )}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <FileText className="h-4 w-4 mr-2" />
+              </Typography>
+            </Box>
+          }
+          action={
+            <Stack direction="row" spacing={1}>
+              <Button variant="outlined" size="small" startIcon={<Description />}>
                 Export
               </Button>
-              <Button variant="outline" size="sm">
-                <Eye className="h-4 w-4 mr-2" />
+              <Button variant="outlined" size="small" startIcon={<Visibility />}>
                 View Order
               </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[50px]">Line</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Supplier</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Fulfillment</TableHead>
-                <TableHead>Temperature</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Est. Delivery</TableHead>
-                <TableHead className="text-right">Value</TableHead>
-                <TableHead className="w-[50px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+            </Stack>
+          }
+        />
+        <CardContent sx={{ p: 0 }}>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ width: 50 }}>Line</TableCell>
+                  <TableCell>Product</TableCell>
+                  <TableCell>Supplier</TableCell>
+                  <TableCell>Quantity</TableCell>
+                  <TableCell>Fulfillment</TableCell>
+                  <TableCell>Temperature</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Est. Delivery</TableCell>
+                  <TableCell align="right">Value</TableCell>
+                  <TableCell sx={{ width: 50 }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
               {selectedOrder.lines.map((line) => (
                 <React.Fragment key={line.id}>
-                  <TableRow className={expandedLines.has(line.id) ? "border-b-0" : ""}>
-                    <TableCell className="font-medium">{line.lineNumber}</TableCell>
+                  <TableRow sx={expandedLines.has(line.id) ? { borderBottom: 0 } : {}}>
+                    <TableCell sx={{ fontWeight: 500 }}>{line.lineNumber}</TableCell>
                     <TableCell>
-                      <div>
-                        <p className="font-medium">{line.productName}</p>
-                        <p className="text-xs text-muted-foreground">{line.sku}</p>
-                      </div>
+                      <Box>
+                        <Typography variant="body2" fontWeight="medium">
+                          {line.productName}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {line.sku}
+                        </Typography>
+                      </Box>
                     </TableCell>
                     <TableCell>{line.supplier}</TableCell>
                     <TableCell>
-                      <div className="text-sm">
-                        <p>{line.orderedQuantity} {line.unit}</p>
+                      <Box>
+                        <Typography variant="body2">
+                          {line.orderedQuantity} {line.unit}
+                        </Typography>
                         {line.remainingQuantity > 0 && (
-                          <p className="text-xs text-muted-foreground">
+                          <Typography variant="caption" color="text.secondary">
                             {line.remainingQuantity} remaining
-                          </p>
+                          </Typography>
                         )}
-                      </div>
+                      </Box>
                     </TableCell>
                     <TableCell>
-                      <div className="space-y-1 min-w-[120px]">
-                        <div className="flex items-center justify-between text-sm">
-                          <span>{line.fulfilledQuantity}/{line.orderedQuantity}</span>
-                          <span className="text-xs text-muted-foreground">
+                      <Box sx={{ minWidth: 120 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                          <Typography variant="body2">
+                            {line.fulfilledQuantity}/{line.orderedQuantity}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
                             {Math.round(getFulfillmentPercentage(line))}%
-                          </span>
-                        </div>
-                        <ProgressIndicator value={getFulfillmentPercentage(line)} className="h-2" />
-                      </div>
+                          </Typography>
+                        </Box>
+                        <LinearProgress
+                          variant="determinate"
+                          value={getFulfillmentPercentage(line)}
+                          sx={{ height: 6, borderRadius: 1 }}
+                        />
+                      </Box>
                     </TableCell>
-                    <TableCell>{getTemperatureBadge(line.temperature)}</TableCell>
-                    <TableCell>{getStatusBadge(line.status)}</TableCell>
+                    <TableCell>{getTemperatureChip(line.temperature)}</TableCell>
+                    <TableCell>{getStatusChip(line.status)}</TableCell>
                     <TableCell>
                       {line.estimatedDelivery && (
-                        <div className="text-sm">
-                          <p>{line.estimatedDelivery.toLocaleDateString()}</p>
+                        <Box>
+                          <Typography variant="body2">
+                            {line.estimatedDelivery.toLocaleDateString()}
+                          </Typography>
                           {line.trackingNumber && (
-                            <p className="text-xs text-muted-foreground flex items-center gap-1">
-                              <Truck className="h-3 w-3" />
-                              {line.trackingNumber}
-                            </p>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <LocalShipping sx={{ fontSize: 14 }} />
+                              <Typography variant="caption">
+                                {line.trackingNumber}
+                              </Typography>
+                            </Box>
                           )}
-                        </div>
+                        </Box>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell align="right">
                       {line.currency} {(line.orderedQuantity * line.price).toLocaleString()}
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => toggleLineExpansion(line.id)}>
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleLineAction('track', line)}
-                            disabled={!line.trackingNumber}
-                          >
-                            Track Shipment
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem 
-                            onClick={() => handleLineAction('expedite', line)}
-                            disabled={line.status === 'fulfilled' || line.status === 'cancelled'}
-                          >
-                            Expedite Delivery
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleLineAction('split', line)}
-                            disabled={line.status === 'fulfilled' || line.status === 'cancelled'}
-                          >
-                            Split Line
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleLineAction('cancel', line)}
-                            disabled={line.status === 'fulfilled' || line.status === 'cancelled'}
-                            className="text-red-600"
-                          >
-                            Cancel Line
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => handleMenuOpen(e, line.id)}
+                      >
+                        <MoreHoriz />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                   {expandedLines.has(line.id) && (
                     <TableRow>
-                      <TableCell colSpan={10} className="bg-muted/50">
-                        <div className="p-4 space-y-3">
-                          <div className="grid grid-cols-3 gap-4 text-sm">
-                            <div>
-                              <p className="font-medium mb-1">Fulfillment History</p>
-                              <div className="space-y-1 text-xs text-muted-foreground">
-                                {line.fulfilledQuantity > 0 && (
-                                  <>
-                                    <p className="flex items-center gap-1">
-                                      <CheckCircle className="h-3 w-3" />
+                      <TableCell colSpan={10} sx={{ bgcolor: 'action.hover' }}>
+                        <Grid container spacing={3} sx={{ p: 2 }}>
+                          <Grid item xs={12} md={4}>
+                            <Typography variant="subtitle2" gutterBottom>
+                              Fulfillment History
+                            </Typography>
+                            <Stack spacing={1}>
+                              {line.fulfilledQuantity > 0 && (
+                                <>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <CheckCircle sx={{ fontSize: 14, color: 'success.main' }} />
+                                    <Typography variant="caption">
                                       {line.fulfilledQuantity} {line.unit} delivered
-                                    </p>
-                                    <p className="flex items-center gap-1">
-                                      <Clock className="h-3 w-3" />
+                                    </Typography>
+                                  </Box>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Schedule sx={{ fontSize: 14, color: 'text.secondary' }} />
+                                    <Typography variant="caption">
                                       Last update: {line.lastUpdate.toLocaleString()}
-                                    </p>
-                                  </>
-                                )}
-                                {line.remainingQuantity > 0 && (
-                                  <p className="flex items-center gap-1">
-                                    <Package className="h-3 w-3" />
-                                    {line.remainingQuantity} {line.unit} pending
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                            <div>
-                              <p className="font-medium mb-1">Temperature Requirements</p>
-                              {line.temperature && (
-                                <div className="text-xs text-muted-foreground">
-                                  <p>Required: {line.temperature.required.min}°C to {line.temperature.required.max}°C</p>
-                                  <p>Current: {line.temperature.current}°C</p>
-                                  <p className={`font-medium ${line.temperature.status === 'normal' ? "text-green-600" : line.temperature.status === 'warning' ? "text-yellow-600" : "text-red-600"}`}>
-                                    Status: {line.temperature.status.toUpperCase()}
-                                  </p>
-                                </div>
+                                    </Typography>
+                                  </Box>
+                                </>
                               )}
-                            </div>
-                            <div>
-                              <p className="font-medium mb-1">Additional Information</p>
-                              <div className="text-xs text-muted-foreground">
-                                <p>Unit Price: {line.currency} {line.price}</p>
-                                <p>Total Value: {line.currency} {(line.orderedQuantity * line.price).toLocaleString()}</p>
-                                {line.trackingNumber && (
-                                  <p>Tracking: {line.trackingNumber}</p>
-                                )}
-                                {isConnected && (
-                                  <p className="text-green-600 flex items-center gap-1 mt-1">
-                                    <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
+                              {line.remainingQuantity > 0 && (
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <Inventory sx={{ fontSize: 14, color: 'info.main' }} />
+                                  <Typography variant="caption">
+                                    {line.remainingQuantity} {line.unit} pending
+                                  </Typography>
+                                </Box>
+                              )}
+                            </Stack>
+                          </Grid>
+                          <Grid item xs={12} md={4}>
+                            <Typography variant="subtitle2" gutterBottom>
+                              Temperature Requirements
+                            </Typography>
+                            {line.temperature && (
+                              <Stack spacing={0.5}>
+                                <Typography variant="caption">
+                                  Required: {line.temperature.required.min}°C to {line.temperature.required.max}°C
+                                </Typography>
+                                <Typography variant="caption">
+                                  Current: {line.temperature.current}°C
+                                </Typography>
+                                <Typography
+                                  variant="caption"
+                                  fontWeight="medium"
+                                  color={
+                                    line.temperature.status === 'normal' ? 'success.main' :
+                                    line.temperature.status === 'warning' ? 'warning.main' :
+                                    'error.main'
+                                  }
+                                >
+                                  Status: {line.temperature.status.toUpperCase()}
+                                </Typography>
+                              </Stack>
+                            )}
+                          </Grid>
+                          <Grid item xs={12} md={4}>
+                            <Typography variant="subtitle2" gutterBottom>
+                              Additional Information
+                            </Typography>
+                            <Stack spacing={0.5}>
+                              <Typography variant="caption">
+                                Unit Price: {line.currency} {line.price}
+                              </Typography>
+                              <Typography variant="caption">
+                                Total Value: {line.currency} {(line.orderedQuantity * line.price).toLocaleString()}
+                              </Typography>
+                              {line.trackingNumber && (
+                                <Typography variant="caption">
+                                  Tracking: {line.trackingNumber}
+                                </Typography>
+                              )}
+                              {isConnected && (
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <Box
+                                    sx={{
+                                      width: 6,
+                                      height: 6,
+                                      borderRadius: '50%',
+                                      bgcolor: 'success.main'
+                                    }}
+                                  />
+                                  <Typography variant="caption">
                                     Live tracking active
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                                  </Typography>
+                                </Box>
+                              )}
+                            </Stack>
+                          </Grid>
+                        </Grid>
                       </TableCell>
                     </TableRow>
                   )}
                 </React.Fragment>
               ))}
-            </TableBody>
-          </Table>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </CardContent>
       </Card>
-    </div>
+
+      {/* Action Menu */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={() => {
+          if (selectedLineId) {
+            toggleLineExpansion(selectedLineId);
+            handleMenuClose();
+          }
+        }}>
+          View Details
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (selectedLineId) {
+              const line = selectedOrder.lines.find(l => l.id === selectedLineId);
+              if (line) {
+                handleLineAction('track', line);
+                handleMenuClose();
+              }
+            }
+          }}
+          disabled={!selectedLineId || !selectedOrder.lines.find(l => l.id === selectedLineId)?.trackingNumber}
+        >
+          Track Shipment
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          onClick={() => {
+            if (selectedLineId) {
+              const line = selectedOrder.lines.find(l => l.id === selectedLineId);
+              if (line) {
+                handleLineAction('expedite', line);
+                handleMenuClose();
+              }
+            }
+          }}
+          disabled={!selectedLineId || (() => {
+            const line = selectedOrder.lines.find(l => l.id === selectedLineId);
+            return line?.status === 'fulfilled' || line?.status === 'cancelled';
+          })()}
+        >
+          Expedite Delivery
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (selectedLineId) {
+              const line = selectedOrder.lines.find(l => l.id === selectedLineId);
+              if (line) {
+                handleLineAction('split', line);
+                handleMenuClose();
+              }
+            }
+          }}
+          disabled={!selectedLineId || (() => {
+            const line = selectedOrder.lines.find(l => l.id === selectedLineId);
+            return line?.status === 'fulfilled' || line?.status === 'cancelled';
+          })()}
+        >
+          Split Line
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (selectedLineId) {
+              const line = selectedOrder.lines.find(l => l.id === selectedLineId);
+              if (line) {
+                handleLineAction('cancel', line);
+                handleMenuClose();
+              }
+            }
+          }}
+          disabled={!selectedLineId || (() => {
+            const line = selectedOrder.lines.find(l => l.id === selectedLineId);
+            return line?.status === 'fulfilled' || line?.status === 'cancelled';
+          })()}
+          sx={{ color: 'error.main' }}
+        >
+          Cancel Line
+        </MenuItem>
+      </Menu>
+    </Box>
   );
 };

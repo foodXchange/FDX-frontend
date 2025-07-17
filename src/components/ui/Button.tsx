@@ -14,7 +14,7 @@ export interface ButtonProps extends Omit<MuiButtonProps, 'variant' | 'size'> {
   sx?: SxProps<Theme>;
 }
 
-const getButtonStyles = (theme: any, variant: ButtonVariant, size: ButtonSize) => {
+const getButtonStyles = (theme: Theme, variant: ButtonVariant, size: ButtonSize) => {
   const baseStyles = {
     borderRadius: 2,
     textTransform: 'none' as const,

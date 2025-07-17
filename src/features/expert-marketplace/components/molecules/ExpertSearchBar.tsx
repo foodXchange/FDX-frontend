@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { FC, useState, useEffect } from 'react';
 import {
   Paper,
@@ -5,7 +6,6 @@ import {
   IconButton,
   Box,
   Chip,
-  Menu,
   MenuItem,
   Badge,
   Tooltip,
@@ -44,7 +44,7 @@ export const ExpertSearchBar: FC<ExpertSearchBarProps> = ({
   activeFilterCount = 0,
 }) => {
   const [searchValue, setSearchValue] = useState(value);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [_anchorEl, _setAnchorEl] = useState<null | HTMLElement>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {

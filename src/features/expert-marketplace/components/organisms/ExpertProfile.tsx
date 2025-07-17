@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { FC, useState } from 'react';
 import {
   Box,
@@ -5,7 +6,6 @@ import {
   Typography,
   Tabs,
   Tab,
-  Grid,
   Button,
   Stack,
   Chip,
@@ -21,10 +21,10 @@ import {
   Language,
   AccessTime,
   CalendarMonth,
-  EmojiEvents,
   School,
   Message,
 } from '@mui/icons-material';
+import { Grid } from '@mui/material';
 import { Expert, Service, Rating, Portfolio } from '../../types';
 import {
   ExpertAvatar,
@@ -91,7 +91,7 @@ export const ExpertProfile: FC<ExpertProfileProps> = ({
       {/* Profile Header */}
       <Paper sx={{ p: 4, mb: 3 }}>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Box display="flex" gap={3}>
               <ExpertAvatar
                 name={`${expert.firstName} ${expert.lastName}`}
@@ -179,7 +179,7 @@ export const ExpertProfile: FC<ExpertProfileProps> = ({
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Stack spacing={3}>
               <Paper variant="outlined" sx={{ p: 2 }}>
                 <Stack spacing={2}>
@@ -270,7 +270,7 @@ export const ExpertProfile: FC<ExpertProfileProps> = ({
 
           <TabPanel value={activeTab} index={3}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h6" gutterBottom>
                   Experience
                 </Typography>
@@ -302,7 +302,7 @@ export const ExpertProfile: FC<ExpertProfileProps> = ({
                 </Stack>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h6" gutterBottom>
                   Working Hours
                 </Typography>
@@ -328,7 +328,7 @@ export const ExpertProfile: FC<ExpertProfileProps> = ({
             <TabPanel value={activeTab} index={4}>
               <Grid container spacing={2}>
                 {expert.certifications.map((cert) => (
-                  <Grid item xs={12} sm={6} md={4} key={cert.id}>
+                  <Grid size={{ xs: 12, sm: 6, md: 4 }} key={cert.id}>
                     <Paper variant="outlined" sx={{ p: 2 }}>
                       <Box display="flex" alignItems="start" gap={2}>
                         <School color="primary" />

@@ -340,7 +340,7 @@ export const Login: React.FC = () => {
                           edge="end"
                           aria-label={showPassword ? 'Hide password' : 'Show password'}
                         >
-                          {showPassword ? <EyeSlashIcon className="h-6 w-6" /> : <EyeIcon className="h-6 w-6" />}
+                          {showPassword ? <EyeSlashIcon sx={{ fontSize: 24 }} /> : <EyeIcon sx={{ fontSize: 24 }} />}
                         </IconButton>
                       </InputAdornment>
                     ),

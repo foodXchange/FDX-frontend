@@ -1,5 +1,7 @@
+import React from 'react';
 import { useState } from 'react';
 import { MagnifyingGlassIcon, BellIcon, UserCircleIcon, Bars3Icon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { Box, IconButton, TextField, Badge, Typography } from '@mui/material';
 
 interface ModernHeaderProps {
   onMenuClick: () => void;
@@ -11,60 +13,76 @@ export const ModernHeader: React.FC<ModernHeaderProps> = ({ onMenuClick, notific
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <header className="sticky top-0 z-50 glass-morphism border-b border-white/10">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-4">
-            <button onClick={onMenuClick} className="p-2 rounded-lg hover:bg-gray-100/20 transition-colors">
-              <Bars3Icon className="w-6 h-6" />
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#B08D57] to-[#1E4C8A] rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">FX</span>
-              </div>
-              <span className="text-xl font-semibold bg-gradient-to-r from-[#B08D57] to-[#1E4C8A] bg-clip-text text-transparent hidden sm:block">
+    <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 50, backdropFilter: 'blur(10px)', bgcolor: 'rgba(255, 255, 255, 0.8)', borderBottom: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+      <Box sx={{ px: { xs: 2, sm: 3, lg: 4 } }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <IconButton onClick={onMenuClick} sx={{ p: 1, borderRadius: 2, '&:hover': { bgcolor: 'rgba(156, 163, 175, 0.2)' } }}>
+              <Box component={Bars3Icon} sx={{ width: 24, height: 24 }} />
+            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box sx={{ width: 32, height: 32, background: 'linear-gradient(135deg, #B08D57, #1E4C8A)', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '0.875rem' }}>FX</Typography>
+              </Box>
+              <Typography sx={{ fontSize: '1.25rem', fontWeight: 600, background: 'linear-gradient(90deg, #B08D57, #1E4C8A)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', display: { xs: 'none', sm: 'block' } }}>
                 FoodXchange
-              </span>
-            </div>
-          </div>
+              </Typography>
+            </Box>
+          </Box>
           
-          <div className="flex-1 max-w-2xl mx-4 sm:mx-8">
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
+          <Box sx={{ flex: 1, maxWidth: 672, mx: { xs: 2, sm: 4 } }}>
+            <Box sx={{ position: 'relative' }}>
+              <Box component={MagnifyingGlassIcon} sx={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 20, height: 20, color: 'text.secondary' }} />
+              <TextField
+                fullWidth
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products, suppliers, or RFQs..."
-                className="w-full pl-10 pr-4 py-2 bg-white/50 backdrop-blur-sm border border-gray-200/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4C8A]/50 focus:border-transparent"
+                variant="outlined"
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    pl: 5,
+                    bgcolor: 'rgba(255, 255, 255, 0.5)',
+                    backdropFilter: 'blur(4px)',
+                    borderRadius: 2,
+                    '& fieldset': {
+                      borderColor: 'rgba(229, 231, 235, 0.5)'
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'rgba(229, 231, 235, 0.7)'
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                      borderWidth: 2
+                    }
+                  }
+                }}
               />
-            </div>
-          </div>
+            </Box>
+          </Box>
           
-          <div className="flex items-center gap-2 sm:gap-4">
-            <button className="relative p-2 rounded-lg hover:bg-gray-100/20 transition-colors">
-              <BellIcon className="w-6 h-6" />
-              {notificationCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FF6B35] text-white text-xs rounded-full flex items-center justify-center">
-                  {notificationCount}
-                </span>
-              )}
-            </button>
-            <button className="p-2 rounded-lg hover:bg-gray-100/20 transition-colors">
-              <UserCircleIcon className="w-6 h-6" />
-            </button>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+            <IconButton sx={{ p: 1, borderRadius: 2, position: 'relative', '&:hover': { bgcolor: 'rgba(156, 163, 175, 0.2)' } }}>
+              <Badge badgeContent={notificationCount} color="error" sx={{ '& .MuiBadge-badge': { bgcolor: '#FF6B35', right: -3, top: -3 } }}>
+                <Box component={BellIcon} sx={{ width: 24, height: 24 }} />
+              </Badge>
+            </IconButton>
+            <IconButton sx={{ p: 1, borderRadius: 2, '&:hover': { bgcolor: 'rgba(156, 163, 175, 0.2)' } }}>
+              <Box component={UserCircleIcon} sx={{ width: 24, height: 24 }} />
+            </IconButton>
             {onLogout && (
-              <button 
+              <IconButton 
                 onClick={onLogout}
-                className="p-2 rounded-lg hover:bg-red-100/20 transition-colors text-red-600"
+                sx={{ p: 1, borderRadius: 2, color: 'error.main', '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.2)' } }}
                 title="Logout"
               >
-                <ArrowRightOnRectangleIcon className="w-6 h-6" />
-              </button>
+                <Box component={ArrowRightOnRectangleIcon} sx={{ width: 24, height: 24 }} />
+              </IconButton>
             )}
-          </div>
-        </div>
-      </div>
-    </header>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };

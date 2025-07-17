@@ -10,6 +10,14 @@ import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import dotenv from 'dotenv';
 
+// Import optimization config
+import { 
+  performanceMiddleware, 
+  optimizeMemory, 
+  optimizeDatabase, 
+  cacheMiddleware 
+} from './config/optimization';
+
 // Import routes
 import authRoutes from './routes/auth';
 import leadsRoutes from './routes/leads';
@@ -18,6 +26,7 @@ import analyticsRoutes from './routes/analytics';
 import uploadRoutes from './routes/upload';
 import securityRoutes from './routes/security';
 import notificationRoutes from './routes/notifications';
+import healthRoutes, { initializeHealthCheck } from './routes/health';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler';
@@ -81,11 +90,17 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Basic middleware
-app.use(compression());
-app.use(morgan('combined'));
+app.use(compression({ level: 6, threshold: 1024 })); // Optimize compression
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
+
+// Performance monitoring
+app.use(performanceMiddleware);
+
+// Cache middleware for static assets
+app.use(cacheMiddleware);
 
 // Session configuration
 app.use(session({
@@ -103,16 +118,8 @@ app.use(session({
 app.use(requestLogger);
 app.use(securityMiddleware);
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    memory: process.memoryUsage(),
-    version: process.version,
-  });
-});
+// Health check routes
+app.use('/health', healthRoutes);
 
 // API routes
 app.use('/api/auth', authRoutes);
@@ -142,24 +149,45 @@ app.use('*', (req, res) => {
 
 // Initialize database and start server
 async function startServer() {
+  const startTime = Date.now();
+  console.log('🚀 Starting FDX Agent Server...');
+  
   try {
-    // Initialize database
+    // Optimize memory usage
+    optimizeMemory();
+    console.log('⚡ Memory optimization enabled');
+
+    // Initialize database with optimization
+    const dbConfig = optimizeDatabase();
     await db.initialize();
     console.log('✅ Database initialized successfully');
+    
+    // Initialize health check system
+    initializeHealthCheck(db);
+    console.log('✅ Health check system initialized');
 
-    // Start WebSocket service
-    wsService.initialize();
-    console.log('✅ WebSocket service initialized');
+    // Start WebSocket service (async for faster startup)
+    setTimeout(() => {
+      wsService.initialize();
+      console.log('✅ WebSocket service initialized');
+    }, 100);
 
-    // Start analytics service
-    analyticsService.initialize();
-    console.log('✅ Analytics service initialized');
+    // Start analytics service (async for faster startup)
+    setTimeout(() => {
+      analyticsService.initialize();
+      console.log('✅ Analytics service initialized');
+    }, 200);
 
     // Start server
     server.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      const startupTime = Date.now() - startTime;
+      console.log(`🚀 Server running on port ${PORT} (started in ${startupTime}ms)`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
+      console.log(`🔍 Detailed health: http://localhost:${PORT}/health/detailed`);
+      console.log(`⚡ Ready check: http://localhost:${PORT}/health/ready`);
+      console.log(`💓 Live check: http://localhost:${PORT}/health/live`);
       console.log(`🔒 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🎯 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
     });
 
   } catch (error) {

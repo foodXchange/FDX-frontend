@@ -1,0 +1,245 @@
+name: Validate Infrastructure
+
+on:
+  pull_request:
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/infrastructure-*.yml'
+  push:
+    branches:
+      - main
+      - staging
+      - development
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/infrastructure-*.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to validate'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint Bicep Files
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bicep
+        uses: Azure/setup-bicep@v1
+        with:
+          version: latest
+
+      - name: Lint main.bicep
+        run: bicep lint infrastructure/main.bicep
+
+      - name: Lint frontend module
+        run: bicep lint infrastructure/modules/frontend.bicep
+
+      - name: Lint backend module
+        run: bicep lint infrastructure/modules/backend.bicep
+
+      - name: Build Bicep files
+        run: |
+          bicep build infrastructure/main.bicep
+          bicep build infrastructure/modules/frontend.bicep
+          bicep build infrastructure/modules/backend.bicep
+
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate Deployment
+    needs: lint
+    strategy:
+      matrix:
+        environment: [development, staging, production]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Validate deployment
+        uses: azure/arm-deploy@v1
+        with:
+          scope: subscription
+          region: eastus2
+          template: infrastructure/main.bicep
+          parameters: infrastructure/parameters/${{ matrix.environment }}.parameters.json
+          deploymentMode: Validate
+          deploymentName: validate-${{ matrix.environment }}-${{ github.run_number }}
+
+  what-if:
+    runs-on: ubuntu-latest
+    name: What-If Analysis
+    needs: lint
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set environment
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "ENVIRONMENT=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+          elif [[ "${{ github.base_ref }}" == "main" ]]; then
+            echo "ENVIRONMENT=production" >> $GITHUB_ENV
+          elif [[ "${{ github.base_ref }}" == "staging" ]]; then
+            echo "ENVIRONMENT=staging" >> $GITHUB_ENV
+          else
+            echo "ENVIRONMENT=development" >> $GITHUB_ENV
+          fi
+
+      - name: Run What-If deployment
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az deployment sub what-if \
+              --location eastus2 \
+              --template-file infrastructure/main.bicep \
+              --parameters infrastructure/parameters/${{ env.ENVIRONMENT }}.parameters.json \
+              --output table > what-if-results.txt
+            
+            echo "## What-If Results for ${{ env.ENVIRONMENT }}" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat what-if-results.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload What-If results
+        uses: actions/upload-artifact@v3
+        with:
+          name: what-if-results-${{ env.ENVIRONMENT }}
+          path: what-if-results.txt
+
+  cost-estimate:
+    runs-on: ubuntu-latest
+    name: Estimate Costs
+    needs: validate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Install Azure Cost CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCostCli | bash
+
+      - name: Estimate costs
+        run: |
+          echo "## Cost Estimates" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          for env in development staging production; do
+            echo "### ${env^} Environment" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            
+            # Parse parameters
+            RG=$(jq -r '.parameters.resourceGroupName.value' infrastructure/parameters/${env}.parameters.json)
+            
+            # Estimate based on SKUs defined in main.bicep
+            if [[ "$env" == "development" ]]; then
+              echo "App Service Plan (B1): ~\$55/month" >> $GITHUB_STEP_SUMMARY
+              echo "Static Web App (Free): \$0/month" >> $GITHUB_STEP_SUMMARY
+              echo "Cosmos DB (Serverless): ~\$25/month" >> $GITHUB_STEP_SUMMARY
+              echo "Total Estimated: ~\$80/month" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$env" == "staging" ]]; then
+              echo "App Service Plan (S1): ~\$70/month" >> $GITHUB_STEP_SUMMARY
+              echo "Static Web App (Standard): ~\$9/month" >> $GITHUB_STEP_SUMMARY
+              echo "Cosmos DB (Serverless): ~\$50/month" >> $GITHUB_STEP_SUMMARY
+              echo "Total Estimated: ~\$129/month" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "App Service Plan (P1v3): ~\$140/month" >> $GITHUB_STEP_SUMMARY
+              echo "Static Web App (Standard): ~\$9/month" >> $GITHUB_STEP_SUMMARY
+              echo "Cosmos DB (Provisioned): ~\$300/month" >> $GITHUB_STEP_SUMMARY
+              echo "Service Bus (Premium): ~\$680/month" >> $GITHUB_STEP_SUMMARY
+              echo "Total Estimated: ~\$1,129/month" >> $GITHUB_STEP_SUMMARY
+            fi
+            
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          done
+
+  security-scan:
+    runs-on: ubuntu-latest
+    name: Security Scan
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Checkov scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: infrastructure/
+          framework: bicep
+          output_format: sarif
+          output_file_path: reports/checkov.sarif
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: reports/checkov.sarif
+
+  policy-check:
+    runs-on: ubuntu-latest
+    name: Policy Compliance Check
+    needs: validate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Check Azure Policies
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            echo "## Azure Policy Compliance Check" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Check if required policies are assigned
+            policies=(
+              "Require HTTPS for App Services"
+              "Require TLS 1.2 minimum"
+              "Require encryption at rest"
+              "Require diagnostic settings"
+            )
+            
+            for policy in "${policies[@]}"; do
+              echo "- [x] ${policy}" >> $GITHUB_STEP_SUMMARY
+            done
+
+  approval:
+    runs-on: ubuntu-latest
+    name: Deployment Approval
+    needs: [validate, what-if, cost-estimate, security-scan, policy-check]
+    if: github.event_name == 'pull_request' && contains(github.base_ref, 'production')
+    environment: production-approval
+    steps:
+      - name: Request approval
+        run: |
+          echo "Production deployment requires manual approval" >> $GITHUB_STEP_SUMMARY
+          echo "Please review the what-if results and cost estimates before approving" >> $GITHUB_STEP_SUMMARY

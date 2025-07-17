@@ -1,21 +1,46 @@
 import React from 'react';
+import { Grid, Card, CardContent, Typography } from '@mui/material';
 
 export const ComplianceStats: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h4 className="text-sm font-medium text-gray-500">Total Checks</h4>
-        <p className="text-2xl font-bold text-gray-900">156</p>
-      </div>
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h4 className="text-sm font-medium text-gray-500">Passed</h4>
-        <p className="text-2xl font-bold text-green-600">142</p>
-      </div>
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h4 className="text-sm font-medium text-gray-500">Failed</h4>
-        <p className="text-2xl font-bold text-red-600">14</p>
-      </div>
-    </div>
+    <Grid container spacing={3}>
+      <Grid item xs={12} md={4}>
+        <Card>
+          <CardContent>
+            <Typography variant="body2" sx={{ color: 'grey.600', fontWeight: 'medium' }}>
+              Total Checks
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'grey.900' }}>
+              156
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <Card>
+          <CardContent>
+            <Typography variant="body2" sx={{ color: 'grey.600', fontWeight: 'medium' }}>
+              Passed
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+              142
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <Card>
+          <CardContent>
+            <Typography variant="body2" sx={{ color: 'grey.600', fontWeight: 'medium' }}>
+              Failed
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'error.main' }}>
+              14
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
   );
 };
 

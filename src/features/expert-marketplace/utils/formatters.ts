@@ -1,3 +1,4 @@
+import React from 'react';
 import { format, formatDistanceToNow, isPast, isToday, isTomorrow } from 'date-fns';
 
 export const formatCurrency = (amount: number, currency = 'USD') => {

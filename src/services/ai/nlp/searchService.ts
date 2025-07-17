@@ -1,3 +1,4 @@
+// Intelligent Search service for AI-powered product and supplier search with semantic understanding
 import { aiService } from '../aiService';
 import { SearchResult } from '../types';
 import { logger } from '../../logger';

@@ -1,3 +1,4 @@
+import React from 'react';
 import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
 
 interface PaymentIntent {

@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Stack,
+  Chip,
+  Grid,
+  Skeleton,
+  InputAdornment
+} from '@mui/material';
+import {
+  FilterList as FunnelIcon,
+  Search as MagnifyingGlassIcon
+} from '@mui/icons-material';
 import { useAuth } from '@/contexts/AuthContext';
-import { useAgentStore } from '@/store/useAgentStore';
+import { useAgentStore } from '../store/useAgentStore';
 import { AgentRFQCard } from './AgentRFQCard';
-import { 
-  FunnelIcon,
-  MagnifyingGlassIcon
-} from '@heroicons/react/24/outline';
 
 interface RFQ {
   id: string;
@@ -31,7 +47,7 @@ interface AgentRFQListProps {
 
 export const AgentRFQList: React.FC<AgentRFQListProps> = ({ rfqs, loading }) => {
   const { user } = useAuth();
-  const { claimLead } = useAgentStore();
+  const { updateLead } = useAgentStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'match' | 'value' | 'time'>('match');
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -101,7 +117,8 @@ export const AgentRFQList: React.FC<AgentRFQListProps> = ({ rfqs, loading }) => 
 
   const handleClaim = async (rfqId: string) => {
     try {
-      await claimLead(rfqId);
+      // Mock implementation - replace with actual API call
+      updateLead(rfqId, { status: 'claimed' });
       // Show success notification
     } catch (error) {
       // Show error notification
@@ -110,78 +127,108 @@ export const AgentRFQList: React.FC<AgentRFQListProps> = ({ rfqs, loading }) => 
   };
 
   return (
-    <div>
+    <Stack spacing={3}>
       {/* Filters and Search */}
       {isAgent && (
-        <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
+        <Card>
+          <CardContent>
+            <Grid container spacing={3}>
+              {/* Search */}
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  variant="outlined"
                   placeholder="Search RFQs..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <MagnifyingGlassIcon sx={{ color: 'grey.400' }} />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
-              </div>
-            </div>
+              </Grid>
 
-            {/* Category Filter */}
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              {categories.map(cat => (
-                <option key={cat} value={cat}>
-                  {cat === 'all' ? 'All Categories' : cat}
-                </option>
-              ))}
-            </select>
+              {/* Category Filter */}
+              <Grid item xs={12} md={4}>
+                <FormControl fullWidth>
+                  <InputLabel>Category</InputLabel>
+                  <Select
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value)}
+                    label="Category"
+                  >
+                    {categories.map(cat => (
+                      <MenuItem key={cat} value={cat}>
+                        {cat === 'all' ? 'All Categories' : cat}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
 
-            {/* Sort */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="match">Best Match First</option>
-              <option value="value">Highest Value First</option>
-              <option value="time">Expiring Soon First</option>
-            </select>
-          </div>
+              {/* Sort */}
+              <Grid item xs={12} md={4}>
+                <FormControl fullWidth>
+                  <InputLabel>Sort By</InputLabel>
+                  <Select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    label="Sort By"
+                  >
+                    <MenuItem value="match">Best Match First</MenuItem>
+                    <MenuItem value="value">Highest Value First</MenuItem>
+                    <MenuItem value="time">Expiring Soon First</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
 
-          {/* Active filters indicator */}
-          <div className="mt-3 flex items-center text-sm text-gray-600">
-            <FunnelIcon className="h-4 w-4 mr-1" />
-            Showing {filteredAndSortedRFQs.length} of {rfqs.length} RFQs
-            {isAgent && (
-              <span className="ml-2 text-green-600 font-medium">
-                • {filteredAndSortedRFQs.filter(r => r.matchScore && r.matchScore >= 90).length} perfect matches
-              </span>
-            )}
-          </div>
-        </div>
+            {/* Active filters indicator */}
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, color: 'grey.600' }}>
+              <FunnelIcon sx={{ mr: 1, fontSize: 16 }} />
+              <Typography variant="body2" sx={{ mr: 2 }}>
+                Showing {filteredAndSortedRFQs.length} of {rfqs.length} RFQs
+              </Typography>
+              {isAgent && (
+                <Chip
+                  label={`${filteredAndSortedRFQs.filter(r => r.matchScore && r.matchScore >= 90).length} perfect matches`}
+                  color="success"
+                  size="small"
+                />
+              )}
+            </Box>
+          </CardContent>
+        </Card>
       )}
 
       {/* RFQ List */}
-      <div className="space-y-4">
+      <Stack spacing={3}>
         {loading ? (
           // Loading skeleton
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-lg shadow-md p-6 animate-pulse">
-              <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-full"></div>
-            </div>
+            <Card key={i}>
+              <CardContent>
+                <Stack spacing={2}>
+                  <Skeleton variant="text" width="60%" height={32} />
+                  <Skeleton variant="text" width="80%" height={20} />
+                  <Skeleton variant="rectangular" width="100%" height={60} />
+                </Stack>
+              </CardContent>
+            </Card>
           ))
         ) : filteredAndSortedRFQs.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-            <p className="text-gray-500">No RFQs found matching your criteria</p>
-          </div>
+          <Card>
+            <CardContent>
+              <Box sx={{ textAlign: 'center', py: 4 }}>
+                <Typography variant="body1" color="grey.500">
+                  No RFQs found matching your criteria
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
         ) : (
           filteredAndSortedRFQs.map(rfq => (
             <AgentRFQCard
@@ -194,19 +241,19 @@ export const AgentRFQList: React.FC<AgentRFQListProps> = ({ rfqs, loading }) => 
             >
               {/* Non-agent view actions */}
               {!isAgent && (
-                <div className="mt-4 flex gap-2">
-                  <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                  <button sx={{ color: "white" }} sx={{ display: "flex" }} sx={{ borderRadius: 1 }} sx={{ borderRadius: 2 }}>
                     View Details
                   </button>
-                  <button className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                  <button sx={{ bgcolor: "grey.50" }} sx={{ color: "grey.700" }} sx={{ display: "flex" }} sx={{ borderRadius: 1 }} sx={{ borderRadius: 2 }} sx={{ border: 1 }} sx={{ borderColor: "grey.300" }}>
                     Submit Quote
                   </button>
-                </div>
+                </Stack>
               )}
             </AgentRFQCard>
           ))
         )}
-      </div>
-    </div>
+      </Stack>
+    </Stack>
   );
 };

@@ -1,4 +1,25 @@
 // Main AI Services Export
+// Unified AI Service Manager
+import { aiService } from './aiService';
+import { 
+  DeliveryOptimization, 
+  InventoryOptimization, 
+  TemperatureRisk, 
+  MarketExpansion, 
+  CompetitorAnalysis 
+} from './types';
+import { demandForecastingService } from './predictions/demandForecastingService';
+import { priceOptimizationService } from './predictions/priceOptimizationService';
+import { supplierMatchingService } from './analytics/supplierMatchingService';
+import { recommendationEngine } from './analytics/recommendationEngine';
+import { supplyChainOptimizationService } from './analytics/supplyChainOptimizationService';
+import { marketIntelligenceService } from './analytics/marketIntelligenceService';
+import { searchService } from './nlp/searchService';
+import { documentIntelligenceService } from './nlp/documentIntelligenceService';
+import { naturalLanguageInterface } from './nlp/naturalLanguageInterface';
+import { AI_CONFIG } from '../../config/ai.config';
+import { logger } from '../logger';
+
 export { aiService } from './aiService';
 
 // Prediction Services
@@ -21,20 +42,6 @@ export * from './types';
 
 // Configuration
 export { AI_CONFIG, AI_ENDPOINTS } from '../../config/ai.config';
-
-// Unified AI Service Manager
-import { aiService } from './aiService';
-import { demandForecastingService } from './predictions/demandForecastingService';
-import { priceOptimizationService } from './predictions/priceOptimizationService';
-import { supplierMatchingService } from './analytics/supplierMatchingService';
-import { recommendationEngine } from './analytics/recommendationEngine';
-import { supplyChainOptimizationService } from './analytics/supplyChainOptimizationService';
-import { marketIntelligenceService } from './analytics/marketIntelligenceService';
-import { searchService } from './nlp/searchService';
-import { documentIntelligenceService } from './nlp/documentIntelligenceService';
-import { naturalLanguageInterface } from './nlp/naturalLanguageInterface';
-import { AI_CONFIG } from '../../config/ai.config';
-import { logger } from '../logger';
 
 export class AIServiceManager {
   private static instance: AIServiceManager;
@@ -178,19 +185,19 @@ export class AIServiceManager {
   }
 
   // Convenience methods for common AI operations
-  async smartSearch(query: string, filters?: any) {
+  async smartSearch(query: string, filters?: Record<string, unknown>) {
     return await searchService.search(query, filters);
   }
 
-  async getForecast(productId: string, historicalData: any[]) {
+  async getForecast(productId: string, historicalData: unknown[]) {
     return await demandForecastingService.forecastDemand(productId, historicalData);
   }
 
-  async optimizePrice(productId: string, currentPrice: number, data: any) {
+  async optimizePrice(productId: string, currentPrice: number, data: { salesHistory: any[]; competitorPrices: number[]; marketConditions: any; }) {
     return await priceOptimizationService.optimizePrice(productId, currentPrice, data);
   }
 
-  async findSuppliers(requirements: any, suppliers: any[]) {
+  async findSuppliers(requirements: { productCategories: string[]; location: { lat: number; lng: number; radius: number; }; certifications: string[]; minRating: number; priceRange: { min: number; max: number; }; deliveryRequirements: any; volumeRequirements: any; }, suppliers: unknown[]) {
     return await supplierMatchingService.matchSuppliers(requirements, suppliers);
   }
 
@@ -198,7 +205,7 @@ export class AIServiceManager {
     return await recommendationEngine.getUserRecommendations(userId);
   }
 
-  async analyzeDocument(file: File | string, options?: any) {
+  async analyzeDocument(file: File | string, options?: Record<string, unknown>) {
     return await documentIntelligenceService.analyzeDocument(file, options);
   }
 
@@ -206,19 +213,19 @@ export class AIServiceManager {
     return await naturalLanguageInterface.processMessage(message, userId, sessionId);
   }
 
-  async generateInsights(data: any, context: string) {
+  async generateInsights(data: Record<string, unknown>, context: string) {
     return await aiService.generateInsights(data, context);
   }
 
-  async optimizeRoutes(deliveries: any[], constraints: any) {
+  async optimizeRoutes(deliveries: DeliveryOptimization[], constraints: { vehicleCapacity: number; maxDeliveryTime: number; temperatureRequirements: boolean; fuelCostPerKm: number; }) {
     return await supplyChainOptimizationService.optimizeDeliveryRoutes(deliveries, constraints);
   }
 
-  async optimizeInventory(products: any[]) {
+  async optimizeInventory(products: InventoryOptimization[]) {
     return await supplyChainOptimizationService.optimizeInventory(products);
   }
 
-  async predictTemperatureRisks(shipments: any[]) {
+  async predictTemperatureRisks(shipments: TemperatureRisk[]) {
     return await supplyChainOptimizationService.predictTemperatureRisks(shipments);
   }
 
@@ -226,16 +233,16 @@ export class AIServiceManager {
     return await marketIntelligenceService.getMarketIntelligence(category, region);
   }
 
-  async identifyOpportunities(businessProfile: any) {
+  async identifyOpportunities(businessProfile: MarketExpansion) {
     return await marketIntelligenceService.identifyMarketOpportunities(businessProfile);
   }
 
-  async analyzeMarketEntry(targetMarket: any, resources: any) {
-    return await marketIntelligenceService.analyzeMarketEntryStrategy(targetMarket, resources);
+  async analyzeMarketEntry(targetMarket: CompetitorAnalysis, analysisType: string) {
+    return await marketIntelligenceService.analyzeMarketEntryStrategy(targetMarket, analysisType);
   }
 
   // Batch operations
-  async processDocumentBatch(documents: any[]) {
+  async processDocumentBatch(documents: Array<{ id: string; content: string | File; options?: Record<string, unknown> }>) {
     const results = [];
     for (const doc of documents) {
       try {
@@ -248,7 +255,7 @@ export class AIServiceManager {
     return results;
   }
 
-  async generateBulkInsights(dataPoints: Array<{ data: any; context: string }>) {
+  async generateBulkInsights(dataPoints: Array<{ data: Record<string, unknown>; context: string }>) {
     const results = [];
     for (const point of dataPoints) {
       try {

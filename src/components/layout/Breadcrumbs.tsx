@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/24/outline';
+import { Box, Breadcrumbs as MuiBreadcrumbs, Typography } from '@mui/material';
 import { routeMetadata } from '@/router/routes';
 
 export const Breadcrumbs: React.FC = () => {
@@ -46,36 +47,40 @@ export const Breadcrumbs: React.FC = () => {
   }
 
   return (
-    <nav className="flex" aria-label="Breadcrumb">
-      <ol className="flex items-center space-x-2">
+    <Box component="nav" aria-label="Breadcrumb">
+      <MuiBreadcrumbs 
+        separator={<Box component={ChevronRightIcon} sx={{ width: 16, height: 16, color: 'text.secondary' }} />}
+        sx={{ display: 'flex', alignItems: 'center' }}
+      >
         {breadcrumbs.map((breadcrumb, index) => (
-          <li key={breadcrumb.href} className="flex items-center">
-            {index > 0 && (
-              <ChevronRightIcon className="flex-shrink-0 h-4 w-4 text-gray-400 mx-2" />
-            )}
+          <Box key={breadcrumb.href}>
             {index === 0 ? (
               <Link
                 to={breadcrumb.href}
-                className="text-gray-400 hover:text-gray-500"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                <HomeIcon className="flex-shrink-0 h-5 w-5" />
-                <span className="sr-only">{breadcrumb.name}</span>
+                <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary', '&:hover': { color: 'text.primary' } }}>
+                  <Box component={HomeIcon} sx={{ flexShrink: 0, width: 20, height: 20 }} />
+                  <Box component="span" sx={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden' }}>{breadcrumb.name}</Box>
+                </Box>
               </Link>
             ) : index === breadcrumbs.length - 1 ? (
-              <span className="text-sm font-medium text-gray-700">
+              <Typography sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'text.primary' }}>
                 {breadcrumb.name}
-              </span>
+              </Typography>
             ) : (
               <Link
                 to={breadcrumb.href}
-                className="text-sm font-medium text-gray-500 hover:text-gray-700"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {breadcrumb.name}
+                <Typography sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'text.secondary', '&:hover': { color: 'text.primary' } }}>
+                  {breadcrumb.name}
+                </Typography>
               </Link>
             )}
-          </li>
+          </Box>
         ))}
-      </ol>
-    </nav>
+      </MuiBreadcrumbs>
+    </Box>
   );
 };

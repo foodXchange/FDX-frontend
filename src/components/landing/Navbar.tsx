@@ -26,7 +26,7 @@ export const Navbar: React.FC = () => {
         <img 
           src={FoodXchangeLogo} 
           alt="FoodXchange" 
-          style={{ height: 40 }}
+          height={40}
         />
       </Box>
       <Divider />
@@ -191,7 +191,7 @@ export const Navbar: React.FC = () => {
                 edge="end"
                 onClick={handleDrawerToggle}
               >
-                {mobileOpen ? <XMarkIcon style={{ width: 24, height: 24 }} /> : <Bars3Icon style={{ width: 24, height: 24 }} />}
+                {mobileOpen ? <Box component={XMarkIcon} sx={{ width: 24, height: 24 }} /> : <Box component={Bars3Icon} sx={{ width: 24, height: 24 }} />}
               </IconButton>
             </Box>
           </Toolbar>

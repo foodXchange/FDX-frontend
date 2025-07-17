@@ -69,7 +69,7 @@ export const TrustBar: React.FC = () => {
                 mb: 3
               }}
             >
-              <TrophyIcon className="h-6 w-6" style={{ marginRight: 8 }} />
+              <Box component={TrophyIcon} sx={{ width: 24, height: 24, mr: 1 }} />
               Trusted by Industry Leaders
             </Box>
             <Typography 
@@ -271,7 +271,7 @@ export const TrustBar: React.FC = () => {
                         boxShadow: theme.shadows[4]
                       }}
                     >
-                      <item.icon className="h-6 w-6" style={{ color: 'white' }} />
+                      <Box component={item.icon} sx={{ width: 24, height: 24, color: 'white' }} />
                     </Box>
                     <Box>
                       <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>

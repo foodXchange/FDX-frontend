@@ -108,9 +108,9 @@ export const useRFQStore = create<RFQState>()(
             state.currentPage = currentPage;
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
         }
@@ -129,9 +129,9 @@ export const useRFQStore = create<RFQState>()(
             state.selectedRFQ = response.data || null;
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
         }
@@ -156,9 +156,9 @@ export const useRFQStore = create<RFQState>()(
           });
 
           return newRFQ;
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
           throw error;
@@ -186,9 +186,9 @@ export const useRFQStore = create<RFQState>()(
             }
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
           throw error;
@@ -214,9 +214,9 @@ export const useRFQStore = create<RFQState>()(
             }
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
           throw error;
@@ -261,16 +261,16 @@ export const useRFQStore = create<RFQState>()(
           set((state) => {
             state.rfqs.forEach((rfq) => {
               if (state.selectedRFQIds.has(rfq.id)) {
-                // @ts-ignore - status type mismatch
-                rfq.status = status;
+                // TODO: Ensure status type is properly defined in RFQ interface
+                (rfq as any).status = status;
               }
             });
             state.selectedRFQIds.clear();
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
           throw error;
@@ -292,9 +292,9 @@ export const useRFQStore = create<RFQState>()(
             state.selectedRFQIds.clear();
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
           throw error;

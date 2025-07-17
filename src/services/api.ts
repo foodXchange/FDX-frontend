@@ -37,7 +37,7 @@ export class ApiService {
     return response.json();
   }
 
-  async post<T>(endpoint: string, data: any): Promise<T> {
+  async post<T>(endpoint: string, data: unknown): Promise<T> {
     const response = await this.fetchWithAuth(endpoint, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -46,7 +46,7 @@ export class ApiService {
     return response.json();
   }
 
-  async put<T>(endpoint: string, data: any): Promise<T> {
+  async put<T>(endpoint: string, data: unknown): Promise<T> {
     const response = await this.fetchWithAuth(endpoint, {
       method: 'PUT',
       body: JSON.stringify(data),

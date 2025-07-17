@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
   Avatar,
   Chip,
@@ -11,12 +9,11 @@ import {
   TextField,
   List,
   ListItem,
+  ListItemButton,
   ListItemAvatar,
   ListItemText,
   ListItemSecondaryAction,
-  Divider,
   Badge,
-  Menu,
   MenuItem,
   Dialog,
   DialogTitle,
@@ -25,35 +22,31 @@ import {
   Tab,
   Tabs,
   useTheme,
-  alpha,
   Tooltip,
   AvatarGroup,
-  LinearProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  Card,
+  CardContent,
 } from '@mui/material';
 import {
   Groups,
   Chat,
   Videocam,
-  Share,
-  Notifications,
   MoreVert,
   Add,
   Edit,
-  Delete,
   VideoCall,
-  Phone,
   ScreenShare,
-  Record,
+  FiberManualRecord as Record,
   Stop,
   PersonAdd,
-  TaskAlt,
   Assignment,
   Timeline,
-  EmojiPeople,
-  TrendingUp,
 } from '@mui/icons-material';
 import { useAgentStore } from '../../store';
-import { Lead, Agent, AgentTask } from '../../types';
+import { Agent } from '../../types';
 
 interface CollaborationSession {
   id: string;
@@ -294,7 +287,7 @@ const CollaborationHub: React.FC = () => {
     switch (type) {
       case 'lead_review': return <Assignment />;
       case 'strategy_session': return <Timeline />;
-      case 'training': return <School />;
+      case 'training': return <Groups />;
       case 'team_meeting': return <Groups />;
       default: return <Chat />;
     }
@@ -303,17 +296,13 @@ const CollaborationHub: React.FC = () => {
   const SessionsList = () => (
     <List sx={{ maxHeight: 400, overflow: 'auto' }}>
       {sessions.map((session) => (
-        <ListItem
+        <ListItemButton
           key={session.id}
-          button
           selected={selectedSession?.id === session.id}
           onClick={() => setSelectedSession(session)}
           sx={{
             borderRadius: 1,
             mb: 1,
-            '&.Mui-selected': {
-              backgroundColor: alpha(theme.palette.primary.main, 0.1),
-            },
           }}
         >
           <ListItemAvatar>
@@ -357,7 +346,7 @@ const CollaborationHub: React.FC = () => {
               <MoreVert />
             </IconButton>
           </ListItemSecondaryAction>
-        </ListItem>
+        </ListItemButton>
       ))}
     </List>
   );
@@ -489,60 +478,6 @@ const CollaborationHub: React.FC = () => {
           </Button>
         </Box>
       </Box>
-    </Box>
-  );
-
-  const CollaborativeNotes = () => (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" sx={{ mb: 2 }}>Collaborative Notes</Typography>
-      <TextField
-        fullWidth
-        multiline
-        rows={8}
-        value={selectedSession?.collaborativeNotes || ''}
-        onChange={(e) => {
-          if (selectedSession) {
-            setSessions(prev => prev.map(session => 
-              session.id === selectedSession.id 
-                ? { ...session, collaborativeNotes: e.target.value }
-                : session
-            ));
-            setSelectedSession({ ...selectedSession, collaborativeNotes: e.target.value });
-          }
-        }}
-        placeholder="Add collaborative notes here..."
-      />
-    </Box>
-  );
-
-  const TasksPanel = () => (
-    <Box sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">Session Tasks</Typography>
-        <Button startIcon={<Add />} size="small">
-          Add Task
-        </Button>
-      </Box>
-      <List>
-        {selectedSession?.tasks.map((task) => (
-          <ListItem key={task.id} sx={{ px: 0 }}>
-            <ListItemAvatar>
-              <Avatar sx={{ width: 32, height: 32, bgcolor: theme.palette.info.main }}>
-                <TaskAlt />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={task.title}
-              secondary={`Assigned to: ${task.assignedTo} • Due: ${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}`}
-            />
-            <Chip 
-              label={task.status} 
-              size="small" 
-              color={task.status === 'completed' ? 'success' : task.status === 'in_progress' ? 'warning' : 'default'} 
-            />
-          </ListItem>
-        ))}
-      </List>
     </Box>
   );
 

@@ -1,10 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
-import { Clock, AlertCircle, Package, Truck, Home } from 'lucide-react';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Chip,
+  LinearProgress,
+  Stack,
+  CircularProgress,
+  Avatar,
+  Paper
+} from '@mui/material';
+import { 
+  Schedule as Clock, 
+  Error as AlertCircle, 
+  Inventory as Package, 
+  LocalShipping as Truck, 
+  Home,
+  LocationOn,
+  Thermostat
+} from '@mui/icons-material';
 import { format } from 'date-fns';
 import { useSampleTracking } from '../../hooks/useSampleTracking';
+
 
 interface TimelineEvent {
   id: string;
@@ -37,11 +56,11 @@ interface Sample {
 }
 
 const statusConfig = {
-  requested: { label: 'Requested', color: 'bg-gray-500' },
-  preparing: { label: 'Preparing', color: 'bg-yellow-500' },
-  in_transit: { label: 'In Transit', color: 'bg-blue-500' },
-  delivered: { label: 'Delivered', color: 'bg-green-500' },
-  cancelled: { label: 'Cancelled', color: 'bg-red-500' },
+  requested: { label: 'Requested', color: 'default' as const },
+  preparing: { label: 'Preparing', color: 'warning' as const },
+  in_transit: { label: 'In Transit', color: 'info' as const },
+  delivered: { label: 'Delivered', color: 'success' as const },
+  cancelled: { label: 'Cancelled', color: 'error' as const },
 };
 
 // const getTimelineIcon = (status: string): React.ElementType => {
@@ -225,156 +244,230 @@ export const SampleTracker: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading samples...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Stack spacing={2} alignItems="center">
+          <CircularProgress />
+          <Typography>Loading samples...</Typography>
+        </Stack>
+      </Box>
+    );
   }
 
   return (
-    <div className="space-y-6">
+    <Stack spacing={3}>
       {/* Connection Status */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`} />
-          <span className="text-sm text-muted-foreground">
-            {isConnected ? "Real-time updates active" : "Disconnected"}
-          </span>
-          {connectionError && (
-            <span className="text-sm text-red-600">
-              ({connectionError})
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box
+          sx={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            bgcolor: isConnected ? 'success.main' : 'error.main'
+          }}
+        />
+        <Typography variant="caption" color="text.secondary">
+          {isConnected ? "Real-time updates active" : "Disconnected"}
+        </Typography>
+        {connectionError && (
+          <Typography variant="caption" color="error">
+            ({connectionError})
+          </Typography>
+        )}
+      </Box>
+      <Stack spacing={2}>
         {samples.map((sample) => (
           <Card
             key={sample.id}
-            className={`cursor-pointer transition-all hover:shadow-lg ${selectedSample?.id === sample.id ? "ring-2 ring-primary" : ""}`}
+            sx={{
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              '&:hover': {
+                boxShadow: 3
+              },
+              ...(selectedSample?.id === sample.id && {
+                outline: 2,
+                outlineColor: 'primary.main',
+                outlineOffset: 2
+              })
+            }}
             onClick={() => setSelectedSample(sample)}
           >
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{sample.trackingNumber}</CardTitle>
-                <Badge className={statusConfig[sample.status].color}>
-                  {statusConfig[sample.status].label}
-                </Badge>
-              </div>
-            </CardHeader>
+            <CardHeader
+              title={sample.trackingNumber}
+              titleTypographyProps={{ variant: 'h6' }}
+              action={
+                <Chip
+                  label={statusConfig[sample.status].label}
+                  color={statusConfig[sample.status].color}
+                  size="small"
+                />
+              }
+            />
             <CardContent>
-              <div className="space-y-2 text-sm">
-                <p className="font-medium">{sample.productName}</p>
-                <p className="text-muted-foreground">
+              <Stack spacing={2}>
+                <Typography variant="body2" fontWeight="medium">
+                  {sample.productName}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
                   {sample.quantity} {sample.unit}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Progress</span>
-                  <span className="font-medium">
-                    {Math.round(getProgressPercentage(sample.timeline))}%
-                  </span>
-                </div>
-                <ProgressIndicator value={getProgressPercentage(sample.timeline)} className="h-2" />
+                </Typography>
+                <Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Progress
+                    </Typography>
+                    <Typography variant="body2" fontWeight="medium">
+                      {Math.round(getProgressPercentage(sample.timeline))}%
+                    </Typography>
+                  </Box>
+                  <LinearProgress
+                    variant="determinate"
+                    value={getProgressPercentage(sample.timeline)}
+                    sx={{ height: 8, borderRadius: 1 }}
+                  />
+                </Box>
                 {sample.currentTemperature && sample.requiredTemperature && (
-                  <div className="flex items-center gap-2 mt-2">
-                    {!isTemperatureInRange(sample.currentTemperature, sample.requiredTemperature) && (
-                      <AlertCircle className="h-4 w-4 text-red-500" />
-                    )}
-                    <span className="text-xs">
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {!isTemperatureInRange(sample.currentTemperature, sample.requiredTemperature) && 
+                      <AlertCircle sx={{ fontSize: 16, color: 'error.main' }} />
+                    }
+                    <Typography variant="caption">
                       Temp: {sample.currentTemperature}°C
                       {sample.requiredTemperature && (
-                        <span className="text-muted-foreground">
+                        <Typography component="span" variant="caption" color="text.secondary">
                           {' '}({sample.requiredTemperature.min}-{sample.requiredTemperature.max}°C)
-                        </span>
+                        </Typography>
                       )}
-                    </span>
-                  </div>
+                    </Typography>
+                  </Box>
                 )}
-              </div>
+              </Stack>
             </CardContent>
           </Card>
         ))}
-      </div>
+      </Stack>
 
       {selectedSample && (
         <Card>
-          <CardHeader>
-            <CardTitle>Timeline for {selectedSample.trackingNumber}</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Order: {selectedSample.orderId} | {selectedSample.productName}
-            </p>
-          </CardHeader>
+          <CardHeader
+            title={`Timeline for ${selectedSample.trackingNumber}`}
+            subheader={`Order: ${selectedSample.orderId} | ${selectedSample.productName}`}
+          />
           <CardContent>
-            <div className="relative">
+            <Box sx={{ position: 'relative' }}>
               {selectedSample.timeline.map((event, index) => {
                 const Icon = event.icon;
                 const isLast = index === selectedSample.timeline.length - 1;
+                const isCompleted = event.status === 'completed';
+                const isActive = event.status === 'active';
                 
                 return (
-                  <div key={event.id} className="flex gap-4 pb-8 relative">
+                  <Box key={event.id} sx={{ display: 'flex', pb: isLast ? 0 : 4 }}>
+                    {/* Timeline line */}
                     {!isLast && (
-                      <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-gray-200" />
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          left: 20,
+                          top: 44,
+                          bottom: 0,
+                          width: 2,
+                          bgcolor: 'grey.300',
+                          zIndex: 0
+                        }}
+                      />
                     )}
                     
-                    <div
-                      className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full ${event.status === 'completed' ? "bg-green-100 text-green-600" : event.status === 'active' ? "bg-blue-100 text-blue-600 ring-4 ring-blue-100" : "bg-gray-100 text-gray-400"}`}
+                    {/* Icon */}
+                    <Avatar
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        mr: 2,
+                        zIndex: 1,
+                        bgcolor: isCompleted ? 'success.light' :
+                                isActive ? 'primary.light' :
+                                'grey.200',
+                        color: isCompleted ? 'success.main' :
+                               isActive ? 'primary.main' :
+                               'text.disabled',
+                        ...(isActive && {
+                          boxShadow: theme => `0 0 0 4px ${theme.palette.primary.light}40`
+                        })
+                      }}
                     >
-                      <Icon className="h-5 w-5" />
-                    </div>
+                      <Icon sx={{ fontSize: 20 }} />
+                    </Avatar>
                     
-                    <div className="flex-1 pt-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-medium">{event.title}</h4>
-                        <span className="text-sm text-muted-foreground">
+                    {/* Content */}
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="body1" fontWeight="medium">
+                          {event.title}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
                           {format(event.timestamp, 'MMM dd, yyyy HH:mm')}
-                        </span>
-                      </div>
+                        </Typography>
+                      </Box>
                       
                       {event.description && (
-                        <p className="text-sm text-muted-foreground mb-2">
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                           {event.description}
-                        </p>
+                        </Typography>
                       )}
                       
-                      <div className="flex gap-4 text-sm">
+                      <Stack direction="row" spacing={2}>
                         {event.location && (
-                          <span className="text-muted-foreground">
-                            📍 {event.location}
-                          </span>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <LocationOn sx={{ fontSize: 16, color: 'text.secondary' }} />
+                            <Typography variant="caption" color="text.secondary">
+                              {event.location}
+                            </Typography>
+                          </Box>
                         )}
                         {event.temperature && (
-                          <span className="text-muted-foreground">
-                            🌡️ {event.temperature}°C
-                          </span>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Thermostat sx={{ fontSize: 16, color: 'text.secondary' }} />
+                            <Typography variant="caption" color="text.secondary">
+                              {event.temperature}°C
+                            </Typography>
+                          </Box>
                         )}
-                      </div>
+                      </Stack>
                       
-                      {event.status === 'active' && (
-                        <Badge variant="default" className="mt-2">
-                          Current Status
-                        </Badge>
+                      {isActive && (
+                        <Chip
+                          label="Current Status"
+                          color="primary"
+                          size="small"
+                          sx={{ mt: 1 }}
+                        />
                       )}
-                    </div>
-                  </div>
+                    </Box>
+                  </Box>
                 );
               })}
-            </div>
+            </Box>
             
             {selectedSample.estimatedDelivery && selectedSample.status !== 'delivered' && (
-              <div className="mt-4 p-4 bg-muted rounded-lg">
-                <p className="text-sm font-medium">
+              <Paper sx={{ p: 2, mt: 3, bgcolor: 'info.light' }}>
+                <Typography variant="body2" fontWeight="medium">
                   Estimated Delivery: {format(selectedSample.estimatedDelivery, 'MMMM dd, yyyy')}
-                </p>
-              </div>
+                </Typography>
+              </Paper>
             )}
             
             {selectedSample.actualDelivery && (
-              <div className="mt-4 p-4 bg-green-50 rounded-lg">
-                <p className="text-sm font-medium text-green-700">
+              <Paper sx={{ p: 2, mt: 3, bgcolor: 'success.light' }}>
+                <Typography variant="body2" fontWeight="medium" color="success.dark">
                   Delivered on: {format(selectedSample.actualDelivery, 'MMMM dd, yyyy')}
-                </p>
-              </div>
+                </Typography>
+              </Paper>
             )}
           </CardContent>
         </Card>
       )}
-    </div>
+    </Stack>
   );
 };

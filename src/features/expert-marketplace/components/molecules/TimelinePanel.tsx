@@ -1,8 +1,17 @@
+import React from 'react';
 import { FC } from 'react';
 import {
-  Box,
   Paper,
   Typography,
+  Chip,
+  Card,
+  CardContent,
+  Box,
+  Stack,
+  Button,
+  LinearProgress,
+} from '@mui/material';
+import {
   Timeline,
   TimelineItem,
   TimelineSeparator,
@@ -10,23 +19,13 @@ import {
   TimelineContent,
   TimelineDot,
   TimelineOppositeContent,
-  Chip,
-  Card,
-  CardContent,
-  LinearProgress,
-  Stack,
-  Button,
-} from '@mui/material';
+} from '@mui/lab';
 import {
   CheckCircle,
   RadioButtonUnchecked,
   Flag,
-  AttachMoney,
-  Assignment,
-  Message,
   InsertDriveFile,
   VideoCall,
-  Star,
 } from '@mui/icons-material';
 import { format, formatDistanceToNow, isPast } from 'date-fns';
 import { Collaboration, Milestone } from '../../types';

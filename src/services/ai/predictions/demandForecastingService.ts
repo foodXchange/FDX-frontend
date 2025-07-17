@@ -1,3 +1,4 @@
+// Demand Forecasting service for predicting product demand using historical data and AI models
 import { DemandForecast, PredictionResult } from '../types';
 import { aiService } from '../aiService';
 import { logger } from '../../logger';

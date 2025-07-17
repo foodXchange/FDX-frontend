@@ -8,7 +8,6 @@ import {
   IconButton,
   Chip,
   Avatar,
-  Button,
   Menu,
   MenuItem,
   Tooltip,
@@ -16,14 +15,8 @@ import {
 } from '@mui/material';
 import {
   MoreVert,
-  Phone,
-  Email,
-  Message,
   Star,
   StarBorder,
-  Edit,
-  Delete,
-  Visibility,
 } from '@mui/icons-material';
 
 interface AccessibleCardProps {
@@ -152,7 +145,7 @@ const AccessibleCard: React.FC<AccessibleCardProps> = ({
     setAnnounceText('Menu closed');
   };
 
-  const handleActionClick = (action: any, index: number) => {
+  const handleActionClick = (action: any) => {
     action.onClick();
     setMenuAnchorEl(null);
     setAnnounceText(`${action.label} action executed for ${title}`);
@@ -173,6 +166,7 @@ const AccessibleCard: React.FC<AccessibleCardProps> = ({
       const timer = setTimeout(() => setAnnounceText(''), 1000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [announceText]);
 
   // Focus management for keyboard navigation
@@ -368,7 +362,7 @@ const AccessibleCard: React.FC<AccessibleCardProps> = ({
                     size="small"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleActionClick(action, index);
+                      handleActionClick(action);
                     }}
                     disabled={action.disabled}
                     aria-label={action.label}
@@ -408,7 +402,7 @@ const AccessibleCard: React.FC<AccessibleCardProps> = ({
         {actions.map((action, index) => (
           <MenuItem
             key={index}
-            onClick={() => handleActionClick(action, index)}
+            onClick={() => handleActionClick(action)}
             disabled={action.disabled}
             role="menuitem"
           >

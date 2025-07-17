@@ -1,10 +1,11 @@
+import React from 'react';
 import { FC } from 'react';
 import {
   Paper,
   Box,
   Typography,
-  Grid,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   WorkHistory,
   AccessTime,
@@ -56,7 +57,7 @@ export const ExpertStats: FC<ExpertStatsProps> = ({
     <Paper variant="outlined" sx={{ p: 2 }}>
       <Grid container spacing={2}>
         {stats.map((stat, index) => (
-          <Grid item xs={6} key={index}>
+          <Grid size={{ xs: 6 }} key={index}>
             <Box display="flex" alignItems="center" gap={1}>
               <Box
                 sx={{

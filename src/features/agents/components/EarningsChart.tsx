@@ -1,5 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
+import { Box } from '@mui/material';
 import { 
   Chart as ChartJS, 
   CategoryScale, 
@@ -129,8 +130,8 @@ export const EarningsChart: React.FC = () => {
   };
 
   return (
-    <div className="h-64">
+    <Box sx={{ height: 256 }}>
       <Line data={data} options={options} />
-    </div>
+    </Box>
   );
 };

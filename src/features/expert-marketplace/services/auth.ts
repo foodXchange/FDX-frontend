@@ -1,4 +1,5 @@
-import { api } from '@/services/api-client';
+import React from 'react';
+import { apiClient } from '@/services/api-client';
 
 interface AuthUser {
   id: string;
@@ -32,7 +33,7 @@ class ExpertMarketplaceAuthService {
   private userKey = 'expert_marketplace_user';
 
   async login(credentials: LoginCredentials): Promise<AuthUser> {
-    const response = await api.post('/auth/login', credentials);
+    const response = await apiClient.post('/auth/login', credentials);
     const user = response.data;
     
     this.setTokens(user.token, user.refreshToken);
@@ -42,7 +43,7 @@ class ExpertMarketplaceAuthService {
   }
 
   async register(data: RegisterData): Promise<AuthUser> {
-    const response = await api.post('/auth/register', data);
+    const response = await apiClient.post('/auth/register', data);
     const user = response.data;
     
     this.setTokens(user.token, user.refreshToken);
@@ -53,7 +54,7 @@ class ExpertMarketplaceAuthService {
 
   async logout(): Promise<void> {
     try {
-      await api.post('/auth/logout');
+      await apiClient.post('/auth/logout');
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -66,7 +67,7 @@ class ExpertMarketplaceAuthService {
     if (!refreshToken) return null;
 
     try {
-      const response = await api.post('/auth/refresh', {
+      const response = await apiClient.post('/auth/refresh', {
         refreshToken,
       });
       
@@ -85,7 +86,7 @@ class ExpertMarketplaceAuthService {
     if (!token) return null;
 
     try {
-      const response = await api.get('/auth/me', {
+      const response = await apiClient.get('/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -100,15 +101,15 @@ class ExpertMarketplaceAuthService {
   }
 
   async verifyEmail(token: string): Promise<void> {
-    await api.post('/auth/verify-email', { token });
+    await apiClient.post('/auth/verify-email', { token });
   }
 
   async requestPasswordReset(email: string): Promise<void> {
-    await api.post('/auth/forgot-password', { email });
+    await apiClient.post('/auth/forgot-password', { email });
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
-    await api.post('/auth/reset-password', { token, password: newPassword });
+    await apiClient.post('/auth/reset-password', { token, password: newPassword });
   }
 
   // Token management

@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ChartBarIcon, 
-  UserGroupIcon, 
-  SparklesIcon,
-  TruckIcon,
-  ShieldCheckIcon
-} from '@heroicons/react/24/outline';
-import { Button } from '../ui/Button';
+import {
+  Box,
+  Typography,
+  Button,
+  Paper,
+  Grid,
+  Chip,
+  LinearProgress,
+  CircularProgress,
+  Card,
+  CardContent,
+  Stack,
+  Avatar,
+  Divider,
+  ButtonGroup
+} from '@mui/material';
+import {
+  BarChart as ChartBarIcon,
+  People as UserGroupIcon,
+  AutoAwesome as SparklesIcon,
+  LocalShipping as TruckIcon,
+  Security as ShieldCheckIcon
+} from '@mui/icons-material';
 
 // Interactive AI Chat Demo
 export const AIChatDemo: React.FC<{ className?: string }> = ({ className }) => {
@@ -56,31 +71,62 @@ export const AIChatDemo: React.FC<{ className?: string }> = ({ className }) => {
   };
 
   return (
-    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
-      <div className="flex items-center mb-4">
-        <SparklesIcon className="w-5 h-5 text-purple-600 mr-2" />
-        <h3 className="font-semibold text-gray-900">AI Assistant Demo</h3>
-      </div>
+    <Paper 
+      sx={{ 
+        p: 3, 
+        borderRadius: 3, 
+        backdropFilter: 'blur(10px)', 
+        bgcolor: 'rgba(255, 255, 255, 0.9)' 
+      }}
+      className={className || ''}
+    >
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+        <SparklesIcon sx={{ fontSize: 20, color: 'secondary.main', mr: 1 }} />
+        <Typography variant="h6" sx={{ color: 'grey.900' }}>
+          AI Assistant Demo
+        </Typography>
+      </Box>
 
-      <div className="bg-gray-50 rounded-lg p-3 h-64 overflow-y-auto mb-4">
-        <AnimatePresence>
-          {messages.map((message) => (
-            <motion.div
-              key={message.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`mb-3 p-2 rounded-lg max-w-[85%] ${message.type === 'user' ? 'bg-blue-500 text-white ml-auto' : 'bg-white text-gray-900'}`}
-            >
-              <div className="text-sm whitespace-pre-line">{message.text}</div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      <Paper sx={{ bgcolor: 'grey.50', p: 2, mb: 2, borderRadius: 2, minHeight: 200 }}>
+        <Stack spacing={1}>
+          <AnimatePresence>
+            {messages.map((message) => (
+              <motion.div
+                key={message.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <Paper
+                  sx={{
+                    p: 1.5,
+                    borderRadius: 2,
+                    maxWidth: '85%',
+                    ...(message.type === 'user' 
+                      ? { 
+                          bgcolor: 'primary.main', 
+                          color: 'white', 
+                          ml: 'auto' 
+                        } 
+                      : { 
+                          bgcolor: 'white', 
+                          color: 'grey.900' 
+                        })
+                  }}
+                >
+                  <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
+                    {message.text}
+                  </Typography>
+                </Paper>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </Stack>
+      </Paper>
 
-      <Button onClick={runDemo} size="sm" className="w-full">
+      <Button onClick={runDemo} variant="contained" size="small" fullWidth>
         Try Demo Scenario {currentDemo + 1}
       </Button>
-    </div>
+    </Paper>
   );
 };
 
@@ -129,59 +175,108 @@ export const MarketDataDemo: React.FC<{ className?: string }> = ({ className }) 
   const currentProduct = marketData[selectedProduct];
 
   return (
-    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
-      <div className="flex items-center mb-4">
-        <ChartBarIcon className="w-5 h-5 text-green-600 mr-2" />
-        <h3 className="font-semibold text-gray-900">Live Market Data</h3>
-      </div>
+    <Paper 
+      sx={{ 
+        p: 3, 
+        borderRadius: 3, 
+        backdropFilter: 'blur(10px)', 
+        bgcolor: 'rgba(255, 255, 255, 0.9)' 
+      }}
+      className={className || ''}
+    >
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+        <ChartBarIcon sx={{ fontSize: 20, color: 'success.main', mr: 1 }} />
+        <Typography variant="h6" sx={{ color: 'grey.900' }}>
+          Live Market Data
+        </Typography>
+      </Box>
 
-      <div className="space-y-3">
-        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-3">
-          <h4 className="font-medium text-gray-900 mb-2">{currentProduct.name}</h4>
-          
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <div className="text-xs text-gray-600">Current Price</div>
-              <motion.div 
-                className="text-lg font-bold text-green-600"
-                animate={animatingPrice ? { scale: [1, 1.1, 1] } : {}}
-              >
-                ${currentProduct.price}
-              </motion.div>
-            </div>
+      <Stack spacing={3}>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" sx={{ fontWeight: 'medium', color: 'grey.900', mb: 2 }}>
+              {currentProduct.name}
+            </Typography>
             
-            <div>
-              <div className="text-xs text-gray-600">24h Change</div>
-              <div className={`text-sm font-semibold ${currentProduct.change > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {currentProduct.change > 0 ? '+' : ''}{currentProduct.change}%
-              </div>
-            </div>
-            
-            <div>
-              <div className="text-xs text-gray-600">Volume</div>
-              <div className="text-sm font-medium">{currentProduct.volume}</div>
-            </div>
-            
-            <div>
-              <div className="text-xs text-gray-600">Suppliers</div>
-              <div className="text-sm font-medium">{currentProduct.suppliers}</div>
-            </div>
-          </div>
-        </div>
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
+                <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                  Current Price
+                </Typography>
+                <motion.div 
+                  animate={animatingPrice ? { scale: [1, 1.1, 1] } : {}}
+                >
+                  <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                    ${currentProduct.price}
+                  </Typography>
+                </motion.div>
+              </Grid>
+              
+              <Grid item xs={6}>
+                <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                  24h Change
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontWeight: 'semibold',
+                    color: currentProduct.change > 0 ? 'success.main' : 'error.main'
+                  }}
+                >
+                  {currentProduct.change > 0 ? '+' : ''}{currentProduct.change}%
+                </Typography>
+              </Grid>
+              
+              <Grid item xs={6}>
+                <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                  Volume
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                  {currentProduct.volume}
+                </Typography>
+              </Grid>
+              
+              <Grid item xs={6}>
+                <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                  Suppliers
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                  {currentProduct.suppliers}
+                </Typography>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
 
-        <div className="grid grid-cols-3 gap-2">
+        <Grid container spacing={1}>
           {marketData.map((product, index) => (
-            <button
-              key={product.name}
-              onClick={() => setSelectedProduct(index)}
-              className={`p-2 rounded-lg text-xs transition-all ${index === selectedProduct ? 'bg-blue-100 border-2 border-blue-300' : 'bg-gray-100 hover:bg-gray-200'}`}
-            >
-              {product.name}
-            </button>
+            <Grid item xs={4} key={product.name}>
+              <Button
+                onClick={() => setSelectedProduct(index)}
+                variant={index === selectedProduct ? 'contained' : 'outlined'}
+                size="small"
+                fullWidth
+                sx={{
+                  fontSize: '0.75rem',
+                  py: 1,
+                  ...(index === selectedProduct 
+                    ? { 
+                        bgcolor: 'primary.main', 
+                        '&:hover': { bgcolor: 'primary.dark' } 
+                      } 
+                    : { 
+                        bgcolor: 'grey.100', 
+                        '&:hover': { bgcolor: 'grey.200' } 
+                      })
+                }}
+              >
+                {product.name}
+              </Button>
+            </Grid>
           ))}
-        </div>
-      </div>
-    </div>
+        </Grid>
+      </Stack>
+    </Paper>
   );
 };
 
@@ -242,72 +337,103 @@ export const SupplierMatchDemo: React.FC<{ className?: string }> = ({ className 
   };
 
   return (
-    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
-      <div className="flex items-center mb-4">
-        <UserGroupIcon className="w-5 h-5 text-blue-600 mr-2" />
-        <h3 className="font-semibold text-gray-900">AI Supplier Matching</h3>
-      </div>
+    <Paper 
+      sx={{ 
+        p: 3, 
+        borderRadius: 3, 
+        backdropFilter: 'blur(10px)', 
+        bgcolor: 'rgba(255, 255, 255, 0.9)' 
+      }}
+      className={className || ''}
+    >
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+        <UserGroupIcon sx={{ fontSize: 20, color: 'primary.main', mr: 1 }} />
+        <Typography variant="h6" sx={{ color: 'grey.900' }}>
+          AI Supplier Matching
+        </Typography>
+      </Box>
 
       {!isMatching && matchingStage < matchingStages.length - 1 ? (
-        <div className="text-center py-8">
-          <div className="mb-4">
-            <div className="text-sm text-gray-600 mb-2">Looking for:</div>
-            <div className="bg-blue-50 rounded-lg p-3">
-              <div className="font-medium">Organic Apples</div>
-              <div className="text-sm text-gray-600">5000 lbs • USDA Organic • California preferred</div>
-            </div>
-          </div>
-          <Button onClick={startMatching} size="sm">
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ color: 'grey.600' }}>
+              Looking for:
+            </Typography>
+            <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'grey.50', mt: 1 }}>
+              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                Organic Apples
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                5000 lbs • USDA Organic • California preferred
+              </Typography>
+            </Paper>
+          </Box>
+          <Button onClick={startMatching} variant="contained" size="small">
             Find Suppliers
           </Button>
-        </div>
+        </Box>
       ) : isMatching ? (
-        <div className="text-center py-8">
+        <Box sx={{ textAlign: 'center', py: 4 }}>
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
-          />
-          <div className="text-sm text-gray-600">{matchingStages[matchingStage]}</div>
-        </div>
+            style={{ marginBottom: 16 }}
+          >
+            <CircularProgress size={40} />
+          </motion.div>
+          <Typography variant="body2" sx={{ color: 'grey.600' }}>
+            {matchingStages[matchingStage]}
+          </Typography>
+        </Box>
       ) : (
-        <div className="space-y-3">
-          <div className="text-sm text-gray-600 mb-3">Top Matches Found:</div>
+        <Stack spacing={2}>
+          <Typography variant="body2" sx={{ color: 'grey.600' }}>
+            Top Matches Found:
+          </Typography>
           {suppliers.map((supplier, index) => (
             <motion.div
               key={supplier.name}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.2 }}
-              className="bg-white rounded-lg p-3 border border-gray-200"
             >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h4 className="font-medium text-sm">{supplier.name}</h4>
-                  <div className="text-xs text-gray-600">{supplier.location} • {supplier.specialty}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-green-600">{supplier.match}%</div>
-                  <div className="text-xs text-gray-600">match</div>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="text-xs text-yellow-600">★ {supplier.rating}</div>
-                </div>
-                <div className="flex gap-1">
-                  {supplier.certifications.map(cert => (
-                    <span key={cert} className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                      {cert}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              <Paper sx={{ p: 2, borderRadius: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <Box>
+                    <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                      {supplier.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                      {supplier.location} • {supplier.specialty}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                      {supplier.match}%
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'grey.600' }}>
+                      match
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography variant="caption" sx={{ color: 'warning.main' }}>
+                      ★ {supplier.rating}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 0.5 }}>
+                    {supplier.certifications.map(cert => (
+                      <Chip key={cert} label={cert} size="small" variant="outlined" />
+                    ))}
+                  </Box>
+                </Box>
+              </Paper>
             </motion.div>
           ))}
-        </div>
+        </Stack>
       )}
-    </div>
+    </Paper>
   );
 };
 
@@ -334,65 +460,93 @@ export const ComplianceDemo: React.FC<{ className?: string }> = ({ className }) 
   };
 
   return (
-    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
-      <div className="flex items-center mb-4">
-        <ShieldCheckIcon className="w-5 h-5 text-green-600 mr-2" />
-        <h3 className="font-semibold text-gray-900">Compliance Checker</h3>
-      </div>
+    <Paper 
+      sx={{ 
+        p: 3, 
+        borderRadius: 3, 
+        backdropFilter: 'blur(10px)', 
+        bgcolor: 'rgba(255, 255, 255, 0.9)' 
+      }}
+      className={className || ''}
+    >
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+        <ShieldCheckIcon sx={{ fontSize: 20, color: 'success.main', mr: 1 }} />
+        <Typography variant="h6" sx={{ color: 'grey.900' }}>
+          Compliance Checker
+        </Typography>
+      </Box>
 
       {!complianceResults ? (
-        <div className="text-center py-6">
+        <Box sx={{ textAlign: 'center', py: 4 }}>
           {checkingCompliance ? (
-            <div>
+            <Box>
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
-                className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}
               >
-                <ShieldCheckIcon className="w-6 h-6 text-green-600" />
+                <ShieldCheckIcon sx={{ fontSize: 24, color: 'success.main' }} />
               </motion.div>
-              <div className="text-sm text-gray-600">Checking compliance...</div>
-            </div>
+              <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                Checking compliance...
+              </Typography>
+            </Box>
           ) : (
-            <div>
-              <div className="text-sm text-gray-600 mb-4">
+            <Box>
+              <Typography variant="body2" sx={{ color: 'grey.600', mb: 2 }}>
                 Verify supplier compliance automatically
-              </div>
-              <Button onClick={runComplianceCheck} size="sm">
+              </Typography>
+              <Button onClick={runComplianceCheck} variant="contained" size="small">
                 Check Compliance
               </Button>
-            </div>
+            </Box>
           )}
-        </div>
+        </Box>
       ) : (
-        <div className="space-y-3">
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-green-600">{complianceResults.overallScore}%</div>
-            <div className="text-sm text-gray-600">Compliance Score</div>
-          </div>
+        <Stack spacing={2}>
+          <Paper sx={{ p: 2, borderRadius: 2, bgcolor: 'success.light' }}>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+              {complianceResults.overallScore}%
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'grey.600' }}>
+              Compliance Score
+            </Typography>
+          </Paper>
 
-          <div className="space-y-2">
+          <Stack spacing={1}>
             {complianceResults.checks.map((check: any, index: number) => (
               <motion.div
                 key={check.name}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center justify-between p-2 bg-white rounded-lg border"
               >
-                <div className="flex items-center">
-                  <div className={`w-2 h-2 rounded-full mr-2 ${check.status === 'passed' ? 'bg-green-500' : check.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'}`} />
-                  <span className="text-sm font-medium">{check.name}</span>
-                </div>
-                <div className="text-xs text-gray-600">
-                  {check.message || `Expires ${check.expiry}`}
-                </div>
+                <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        mr: 1,
+                        bgcolor: check.status === 'passed' ? 'success.main' : 
+                                check.status === 'warning' ? 'warning.main' : 'error.main'
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                      {check.name}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                    {check.message || `Expires ${check.expiry}`}
+                  </Typography>
+                </Paper>
               </motion.div>
             ))}
-          </div>
-        </div>
+          </Stack>
+        </Stack>
       )}
-    </div>
+    </Paper>
   );
 };
 
@@ -431,74 +585,114 @@ export const OrderTrackingDemo: React.FC<{ className?: string }> = ({ className 
   const currentOrder = orders[selectedOrder];
 
   return (
-    <div className={`glass-morphism rounded-xl p-4 ${className || ''}`}>
-      <div className="flex items-center mb-4">
-        <TruckIcon className="w-5 h-5 text-orange-600 mr-2" />
-        <h3 className="font-semibold text-gray-900">Live Order Tracking</h3>
-      </div>
+    <Paper 
+      sx={{ 
+        p: 3, 
+        borderRadius: 3, 
+        backdropFilter: 'blur(10px)', 
+        bgcolor: 'rgba(255, 255, 255, 0.9)' 
+      }}
+      className={className || ''}
+    >
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+        <TruckIcon sx={{ fontSize: 20, color: 'warning.main', mr: 1 }} />
+        <Typography variant="h6" sx={{ color: 'grey.900' }}>
+          Live Order Tracking
+        </Typography>
+      </Box>
 
-      <div className="space-y-3">
-        <div className="flex gap-2 mb-3">
+      <Stack spacing={3}>
+        <ButtonGroup variant="outlined" size="small">
           {orders.map((order, index) => (
-            <button
+            <Button
               key={order.id}
               onClick={() => setSelectedOrder(index)}
-              className={`px-3 py-1 text-xs rounded-full transition-all ${index === selectedOrder ? 'bg-orange-100 text-orange-800 border border-orange-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              variant={index === selectedOrder ? 'contained' : 'outlined'}
+              sx={{
+                fontSize: '0.75rem',
+                ...(index === selectedOrder 
+                  ? { 
+                      bgcolor: 'warning.main', 
+                      color: 'white',
+                      '&:hover': { bgcolor: 'warning.dark' } 
+                    } 
+                  : {})
+              }}
             >
               {order.id}
-            </button>
+            </Button>
           ))}
-        </div>
+        </ButtonGroup>
 
-        <div className="bg-white rounded-lg p-3 border">
-          <div className="flex justify-between items-start mb-3">
-            <div>
-              <h4 className="font-medium text-sm">{currentOrder.product}</h4>
-              <div className="text-xs text-gray-600">{currentOrder.supplier}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm font-semibold text-orange-600">
+        <Paper sx={{ p: 2, borderRadius: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+            <Box>
+              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                {currentOrder.product}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                {currentOrder.supplier}
+              </Typography>
+            </Box>
+            <Box sx={{ textAlign: 'right' }}>
+              <Typography variant="body2" sx={{ fontWeight: 'semibold', color: 'warning.main' }}>
                 ETA: {currentOrder.eta}
-              </div>
-              <div className="text-xs text-gray-600 capitalize">
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'grey.600' }}>
                 {currentOrder.status.replace('_', ' ')}
-              </div>
-            </div>
-          </div>
+              </Typography>
+            </Box>
+          </Box>
 
-          <div className="mb-3">
-            <div className="flex justify-between text-xs text-gray-600 mb-1">
-              <span>Progress</span>
-              <span>{currentOrder.progress}%</span>
-            </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-orange-400 to-orange-600"
-                initial={{ width: 0 }}
-                animate={{ width: `${currentOrder.progress}%` }}
-                transition={{ duration: 1, ease: 'easeOut' }}
+          <Box sx={{ mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+              <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                Progress
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                {currentOrder.progress}%
+              </Typography>
+            </Box>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${currentOrder.progress}%` }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+            >
+              <LinearProgress 
+                variant="determinate" 
+                value={currentOrder.progress} 
+                sx={{ height: 8, borderRadius: 1 }}
               />
-            </div>
-          </div>
+            </motion.div>
+          </Box>
 
-          <div className="space-y-2">
-            <div className="text-xs font-medium text-gray-700 mb-2">Recent Updates:</div>
-            {currentOrder.updates.map((update, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex justify-between text-xs"
-              >
-                <span className="text-gray-600">{update.time}</span>
-                <span className="font-medium text-gray-900">{update.status}</span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+          <Box>
+            <Typography variant="body2" sx={{ color: 'grey.700', mb: 2 }}>
+              Recent Updates:
+            </Typography>
+            <Stack spacing={1}>
+              {currentOrder.updates.map((update, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                      {update.time}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'grey.900' }}>
+                      {update.status}
+                    </Typography>
+                  </Box>
+                </motion.div>
+              ))}
+            </Stack>
+          </Box>
+        </Paper>
+      </Stack>
+    </Paper>
   );
 };
 
@@ -517,30 +711,67 @@ export const DemoShowcase: React.FC<{ className?: string }> = ({ className }) =>
   const ActiveDemoComponent = demos[activeDemo].component;
 
   return (
-    <div className={`glass-morphism rounded-xl p-6 ${className || ''}`}>
-      <h2 className="text-xl font-bold mb-6 gradient-text text-center">
+    <Paper 
+      sx={{ 
+        p: 4, 
+        borderRadius: 3, 
+        backdropFilter: 'blur(10px)', 
+        bgcolor: 'rgba(255, 255, 255, 0.9)' 
+      }}
+      className={className || ''}
+    >
+      <Typography 
+        variant="h5" 
+        sx={{ 
+          fontWeight: 'bold', 
+          mb: 4, 
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}
+      >
         Platform Capabilities Demo
-      </h2>
+      </Typography>
 
-      <div className="flex flex-wrap gap-2 mb-6">
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 4, justifyContent: 'center' }}>
         {demos.map((demo, index) => {
           const IconComponent = demo.icon;
           return (
-            <button
+            <Button
               key={demo.title}
               onClick={() => setActiveDemo(index)}
-              className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${index === activeDemo ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              variant={index === activeDemo ? 'contained' : 'outlined'}
+              startIcon={<IconComponent />}
+              sx={{
+                fontSize: '0.875rem',
+                fontWeight: 'medium',
+                ...(index === activeDemo 
+                  ? { 
+                      background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                      color: 'white',
+                      boxShadow: 3,
+                      '&:hover': {
+                        background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+                        boxShadow: 6
+                      }
+                    } 
+                  : { 
+                      bgcolor: 'grey.100',
+                      color: 'grey.700',
+                      '&:hover': { bgcolor: 'grey.200' }
+                    })
+              }}
             >
-              <IconComponent className="w-4 h-4 mr-2" />
               {demo.title}
-            </button>
+            </Button>
           );
         })}
-      </div>
+      </Box>
 
-      <div className="min-h-[400px]">
+      <Box sx={{ minHeight: 400 }}>
         <ActiveDemoComponent />
-      </div>
-    </div>
+      </Box>
+    </Paper>
   );
 };

@@ -12,23 +12,20 @@ import {
   Button,
   Chip,
   Avatar,
-  LinearProgress,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   IconButton,
   Menu,
   Tabs,
   Tab,
   useTheme,
-  alpha,
-  Tooltip,
   CircularProgress,
   Alert,
+  LinearProgress,
 } from '@mui/material';
 import {
   Analytics,
@@ -36,7 +33,6 @@ import {
   TrendingDown,
   Download,
   Refresh,
-  FilterList,
   Schedule,
   AttachMoney,
   People,
@@ -44,14 +40,11 @@ import {
   Star,
   Compare,
   PieChart,
-  BarChart,
   ShowChart,
-  CalendarToday,
   LocationOn,
   Business,
   Phone,
   Email,
-  WhatsApp,
   Insights,
 } from '@mui/icons-material';
 import { useAgentStore } from '../../store';
@@ -148,7 +141,7 @@ interface ForecastData {
 
 const AdvancedAnalytics: React.FC = () => {
   const theme = useTheme();
-  const { currentAgent } = useAgentStore();
+  const { } = useAgentStore();
   
   const [timeRange, setTimeRange] = useState('month');
   const [compareMode, setCompareMode] = useState(false);
@@ -325,7 +318,7 @@ const AdvancedAnalytics: React.FC = () => {
   const OverviewTab = () => (
     <Grid container spacing={3}>
       {/* Key Metrics */}
-      <Grid item xs={12} sm={6} md={2}>
+      <Grid size={{ xs: 12, sm: 6, md: 2 }}>
         <MetricCard
           title="Total Leads"
           value={analyticsData?.overview.totalLeads || 0}
@@ -334,7 +327,7 @@ const AdvancedAnalytics: React.FC = () => {
           color={theme.palette.primary.main}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={2}>
+      <Grid size={{ xs: 12, sm: 6, md: 2 }}>
         <MetricCard
           title="Conversion Rate"
           value={formatPercentage(analyticsData?.overview.conversionRate || 0)}
@@ -343,7 +336,7 @@ const AdvancedAnalytics: React.FC = () => {
           color={theme.palette.success.main}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={2}>
+      <Grid size={{ xs: 12, sm: 6, md: 2 }}>
         <MetricCard
           title="Avg Deal Size"
           value={formatCurrency(analyticsData?.overview.averageDealSize || 0)}
@@ -351,7 +344,7 @@ const AdvancedAnalytics: React.FC = () => {
           color={theme.palette.warning.main}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={2}>
+      <Grid size={{ xs: 12, sm: 6, md: 2 }}>
         <MetricCard
           title="Total Revenue"
           value={formatCurrency(analyticsData?.overview.totalRevenue || 0)}
@@ -360,7 +353,7 @@ const AdvancedAnalytics: React.FC = () => {
           color={theme.palette.info.main}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={2}>
+      <Grid size={{ xs: 12, sm: 6, md: 2 }}>
         <MetricCard
           title="Response Time"
           value={`${analyticsData?.overview.responseTime || 0}h`}
@@ -369,7 +362,7 @@ const AdvancedAnalytics: React.FC = () => {
           subtitle="Average response time"
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={2}>
+      <Grid size={{ xs: 12, sm: 6, md: 2 }}>
         <MetricCard
           title="Satisfaction"
           value={`${analyticsData?.overview.customerSatisfaction || 0}/5`}
@@ -380,7 +373,7 @@ const AdvancedAnalytics: React.FC = () => {
       </Grid>
 
       {/* Charts Placeholder */}
-      <Grid item xs={12} md={8}>
+      <Grid size={{ xs: 12, md: 8 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -395,7 +388,7 @@ const AdvancedAnalytics: React.FC = () => {
         </Card>
       </Grid>
 
-      <Grid item xs={12} md={4}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -414,7 +407,7 @@ const AdvancedAnalytics: React.FC = () => {
 
   const SourceAnalysisTab = () => (
     <Grid container spacing={3}>
-      <Grid item xs={12}>
+      <Grid size={{ xs: 12 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -491,7 +484,7 @@ const AdvancedAnalytics: React.FC = () => {
 
   const GeographicTab = () => (
     <Grid container spacing={3}>
-      <Grid item xs={12} md={8}>
+      <Grid size={{ xs: 12, md: 8 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -505,7 +498,7 @@ const AdvancedAnalytics: React.FC = () => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -546,7 +539,7 @@ const AdvancedAnalytics: React.FC = () => {
 
   const ForecastTab = () => (
     <Grid container spacing={3}>
-      <Grid item xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -579,7 +572,7 @@ const AdvancedAnalytics: React.FC = () => {
         </Card>
       </Grid>
 
-      <Grid item xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -612,7 +605,7 @@ const AdvancedAnalytics: React.FC = () => {
         </Card>
       </Grid>
 
-      <Grid item xs={12}>
+      <Grid size={{ xs: 12 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>

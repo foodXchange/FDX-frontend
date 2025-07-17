@@ -1,3 +1,4 @@
+import React, { useState, useRef } from 'react';
 import { FC, useState, useRef } from 'react';
 import {
   Box,
@@ -5,7 +6,6 @@ import {
   Typography,
   IconButton,
   Button,
-  Grid,
   Card,
   CardContent,
   CardActions,
@@ -34,6 +34,7 @@ import {
   Search,
   FilterList,
 } from '@mui/icons-material';
+import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import { Document } from '../../types';
 
@@ -46,12 +47,12 @@ interface DocumentsPanelProps {
 
 export const DocumentsPanel: FC<DocumentsPanelProps> = ({
   documents,
-  collaborationId,
+  collaborationId: _collaborationId,
   onDocumentUpload,
   onDocumentDelete,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<string | null>(null);
+  const [filterType, _setFilterType] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -230,7 +231,7 @@ export const DocumentsPanel: FC<DocumentsPanelProps> = ({
         ) : (
           <Grid container spacing={2}>
             {filteredDocs.map((doc) => (
-              <Grid item xs={12} sm={6} md={4} key={doc.id}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={doc.id}>
                 <Card sx={{ height: '100%' }}>
                   <CardContent>
                     <Box display="flex" justifyContent="space-between" alignItems="start">

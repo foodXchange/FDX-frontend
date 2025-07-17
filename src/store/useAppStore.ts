@@ -17,8 +17,20 @@ interface AppSettings {
   };
 }
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'agent' | 'supplier' | 'buyer';
+  avatar?: string;
+  preferences?: Record<string, unknown>;
+  permissions?: string[];
+  lastLogin?: Date;
+  isActive: boolean;
+}
+
 interface AppState {
-  user: any;
+  user: User | null;
   // Settings
   settings: AppSettings;
   updateSettings: (settings: Partial<AppSettings>) => void;
@@ -41,7 +53,7 @@ interface AppState {
     type: string;
     title: string;
     timestamp: Date;
-    data?: any;
+    data?: Record<string, unknown>;
   }>;
   addActivity: (activity: Omit<AppState['recentActivity'][0], 'id' | 'timestamp'>) => void;
   clearActivity: () => void;

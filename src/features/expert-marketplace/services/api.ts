@@ -1,4 +1,5 @@
-import { api } from '@/services/api-client';
+import React from 'react';
+import { apiClient } from '@/services/api-client';
 import {
   Expert,
   ExpertSearchFilters,
@@ -21,38 +22,37 @@ export const expertApi = {
   async searchExperts(filters: ExpertSearchFilters): Promise<ExpertSearchResult> {
     const params = new URLSearchParams();
     
-    if (filters.query) params.append('q', filters.query);
+    if (filters?.query) params.append('q', filters.query);
     if (filters.categories?.length) params.append('categories', filters.categories.join(','));
-    if (filters.minRating) params.append('minRating', filters.minRating.toString());
-    if (filters.maxHourlyRate) params.append('maxRate', filters.maxHourlyRate.toString());
+    if (filters?.minRating) params.append('minRating', filters.minRating.toString());
+    if (filters?.maxHourlyRate) params.append('maxRate', filters.maxHourlyRate.toString());
     if (filters.languages?.length) params.append('languages', filters.languages.join(','));
     if (filters.availability !== undefined) params.append('available', filters.availability.toString());
     if (filters.location?.country) params.append('country', filters.location.country);
-    if (filters.sortBy) params.append('sort', filters.sortBy);
+    if (filters?.sortBy) params.append('sort', filters.sortBy);
     
-    const response = await api.get(`${EXPERT_API_BASE}/search?${params}`);
+    const response = await apiClient.get(`${EXPERT_API_BASE}/search?${params}`);
     return response.data;
   },
 
   async getExpertById(expertId: string): Promise<Expert> {
-    const response = await api.get(`${EXPERT_API_BASE}/${expertId}`);
+    const response = await apiClient.get(`${EXPERT_API_BASE}/${expertId}`);
     return response.data;
   },
 
   async getExpertProfile(expertId: string): Promise<Expert & { services: Service[]; ratings: Rating[] }> {
-    const response = await api.get(`${EXPERT_API_BASE}/${expertId}/profile`);
+    const response = await apiClient.get(`${EXPERT_API_BASE}/${expertId}/profile`);
     return response.data;
   },
 
   async updateExpertProfile(expertId: string, updates: Partial<Expert>): Promise<Expert> {
-    const response = await api.patch(`${EXPERT_API_BASE}/${expertId}`, updates);
+    const response = await apiClient.patch(`${EXPERT_API_BASE}/${expertId}`, updates);
     return response.data;
   },
 
   async getExpertAvailability(expertId: string, date: string): Promise<TimeSlot[]> {
-    const response = await api.get(`${EXPERT_API_BASE}/${expertId}/availability`, {
-      params: { date },
-    });
+    const params = new URLSearchParams({ date });
+    const response = await apiClient.get(`${EXPERT_API_BASE}/${expertId}/availability?${params}`);
     return response.data;
   },
 
@@ -61,35 +61,34 @@ export const expertApi = {
     startDate: string,
     endDate: string
   ): Promise<{ date: string; slots: TimeSlot[] }[]> {
-    const response = await api.get(`${EXPERT_API_BASE}/${expertId}/schedule`, {
-      params: { startDate, endDate },
-    });
+    const params = new URLSearchParams({ startDate, endDate });
+    const response = await apiClient.get(`${EXPERT_API_BASE}/${expertId}/schedule?${params}`);
     return response.data;
   },
 
   // Service endpoints
   async getExpertServices(expertId: string): Promise<Service[]> {
-    const response = await api.get(`${EXPERT_API_BASE}/${expertId}/services`);
+    const response = await apiClient.get(`${EXPERT_API_BASE}/${expertId}/services`);
     return response.data;
   },
 
   async getServiceById(serviceId: string): Promise<Service> {
-    const response = await api.get(`${EXPERT_API_BASE}/services/${serviceId}`);
+    const response = await apiClient.get(`${EXPERT_API_BASE}/services/${serviceId}`);
     return response.data;
   },
 
   async createService(service: Omit<Service, 'id' | 'createdAt' | 'updatedAt'>): Promise<Service> {
-    const response = await api.post(`${EXPERT_API_BASE}/services`, service);
+    const response = await apiClient.post(`${EXPERT_API_BASE}/services`, service);
     return response.data;
   },
 
   async updateService(serviceId: string, updates: Partial<Service>): Promise<Service> {
-    const response = await api.patch(`${EXPERT_API_BASE}/services/${serviceId}`, updates);
+    const response = await apiClient.patch(`${EXPERT_API_BASE}/services/${serviceId}`, updates);
     return response.data;
   },
 
   async deleteService(serviceId: string): Promise<void> {
-    await api.delete(`${EXPERT_API_BASE}/services/${serviceId}`);
+    await apiClient.delete(`${EXPERT_API_BASE}/services/${serviceId}`);
   },
 
   // Collaboration endpoints
@@ -98,19 +97,24 @@ export const expertApi = {
     expertId?: string;
     clientId?: string;
   }): Promise<Collaboration[]> {
-    const response = await api.get(`${EXPERT_API_BASE}/collaborations`, { params: filters });
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+    if (filters?.expertId) params.append('expertId', filters.expertId);
+    if (filters?.clientId) params.append('clientId', filters.clientId);
+    
+    const response = await apiClient.get(`${EXPERT_API_BASE}/collaborations?${params}`);
     return response.data;
   },
 
   async getCollaborationById(collaborationId: string): Promise<Collaboration> {
-    const response = await api.get(`${EXPERT_API_BASE}/collaborations/${collaborationId}`);
+    const response = await apiClient.get(`${EXPERT_API_BASE}/collaborations/${collaborationId}`);
     return response.data;
   },
 
   async createCollaboration(
     collaboration: Omit<Collaboration, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<Collaboration> {
-    const response = await api.post(`${EXPERT_API_BASE}/collaborations`, collaboration);
+    const response = await apiClient.post(`${EXPERT_API_BASE}/collaborations`, collaboration);
     return response.data;
   },
 
@@ -118,7 +122,7 @@ export const expertApi = {
     collaborationId: string,
     updates: Partial<Collaboration>
   ): Promise<Collaboration> {
-    const response = await api.patch(
+    const response = await apiClient.patch(
       `${EXPERT_API_BASE}/collaborations/${collaborationId}`,
       updates
     );
@@ -131,9 +135,12 @@ export const expertApi = {
     total: number;
     hasMore: boolean;
   }> {
-    const response = await api.get(
-      `${EXPERT_API_BASE}/collaborations/${collaborationId}/messages`,
-      { params: { page, limit } }
+    const params = new URLSearchParams();
+    if (page) params.append('page', page.toString());
+    if (limit) params.append('limit', limit.toString());
+    
+    const response = await apiClient.get(
+      `${EXPERT_API_BASE}/collaborations/${collaborationId}/messages?${params}`
     );
     return response.data;
   },
@@ -143,7 +150,7 @@ export const expertApi = {
     content: string,
     attachments?: string[]
   ): Promise<Message> {
-    const response = await api.post(
+    const response = await apiClient.post(
       `${EXPERT_API_BASE}/collaborations/${collaborationId}/messages`,
       { content, attachments }
     );
@@ -151,7 +158,7 @@ export const expertApi = {
   },
 
   async markMessageAsRead(collaborationId: string, messageId: string): Promise<void> {
-    await api.patch(
+    await apiClient.patch(
       `${EXPERT_API_BASE}/collaborations/${collaborationId}/messages/${messageId}/read`
     );
   },
@@ -161,7 +168,7 @@ export const expertApi = {
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await api.post(
+    const response = await apiClient.post(
       `${EXPERT_API_BASE}/collaborations/${collaborationId}/documents`,
       formData,
       {
@@ -174,7 +181,7 @@ export const expertApi = {
   },
 
   async deleteDocument(collaborationId: string, documentId: string): Promise<void> {
-    await api.delete(
+    await apiClient.delete(
       `${EXPERT_API_BASE}/collaborations/${collaborationId}/documents/${documentId}`
     );
   },
@@ -187,47 +194,54 @@ export const expertApi = {
     startDate?: string;
     endDate?: string;
   }): Promise<Booking[]> {
-    const response = await api.get(`${EXPERT_API_BASE}/bookings`, { params: filters });
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+    if (filters?.expertId) params.append('expertId', filters.expertId);
+    if (filters?.clientId) params.append('clientId', filters.clientId);
+    if (filters?.startDate) params.append('startDate', filters.startDate);
+    if (filters?.endDate) params.append('endDate', filters.endDate);
+    
+    const response = await apiClient.get(`${EXPERT_API_BASE}/bookings?${params}`);
     return response.data;
   },
 
   async getBookingById(bookingId: string): Promise<Booking> {
-    const response = await api.get(`${EXPERT_API_BASE}/bookings/${bookingId}`);
+    const response = await apiClient.get(`${EXPERT_API_BASE}/bookings/${bookingId}`);
     return response.data;
   },
 
   async createBooking(booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<Booking> {
-    const response = await api.post(`${EXPERT_API_BASE}/bookings`, booking);
+    const response = await apiClient.post(`${EXPERT_API_BASE}/bookings`, booking);
     return response.data;
   },
 
   async updateBooking(bookingId: string, updates: Partial<Booking>): Promise<Booking> {
-    const response = await api.patch(`${EXPERT_API_BASE}/bookings/${bookingId}`, updates);
+    const response = await apiClient.patch(`${EXPERT_API_BASE}/bookings/${bookingId}`, updates);
     return response.data;
   },
 
   async cancelBooking(bookingId: string, reason?: string): Promise<void> {
-    await api.post(`${EXPERT_API_BASE}/bookings/${bookingId}/cancel`, { reason });
+    await apiClient.post(`${EXPERT_API_BASE}/bookings/${bookingId}/cancel`, { reason });
   },
 
   async confirmBooking(bookingId: string): Promise<Booking> {
-    const response = await api.post(`${EXPERT_API_BASE}/bookings/${bookingId}/confirm`);
+    const response = await apiClient.post(`${EXPERT_API_BASE}/bookings/${bookingId}/confirm`);
     return response.data;
   },
 
   // Rating endpoints
   async getRatings(expertId: string): Promise<Rating[]> {
-    const response = await api.get(`${EXPERT_API_BASE}/${expertId}/ratings`);
+    const response = await apiClient.get(`${EXPERT_API_BASE}/${expertId}/ratings`);
     return response.data;
   },
 
   async createRating(rating: Omit<Rating, 'id' | 'createdAt'>): Promise<Rating> {
-    const response = await api.post(`${EXPERT_API_BASE}/ratings`, rating);
+    const response = await apiClient.post(`${EXPERT_API_BASE}/ratings`, rating);
     return response.data;
   },
 
   async updateRating(ratingId: string, updates: Partial<Rating>): Promise<Rating> {
-    const response = await api.patch(`${EXPERT_API_BASE}/ratings/${ratingId}`, updates);
+    const response = await apiClient.patch(`${EXPERT_API_BASE}/ratings/${ratingId}`, updates);
     return response.data;
   },
 
@@ -238,9 +252,10 @@ export const expertApi = {
     ratings: { average: number; count: number; distribution: any };
     performance: { responseTime: number; completionRate: number };
   }> {
-    const response = await api.get(`${EXPERT_API_BASE}/${expertId}/analytics`, {
-      params: { period },
-    });
+    const params = new URLSearchParams();
+    if (period) params.append('period', period);
+    
+    const response = await apiClient.get(`${EXPERT_API_BASE}/${expertId}/analytics?${params}`);
     return response.data;
   },
 };

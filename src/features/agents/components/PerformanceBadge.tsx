@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 interface PerformanceBadgeProps {
-  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
   size?: 'small' | 'medium' | 'large';
   showLabel?: boolean;
 }
@@ -40,6 +40,13 @@ export const PerformanceBadge: React.FC<PerformanceBadgeProps> = ({
       textColor: 'text-purple-800',
       icon: '💎',
       label: 'Platinum'
+    },
+    diamond: {
+      color: 'from-cyan-500 to-cyan-600',
+      bgColor: 'bg-cyan-100',
+      textColor: 'text-cyan-800',
+      icon: '💎',
+      label: 'Diamond'
     }
   };
 
@@ -62,7 +69,7 @@ export const PerformanceBadge: React.FC<PerformanceBadgeProps> = ({
   const sizeClass = sizeConfig[size];
 
   return (
-    <div className="flex items-center gap-2">
+    <div sx={{ display: "flex" }} sx={{ alignItems: "center" }}>
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}

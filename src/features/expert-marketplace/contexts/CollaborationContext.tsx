@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode, FC, useEffect } from 'react';
-import { Collaboration, Message, Document, Deliverable, CollaborationStatus } from '../types';
+import { Collaboration, Message, Document, Deliverable } from '../types';
 
 interface CollaborationContextValue {
   // State
@@ -158,7 +158,7 @@ export const CollaborationProvider: FC<CollaborationProviderProps> = ({ children
     }
   }, [activeCollaboration]);
 
-  const loadMessages = useCallback(async (collaborationId: string) => {
+  const loadMessages = useCallback(async (_collaborationId: string) => {
     setLoading(true);
     setError(null);
     try {

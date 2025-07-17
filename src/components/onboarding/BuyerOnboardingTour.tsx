@@ -4,6 +4,16 @@ import { OnboardingTour, TourStep, WelcomeModal, OnboardingChecklist } from './O
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
 import { UserRole } from '../../shared/types';
+import {
+  Box,
+  Typography,
+  Button,
+  Paper,
+  Stack,
+  Card,
+  CardContent,
+  Chip
+} from '@mui/material';
 
 interface BuyerOnboardingProps {
   onComplete?: () => void;
@@ -241,7 +251,7 @@ export const BuyerOnboardingTour: React.FC<BuyerOnboardingProps> = ({
         isOpen={showWelcome}
         onClose={handleWelcomeSkip}
         onStartTour={handleWelcomeStart}
-        userName={user?.profile?.firstName}
+        userName={user?.name}
       />
 
       <OnboardingTour
@@ -257,111 +267,130 @@ export const BuyerOnboardingTour: React.FC<BuyerOnboardingProps> = ({
           initial={{ opacity: 0, x: 300 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 300 }}
-          className="fixed right-4 top-20 w-80 glass-morphism rounded-xl p-4 z-[1800] max-h-[calc(100vh-160px)] overflow-y-auto"
         >
-          <h3 className="text-lg font-semibold mb-4 gradient-text">
-            Procurement Capabilities
-          </h3>
-          
-          <div className="space-y-3 mb-4">
-            {demoCapabilities.map((capability, index) => (
-              <motion.div
-                key={capability.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white/50 rounded-lg p-3 border border-gray-200"
-              >
-                <h4 className="font-medium text-sm text-gray-900 mb-1">
-                  {capability.title}
-                </h4>
-                <p className="text-xs text-gray-600 mb-2">
-                  {capability.description}
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-semibold text-[#1E4C8A]">
-                    {capability.metric}
-                  </span>
-                  <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">
-                    {capability.trend}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="border-t border-gray-200 pt-4">
-            <h4 className="font-medium text-sm text-gray-900 mb-3">
-              Marketplace Overview
-            </h4>
-            <div className="space-y-2">
-              {marketplaceHighlights.map((highlight, index) => (
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
+            <Typography variant="h6" sx={{ mb: 3, fontWeight: 'semibold', background: 'linear-gradient(135deg, #1E4C8A, #FF6B35)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              Procurement Capabilities
+            </Typography>
+            
+            <Stack spacing={2} sx={{ mb: 3 }}>
+              {demoCapabilities.map((capability, index) => (
                 <motion.div
-                  key={highlight.category}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 + index * 0.1 }}
-                  className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2"
+                  key={capability.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
                 >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h5 className="text-xs font-medium text-gray-900">
-                        {highlight.category}
-                      </h5>
-                      <p className="text-xs text-gray-600">
-                        {highlight.suppliers} suppliers • {highlight.products} products
-                      </p>
-                    </div>
-                    <span className="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded">
-                      -{highlight.avgSavings}
-                    </span>
-                  </div>
+                  <Card>
+                    <CardContent sx={{ p: 2 }}>
+                      <Typography variant="subtitle1" sx={{ color: 'grey.900', fontWeight: 'medium', mb: 1 }}>
+                        {capability.title}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'grey.600', mb: 2 }}>
+                        {capability.description}
+                      </Typography>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'semibold', color: 'primary.main' }}>
+                          {capability.metric}
+                        </Typography>
+                        <Chip
+                          label={capability.trend}
+                          size="small"
+                          color="success"
+                          sx={{ fontSize: '0.75rem' }}
+                        />
+                      </Box>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               ))}
-            </div>
-          </div>
+            </Stack>
 
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <h4 className="font-medium text-sm text-gray-900 mb-2">
-              Quick Actions
-            </h4>
-            <div className="space-y-2">
-              <button
-                onClick={() => navigate('/rfq/create')}
-                className="w-full text-left text-xs text-[#1E4C8A] hover:bg-blue-50 p-2 rounded transition-colors"
-              >
-                📝 Create Your First RFQ
-              </button>
-              <button
-                onClick={() => navigate('/marketplace')}
-                className="w-full text-left text-xs text-[#1E4C8A] hover:bg-blue-50 p-2 rounded transition-colors"
-              >
-                🛒 Browse Marketplace
-              </button>
-              <button
-                onClick={() => navigate('/suppliers')}
-                className="w-full text-left text-xs text-[#1E4C8A] hover:bg-blue-50 p-2 rounded transition-colors"
-              >
-                🏢 Find Suppliers
-              </button>
-              <button
-                onClick={() => navigate('/samples')}
-                className="w-full text-left text-xs text-[#1E4C8A] hover:bg-blue-50 p-2 rounded transition-colors"
-              >
-                🧪 Request Samples
-              </button>
-            </div>
-          </div>
+            <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 2 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 'medium', color: 'grey.900', mb: 2 }}>
+                Marketplace Overview
+              </Typography>
+              <Stack spacing={1}>
+                {marketplaceHighlights.map((highlight, index) => (
+                  <motion.div
+                    key={highlight.category}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + index * 0.1 }}
+                  >
+                    <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box>
+                          <Typography variant="body2" sx={{ color: 'grey.900', fontWeight: 'medium' }}>
+                            {highlight.category}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: 'grey.600' }}>
+                            {highlight.suppliers} suppliers • {highlight.products} products
+                          </Typography>
+                        </Box>
+                        <Chip
+                          label={`-${highlight.avgSavings}`}
+                          size="small"
+                          color="success"
+                          sx={{ fontSize: '0.75rem' }}
+                        />
+                      </Box>
+                    </Box>
+                  </motion.div>
+                ))}
+              </Stack>
+            </Box>
+
+            <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 2, mt: 2 }}>
+              <Typography variant="subtitle2" sx={{ color: 'grey.900', fontWeight: 'medium', mb: 2 }}>
+                Quick Actions
+              </Typography>
+              <Stack spacing={1}>
+                <Button
+                  onClick={() => navigate('/rfq/create')}
+                  variant="outlined"
+                  fullWidth
+                  sx={{ justifyContent: 'flex-start', borderRadius: 2 }}
+                >
+                  📝 Create Your First RFQ
+                </Button>
+                <Button
+                  onClick={() => navigate('/marketplace')}
+                  variant="outlined"
+                  fullWidth
+                  sx={{ justifyContent: 'flex-start', borderRadius: 2 }}
+                >
+                  🛒 Browse Marketplace
+                </Button>
+                <Button
+                  onClick={() => navigate('/suppliers')}
+                  variant="outlined"
+                  fullWidth
+                  sx={{ justifyContent: 'flex-start', borderRadius: 2 }}
+                >
+                  🏢 Find Suppliers
+                </Button>
+                <Button
+                  onClick={() => navigate('/samples')}
+                  variant="outlined"
+                  fullWidth
+                  sx={{ justifyContent: 'flex-start', borderRadius: 2 }}
+                >
+                  🧪 Request Samples
+                </Button>
+              </Stack>
+            </Box>
+          </Paper>
         </motion.div>
       )}
 
       {/* Onboarding Checklist - Always visible after tour */}
       {!showTour && !showWelcome && (
-        <div className="fixed bottom-4 right-4 w-80">
+        <Box sx={{ m: 2 }}>
           <OnboardingChecklist
             items={buyerChecklistItems}
           />
-        </div>
+        </Box>
       )}
     </>
   );

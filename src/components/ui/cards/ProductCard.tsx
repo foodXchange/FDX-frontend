@@ -1,3 +1,5 @@
+import React from 'react';
+import { Box, Card, CardContent, CardMedia, Typography, Button, Stack } from '@mui/material';
 import { Badge } from '../Badge';
 import { ShieldCheckIcon, ClockIcon } from '@heroicons/react/24/outline';
 
@@ -30,51 +32,116 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onQuickRFQ
 }) => {
   return (
-    <div className="group relative bg-white rounded-xl shadow-md card-hover overflow-hidden">
-      <div className="aspect-w-16 aspect-h-9 relative">
-        <img src={image} alt={name} className="w-full h-48 object-cover" />
+    <Card
+      sx={{
+        position: 'relative',
+        borderRadius: 3,
+        overflow: 'hidden',
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: 4,
+          '& .MuiBox-root:last-child': {
+            opacity: 1,
+          }
+        }
+      }}
+    >
+      <Box sx={{ position: 'relative' }}>
+        <CardMedia
+          component="img"
+          height="192"
+          image={image}
+          alt={name}
+          sx={{ objectFit: 'cover' }}
+        />
         {verified && (
-          <div className="absolute top-2 right-2">
-            <div className="bg-[#1E4C8A] text-white p-2 rounded-full">
-              <ShieldCheckIcon className="w-5 h-5" />
-            </div>
-          </div>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              bgcolor: '#1E4C8A',
+              color: 'white',
+              p: 1,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Box component={ShieldCheckIcon} sx={{ width: 20, height: 20 }} />
+          </Box>
         )}
-        <div className="absolute top-2 left-2 flex gap-1">
+        <Box sx={{ position: 'absolute', top: 8, left: 8, display: 'flex', gap: 0.5 }}>
           {certifications.slice(0, 3).map((cert, i) => (
             <Badge key={i} variant="certification" size="sm">{cert}</Badge>
           ))}
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-lg text-gray-900 truncate">{name}</h3>
-        <p className="text-sm text-gray-600 mb-3">{supplier}</p>
-        <div className="space-y-2 mb-4">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Price</span>
-            <span className="font-semibold text-[#B08D57]">{price}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-500">MOQ</span>
-            <span className="font-medium">{moq}</span>
-          </div>
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <ClockIcon className="w-4 h-4" />
-            <span>{leadTime}</span>
-          </div>
-        </div>
-        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onClick={onView} className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors">
+        </Box>
+      </Box>
+      <CardContent sx={{ p: 2 }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {name}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+          {supplier}
+        </Typography>
+        <Stack spacing={1} sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>Price</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 600, color: '#B08D57' }}>{price}</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>MOQ</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>{moq}</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontSize: '0.875rem', color: 'text.secondary' }}>
+            <Box component={ClockIcon} sx={{ width: 16, height: 16 }} />
+            <Typography variant="body2">{leadTime}</Typography>
+          </Box>
+        </Stack>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1,
+            opacity: 0,
+            transition: 'opacity 0.3s'
+          }}
+        >
+          <Button
+            size="small"
+            onClick={onView}
+            sx={{
+              flex: 1,
+              bgcolor: 'grey.100',
+              color: 'text.primary',
+              '&:hover': { bgcolor: 'grey.200' }
+            }}
+          >
             View
-          </button>
-          <button onClick={onRequestSample} className="flex-1 px-3 py-2 bg-[#52B788] text-white hover:bg-[#2D7A5F] rounded-lg text-sm font-medium transition-colors">
+          </Button>
+          <Button
+            size="small"
+            onClick={onRequestSample}
+            sx={{
+              flex: 1,
+              bgcolor: '#52B788',
+              color: 'white',
+              '&:hover': { bgcolor: '#2D7A5F' }
+            }}
+          >
             Sample
-          </button>
-          <button onClick={onQuickRFQ} className="flex-1 px-3 py-2 btn-primary rounded-lg text-sm font-medium">
+          </Button>
+          <Button
+            size="small"
+            variant="contained"
+            onClick={onQuickRFQ}
+            sx={{ flex: 1 }}
+          >
             RFQ
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </Box>
+      </CardContent>
+    </Card>
   );
 };

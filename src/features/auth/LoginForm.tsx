@@ -1,10 +1,29 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { Button } from '../../components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/Card';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+  Card,
+  CardContent,
+  CardHeader,
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+  CircularProgress,
+  Link,
+  Stack
+} from '@mui/material';
+import {
+  Visibility,
+  VisibilityOff
+} from '@mui/icons-material';
 
 // Validation schema
 const loginSchema = z.object({
@@ -58,147 +77,164 @@ export function LoginForm({ onLogin, loading = false, error }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo and Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="text-4xl font-bold">
-              <span className="text-orange-500">X</span>
-              <span className="text-teal-600">FOOD</span>
-            </div>
-          </div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">FoodXchange</h1>
-          <p className="text-gray-600">Transforming Global Food Sourcing</p>
-        </div>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'grey.50',
+        py: 3,
+        px: { xs: 2, sm: 3, lg: 4 }
+      }}
+    >
+      <Container maxWidth="sm">
+        <Stack spacing={4}>
+          {/* Logo and Header */}
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography
+              variant="h3"
+              component="div"
+              sx={{
+                fontWeight: 'bold',
+                mb: 2,
+                display: 'inline-flex',
+                alignItems: 'center'
+              }}
+            >
+              <Box component="span" sx={{ color: 'warning.main' }}>X</Box>
+              <Box component="span" sx={{ color: 'info.main' }}>FOOD</Box>
+            </Typography>
+            <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+              FoodXchange
+            </Typography>
+            <Typography color="text.secondary">
+              Transforming Global Food Sourcing
+            </Typography>
+          </Box>
 
-        {/* Login Card */}
-        <Card variant="glass" padding="lg" shadow="xl">
-          <CardHeader>
-            <CardTitle className="text-center">Welcome Back</CardTitle>
-            <CardDescription className="text-center">
-              Sign in to access your FoodXchange dashboard
-            </CardDescription>
-          </CardHeader>
+          {/* Login Card */}
+          <Card sx={{ boxShadow: 3 }}>
+            <CardHeader
+              title="Welcome Back"
+              subheader="Sign in to access your FoodXchange dashboard"
+              titleTypographyProps={{ align: 'center', variant: 'h5' }}
+              subheaderTypographyProps={{ align: 'center' }}
+              sx={{ pb: 0 }}
+            />
 
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Global Error */}
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
+            <CardContent sx={{ p: 3 }}>
+              <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+                <Stack spacing={3}>
+                  {/* Global Error */}
+                  {error && (
+                    <Alert severity="error" sx={{ width: '100%' }}>
+                      {error}
+                    </Alert>
+                  )}
 
-              {/* Email Field */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Email Address
-                </label>
-                <input
-                  {...register('email')}
-                  type="email"
-                  className={`w-full px-4 py-3 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.email 
-                      ? 'border-red-300 bg-red-50' 
-                      : 'border-gray-200 bg-white'
-                  }`}
-                  placeholder="Enter your email"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
-              </div>
+                  {/* Email Field */}
+                  <TextField
+                    {...register('email')}
+                    type="email"
+                    label="Email Address"
+                    fullWidth
+                    autoComplete="email"
+                    placeholder="Enter your email"
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                  />
 
-              {/* Password Field */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
+                  {/* Password Field */}
+                  <TextField
                     {...register('password')}
                     type={showPassword ? 'text' : 'password'}
-                    className={`w-full px-4 py-3 pr-12 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.password 
-                        ? 'border-red-300 bg-red-50' 
-                        : 'border-gray-200 bg-white'
-                    }`}
+                    label="Password"
+                    fullWidth
+                    autoComplete="current-password"
                     placeholder="Enter your password"
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                            aria-label="toggle password visibility"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+
+                  {/* Remember Me */}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        {...register('rememberMe')}
+                        color="primary"
+                      />
+                    }
+                    label="Remember me for 30 days"
+                  />
+
+                  {/* Submit Button */}
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    size="large"
+                    disabled={!isValid || loading}
+                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
                   >
-                    {showPassword ? (
-                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-red-500 text-sm">{errors.password.message}</p>
-                )}
-              </div>
+                    {loading ? 'Signing In...' : 'Sign In'}
+                  </Button>
 
-              {/* Remember Me */}
-              <div className="flex items-center space-x-2">
-                <input
-                  {...register('rememberMe')}
-                  type="checkbox"
-                  id="rememberMe"
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <label htmlFor="rememberMe" className="text-sm text-gray-600">
-                  Remember me for 30 days
-                </label>
-              </div>
+                  {/* Demo Credentials */}
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Button
+                      variant="text"
+                      onClick={fillDemoCredentials}
+                      color="primary"
+                      sx={{ textTransform: 'none' }}
+                    >
+                      Use Demo Credentials
+                    </Button>
+                    <Typography variant="caption" display="block" color="text.secondary">
+                      Demo: demo@foodxchange.com / demo123
+                    </Typography>
+                  </Box>
 
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full"
-                loading={loading}
-                disabled={!isValid}
-              >
-                {loading ? 'Signing In...' : 'Sign In'}
-              </Button>
+                  {/* Forgot Password */}
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Link
+                      href="/forgot-password"
+                      underline="hover"
+                      color="text.secondary"
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      Forgot your password?
+                    </Link>
+                  </Box>
+                </Stack>
+              </Box>
+            </CardContent>
+          </Card>
 
-              {/* Demo Credentials */}
-              <div className="text-center space-y-2">
-                <button
-                  type="button"
-                  onClick={fillDemoCredentials}
-                  className="text-sm text-blue-600 hover:text-blue-800 underline"
-                >
-                  Use Demo Credentials
-                </button>
-                <p className="text-xs text-gray-500">
-                  Demo: demo@foodxchange.com / demo123
-                </p>
-              </div>
-
-              {/* Forgot Password */}
-              <div className="text-center">
-                <button
-                  type="button"
-                  className="text-sm text-gray-600 hover:text-gray-800"
-                >
-                  Forgot your password?
-                </button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* Footer */}
-        <div className="text-center mt-6 text-xs text-gray-500">
-          By signing in, you agree to our Terms of Service and Privacy Policy
-        </div>
-      </div>
-    </div>
+          {/* Footer */}
+          <Typography
+            variant="caption"
+            align="center"
+            color="text.secondary"
+            sx={{ mt: 3 }}
+          >
+            By signing in, you agree to our Terms of Service and Privacy Policy
+          </Typography>
+        </Stack>
+      </Container>
+    </Box>
   );
 }

@@ -1,3 +1,4 @@
+import React from 'react';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { 
@@ -8,7 +9,6 @@ import {
   AgentNotification, 
   AgentTask, 
   WhatsAppMessage, 
-  WhatsAppTemplate,
   AgentStore 
 } from '../types';
 
@@ -25,7 +25,7 @@ const initialFilters: LeadSearchFilters = {
 
 export const useAgentStore = create<AgentStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Agent data
       currentAgent: null,
       isAuthenticated: false,
@@ -144,6 +144,14 @@ export const useAgentStore = create<AgentStore>()(
 
       updateLastSync: () => {
         set({ lastSyncAt: new Date().toISOString() });
+      },
+
+      updateAgent: (updates: Partial<Agent>) => {
+        set((state) => ({
+          currentAgent: state.currentAgent 
+            ? { ...state.currentAgent, ...updates }
+            : null,
+        }));
       },
 
       logout: () => {

@@ -1,7 +1,7 @@
+import React, { useState } from 'react';
 import { FC, useState } from 'react';
 import {
   Box,
-  Grid,
   Card,
   CardMedia,
   CardContent,
@@ -12,8 +12,8 @@ import {
   DialogTitle,
   IconButton,
   Stack,
-  Button,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   Close,
   CalendarMonth,
@@ -69,7 +69,7 @@ export const PortfolioGallery: FC<PortfolioGalleryProps> = ({ portfolio }) => {
     <>
       <Grid container spacing={3}>
         {portfolio.map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item.id}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.id}>
             <Card
               sx={{
                 height: '100%',
@@ -253,7 +253,7 @@ export const PortfolioGallery: FC<PortfolioGalleryProps> = ({ portfolio }) => {
                   </Box>
 
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                       <Box display="flex" alignItems="center" gap={1}>
                         <CalendarMonth color="action" />
                         <Box>
@@ -267,7 +267,7 @@ export const PortfolioGallery: FC<PortfolioGalleryProps> = ({ portfolio }) => {
                       </Box>
                     </Grid>
                     {selectedItem.client && (
-                      <Grid item xs={12} sm={4}>
+                      <Grid size={{ xs: 12, sm: 4 }}>
                         <Box display="flex" alignItems="center" gap={1}>
                           <Business color="action" />
                           <Box>
@@ -281,7 +281,7 @@ export const PortfolioGallery: FC<PortfolioGalleryProps> = ({ portfolio }) => {
                         </Box>
                       </Grid>
                     )}
-                    <Grid item xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                       <Box display="flex" alignItems="center" gap={1}>
                         <EmojiEvents color="action" />
                         <Box>

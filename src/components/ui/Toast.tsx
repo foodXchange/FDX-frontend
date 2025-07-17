@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   CheckCircleIcon,
@@ -9,6 +9,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { Box, Typography, Button, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+
+import { Theme } from '@mui/material/styles';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -25,7 +27,7 @@ export interface ToastProps {
   onClose?: (id: string) => void;
 }
 
-const getToastConfig = (theme: any) => ({
+const getToastConfig = (theme: Theme) => ({
   success: {
     icon: CheckCircleIcon,
     backgroundColor: theme.palette.success.light + '20',
@@ -111,9 +113,11 @@ export const Toast: React.FC<ToastProps> = ({
           <Box sx={{ p: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
               <Box sx={{ flexShrink: 0 }}>
-                <Icon 
-                  className="h-6 w-6"
-                  style={{ 
+                <Box 
+                  component={Icon}
+                  sx={{ 
+                    width: 24,
+                    height: 24,
                     color: config.iconColor 
                   }} 
                 />
@@ -174,7 +178,7 @@ export const Toast: React.FC<ToastProps> = ({
                     },
                   }}
                 >
-                  <XMarkIcon className="h-6 w-6" />
+                  <Box component={XMarkIcon} sx={{ width: 24, height: 24 }} />
                 </IconButton>
               </Box>
             </Box>

@@ -1,10 +1,15 @@
 import React from 'react';
+import { Grid, Typography } from '@mui/material';
 
 export const ProductList: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <p className="text-gray-600 col-span-full">Products will be displayed here.</p>
-    </div>
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Typography variant="body2" sx={{ color: 'grey.600' }}>
+          Products will be displayed here.
+        </Typography>
+      </Grid>
+    </Grid>
   );
 };
 

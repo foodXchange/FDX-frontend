@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useCallback, useMemo } from 'react';
 import { useDebounce } from './useDebounce';
 
@@ -30,7 +31,6 @@ export function useOptimizedSearch<T>(
   } = config;
 
   const [query, setQuery] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
   const debouncedQuery = useDebounce(query, debounceMs);
 
   // Create search index for better performance
@@ -107,7 +107,7 @@ export function useOptimizedSearch<T>(
       if (matchingSets.length === 0) return [];
       
       return matchingSets.reduce((acc, current) => 
-        acc.filter(item => current.includes(item))
+        acc.filter((item: T) => current.includes(item))
       );
     }
 
@@ -148,13 +148,11 @@ export function useOptimizedSearch<T>(
   }, [data, debouncedQuery, query, performSearch]);
 
   const search = useCallback((newQuery: string) => {
-    setIsSearching(true);
     setQuery(newQuery);
   }, []);
 
   const clear = useCallback(() => {
     setQuery('');
-    setIsSearching(false);
   }, []);
 
   return [results, search, clear];

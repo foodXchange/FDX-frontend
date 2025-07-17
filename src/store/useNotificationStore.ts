@@ -12,7 +12,7 @@ export interface Notification {
   actionUrl?: string;
   actionLabel?: string;
   category?: 'rfq' | 'order' | 'compliance' | 'system';
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface NotificationState {

@@ -1,17 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Box,
+  Typography,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  Avatar,
+  Stack,
+  Fab,
+  Backdrop,
+  Paper,
+  IconButton,
+  Divider
+} from '@mui/material';
+import {
+  People as UserGroupIcon,
+  ShoppingBag as ShoppingBagIcon,
+  AutoAwesome as SparklesIcon,
+  Close as XMarkIcon
+} from '@mui/icons-material';
 import { SellerOnboardingTour, useSellerOnboarding } from './SellerOnboardingTour';
 import { BuyerOnboardingTour, useBuyerOnboarding } from './BuyerOnboardingTour';
 import { DemoShowcase } from './InteractiveDemoComponents';
 import { useAppStore } from '../../store/useAppStore';
 import { UserRole } from '../../shared/types';
-import { Button } from '../ui/Button';
-import { 
-  UserGroupIcon, 
-  ShoppingBagIcon, 
-  SparklesIcon,
-  XMarkIcon 
-} from '@heroicons/react/24/outline';
 
 interface OnboardingManagerProps {
   forceShow?: boolean;
@@ -68,21 +83,21 @@ export const OnboardingManager: React.FC<OnboardingManagerProps> = ({
         title: 'Welcome to FoodXchange for Suppliers',
         description: 'Showcase your products, respond to RFQs, and grow your business with AI-powered insights.',
         icon: ShoppingBagIcon,
-        color: 'from-green-500 to-blue-600'
+        color: 'linear-gradient(135deg, #4ade80, #3b82f6)'
       };
     } else if (user?.role === UserRole.BUYER) {
       return {
         title: 'Welcome to FoodXchange for Buyers',
         description: 'Find verified suppliers, streamline procurement, and make data-driven purchasing decisions.',
         icon: UserGroupIcon,
-        color: 'from-blue-500 to-purple-600'
+        color: 'linear-gradient(135deg, #3b82f6, #8b5cf6)'
       };
     }
     return {
       title: 'Welcome to FoodXchange',
       description: 'The future of B2B food commerce is here.',
       icon: SparklesIcon,
-      color: 'from-indigo-500 to-purple-600'
+      color: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
     };
   };
 
@@ -111,35 +126,35 @@ export const OnboardingManager: React.FC<OnboardingManagerProps> = ({
   // Show demo showcase
   if (showDemoShowcase) {
     return (
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[2000] p-4"
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-          >
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-              <h2 className="text-xl font-bold gradient-text">Platform Demo</h2>
-              <button
-                onClick={handleCloseDemo}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <XMarkIcon className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
-            
-            <div className="p-6">
-              <DemoShowcase />
-            </div>
-          </motion.div>
-        </motion.div>
-      </AnimatePresence>
+      <Dialog
+        open={showDemoShowcase}
+        onClose={handleCloseDemo}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            overflow: 'hidden'
+          }
+        }}
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h5" sx={{ 
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            Platform Demo
+          </Typography>
+          <IconButton onClick={handleCloseDemo}>
+            <XMarkIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <DemoShowcase />
+        </DialogContent>
+      </Dialog>
     );
   }
 
@@ -149,83 +164,90 @@ export const OnboardingManager: React.FC<OnboardingManagerProps> = ({
   }
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[2000] p-4"
+    <Backdrop open={true} sx={{ zIndex: 1300 }}>
+      <Paper 
+        sx={{ 
+          p: 4, 
+          maxWidth: 480, 
+          width: '90%', 
+          borderRadius: 3,
+          textAlign: 'center'
+        }}
       >
+        {/* Animated Icon */}
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          className="glass-morphism rounded-2xl p-8 max-w-lg w-full text-center"
+          animate={{
+            scale: [1, 1.1, 1],
+            rotate: [0, 5, -5, 0]
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            repeatDelay: 3
+          }}
         >
-          {/* Animated Icon */}
-          <motion.div
-            animate={{
-              scale: [1, 1.1, 1],
-              rotate: [0, 5, -5, 0]
+          <Avatar
+            sx={{
+              width: 80,
+              height: 80,
+              mx: 'auto',
+              mb: 3,
+              background: roleContent.color
             }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              repeatDelay: 3
-            }}
-            className={`w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center bg-gradient-to-r ${roleContent.color}`}
           >
-            <IconComponent className="w-10 h-10 text-white" />
-          </motion.div>
-
-          <h2 className="text-2xl font-bold mb-4 gradient-text">
-            {roleContent.title}
-          </h2>
-
-          <p className="text-gray-600 mb-8 leading-relaxed">
-            {roleContent.description}
-          </p>
-
-          <div className="space-y-4">
-            <Button
-              variant="default"
-              size="lg"
-              onClick={() => setOnboardingMode('auto')}
-              className="w-full hover-lift"
-            >
-              <SparklesIcon className="w-5 h-5 mr-2" />
-              Start Guided Tour
-            </Button>
-
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={handleShowDemo}
-              className="w-full"
-            >
-              <UserGroupIcon className="w-5 h-5 mr-2" />
-              See Platform Demo
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleOnboardingComplete}
-              className="w-full text-gray-500"
-            >
-              Skip - I'll Explore on My Own
-            </Button>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="flex items-center justify-center text-xs text-gray-500">
-              <SparklesIcon className="w-4 h-4 mr-1" />
-              You can always access these tours from the help menu
-            </div>
-          </div>
+            <IconComponent sx={{ fontSize: 40, color: 'white' }} />
+          </Avatar>
         </motion.div>
-      </motion.div>
-    </AnimatePresence>
+
+        <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+          {roleContent.title}
+        </Typography>
+
+        <Typography variant="body1" sx={{ color: 'grey.600', mb: 4 }}>
+          {roleContent.description}
+        </Typography>
+
+        <Stack spacing={2}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => setOnboardingMode('auto')}
+            startIcon={<SparklesIcon />}
+            fullWidth
+          >
+            Start Guided Tour
+          </Button>
+
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={handleShowDemo}
+            startIcon={<UserGroupIcon />}
+            fullWidth
+          >
+            See Platform Demo
+          </Button>
+
+          <Button
+            variant="text"
+            size="small"
+            onClick={handleOnboardingComplete}
+            fullWidth
+          >
+            Skip - I'll Explore on My Own
+          </Button>
+        </Stack>
+
+        <Divider sx={{ my: 3 }} />
+        
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <SparklesIcon sx={{ fontSize: 16, mr: 1, color: 'grey.500' }} />
+          <Typography variant="caption" sx={{ color: 'grey.500' }}>
+            You can always access these tours from the help menu
+          </Typography>
+        </Box>
+      </Paper>
+    </Backdrop>
   );
 };
 
@@ -240,13 +262,13 @@ export const OnboardingFloatingButton: React.FC = () => {
       label: 'Take Tour',
       icon: SparklesIcon,
       onClick: () => setShowManager(true),
-      color: 'from-blue-500 to-purple-600'
+      color: 'linear-gradient(135deg, #3b82f6, #8b5cf6)'
     },
     {
       label: 'View Demo',
       icon: UserGroupIcon,
       onClick: () => setShowManager(true),
-      color: 'from-green-500 to-blue-600'
+      color: 'linear-gradient(135deg, #4ade80, #3b82f6)'
     }
   ];
 
@@ -254,8 +276,8 @@ export const OnboardingFloatingButton: React.FC = () => {
 
   return (
     <>
-      <div className="fixed bottom-6 left-6 z-[1000]">
-        <div className="relative">
+      <Box sx={{ position: 'fixed', bottom: 24, left: 24, zIndex: 1000 }}>
+        <Box sx={{ position: 'relative' }}>
           {/* Action buttons */}
           <AnimatePresence>
             {isExpanded && (
@@ -263,45 +285,72 @@ export const OnboardingFloatingButton: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                className="absolute bottom-16 left-0 space-y-2"
+                style={{ position: 'absolute', bottom: 80, left: 0 }}
               >
-                {actions.map((action, index) => {
-                  const IconComponent = action.icon;
-                  return (
-                    <motion.button
-                      key={action.label}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ delay: index * 0.1 }}
-                      onClick={action.onClick}
-                      className={`flex items-center px-4 py-2 rounded-lg text-white font-medium text-sm shadow-lg hover:shadow-xl transition-all hover-lift bg-gradient-to-r ${action.color}`}
-                    >
-                      <IconComponent className="w-4 h-4 mr-2" />
-                      {action.label}
-                    </motion.button>
-                  );
-                })}
+                <Stack spacing={1}>
+                  {actions.map((action, index) => {
+                    const IconComponent = action.icon;
+                    return (
+                      <motion.div
+                        key={action.label}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Button
+                          variant="contained"
+                          startIcon={<IconComponent />}
+                          onClick={action.onClick}
+                          sx={{
+                            background: action.color,
+                            color: 'white',
+                            fontWeight: 'medium',
+                            fontSize: '0.875rem',
+                            boxShadow: 3,
+                            '&:hover': {
+                              boxShadow: 6,
+                              transform: 'translateY(-2px)'
+                            },
+                            transition: 'all 0.2s ease-in-out'
+                          }}
+                        >
+                          {action.label}
+                        </Button>
+                      </motion.div>
+                    );
+                  })}
+                </Stack>
               </motion.div>
             )}
           </AnimatePresence>
 
           {/* Main floating button */}
-          <motion.button
+          <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-purple-500 to-pink-600 text-white flex items-center justify-center hover-lift"
           >
-            <motion.div
-              animate={{ rotate: isExpanded ? 45 : 0 }}
-              transition={{ duration: 0.2 }}
+            <Fab
+              color="primary"
+              onClick={() => setIsExpanded(!isExpanded)}
+              sx={{
+                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                boxShadow: 3,
+                '&:hover': {
+                  boxShadow: 6
+                }
+              }}
             >
-              <SparklesIcon className="w-6 h-6" />
-            </motion.div>
-          </motion.button>
-        </div>
-      </div>
+              <motion.div
+                animate={{ rotate: isExpanded ? 45 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <SparklesIcon />
+              </motion.div>
+            </Fab>
+          </motion.div>
+        </Box>
+      </Box>
 
       {/* Onboarding Manager */}
       {showManager && (

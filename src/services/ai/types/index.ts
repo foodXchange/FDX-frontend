@@ -1,3 +1,4 @@
+// TypeScript type definitions for AI services including predictions, search, and analytics
 export interface AIProvider {
   name: 'openai' | 'claude' | 'custom';
   model: string;
@@ -118,4 +119,49 @@ export interface RecommendationEngine {
   getUserRecommendations(userId: string): Promise<SearchResult[]>;
   getProductRecommendations(productId: string): Promise<SearchResult[]>;
   getSupplierRecommendations(criteria: any): Promise<SupplierMatch[]>;
+}
+
+// Supply Chain Optimization Types
+export interface DeliveryOptimization {
+  id: string;
+  location: { lat: number; lng: number };
+  deliveryWindow: { start: string; end: string };
+  priority: 'high' | 'medium' | 'low';
+  products: { id: string; temperature: 'ambient' | 'frozen' | 'chilled' }[];
+}
+
+export interface InventoryOptimization {
+  id: string;
+  currentStock: number;
+  dailyDemand: number;
+  leadTime: number;
+  unitCost: number;
+  holdingCost: number;
+  orderingCost: number;
+  perishable: boolean;
+  shelfLife?: number;
+}
+
+export interface TemperatureRisk {
+  id: string;
+  route: { location: string; duration: number }[];
+  products: { temperatureRange: { min: number; max: number } }[];
+  vehicleType: 'ambient' | 'frozen' | 'refrigerated';
+  weatherConditions: any;
+}
+
+// Market Intelligence Types
+export interface MarketExpansion {
+  currentCategories: string[];
+  capabilities: string[];
+  budget: number;
+  riskTolerance: 'high' | 'medium' | 'low';
+  timeframe: 'short' | 'medium' | 'long';
+}
+
+export interface CompetitorAnalysis {
+  category: string;
+  region: string;
+  customerSegment: string;
+  competitionLevel: 'high' | 'medium' | 'low';
 }

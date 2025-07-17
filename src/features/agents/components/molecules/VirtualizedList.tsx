@@ -1,7 +1,6 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Box,
-  List,
   ListItem,
   ListItemText,
   Typography,
@@ -102,15 +101,17 @@ const VirtualizedList: React.FC<VirtualizedListProps> = ({
 
   // Render individual list item
   const renderItem = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
-    const item = virtualization.visibleItems[index];
+    const visibleItem = virtualization.visibleItems[index];
     
-    if (!item) {
+    if (!visibleItem) {
       return (
         <div style={style}>
           <Skeleton variant="rectangular" width="100%" height={itemHeight - 8} />
         </div>
       );
     }
+
+    const item = visibleItem.item;
 
     if (renderCustomItem) {
       return (
@@ -226,6 +227,7 @@ const VirtualizedList: React.FC<VirtualizedListProps> = ({
       <Box position="relative">
         <VirtualList
           height={height}
+          width="100%"
           itemCount={virtualization.visibleItems.length}
           itemSize={itemHeight}
           overscanCount={5}

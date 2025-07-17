@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { FC, useState } from 'react';
 import {
   Box,
@@ -33,7 +34,7 @@ import {
   Comment,
   Edit,
 } from '@mui/icons-material';
-import { format, isPast, addDays } from 'date-fns';
+import { format, isPast } from 'date-fns';
 import { Deliverable } from '../../types';
 
 interface DeliverablesPanelProps {

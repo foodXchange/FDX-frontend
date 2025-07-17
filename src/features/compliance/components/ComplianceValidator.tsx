@@ -1,8 +1,33 @@
-// File: C:\Users\foodz\Documents\GitHub\Development\FDX-frontend\src\features\compliance\components\ComplianceValidator.tsx
-
 import React, { useState } from 'react';
-import { CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
-import { ClipboardDocumentCheckIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  Chip,
+  Tabs,
+  Tab,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Alert,
+  AlertTitle,
+  CircularProgress,
+  Stack,
+  Avatar,
+  Paper,
+  Divider
+} from '@mui/material';
+import {
+  CheckCircle as CheckCircleIcon,
+  Cancel as XCircleIcon,
+  Warning as ExclamationTriangleIcon,
+  Assignment as ClipboardDocumentCheckIcon,
+  Security as ShieldCheckIcon
+} from '@mui/icons-material';
 
 interface ValidationResult {
   passed: boolean;
@@ -75,248 +100,292 @@ export const ComplianceValidator: React.FC<ComplianceValidatorProps> = ({
     const isValid = !['green', 'blue', 'purple', 'red'].includes(color?.colorName?.toLowerCase());
     
     return (
-      <div className={`p-4 rounded-lg border-2 ${isValid ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
-        <div className="flex items-center justify-between">
-          <div>
-            <h4 className="font-semibold">Color Specification</h4>
-            <p className="text-sm text-gray-600">{color?.colorName || 'Not specified'}</p>
-          </div>
-          <div className="flex items-center space-x-2">
+      <Alert
+        severity={isValid ? 'success' : 'error'}
+        sx={{ border: 2, borderColor: isValid ? 'success.main' : 'error.main' }}
+        icon={isValid ? <CheckCircleIcon /> : <XCircleIcon />}
+      >
+        <AlertTitle>Color Specification</AlertTitle>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box>
+            <Typography variant="body2">
+              {color?.colorName || 'Not specified'}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {color?.hexCode && (
-              <div 
-                className="w-12 h-12 rounded border-2 border-gray-300"
-                style={{ backgroundColor: color.hexCode }}
+              <Box
+                sx={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 1,
+                  border: 2,
+                  borderColor: 'divider',
+                  bgcolor: color.hexCode
+                }}
               />
             )}
-            {isValid ? (
-              <CheckCircleIcon className="h-8 w-8 text-green-500" />
-            ) : (
-              <XCircleIcon className="h-8 w-8 text-red-500" />
-            )}
-          </div>
-        </div>
+          </Box>
+        </Box>
         {!isValid && (
-          <div className="mt-2 p-2 bg-red-100 rounded text-sm text-red-700">
-            <strong>Critical Error:</strong> This color will cause product rejection.
-            <br />Allowed colors: golden, light golden, amber, honey
-          </div>
+          <Box sx={{ mt: 1 }}>
+            <Typography variant="body2" color="error">
+              <strong>Critical Error:</strong> This color will cause product rejection.
+              <br />Allowed colors: golden, light golden, amber, honey
+            </Typography>
+          </Box>
         )}
-      </div>
+      </Alert>
     );
   };
 
   // Validation score display
   const ScoreDisplay = ({ score }: { score: number }) => {
     const getScoreColor = () => {
-      if (score >= 80) return 'text-green-600';
-      if (score >= 60) return 'text-yellow-600';
-      return 'text-red-600';
+      if (score >= 80) return 'success.main';
+      if (score >= 60) return 'warning.main';
+      return 'error.main';
     };
 
     const getScoreBackground = () => {
-      if (score >= 80) return 'bg-green-100';
-      if (score >= 60) return 'bg-yellow-100';
-      return 'bg-red-100';
+      if (score >= 80) return 'success.light';
+      if (score >= 60) return 'warning.light';
+      return 'error.light';
     };
 
     return (
-      <div className={`inline-flex items-center px-4 py-2 rounded-full ${getScoreBackground()}`}>
-        <span className={`text-2xl font-bold ${getScoreColor()}`}>{score}</span>
-        <span className="text-sm ml-1 text-gray-600">/100</span>
-      </div>
+      <Box
+        sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          px: 2,
+          py: 1,
+          borderRadius: '50px',
+          bgcolor: getScoreBackground(),
+        }}
+      >
+        <Typography variant="h4" sx={{ color: getScoreColor(), fontWeight: 'bold' }}>
+          {score}
+        </Typography>
+        <Typography variant="body2" sx={{ ml: 0.5, color: 'text.secondary' }}>
+          /100
+        </Typography>
+      </Box>
     );
   };
 
-  return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <ShieldCheckIcon className="h-8 w-8 text-blue-600" />
-          <h2 className="text-2xl font-bold text-gray-900">Compliance Validation</h2>
-        </div>
-        <button
-          onClick={runFullValidation}
-          disabled={isValidating}
-          className={`px-6 py-3 rounded-lg font-medium transition-all ${
-            isValidating 
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
-        >
-          {isValidating ? (
-            <span className="flex items-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Validating...
-            </span>
-          ) : (
-            'Run Full Validation'
-          )}
-        </button>
+  interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+  }
+
+  function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
       </div>
+    );
+  }
 
-      {/* Real-time errors */}
-      {Object.keys(realTimeErrors).length > 0 && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <h3 className="font-semibold text-red-800 mb-2">Real-time Validation Errors</h3>
-          {Object.entries(realTimeErrors).map(([field, error]) => (
-            <div key={field} className="text-sm text-red-600 mb-1">
-              <strong>{field}:</strong> {error}
-            </div>
-          ))}
-        </div>
-      )}
+  return (
+    <Card sx={{ boxShadow: 3 }}>
+      <CardHeader
+        avatar={<ShieldCheckIcon color="primary" />}
+        title="Compliance Validation"
+        titleTypographyProps={{ variant: 'h5' }}
+        action={
+          <Button
+            variant="contained"
+            onClick={runFullValidation}
+            disabled={isValidating}
+            startIcon={isValidating ? <CircularProgress size={20} /> : null}
+          >
+            {isValidating ? 'Validating...' : 'Run Full Validation'}
+          </Button>
+        }
+      />
+      <CardContent>
+        <Stack spacing={3}>
 
-      {/* Color preview for cornflakes */}
-      {productType === 'cornflakes' && specifications?.specifications?.visual?.primaryColor && (
-        <div className="mb-6">
-          <ColorValidationPreview color={specifications.specifications.visual.primaryColor} />
-        </div>
-      )}
-
-      {/* Validation Results */}
-      {validationResult && (
-        <div className="space-y-6">
-          {/* Score and Status */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center space-x-4">
-              <ScoreDisplay score={validationResult.score} />
-              <div>
-                <p className="text-sm text-gray-600">Compliance Status</p>
-                <p className={`text-lg font-semibold ${validationResult.passed ? 'text-green-600' : 'text-red-600'}`}>
-                  {validationResult.passed ? 'PASSED' : 'FAILED'}
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Estimated Fix Time</p>
-              <p className="text-lg font-semibold">{validationResult.estimatedFixTime}</p>
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
-              <button
-                onClick={() => setActiveTab('errors')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'errors'
-                    ? 'border-red-500 text-red-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Critical Errors ({validationResult.criticalErrors.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('warnings')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'warnings'
-                    ? 'border-yellow-500 text-yellow-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Warnings ({validationResult.warnings.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('certifications')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'certifications'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Certifications ({validationResult.certificationsRequired.length})
-              </button>
-            </nav>
-          </div>
-
-          {/* Tab Content */}
-          <div className="min-h-[200px]">
-            {activeTab === 'errors' && (
-              <div className="space-y-3">
-                {validationResult.criticalErrors.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No critical errors found!</p>
-                ) : (
-                  validationResult.criticalErrors.map((error, index) => (
-                    <div key={index} className="flex items-start space-x-3 p-4 bg-red-50 rounded-lg">
-                      <XCircleIcon className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-red-800">{error}</p>
-                        {validationResult.suggestions[index] && (
-                          <p className="text-sm text-red-600 mt-1">
-                            <strong>Fix:</strong> {validationResult.suggestions[index]}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-
-            {activeTab === 'warnings' && (
-              <div className="space-y-3">
-                {validationResult.warnings.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No warnings found!</p>
-                ) : (
-                  validationResult.warnings.map((warning, index) => (
-                    <div key={index} className="flex items-start space-x-3 p-4 bg-yellow-50 rounded-lg">
-                      <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-yellow-800">{warning}</p>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-
-            {activeTab === 'certifications' && (
-              <div className="space-y-3">
-                {validationResult.certificationsRequired.map((cert, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <ClipboardDocumentCheckIcon className="h-5 w-5 text-blue-500" />
-                      <span className="text-sm font-medium text-blue-800">{cert}</span>
-                    </div>
-                    <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">Required</span>
-                  </div>
+          {/* Real-time errors */}
+          {Object.keys(realTimeErrors).length > 0 && (
+            <Alert severity="error">
+              <AlertTitle>Real-time Validation Errors</AlertTitle>
+              <Box>
+                {Object.entries(realTimeErrors).map(([field, error]) => (
+                  <Typography key={field} variant="body2" sx={{ mb: 0.5 }}>
+                    <strong>{field}:</strong> {error}
+                  </Typography>
                 ))}
-              </div>
-            )}
-          </div>
-
-          {/* Market Compliance */}
-          {validationResult.marketCompliance && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-semibold text-gray-900 mb-3">Market Compliance (US)</h3>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  {validationResult.marketCompliance.compliant ? (
-                    <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                  ) : (
-                    <XCircleIcon className="h-5 w-5 text-red-500 mr-2" />
-                  )}
-                  <span className={validationResult.marketCompliance.compliant ? 'text-green-700' : 'text-red-700'}>
-                    {validationResult.marketCompliance.compliant ? 'Market Compliant' : 'Not Market Compliant'}
-                  </span>
-                </div>
-                {validationResult.marketCompliance.missingElements.length > 0 && (
-                  <div className="ml-7">
-                    <p className="text-sm text-gray-600 font-medium mb-1">Missing Requirements:</p>
-                    <ul className="list-disc list-inside text-sm text-red-600">
-                      {validationResult.marketCompliance.missingElements.map((element, idx) => (
-                        <li key={idx}>{element}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
+              </Box>
+            </Alert>
           )}
-        </div>
-      )}
-    </div>
+
+          {/* Color preview for cornflakes */}
+          {productType === 'cornflakes' && specifications?.specifications?.visual?.primaryColor && (
+            <ColorValidationPreview color={specifications.specifications.visual.primaryColor} />
+          )}
+
+          {/* Validation Results */}
+          {validationResult && (
+            <Stack spacing={3}>
+              {/* Score and Status */}
+              <Paper sx={{ p: 2, bgcolor: 'grey.50' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <ScoreDisplay score={validationResult.score} />
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Compliance Status
+                      </Typography>
+                      <Typography 
+                        variant="h6" 
+                        sx={{ 
+                          color: validationResult.passed ? 'success.main' : 'error.main',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {validationResult.passed ? 'PASSED' : 'FAILED'}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="caption" color="text.secondary">
+                      Estimated Fix Time
+                    </Typography>
+                    <Typography variant="h6" fontWeight="bold">
+                      {validationResult.estimatedFixTime}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Paper>
+
+              {/* Tabs */}
+              <Tabs 
+                value={activeTab === 'errors' ? 0 : activeTab === 'warnings' ? 1 : 2}
+                onChange={(_, newValue) => {
+                  setActiveTab(newValue === 0 ? 'errors' : newValue === 1 ? 'warnings' : 'certifications');
+                }}
+              >
+                <Tab 
+                  label={`Critical Errors (${validationResult.criticalErrors.length})`}
+                  sx={{ color: 'error.main' }}
+                />
+                <Tab 
+                  label={`Warnings (${validationResult.warnings.length})`}
+                  sx={{ color: 'warning.main' }}
+                />
+                <Tab 
+                  label={`Certifications (${validationResult.certificationsRequired.length})`}
+                  sx={{ color: 'primary.main' }}
+                />
+              </Tabs>
+
+              {/* Tab Content */}
+              <Box sx={{ minHeight: 200 }}>
+                <TabPanel value={activeTab === 'errors' ? 0 : activeTab === 'warnings' ? 1 : 2} index={0}>
+                  <Stack spacing={2}>
+                    {validationResult.criticalErrors.length === 0 ? (
+                      <Typography color="text.secondary" textAlign="center" sx={{ py: 4 }}>
+                        No critical errors found!
+                      </Typography>
+                    ) : (
+                      validationResult.criticalErrors.map((error, index) => (
+                        <Alert key={index} severity="error" icon={<XCircleIcon />}>
+                          <Typography variant="body2" fontWeight="medium">
+                            {error}
+                          </Typography>
+                          {validationResult.suggestions[index] && (
+                            <Typography variant="body2" sx={{ mt: 1 }}>
+                              <strong>Fix:</strong> {validationResult.suggestions[index]}
+                            </Typography>
+                          )}
+                        </Alert>
+                      ))
+                    )}
+                  </Stack>
+                </TabPanel>
+
+                <TabPanel value={activeTab === 'errors' ? 0 : activeTab === 'warnings' ? 1 : 2} index={1}>
+                  <Stack spacing={2}>
+                    {validationResult.warnings.length === 0 ? (
+                      <Typography color="text.secondary" textAlign="center" sx={{ py: 4 }}>
+                        No warnings found!
+                      </Typography>
+                    ) : (
+                      validationResult.warnings.map((warning, index) => (
+                        <Alert key={index} severity="warning" icon={<ExclamationTriangleIcon />}>
+                          <Typography variant="body2">{warning}</Typography>
+                        </Alert>
+                      ))
+                    )}
+                  </Stack>
+                </TabPanel>
+
+                <TabPanel value={activeTab === 'errors' ? 0 : activeTab === 'warnings' ? 1 : 2} index={2}>
+                  <List>
+                    {validationResult.certificationsRequired.map((cert, index) => (
+                      <ListItem key={index} sx={{ bgcolor: 'info.light', mb: 1, borderRadius: 1 }}>
+                        <ListItemIcon>
+                          <ClipboardDocumentCheckIcon color="info" />
+                        </ListItemIcon>
+                        <ListItemText primary={cert} />
+                        <Chip label="Required" color="info" size="small" />
+                      </ListItem>
+                    ))}
+                  </List>
+                </TabPanel>
+              </Box>
+
+              {/* Market Compliance */}
+              {validationResult.marketCompliance && (
+                <Paper sx={{ p: 2, bgcolor: 'grey.50' }}>
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    Market Compliance (US)
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    {validationResult.marketCompliance.compliant ? (
+                      <CheckCircleIcon color="success" sx={{ mr: 1 }} />
+                    ) : (
+                      <XCircleIcon color="error" sx={{ mr: 1 }} />
+                    )}
+                    <Typography
+                      color={validationResult.marketCompliance.compliant ? 'success.main' : 'error.main'}
+                      fontWeight="medium"
+                    >
+                      {validationResult.marketCompliance.compliant ? 'Market Compliant' : 'Not Market Compliant'}
+                    </Typography>
+                  </Box>
+                  {validationResult.marketCompliance.missingElements.length > 0 && (
+                    <Box sx={{ ml: 4 }}>
+                      <Typography variant="body2" fontWeight="medium" gutterBottom>
+                        Missing Requirements:
+                      </Typography>
+                      <List dense>
+                        {validationResult.marketCompliance.missingElements.map((element, idx) => (
+                          <ListItem key={idx} sx={{ py: 0.5 }}>
+                            <Typography variant="body2" color="error">
+                              • {element}
+                            </Typography>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Box>
+                  )}
+                </Paper>
+              )}
+            </Stack>
+          )}
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };

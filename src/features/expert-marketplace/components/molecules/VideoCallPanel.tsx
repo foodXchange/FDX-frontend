@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { FC, useState, useRef, useEffect } from 'react';
 import {
   Box,
@@ -9,8 +10,9 @@ import {
   Avatar,
   Badge,
   Tooltip,
-  Grid,
+  Chip,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   Videocam,
   VideocamOff,
@@ -39,7 +41,7 @@ interface VideoCallPanelProps {
 }
 
 export const VideoCallPanel: FC<VideoCallPanelProps> = ({
-  collaborationId,
+  collaborationId: _collaborationId,
   participants,
   isActive,
   onEndCall,
@@ -127,7 +129,7 @@ export const VideoCallPanel: FC<VideoCallPanelProps> = ({
       <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         <Grid container spacing={1} sx={{ height: '100%', p: 2 }}>
           {participants.map((participant, index) => (
-            <Grid item xs={12} md={participants.length > 1 ? 6 : 12} key={participant.id}>
+            <Grid size={{ xs: 12, md: participants.length > 1 ? 6 : 12 }} key={participant.id}>
               <Paper
                 sx={{
                   height: '100%',

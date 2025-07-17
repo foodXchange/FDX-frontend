@@ -42,7 +42,7 @@ export const Footer: React.FC = () => {
               <img 
                 src={FoodXchangeLogo} 
                 alt="FoodXchange" 
-                style={{ height: 32 }}
+                height={32}
                 onError={(e) => {
                   // Fallback if logo not found
                   const target = e.currentTarget as HTMLImageElement;

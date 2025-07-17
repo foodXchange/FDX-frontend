@@ -1,3 +1,4 @@
+// Service for market intelligence analysis including pricing trends, demand analysis, and competitor insights
 import { MarketIntelligence } from '../types';
 import { aiService } from '../aiService';
 import { logger } from '../../logger';

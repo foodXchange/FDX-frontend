@@ -3,7 +3,6 @@ import {
   Box,
   Container,
   Typography,
-  Grid,
   Card,
   CardContent,
   Button,
@@ -17,13 +16,7 @@ import {
   Chip,
   IconButton,
   Menu,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  DatePicker,
-  TextField,
-  Alert,
+  MenuItem,Alert,
   LinearProgress,
   Avatar,
   Divider,
@@ -38,6 +31,8 @@ import {
   ListItemText,
   ListItemAvatar,
 } from '@mui/material';
+import { Grid } from '@mui/material';
+import {} from '@mui/x-date-pickers/';
 import {
   AttachMoney,
   TrendingUp,
@@ -86,7 +81,7 @@ const CommissionTracking: React.FC = () => {
   const [selectedCommission, setSelectedCommission] = useState<Commission | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     status: 'all' as CommissionStatus | 'all',
     type: 'all' as CommissionType | 'all',
     period: 'month' as 'week' | 'month' | 'quarter' | 'year',
@@ -115,8 +110,15 @@ const CommissionTracking: React.FC = () => {
       setError(null);
       const result = await agentApi.getCommissions();
       setCommissions(result.commissions);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load commissions');
+    } catch (err: unknown) {
+      const error = err as Error;
+      if (error instanceof Error) {
+        setError(error.message);
+      } else if (typeof err === 'object' && err && 'message' in err) {
+        setError(String((err as any).message));
+      } else {
+        setError('Failed to load commissions');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -351,7 +353,7 @@ const CommissionTracking: React.FC = () => {
 
   const AnalyticsView: React.FC = () => (
     <Grid container spacing={3}>
-      <Grid item xs={12}>
+      <Grid size={{ xs: 12 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -366,7 +368,7 @@ const CommissionTracking: React.FC = () => {
         </Card>
       </Grid>
       
-      <Grid item xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -381,7 +383,7 @@ const CommissionTracking: React.FC = () => {
         </Card>
       </Grid>
       
-      <Grid item xs={12} md={6}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -436,7 +438,7 @@ const CommissionTracking: React.FC = () => {
 
       {/* Metrics */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricCard
             title="Total Earned"
             value={metrics.totalEarned}
@@ -445,7 +447,7 @@ const CommissionTracking: React.FC = () => {
             trend={metrics.growthRate}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricCard
             title="Pending"
             value={metrics.pendingAmount}
@@ -453,7 +455,7 @@ const CommissionTracking: React.FC = () => {
             color={theme.palette.warning.main}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricCard
             title="This Month"
             value={metrics.thisMonthEarnings}
@@ -461,7 +463,7 @@ const CommissionTracking: React.FC = () => {
             color={theme.palette.primary.main}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricCard
             title="Average"
             value={metrics.averageCommission}

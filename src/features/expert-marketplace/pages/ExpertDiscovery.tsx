@@ -1,8 +1,8 @@
+import React, { useState } from 'react';
 import { FC, useState } from 'react';
 import {
   Box,
   Container,
-  Grid,
   Typography,
   Button,
   Drawer,
@@ -13,6 +13,7 @@ import {
   Skeleton,
   Alert,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   FilterList,
   ViewList,
@@ -67,7 +68,7 @@ export const ExpertDiscovery: FC = () => {
   const renderExpertSkeleton = () => (
     <Grid container spacing={3}>
       {Array.from({ length: 8 }).map((_, index) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={index}>
           <Paper sx={{ p: 2 }}>
             <Box display="flex" gap={2} mb={2}>
               <Skeleton variant="circular" width={56} height={56} />
@@ -133,7 +134,7 @@ export const ExpertDiscovery: FC = () => {
             />
           </Drawer>
         ) : (
-          <Grid item md={3}>
+          <Grid size={{ md: 3 }}>
             <ExpertFilters
               filters={filters}
               onFiltersChange={handleFiltersChange}
@@ -144,7 +145,7 @@ export const ExpertDiscovery: FC = () => {
         )}
 
         {/* Results */}
-        <Grid item xs={12} md={filtersOpen && !isMobile ? 9 : 12}>
+        <Grid size={{ xs: 12, md: filtersOpen && !isMobile ? 9 : 12 }}>
           {/* Results Header */}
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
             <Box display="flex" alignItems="center" gap={2}>
@@ -207,12 +208,12 @@ export const ExpertDiscovery: FC = () => {
             <>
               <Grid container spacing={3}>
                 {experts.map((expert) => (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={viewMode === 'list' ? 12 : 6}
-                    md={viewMode === 'list' ? 12 : 6}
-                    lg={viewMode === 'list' ? 12 : 4}
+                  <Grid size={{ 
+                    xs: 12,
+                    sm: viewMode === 'list' ? 12 : 6,
+                    md: viewMode === 'list' ? 12 : 6,
+                    lg: viewMode === 'list' ? 12 : 4
+                  }}
                     key={expert.id}
                   >
                     <ExpertCard
@@ -255,3 +256,5 @@ export const ExpertDiscovery: FC = () => {
     </Container>
   );
 };
+
+export default ExpertDiscovery;

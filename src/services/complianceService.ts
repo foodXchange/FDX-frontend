@@ -1,3 +1,4 @@
+// Compliance service for regulatory checks, certifications, and audit management
 import { api } from './api';
 import { ApiResponse, ComplianceValidation, ComplianceStatus, Certification } from '../shared/types';
 

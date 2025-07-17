@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useEffect, useCallback, useRef, useState } from 'react';
 
 interface KeyboardShortcut {
@@ -296,7 +297,7 @@ function normalizeKey(event: KeyboardEvent): string {
   return normalizedKey;
 }
 
-function isShortcutMatch(shortcutKeys: string[], pressedKey: string, event: KeyboardEvent): boolean {
+function isShortcutMatch(shortcutKeys: string[], _pressedKey: string, event: KeyboardEvent): boolean {
   return shortcutKeys.some(shortcut => {
     const keys = shortcut.toLowerCase().split('+');
     const modifiers = keys.slice(0, -1);

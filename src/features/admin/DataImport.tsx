@@ -1,7 +1,25 @@
+import React from 'react';
 import { useState } from 'react';
-import { CloudArrowUpIcon, DocumentTextIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { CloudUpload as CloudArrowUpIcon, Description as DocumentTextIcon, CheckCircle as CheckCircleIcon, Cancel as XCircleIcon } from '@mui/icons-material';
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardHeader,
+  Button,
+  Box,
+  Stack,
+  Grid,
+  Paper,
+  Alert,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Chip,
+  Divider
+} from '@mui/material';
 
 interface ImportResult {
   success: boolean;
@@ -119,168 +137,257 @@ export const DataImport: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Data Import Center</h1>
-        <p className="text-gray-600 mt-2">Import your data into FoodXchange platform</p>
-      </div>
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Stack spacing={3}>
+        <Box>
+          <Typography variant="h4" sx={{ color: 'grey.900', fontWeight: 'bold', mb: 1 }}>
+            Data Import Center
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'grey.600' }}>
+            Import your data into FoodXchange platform
+          </Typography>
+        </Box>
 
-      {/* Import Type Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Import Type</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {importTypes.map((type) => (
-              <div key={type.id}>
-                <button
-                  onClick={() => setImportType(type.id)}
-                  className={`w-full p-4 rounded-lg border-2 transition-all ${
-                    importType === type.id
-                      ? 'border-[#1E4C8A] bg-[#1E4C8A]/10'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <DocumentTextIcon className={`w-8 h-8 mx-auto mb-2 ${
-                    importType === type.id ? 'text-[#1E4C8A]' : 'text-gray-400'
-                  }`} />
-                  <span className={`text-sm font-medium ${
-                    importType === type.id ? 'text-[#1E4C8A]' : 'text-gray-700'
-                  }`}>
-                    {type.label}
-                  </span>
-                </button>
-                <button
-                  onClick={() => downloadTemplate(type.id)}
-                  className="w-full mt-2 text-xs text-[#1E4C8A] hover:underline"
-                >
-                  Download Template
-                </button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* File Upload */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Upload File</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-              <CloudArrowUpIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-4">
-                Drag and drop your CSV or Excel file here, or click to browse
-              </p>
-              <input
-                type="file"
-                accept=".csv,.xlsx,.xls"
-                onChange={handleFileSelect}
-                className="hidden"
-                id="file-upload"
-              />
-              <label
-                htmlFor="file-upload"
-                className="cursor-pointer inline-flex items-center px-4 py-2 bg-[#1E4C8A] text-white rounded-lg hover:bg-[#16365F] transition-colors"
-              >
-                Choose File
-              </label>
-              {selectedFile && (
-                <p className="mt-4 text-sm text-gray-600">
-                  Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
-                </p>
-              )}
-            </div>
-
-            <Button
-              onClick={handleImport}
-              disabled={!selectedFile || importing}
-              className="w-full"
-            >
-              {importing ? 'Importing...' : 'Import Data'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Import Results */}
-      {results.length > 0 && (
+        {/* Import Type Selection */}
         <Card>
           <CardHeader>
-            <CardTitle>Import Results</CardTitle>
+            <Typography variant="h6">
+              Select Import Type
+            </Typography>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {results.map((result, index) => (
-                <div
-                  key={index}
-                  className={`p-4 rounded-lg flex items-start gap-3 ${
-                    result.success ? 'bg-green-50' : 'bg-red-50'
-                  }`}
-                >
-                  {result.success ? (
-                    <CheckCircleIcon className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  ) : (
-                    <XCircleIcon className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                  )}
-                  <div className="flex-1">
-                    <p className={`font-medium ${result.success ? 'text-green-900' : 'text-red-900'}`}>
-                      {result.message}
-                    </p>
-                    {result.imported !== undefined && (
-                      <p className="text-sm text-gray-600">
-                        Imported: {result.imported}, Failed: {result.failed || 0}
-                      </p>
-                    )}
-                  </div>
-                </div>
+            <Grid container spacing={2}>
+              {importTypes.map((type) => (
+                <Grid item xs={12} sm={6} md={4} key={type.id}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      border: 2,
+                      borderColor: importType === type.id ? 'primary.main' : 'grey.300',
+                      bgcolor: importType === type.id ? 'primary.light' : 'transparent',
+                      '&:hover': {
+                        borderColor: importType === type.id ? 'primary.main' : 'grey.400'
+                      }
+                    }}
+                    onClick={() => setImportType(type.id)}
+                  >
+                    <DocumentTextIcon
+                      sx={{
+                        fontSize: 48,
+                        color: importType === type.id ? 'primary.main' : 'grey.400',
+                        mb: 1
+                      }}
+                    />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 'medium',
+                        color: importType === type.id ? 'primary.main' : 'grey.700',
+                        mb: 2
+                      }}
+                    >
+                      {type.label}
+                    </Typography>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        downloadTemplate(type.id);
+                      }}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                    >
+                      Download Template
+                    </Button>
+                  </Paper>
+                </Grid>
               ))}
-            </div>
+            </Grid>
           </CardContent>
         </Card>
-      )}
 
-      {/* Instructions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Import Instructions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4 text-sm text-gray-600">
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">File Format Requirements:</h4>
-              <ul className="list-disc list-inside space-y-1">
-                <li>CSV files with comma separation</li>
-                <li>Excel files (.xlsx or .xls)</li>
-                <li>First row must contain column headers</li>
-                <li>UTF-8 encoding for special characters</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Data Validation:</h4>
-              <ul className="list-disc list-inside space-y-1">
-                <li>Email addresses must be valid format</li>
-                <li>Prices must be numeric values</li>
-                <li>Dates in YYYY-MM-DD format</li>
-                <li>Boolean fields: true/false or yes/no</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Import Process:</h4>
-              <ol className="list-decimal list-inside space-y-1">
-                <li>Download the template for your data type</li>
-                <li>Fill in your data following the format</li>
-                <li>Save as CSV or Excel file</li>
-                <li>Upload and import</li>
-                <li>Review import results</li>
-              </ol>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+        {/* File Upload */}
+        <Card>
+          <CardHeader>
+            <Typography variant="h6">
+              Upload File
+            </Typography>
+          </CardHeader>
+          <CardContent>
+            <Stack spacing={3}>
+              <Paper
+                sx={{
+                  p: 4,
+                  textAlign: 'center',
+                  border: 2,
+                  borderStyle: 'dashed',
+                  borderColor: 'grey.300',
+                  bgcolor: 'grey.50',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    borderColor: 'primary.main',
+                    bgcolor: 'primary.light'
+                  }
+                }}
+                onClick={() => document.getElementById('file-upload')?.click()}
+              >
+                <CloudArrowUpIcon sx={{ fontSize: 48, color: 'grey.400', mb: 2 }} />
+                <Typography variant="body1" sx={{ color: 'grey.600', mb: 2 }}>
+                  Drag and drop your CSV or Excel file here, or click to browse
+                </Typography>
+                <input
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  onChange={handleFileSelect}
+                  style={{ display: 'none' }}
+                  id="file-upload"
+                />
+                <Button
+                  variant="contained"
+                  component="span"
+                >
+                  Choose File
+                </Button>
+                {selectedFile && (
+                  <Typography variant="body2" sx={{ color: 'grey.600', mt: 2 }}>
+                    Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
+                  </Typography>
+                )}
+              </Paper>
+
+              <Button
+                onClick={handleImport}
+                disabled={!selectedFile || importing}
+                variant="contained"
+                size="large"
+                fullWidth
+              >
+                {importing ? 'Importing...' : 'Import Data'}
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
+
+        {/* Import Results */}
+        {results.length > 0 && (
+          <Card>
+            <CardHeader>
+              <Typography variant="h6">
+                Import Results
+              </Typography>
+            </CardHeader>
+            <CardContent>
+              <Stack spacing={2}>
+                {results.map((result, index) => (
+                  <Alert
+                    key={index}
+                    severity={result.success ? 'success' : 'error'}
+                    icon={result.success ? <CheckCircleIcon /> : <XCircleIcon />}
+                    sx={{ alignItems: 'flex-start' }}
+                  >
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                        {result.message}
+                      </Typography>
+                      {result.imported !== undefined && (
+                        <Typography variant="caption" sx={{ color: 'grey.600', mt: 1, display: 'block' }}>
+                          Imported: {result.imported}, Failed: {result.failed || 0}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Alert>
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Instructions */}
+        <Card>
+          <CardHeader>
+            <Typography variant="h6">
+              Import Instructions
+            </Typography>
+          </CardHeader>
+          <CardContent>
+            <Stack spacing={3}>
+              <Box>
+                <Typography variant="subtitle1" sx={{ color: 'grey.900', mb: 2 }}>
+                  File Format Requirements:
+                </Typography>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="CSV files with comma separation" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Excel files (.xlsx or .xls)" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="First row must contain column headers" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="UTF-8 encoding for special characters" />
+                  </ListItem>
+                </List>
+              </Box>
+              
+              <Divider />
+              
+              <Box>
+                <Typography variant="subtitle1" sx={{ color: 'grey.900', mb: 2 }}>
+                  Data Validation:
+                </Typography>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Email addresses must be valid format" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Prices must be numeric values" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Dates in YYYY-MM-DD format" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Boolean fields: true/false or yes/no" />
+                  </ListItem>
+                </List>
+              </Box>
+              
+              <Divider />
+              
+              <Box>
+                <Typography variant="subtitle1" sx={{ color: 'grey.900', mb: 2 }}>
+                  Import Process:
+                </Typography>
+                <List dense>
+                  <ListItem>
+                    <Chip label="1" size="small" sx={{ mr: 1 }} />
+                    <ListItemText primary="Download the template for your data type" />
+                  </ListItem>
+                  <ListItem>
+                    <Chip label="2" size="small" sx={{ mr: 1 }} />
+                    <ListItemText primary="Fill in your data following the format" />
+                  </ListItem>
+                  <ListItem>
+                    <Chip label="3" size="small" sx={{ mr: 1 }} />
+                    <ListItemText primary="Save as CSV or Excel file" />
+                  </ListItem>
+                  <ListItem>
+                    <Chip label="4" size="small" sx={{ mr: 1 }} />
+                    <ListItemText primary="Upload and import" />
+                  </ListItem>
+                  <ListItem>
+                    <Chip label="5" size="small" sx={{ mr: 1 }} />
+                    <ListItemText primary="Review import results" />
+                  </ListItem>
+                </List>
+              </Box>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Stack>
+    </Container>
   );
 };

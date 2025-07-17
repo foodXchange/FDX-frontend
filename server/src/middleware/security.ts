@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { createDOMPurify } from 'dompurify';
+import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 
 const window = new JSDOM('').window;
-const DOMPurify = createDOMPurify(window as any);
+const purify = DOMPurify(window as any);
 
 export const securityMiddleware = (
   req: Request,
@@ -38,7 +38,7 @@ export const securityMiddleware = (
 export const sanitizeInput = (req: Request, res: Response, next: NextFunction) => {
   const sanitizeObject = (obj: any): any => {
     if (typeof obj === 'string') {
-      return DOMPurify.sanitize(obj);
+      return purify.sanitize(obj);
     }
     
     if (Array.isArray(obj)) {

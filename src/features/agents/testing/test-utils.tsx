@@ -3,7 +3,7 @@ import { render, RenderOptions, RenderResult } from '@testing-library/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { MemoryRouter, MemoryRouterProps } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+// Jest is automatically available in test environment
 
 // Mock store for Zustand
 interface MockStoreOptions {
@@ -17,16 +17,16 @@ export const createMockStore = (options: MockStoreOptions = {}) => {
   const store = {
     ...initialState,
     ...actions,
-    subscribe: vi.fn(),
-    getState: vi.fn(() => ({ ...initialState })),
-    setState: vi.fn((updater: any) => {
+    subscribe: jest.fn(),
+    getState: jest.fn(() => ({ ...initialState })),
+    setState: jest.fn((updater: any) => {
       if (typeof updater === 'function') {
         Object.assign(initialState, updater(initialState));
       } else {
         Object.assign(initialState, updater);
       }
     }),
-    destroy: vi.fn(),
+    destroy: jest.fn(),
   };
 
   return store;
@@ -54,7 +54,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
 
 // Custom wrapper component
 const createWrapper = (options: CustomRenderOptions = {}) => {
-  const { routerProps, themeProps, storeOptions } = options;
+  const { routerProps, themeProps } = options;
   const theme = themeProps ? createTheme(themeProps) : testTheme;
   
   return function Wrapper({ children }: { children: React.ReactNode }) {
@@ -80,11 +80,11 @@ const createWrapper = (options: CustomRenderOptions = {}) => {
 export const customRender = (
   ui: ReactElement,
   options: CustomRenderOptions = {}
-): RenderResult & { user: ReturnType<typeof userEvent.setup> } => {
-  const user = userEvent.setup();
-  const { routerProps, themeProps, storeOptions, ...renderOptions } = options;
+): RenderResult & { user: typeof userEvent } => {
+  const user = userEvent;
+  const { routerProps, themeProps, ...renderOptions } = options;
   
-  const Wrapper = createWrapper({ routerProps, themeProps, storeOptions });
+  const Wrapper = createWrapper({ routerProps, themeProps });
   
   const result = render(ui, {
     wrapper: Wrapper,
@@ -122,7 +122,7 @@ export const mockLeadData = {
       email: `contact${index + 1}@test.com`,
       phone: `+123456789${index}`,
       status: ['active', 'pending', 'closed'][index % 3],
-      priority: ['high', 'medium', 'low'][index % 3] as const,
+      priority: (['high', 'medium', 'low'][index % 3]) as 'high' | 'medium' | 'low',
       estimatedRevenue: (index + 1) * 10000,
       source: ['website', 'referral', 'cold-call'][index % 3],
       tags: [`tag${index + 1}`],
@@ -151,10 +151,10 @@ export const mockAgentData = {
 
 // API mocking utilities
 export const mockApiResponses = {
-  success: <T>(data: T) => Promise.resolve({ data, success: true }),
+  success: <T,>(data: T) => Promise.resolve({ data, success: true }),
   error: (message: string, status: number = 400) => 
     Promise.reject(new Error(`HTTP ${status}: ${message}`)),
-  delayed: <T>(data: T, delay: number = 1000) => 
+  delayed: <T,>(data: T, delay: number = 1000) => 
     new Promise<{ data: T; success: boolean }>(resolve => 
       setTimeout(() => resolve({ data, success: true }), delay)
     ),
@@ -162,7 +162,7 @@ export const mockApiResponses = {
 
 // Mock fetch implementation
 export const createMockFetch = (responses: Record<string, any>) => {
-  return vi.fn().mockImplementation((url: string, options?: RequestInit) => {
+  return jest.fn().mockImplementation((url: string, options?: RequestInit) => {
     const method = options?.method || 'GET';
     const key = `${method} ${url}`;
     
@@ -244,11 +244,11 @@ export const checkAccessibility = async (container: HTMLElement): Promise<any> =
 export const testComponentProps = {
   lead: mockLeadData.basic(),
   agent: mockAgentData.basic(),
-  onAction: vi.fn(),
-  onSelect: vi.fn(),
-  onSave: vi.fn(),
-  onCancel: vi.fn(),
-  onDelete: vi.fn(),
+  onAction: jest.fn(),
+  onSelect: jest.fn(),
+  onSave: jest.fn(),
+  onCancel: jest.fn(),
+  onDelete: jest.fn(),
 };
 
 // Custom matchers for better assertions
@@ -299,14 +299,14 @@ export const mockHooks = {
   useAuth: () => ({
     user: { id: 'user-1', name: 'Test User', email: 'test@example.com' },
     isAuthenticated: true,
-    login: vi.fn(),
-    logout: vi.fn(),
+    login: jest.fn(),
+    logout: jest.fn(),
   }),
   useApi: () => ({
-    get: vi.fn(),
-    post: vi.fn(),
-    put: vi.fn(),
-    delete: vi.fn(),
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
     isLoading: false,
     error: null,
   }),
@@ -317,7 +317,7 @@ export const integrationHelpers = {
   waitForLoadingToFinish: () => new Promise(resolve => setTimeout(resolve, 0)),
   
   fillForm: async (form: HTMLFormElement, data: Record<string, string>) => {
-    const user = userEvent.setup();
+    const user = userEvent;
     
     for (const [name, value] of Object.entries(data)) {
       const field = form.querySelector(`[name="${name}"]`) as HTMLInputElement;
@@ -335,7 +335,7 @@ export const integrationHelpers = {
   },
   
   submitForm: async (form: HTMLFormElement) => {
-    const user = userEvent.setup();
+    const user = userEvent;
     const submitButton = form.querySelector('[type="submit"]') as HTMLButtonElement;
     if (submitButton) {
       await user.click(submitButton);
@@ -346,44 +346,9 @@ export const integrationHelpers = {
 // Re-export commonly used testing utilities
 export * from '@testing-library/react';
 export * from '@testing-library/user-event';
-export { vi } from 'vitest';
+// Jest exports are available globally
 
-// Set up global test configuration
-beforeEach(() => {
-  // Clear all mocks before each test
-  vi.clearAllMocks();
-  
-  // Reset fetch mock
-  global.fetch = vi.fn();
-  
-  // Mock window.matchMedia
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: vi.fn().mockImplementation(query => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  });
-  
-  // Mock IntersectionObserver
-  global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }));
-  
-  // Mock ResizeObserver
-  global.ResizeObserver = vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }));
-});
+// Remove global configuration from test-utils to avoid duplication
+// Global configuration is handled in setup.ts
 
 export default customRender;

@@ -1,36 +1,62 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAgentStore } from '@/store/useAgentStore';
+import {
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Chip,
+  IconButton,
+  LinearProgress,
+  ToggleButton,
+  ToggleButtonGroup,
+  Container,
+  Stack,
+  Divider,
+  Tabs,
+  Tab,
+  Tooltip
+} from '@mui/material';
+import {
+  Refresh as ArrowPathIcon,
+  Chat as ChatBubbleLeftRightIcon,
+  Phone as PhoneIcon,
+  Email as EnvelopeIcon,
+  ViewKanban as ViewKanbanIcon,
+  ViewList as ViewListIcon,
+  Settings as SettingsIcon
+} from '@mui/icons-material';
+import { useAgentStore } from '../store/useAgentStore';
 import { Lead } from '../types';
 import { LeadCard } from './LeadCard';
 import { AgentRFQList } from './AgentRFQList';
-import { 
-  ArrowPathIcon,
-  ChatBubbleLeftRightIcon,
-  PhoneIcon,
-  EnvelopeIcon
-} from '@heroicons/react/24/outline';
 
 type ViewMode = 'kanban' | 'list';
 type LeadStatus = Lead['status'];
 
-const statusColumns: { status: LeadStatus; label: string; color: string }[] = [
-  { status: 'claimed', label: 'New', color: 'bg-blue-100 text-blue-800' },
-  { status: 'contacted', label: 'Contacted', color: 'bg-yellow-100 text-yellow-800' },
-  { status: 'negotiating', label: 'Negotiating', color: 'bg-purple-100 text-purple-800' },
-  { status: 'won', label: 'Won', color: 'bg-green-100 text-green-800' },
-  { status: 'lost', label: 'Lost', color: 'bg-red-100 text-red-800' }
+const statusColumns: { status: LeadStatus; label: string; color: 'primary' | 'warning' | 'secondary' | 'success' | 'error' }[] = [
+  { status: 'claimed', label: 'New', color: 'primary' },
+  { status: 'contacted', label: 'Contacted', color: 'warning' },
+  { status: 'negotiating', label: 'Negotiating', color: 'secondary' },
+  { status: 'won', label: 'Won', color: 'success' },
+  { status: 'lost', label: 'Lost', color: 'error' }
 ];
 
 export const LeadManagement: React.FC = () => {
-  const { availableLeads, myLeads, updateLeadStatus } = useAgentStore();
+  const { leads, updateLead } = useAgentStore();
   const [viewMode, setViewMode] = useState<ViewMode>('kanban');
   const [activeTab, setActiveTab] = useState<'available' | 'active'>('available');
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
 
+  // Mock data - replace with actual store properties
+  const availableLeads = leads.filter((lead: any) => lead.status === 'new' || lead.status === 'available');
+  const myLeads = leads.filter((lead: any) => lead.status !== 'new' && lead.status !== 'available');
+
   // Filter leads by status for Kanban columns
   const getLeadsByStatus = (status: LeadStatus) => {
-    return myLeads.filter(lead => lead.status === status);
+    return myLeads.filter((lead: any) => lead.status === status);
   };
 
   // Handle drag and drop
@@ -47,7 +73,7 @@ export const LeadManagement: React.FC = () => {
   const handleDrop = (e: React.DragEvent, newStatus: LeadStatus) => {
     e.preventDefault();
     if (draggedLead && draggedLead.status !== newStatus) {
-      updateLeadStatus(draggedLead.id, newStatus);
+      updateLead(draggedLead.id, { status: newStatus });
     }
     setDraggedLead(null);
   };
@@ -59,116 +85,161 @@ export const LeadManagement: React.FC = () => {
   };
 
   const renderKanbanView = () => (
-    <div className="flex gap-4 overflow-x-auto pb-4">
+    <Grid container spacing={2}>
       {statusColumns.map(column => (
-        <div 
-          key={column.status}
-          className="flex-shrink-0 w-80"
-        >
-          {/* Column Header */}
-          <div className="mb-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">{column.label}</h3>
-              <span className={`px-2 py-1 text-xs font-medium rounded-full ${column.color}`}>
-                {getLeadsByStatus(column.status).length}
-              </span>
-            </div>
-          </div>
+        <Grid item xs={12} md={2.4} key={column.status}>
+          <Card sx={{ height: '100%', minHeight: 600 }}>
+            <CardContent sx={{ pb: 1 }}>
+              {/* Column Header */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" component="h3" sx={{ color: 'grey.900' }}>
+                  {column.label}
+                </Typography>
+                <Chip
+                  label={getLeadsByStatus(column.status).length}
+                  color={column.color}
+                  size="small"
+                />
+              </Box>
+              
+              <Divider sx={{ mb: 2 }} />
 
-          {/* Column Content */}
-          <div
-            className="space-y-3 min-h-[400px] bg-gray-50 rounded-lg p-3"
-            onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, column.status)}
-          >
-            <AnimatePresence>
-              {getLeadsByStatus(column.status).map(lead => (
-                <motion.div
-                  key={lead.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                >
-                  <div 
-                    className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-move"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, lead)}
-                  >
-                    <h4 className="font-medium text-gray-900 mb-1">{lead.rfqTitle}</h4>
-                    <p className="text-sm text-gray-600 mb-2">{lead.buyerName}</p>
-                    
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs text-gray-500">{lead.buyerLocation}</span>
-                      <span className="text-sm font-semibold text-green-600">
-                        ${lead.estimatedCommission}
-                      </span>
-                    </div>
-
-                    {/* Quick Actions */}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleQuickAction(lead.id, 'whatsapp')}
-                        className="flex-1 p-2 text-green-600 hover:bg-green-50 rounded transition-colors"
-                        title="WhatsApp"
+              {/* Column Content */}
+              <Box
+                sx={{ 
+                  bgcolor: 'grey.50', 
+                  borderRadius: 1, 
+                  minHeight: 400,
+                  p: 1
+                }}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, column.status)}
+              >
+                <Stack spacing={2}>
+                  <AnimatePresence>
+                    {getLeadsByStatus(column.status).map((lead: any) => (
+                      <motion.div
+                        key={lead.id}
+                        layout
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
                       >
-                        <ChatBubbleLeftRightIcon className="h-4 w-4 mx-auto" />
-                      </button>
-                      <button
-                        onClick={() => handleQuickAction(lead.id, 'call')}
-                        className="flex-1 p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                        title="Call"
-                      >
-                        <PhoneIcon className="h-4 w-4 mx-auto" />
-                      </button>
-                      <button
-                        onClick={() => handleQuickAction(lead.id, 'email')}
-                        className="flex-1 p-2 text-gray-600 hover:bg-gray-50 rounded transition-colors"
-                        title="Email"
-                      >
-                        <EnvelopeIcon className="h-4 w-4 mx-auto" />
-                      </button>
-                    </div>
+                        <Card 
+                          sx={{ 
+                            cursor: 'grab',
+                            '&:hover': { boxShadow: 3 },
+                            '&:active': { cursor: 'grabbing' }
+                          }}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, lead)}
+                        >
+                          <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                            <Typography variant="subtitle2" sx={{ color: 'grey.900', mb: 1 }}>
+                              {lead.rfqTitle}
+                            </Typography>
+                            <Typography variant="body2" color="grey.600" sx={{ mb: 1 }}>
+                              {lead.buyerName}
+                            </Typography>
+                            
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                              <Typography variant="caption" color="grey.500">
+                                {lead.buyerLocation}
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: 'success.main', fontWeight: 'bold' }}>
+                                ${lead.estimatedCommission}
+                              </Typography>
+                            </Box>
 
-                    {/* Progress indicator */}
-                    {column.status === 'negotiating' && (
-                      <div className="mt-3">
-                        <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
-                          <span>Progress</span>
-                          <span>60%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-1.5">
-                          <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '60%' }}></div>
-                        </div>
-                      </div>
-                    )}
+                            {/* Quick Actions */}
+                            <Stack direction="row" spacing={1} sx={{ justifyContent: 'center', mb: 1 }}>
+                              <Tooltip title="WhatsApp">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleQuickAction(lead.id, 'whatsapp')}
+                                  sx={{ color: 'success.main' }}
+                                >
+                                  <ChatBubbleLeftRightIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Call">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleQuickAction(lead.id, 'call')}
+                                  sx={{ color: 'primary.main' }}
+                                >
+                                  <PhoneIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Email">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleQuickAction(lead.id, 'email')}
+                                  sx={{ color: 'grey.600' }}
+                                >
+                                  <EnvelopeIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            </Stack>
 
-                    {/* Notes preview */}
-                    {lead.notes && (
-                      <p className="mt-2 text-xs text-gray-500 italic line-clamp-2">
-                        "{lead.notes}"
-                      </p>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                            {/* Progress indicator */}
+                            {column.status === 'negotiating' && (
+                              <Box sx={{ mt: 1 }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                  <Typography variant="caption" color="grey.600">
+                                    Progress
+                                  </Typography>
+                                  <Typography variant="caption" color="grey.600">
+                                    60%
+                                  </Typography>
+                                </Box>
+                                <LinearProgress variant="determinate" value={60} sx={{ borderRadius: 1 }} />
+                              </Box>
+                            )}
 
-            {/* Empty state */}
-            {getLeadsByStatus(column.status).length === 0 && (
-              <div className="text-center py-8 text-gray-400">
-                <p className="text-sm">No leads in {column.label.toLowerCase()}</p>
-              </div>
-            )}
-          </div>
-        </div>
+                            {/* Notes preview */}
+                            {lead.notes && lead.notes.length > 0 && (
+                              <Typography 
+                                variant="caption" 
+                                color="grey.500" 
+                                sx={{ 
+                                  mt: 1, 
+                                  fontStyle: 'italic',
+                                  display: '-webkit-box',
+                                  overflow: 'hidden',
+                                  WebkitBoxOrient: 'vertical',
+                                  WebkitLineClamp: 2,
+                                }}
+                              >
+                                "{lead.notes[0].content}"
+                              </Typography>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+
+                  {/* Empty state */}
+                  {getLeadsByStatus(column.status).length === 0 && (
+                    <Box sx={{ textAlign: 'center', py: 4 }}>
+                      <Typography variant="body2" color="grey.400">
+                        No leads in {column.label.toLowerCase()}
+                      </Typography>
+                    </Box>
+                  )}
+                </Stack>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
       ))}
-    </div>
+    </Grid>
   );
 
   const renderListView = () => (
-    <div className="space-y-4">
-      {myLeads.map(lead => (
+    <Stack spacing={2}>
+      {myLeads.map((lead: any) => (
         <LeadCard
           key={lead.id}
           lead={lead}
@@ -176,116 +247,113 @@ export const LeadManagement: React.FC = () => {
           onView={(id) => console.log('View lead:', id)}
         />
       ))}
-    </div>
+    </Stack>
   );
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">Lead Management</h1>
-        
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => window.location.reload()}
-            className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
-            title="Refresh"
-          >
-            <ArrowPathIcon className="h-5 w-5" />
-          </button>
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Stack spacing={3}>
+        {/* Header */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h4" component="h1" sx={{ color: 'grey.900', fontWeight: 'bold' }}>
+            Lead Management
+          </Typography>
           
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setActiveTab('available')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === 'available' 
-                  ? 'bg-white text-gray-900 shadow-sm' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Available Leads ({availableLeads.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('active')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === 'active' 
-                  ? 'bg-white text-gray-900 shadow-sm' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              My Active Leads ({myLeads.length})
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      {activeTab === 'available' ? (
-        <div>
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-gray-600">
-              Browse and claim leads that match your expertise
-            </p>
-            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-              Set Preferences →
-            </button>
-          </div>
-          
-          {/* Mock RFQ data for available leads */}
-          <AgentRFQList
-            rfqs={availableLeads.map(lead => ({
-              id: lead.id,
-              title: lead.rfqTitle,
-              description: `Looking for suppliers of ${lead.category} products`,
-              category: lead.category,
-              buyerName: lead.buyerName,
-              buyerLocation: lead.buyerLocation,
-              estimatedValue: lead.estimatedValue,
-              createdAt: new Date(),
-              expiresAt: lead.expiresAt,
-              status: 'open'
-            }))}
-          />
-        </div>
-      ) : (
-        <div>
-          {/* View Mode Toggle */}
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-gray-600">
-              Manage your active leads through the sales pipeline
-            </p>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Tooltip title="Refresh">
+              <IconButton
+                onClick={() => window.location.reload()}
+                sx={{ color: 'grey.600' }}
+              >
+                <ArrowPathIcon />
+              </IconButton>
+            </Tooltip>
             
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">View:</span>
-              <div className="flex bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode('kanban')}
-                  className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                    viewMode === 'kanban' 
-                      ? 'bg-white text-gray-900 shadow-sm' 
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Kanban
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                    viewMode === 'list' 
-                      ? 'bg-white text-gray-900 shadow-sm' 
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  List
-                </button>
-              </div>
-            </div>
-          </div>
+            <Tabs
+              value={activeTab}
+              onChange={(e, newValue) => setActiveTab(newValue)}
+              variant="fullWidth"
+              sx={{ minWidth: 400 }}
+            >
+              <Tab 
+                label={`Available Leads (${availableLeads.length})`} 
+                value="available" 
+              />
+              <Tab 
+                label={`My Active Leads (${myLeads.length})`} 
+                value="active" 
+              />
+            </Tabs>
+          </Stack>
+        </Box>
 
-          {/* Active Leads View */}
-          {viewMode === 'kanban' ? renderKanbanView() : renderListView()}
-        </div>
-      )}
-    </div>
+        {/* Content */}
+        {activeTab === 'available' ? (
+          <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Typography variant="body1" color="grey.600">
+                Browse and claim leads that match your expertise
+              </Typography>
+              <Button 
+                variant="text" 
+                color="primary"
+                endIcon={<SettingsIcon />}
+              >
+                Set Preferences
+              </Button>
+            </Box>
+            
+            {/* Mock RFQ data for available leads */}
+            <AgentRFQList
+              rfqs={availableLeads.map((lead: any) => ({
+                id: lead.id,
+                title: lead.rfqTitle,
+                description: `Looking for suppliers of ${lead.category} products`,
+                category: lead.category,
+                buyerName: lead.buyerName,
+                buyerLocation: lead.buyerLocation,
+                estimatedValue: lead.estimatedValue,
+                createdAt: new Date(),
+                expiresAt: new Date(lead.expiresAt),
+                status: 'open'
+              }))}
+            />
+          </Box>
+        ) : (
+          <Box>
+            {/* View Mode Toggle */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Typography variant="body1" color="grey.600">
+                Manage your active leads through the sales pipeline
+              </Typography>
+              
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography variant="body2" color="grey.600">
+                  View:
+                </Typography>
+                <ToggleButtonGroup
+                  value={viewMode}
+                  exclusive
+                  onChange={(e, newMode) => newMode && setViewMode(newMode)}
+                  size="small"
+                >
+                  <ToggleButton value="kanban" aria-label="kanban view">
+                    <ViewKanbanIcon fontSize="small" sx={{ mr: 1 }} />
+                    Kanban
+                  </ToggleButton>
+                  <ToggleButton value="list" aria-label="list view">
+                    <ViewListIcon fontSize="small" sx={{ mr: 1 }} />
+                    List
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Stack>
+            </Box>
+
+            {/* Active Leads View */}
+            {viewMode === 'kanban' ? renderKanbanView() : renderListView()}
+          </Box>
+        )}
+      </Stack>
+    </Container>
   );
 };

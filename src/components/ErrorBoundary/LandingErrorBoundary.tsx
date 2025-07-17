@@ -1,6 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { Box, Typography, Button, Stack } from '@mui/material';
+import { Warning as ExclamationTriangleIcon } from '@mui/icons-material';
 
 interface Props {
   children: ReactNode;
@@ -66,65 +67,74 @@ Component Stack: ${this.state.errorInfo?.componentStack}
       }
 
       return (
-        <div className="min-h-screen bg-gradient-to-br from-violet-900 via-blue-900 to-cyan-900 flex items-center justify-center p-4">
+        <Box sx={{ p: 2, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-md w-full bg-white/10 backdrop-blur-md rounded-3xl p-8 text-center border border-white/20"
           >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
-              className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center"
-            >
-              <ExclamationTriangleIcon className="w-8 h-8 text-red-400" />
-            </motion.div>
-            
-            <h2 className="text-2xl font-bold text-white mb-4">
-              Something went wrong
-            </h2>
-            
-            <p className="text-gray-300 mb-8 leading-relaxed">
-              We encountered an unexpected error while loading this page. 
-              Please try refreshing or contact support if the problem persists.
-            </p>
-            
-            <div className="space-y-4">
-              <motion.button
-                onClick={this.handleRetry}
-                className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+            <Box sx={{ bgcolor: 'white', p: 4, maxWidth: 400, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
               >
-                <ArrowPathIcon className="w-5 h-5" />
-                Try Again
-              </motion.button>
+                <Box sx={{ bgcolor: 'error.light', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', width: 64, height: 64, mx: 'auto', mb: 3 }}>
+                  <ExclamationTriangleIcon sx={{ fontSize: 32, color: 'error.main' }} />
+                </Box>
+              </motion.div>
               
-              <motion.button
-                onClick={this.handleReportError}
-                className="w-full border border-white/30 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Report Error
-              </motion.button>
-            </div>
-            
-            {process.env.NODE_ENV === 'development' && (
-              <details className="mt-6 text-left">
-                <summary className="text-sm text-gray-400 cursor-pointer hover:text-gray-300">
-                  Error Details (Development Only)
-                </summary>
-                <pre className="mt-2 text-xs text-red-400 bg-red-900/20 p-2 rounded overflow-auto">
-                  {this.state.error?.message}
-                  {this.state.error?.stack}
-                </pre>
-              </details>
-            )}
+              <Typography variant="h5" sx={{ color: 'grey.900', mb: 2, fontWeight: 'bold' }}>
+                Something went wrong
+              </Typography>
+              
+              <Typography variant="body2" sx={{ color: 'grey.600', mb: 4, lineHeight: 1.6 }}>
+                We encountered an unexpected error while loading this page. 
+                Please try refreshing or contact support if the problem persists.
+              </Typography>
+              
+              <Stack spacing={2}>
+                <Button
+                  component={motion.button}
+                  onClick={this.handleRetry}
+                  variant="contained"
+                  fullWidth
+                  sx={{ borderRadius: 2 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Try Again
+                </Button>
+                
+                <Button
+                  component={motion.button}
+                  onClick={this.handleReportError}
+                  fullWidth
+                  variant="outlined"
+                  sx={{ borderRadius: 2 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Report Error
+                </Button>
+              </Stack>
+              
+              {process.env.NODE_ENV === 'development' && (
+                <Box sx={{ mt: 3, textAlign: 'left' }}>
+                  <details>
+                    <summary style={{ fontSize: '0.875rem', color: '#9ca3af', cursor: 'pointer' }}>
+                      Error Details (Development Only)
+                    </summary>
+                    <Box component="pre" sx={{ mt: 1, fontSize: '0.75rem', color: 'error.main', bgcolor: 'error.light', p: 1, borderRadius: 1, overflow: 'auto' }}>
+                      {this.state.error?.message}
+                      {this.state.error?.stack}
+                    </Box>
+                  </details>
+                </Box>
+              )}
+            </Box>
           </motion.div>
-        </div>
+        </Box>
       );
     }
 

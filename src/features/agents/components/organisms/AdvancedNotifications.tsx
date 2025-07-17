@@ -14,7 +14,6 @@ import {
   Button,
   Chip,
   Badge,
-  Menu,
   MenuItem,
   Dialog,
   DialogTitle,
@@ -27,13 +26,11 @@ import {
   Switch,
   FormControlLabel,
   FormGroup,
-  Divider,
   Tabs,
   Tab,
   Alert,
   useTheme,
   alpha,
-  Tooltip,
   Snackbar,
 } from '@mui/material';
 import {
@@ -43,32 +40,22 @@ import {
   Settings,
   Clear,
   MarkEmailRead,
-  FilterList,
-  Tune,
   Add,
   Edit,
   Delete,
-  Priority,
-  EventAvailable,
-  TrendingUp,
   AttachMoney,
+  TrendingUp,
   Assignment,
-  Phone,
   WhatsApp,
-  Email,
-  PersonAdd,
   CheckCircle,
-  Warning,
   Info,
-  Error,
   Close,
   VolumeOff,
   VolumeUp,
   Vibration,
-  SmartDisplay,
 } from '@mui/icons-material';
 import { useAgentStore } from '../../store';
-import { AgentNotification, NotificationType } from '../../types';
+import { NotificationType } from '../../types';
 
 interface NotificationRule {
   id: string;
@@ -126,7 +113,7 @@ const AdvancedNotifications: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   
   const [notificationRules, setNotificationRules] = useState<NotificationRule[]>([]);
-  const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
+  const [, setTemplates] = useState<NotificationTemplate[]>([]);
   const [globalSettings, setGlobalSettings] = useState({
     pushEnabled: true,
     emailEnabled: true,
@@ -246,7 +233,7 @@ const AdvancedNotifications: React.FC = () => {
 
   const getNotificationIcon = (type: NotificationType) => {
     switch (type) {
-      case 'new_lead': return <PersonAdd />;
+      case 'new_lead': return <Add />;
       case 'lead_update': return <Assignment />;
       case 'commission_earned': return <AttachMoney />;
       case 'target_achieved': return <TrendingUp />;
@@ -269,7 +256,7 @@ const AdvancedNotifications: React.FC = () => {
 
   const getTypeIcon = (type: NotificationType) => {
     switch (type) {
-      case 'new_lead': return <PersonAdd color="primary" />;
+      case 'new_lead': return <Add color="primary" />;
       case 'commission_earned': return <AttachMoney color="success" />;
       case 'reminder': return <Schedule color="warning" />;
       case 'whatsapp_message': return <WhatsApp color="success" />;
@@ -293,7 +280,7 @@ const AdvancedNotifications: React.FC = () => {
     setSnackbarOpen(true);
   };
 
-  const deleteNotification = (notificationId: string) => {
+  const deleteNotification = (_id: string) => {
     // Implementation would remove notification from store
     setSnackbarMessage('Notification deleted');
     setSnackbarOpen(true);

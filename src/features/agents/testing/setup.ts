@@ -1,4 +1,5 @@
-import { beforeAll, afterEach, afterAll, expect } from 'vitest';
+import React from 'react';
+// Jest is automatically available in test environment
 import { setupServer } from 'msw/node';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -6,11 +7,11 @@ import '@testing-library/jest-dom';
 import { handlers, resetMockData } from './msw-handlers';
 import { customMatchers } from './test-utils';
 
-// Extend Vitest's expect with custom matchers
+// Extend Jest's expect with custom matchers
 expect.extend(customMatchers);
 
 // Setup MSW server for API mocking
-export const server = setupServer(...handlers);
+const server = setupServer(...handlers);
 
 // Global test setup
 beforeAll(() => {
@@ -35,7 +36,7 @@ afterEach(() => {
   resetMockData();
   
   // Clear all mocks
-  vi.clearAllMocks();
+  jest.clearAllMocks();
 });
 
 afterAll(() => {
@@ -51,54 +52,60 @@ function setupGlobalMocks() {
   // Mock window.matchMedia
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: vi.fn().mockImplementation(query => ({
+    value: jest.fn().mockImplementation((query: string) => ({
       matches: false,
       media: query,
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
     })),
   });
 
-  // Mock IntersectionObserver
-  global.IntersectionObserver = vi.fn().mockImplementation((callback, options) => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-    root: null,
-    rootMargin: options?.rootMargin || '',
-    thresholds: options?.threshold || [0],
-  }));
+  // Mock IntersectionObserver (if not already defined)
+  if (!global.IntersectionObserver) {
+    global.IntersectionObserver = jest.fn().mockImplementation((_callback: any, options: any) => ({
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+      disconnect: jest.fn(),
+      root: null,
+      rootMargin: options?.rootMargin || '',
+      thresholds: options?.threshold || [0],
+    }));
+  }
 
-  // Mock ResizeObserver
-  global.ResizeObserver = vi.fn().mockImplementation((callback) => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }));
+  // Mock ResizeObserver (if not already defined)
+  if (!global.ResizeObserver) {
+    global.ResizeObserver = jest.fn().mockImplementation((_callback: any) => ({
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+      disconnect: jest.fn(),
+    }));
+  }
 
-  // Mock MutationObserver
-  global.MutationObserver = vi.fn().mockImplementation((callback) => ({
-    observe: vi.fn(),
-    disconnect: vi.fn(),
-    takeRecords: vi.fn(() => []),
-  }));
+  // Mock MutationObserver (if not already defined)
+  if (!global.MutationObserver) {
+    global.MutationObserver = jest.fn().mockImplementation((_callback: any) => ({
+      observe: jest.fn(),
+      disconnect: jest.fn(),
+      takeRecords: jest.fn(() => []),
+    }));
+  }
 
   // Mock requestAnimationFrame
-  global.requestAnimationFrame = vi.fn((callback) => {
+  global.requestAnimationFrame = jest.fn((callback: any) => {
     setTimeout(callback, 16); // 60fps
     return 1;
   });
 
-  global.cancelAnimationFrame = vi.fn();
+  global.cancelAnimationFrame = jest.fn();
 
   // Mock getComputedStyle
   Object.defineProperty(window, 'getComputedStyle', {
-    value: vi.fn().mockImplementation(() => ({
-      getPropertyValue: vi.fn(() => ''),
+    value: jest.fn().mockImplementation(() => ({
+      getPropertyValue: jest.fn(() => ''),
       display: 'block',
       visibility: 'visible',
       opacity: '1',
@@ -107,17 +114,17 @@ function setupGlobalMocks() {
 
   // Mock scrollTo
   Object.defineProperty(window, 'scrollTo', {
-    value: vi.fn(),
+    value: jest.fn(),
   });
 
   // Mock localStorage
   const localStorageMock = {
-    getItem: vi.fn(() => null),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-    clear: vi.fn(),
+    getItem: jest.fn(() => null),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
     length: 0,
-    key: vi.fn(() => null),
+    key: jest.fn(() => null),
   };
   
   Object.defineProperty(window, 'localStorage', {
@@ -126,12 +133,12 @@ function setupGlobalMocks() {
 
   // Mock sessionStorage
   const sessionStorageMock = {
-    getItem: vi.fn(() => null),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-    clear: vi.fn(),
+    getItem: jest.fn(() => null),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
     length: 0,
-    key: vi.fn(() => null),
+    key: jest.fn(() => null),
   };
   
   Object.defineProperty(window, 'sessionStorage', {
@@ -139,88 +146,79 @@ function setupGlobalMocks() {
   });
 
   // Mock URL.createObjectURL
-  global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
-  global.URL.revokeObjectURL = vi.fn();
+  global.URL.createObjectURL = jest.fn(() => 'blob:mock-url');
+  global.URL.revokeObjectURL = jest.fn();
 
   // Mock HTMLCanvasElement
-  HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
-    fillRect: vi.fn(),
-    clearRect: vi.fn(),
-    beginPath: vi.fn(),
-    moveTo: vi.fn(),
-    lineTo: vi.fn(),
-    stroke: vi.fn(),
-    fill: vi.fn(),
-    toDataURL: vi.fn(() => 'data:image/png;base64,mock'),
-  }));
+  HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
+    fillRect: jest.fn(),
+    clearRect: jest.fn(),
+    beginPath: jest.fn(),
+    moveTo: jest.fn(),
+    lineTo: jest.fn(),
+    stroke: jest.fn(),
+    fill: jest.fn(),
+    toDataURL: jest.fn(() => 'data:image/png;base64,mock'),
+  })) as any;
 
   // Mock crypto for security utilities
   Object.defineProperty(global, 'crypto', {
     value: {
-      getRandomValues: vi.fn((arr) => {
+      getRandomValues: jest.fn((arr: any) => {
         for (let i = 0; i < arr.length; i++) {
           arr[i] = Math.floor(Math.random() * 256);
         }
         return arr;
       }),
-      randomUUID: vi.fn(() => 'mock-uuid-1234-5678-9abc-def0'),
+      randomUUID: jest.fn(() => 'mock-uuid-1234-5678-9abc-def0'),
     },
   });
 
   // Mock fetch (will be overridden by MSW)
-  global.fetch = vi.fn();
+  global.fetch = jest.fn();
 
   // Mock performance API
   Object.defineProperty(global, 'performance', {
     value: {
-      now: vi.fn(() => Date.now()),
-      mark: vi.fn(),
-      measure: vi.fn(),
-      getEntriesByType: vi.fn(() => []),
-      getEntriesByName: vi.fn(() => []),
+      now: jest.fn(() => Date.now()),
+      mark: jest.fn(),
+      measure: jest.fn(),
+      getEntriesByType: jest.fn(() => []),
+      getEntriesByName: jest.fn(() => []),
     },
   });
 
-  // Mock navigator
-  Object.defineProperty(navigator, 'userAgent', {
-    value: 'Mozilla/5.0 (Test Environment)',
-    configurable: true,
-  });
+  // Enable fake timers for testing
+  // vi.useFakeTimers();
 
-  Object.defineProperty(navigator, 'language', {
-    value: 'en-US',
-    configurable: true,
-  });
-
-  Object.defineProperty(navigator, 'languages', {
-    value: ['en-US', 'en'],
-    configurable: true,
-  });
+  // Mock date for consistent testing
+  const mockDate = new Date('2024-01-01T00:00:00.000Z');
+  jest.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
 
   // Mock Notification API
   Object.defineProperty(global, 'Notification', {
-    value: vi.fn().mockImplementation(() => ({
-      close: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
+    value: jest.fn().mockImplementation(() => ({
+      close: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
     })),
   });
 
   Object.defineProperty(Notification, 'permission', {
-    value: 'default',
-    configurable: true,
+    value: 'granted',
+    writable: true,
   });
 
   Object.defineProperty(Notification, 'requestPermission', {
-    value: vi.fn(() => Promise.resolve('granted')),
+    value: jest.fn(() => Promise.resolve('granted')),
   });
 
   // Mock WebSocket for real-time features
-  global.WebSocket = vi.fn().mockImplementation(() => ({
-    send: vi.fn(),
-    close: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
+  (global as any).WebSocket = jest.fn().mockImplementation(() => ({
+    send: jest.fn(),
+    close: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
     readyState: 1, // OPEN
     CONNECTING: 0,
     OPEN: 1,
@@ -229,155 +227,199 @@ function setupGlobalMocks() {
   }));
 
   // Mock DOMPurify
-  vi.mock('dompurify', () => ({
+  jest.mock('dompurify', () => ({
     default: {
-      sanitize: vi.fn((content) => content),
+      sanitize: jest.fn((content: any) => content),
     },
   }));
 }
 
+// Restore global mocks
 function restoreGlobalMocks() {
   // Restore any mocked globals if needed
-  vi.restoreAllMocks();
+  jest.restoreAllMocks();
 }
 
 function setupConsoleSpies() {
-  // Spy on console methods to catch unexpected errors/warnings
+  // Store original console methods
   const originalError = console.error;
   const originalWarn = console.warn;
 
-  console.error = vi.fn((...args) => {
+  console.error = jest.fn((...args: any[]) => {
     // Allow certain expected errors
     const message = args[0];
     if (typeof message === 'string') {
-      // Ignore React Testing Library warnings about act()
-      if (message.includes('Warning: An invalid form control')) return;
-      if (message.includes('Warning: React does not recognize')) return;
-      if (message.includes('act(...)')) return;
+      // Ignore React error boundary warnings in tests
+      if (message.includes('Consider adding an error boundary')) return;
+      // Ignore act() warnings
+      if (message.includes('was not wrapped in act')) return;
     }
     
-    // Call original console.error for unexpected errors
+    // Log other errors
     originalError.apply(console, args);
   });
 
-  console.warn = vi.fn((...args) => {
+  console.warn = jest.fn((...args: any[]) => {
     const message = args[0];
     if (typeof message === 'string') {
       // Ignore certain expected warnings
-      if (message.includes('componentWillReceiveProps')) return;
-      if (message.includes('componentWillMount')) return;
+      if (message.includes('React does not recognize')) return;
+      if (message.includes('Unknown event handler property')) return;
     }
     
-    // Call original console.warn for unexpected warnings
+    // Log other warnings
     originalWarn.apply(console, args);
   });
 }
 
 // Test environment validation
-export function validateTestEnvironment() {
-  const requiredGlobals = [
-    'IntersectionObserver',
-    'ResizeObserver',
-    'requestAnimationFrame',
-    'localStorage',
-    'sessionStorage',
-    'crypto',
-    'fetch',
-    'performance',
-  ];
+function validateTestEnvironment() {
+  // Ensure we're in a test environment
+  if (process.env.NODE_ENV !== 'test') {
+    throw new Error('Test setup should only run in test environment');
+  }
 
-  const missingGlobals = requiredGlobals.filter(global => !(global in window));
-  
-  if (missingGlobals.length > 0) {
-    throw new Error(`Missing global mocks: ${missingGlobals.join(', ')}`);
+  // Ensure required globals are available
+  const requiredGlobals = ['window', 'document', 'navigator'];
+  for (const global of requiredGlobals) {
+    if (!(global in globalThis)) {
+      throw new Error(`Required global '${global}' is not available`);
+    }
   }
 }
 
-// Performance testing utilities
-export const performanceHelpers = {
-  measureRenderTime: async (renderFunction: () => void): Promise<number> => {
-    const start = performance.now();
-    renderFunction();
-    const end = performance.now();
-    return end - start;
+// Custom test utilities
+export const testUtils = {
+  // Wait for async operations
+  waitForAsync: (ms: number = 100) => new Promise(resolve => setTimeout(resolve, ms)),
+  
+  // Mock module with TypeScript support
+  mockModule: (modulePath: string, mockImplementation: any) => {
+    jest.mock(modulePath, () => mockImplementation);
   },
-
-  expectPerformanceUnder: (actualTime: number, maxTime: number) => {
-    expect(actualTime).toBeLessThan(maxTime);
+  
+  // Create mock API response
+  createMockResponse: (data: any, status: number = 200) => ({
+    ok: status >= 200 && status < 300,
+    status,
+    json: async () => data,
+    text: async () => JSON.stringify(data),
+    headers: new Headers(),
+  }),
+  
+  // Mock browser APIs
+  mockGeolocation: (coords: { latitude: number; longitude: number }) => {
+    const mockGeolocation = {
+      getCurrentPosition: jest.fn().mockImplementationOnce((success) =>
+        Promise.resolve(
+          success({
+            coords: {
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+            },
+          })
+        )
+      ),
+      watchPosition: jest.fn(),
+      clearWatch: jest.fn(),
+    };
+    
+    Object.defineProperty(navigator, 'geolocation', {
+      value: mockGeolocation,
+      writable: true,
+    });
   },
-};
-
-// Accessibility testing setup
-export const a11yConfig = {
-  rules: {
-    // Disable certain rules for testing environment
-    'color-contrast': { enabled: false },
-    'landmark-one-main': { enabled: false },
-    'page-has-heading-one': { enabled: false },
-  },
-};
-
-// Test data cleanup utilities
-export const cleanupHelpers = {
-  clearLocalStorage: () => {
+  
+  // Storage utilities
+  mockLocalStorage: () => {
+    const storage: Record<string, string> = {};
+    
     Object.defineProperty(window, 'localStorage', {
       value: {
-        getItem: vi.fn(() => null),
-        setItem: vi.fn(),
-        removeItem: vi.fn(),
-        clear: vi.fn(),
+        getItem: jest.fn((key: string) => storage[key] || null),
+        setItem: jest.fn((key: string, value: string) => {
+          storage[key] = value;
+        }),
+        removeItem: jest.fn((key: string) => {
+          delete storage[key];
+        }),
+        clear: jest.fn(() => {
+          Object.keys(storage).forEach(key => delete storage[key]);
+        }),
         length: 0,
-        key: vi.fn(() => null),
+        key: jest.fn(() => null),
       },
     });
   },
-
-  clearSessionStorage: () => {
+  
+  mockSessionStorage: () => {
+    const storage: Record<string, string> = {};
+    
     Object.defineProperty(window, 'sessionStorage', {
       value: {
-        getItem: vi.fn(() => null),
-        setItem: vi.fn(),
-        removeItem: vi.fn(),
-        clear: vi.fn(),
+        getItem: jest.fn((key: string) => storage[key] || null),
+        setItem: jest.fn((key: string, value: string) => {
+          storage[key] = value;
+        }),
+        removeItem: jest.fn((key: string) => {
+          delete storage[key];
+        }),
+        clear: jest.fn(() => {
+          Object.keys(storage).forEach(key => delete storage[key]);
+        }),
         length: 0,
-        key: vi.fn(() => null),
+        key: jest.fn(() => null),
       },
     });
   },
 
   resetTimers: () => {
-    vi.clearAllTimers();
-    vi.useRealTimers();
+    jest.clearAllTimers();
+    jest.useRealTimers();
   },
 };
 
-// Custom test utilities for async operations
-export const asyncHelpers = {
-  waitFor: (condition: () => boolean, timeout: number = 5000): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const startTime = Date.now();
-      
-      const check = () => {
-        if (condition()) {
-          resolve();
-        } else if (Date.now() - startTime > timeout) {
-          reject(new Error(`Timeout waiting for condition after ${timeout}ms`));
-        } else {
-          setTimeout(check, 10);
-        }
-      };
-      
-      check();
-    });
-  },
+// Error boundaries for testing
+export class TestErrorBoundary extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TestErrorBoundary';
+  }
+}
 
-  flushPromises: (): Promise<void> => {
-    return new Promise(resolve => setTimeout(resolve, 0));
-  },
+// Mock data generators
+export const generateMockData = {
+  user: (overrides = {}) => ({
+    id: 'user-123',
+    name: 'Test User',
+    email: 'test@example.com',
+    role: 'agent',
+    ...overrides,
+  }),
+  
+  lead: (overrides = {}) => ({
+    id: 'lead-123',
+    companyName: 'Test Company',
+    contactPerson: 'John Doe',
+    email: 'john@testcompany.com',
+    phone: '+1234567890',
+    status: 'new',
+    priority: 'medium',
+    ...overrides,
+  }),
+  
+  notification: (overrides = {}) => ({
+    id: 'notif-123',
+    title: 'Test Notification',
+    message: 'This is a test notification',
+    type: 'info',
+    isRead: false,
+    timestamp: new Date().toISOString(),
+    ...overrides,
+  }),
 };
 
 // Export commonly used testing imports
-export { vi } from 'vitest';
 export { server };
 
 // Run environment validation

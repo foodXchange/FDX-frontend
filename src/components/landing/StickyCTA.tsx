@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Box, Button, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 export const StickyCTA: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -21,33 +23,59 @@ export const StickyCTA: React.FC = () => {
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
+        <Box
+          component={motion.div}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t border-gray-200 p-4 z-50 md:hidden"
+          sx={{ 
+            position: 'fixed', 
+            bottom: 0, 
+            left: 0, 
+            right: 0, 
+            bgcolor: 'white', 
+            boxShadow: 6, 
+            borderTop: 1, 
+            borderColor: 'grey.200', 
+            p: 2, 
+            zIndex: 50, 
+            display: { md: 'none' } 
+          }}
         >
-          <div className="flex flex-col sm:flex-row gap-3">
-            <motion.a
-              href="/register"
-              whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-orange-600 text-white py-3 px-4 rounded-lg font-bold text-center hover:bg-orange-700 transition-colors inline-block"
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1.5 }}>
+            <Button
+              component={Link}
+              to="/register"
+              variant="contained"
+              fullWidth
+              sx={{ 
+                bgcolor: '#ea580c', 
+                py: 1.5,
+                fontWeight: 700,
+                '&:hover': { bgcolor: '#dc2626' }
+              }}
             >
               Start Free Trial
-            </motion.a>
-            <motion.a
-              href="/login"
-              whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-bold text-center hover:bg-blue-700 transition-colors inline-block"
+            </Button>
+            <Button
+              component={Link}
+              to="/login"
+              variant="contained"
+              fullWidth
+              sx={{ 
+                bgcolor: 'primary.main',
+                py: 1.5,
+                fontWeight: 700
+              }}
             >
               Login
-            </motion.a>
-          </div>
-          <p className="text-xs text-gray-500 text-center mt-2">
+            </Button>
+          </Box>
+          <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', textAlign: 'center', mt: 1 }}>
             No credit card required • Free trial
-          </p>
-        </motion.div>
+          </Typography>
+        </Box>
       )}
     </AnimatePresence>
   );

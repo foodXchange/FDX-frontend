@@ -2,19 +2,43 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MagnifyingGlassIcon,
-  FunnelIcon,
-  PlusIcon,
-  EyeIcon,
-  PencilIcon,
-  TrashIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CalendarDaysIcon,
-  UserGroupIcon,
-  DocumentTextIcon,
-  ExclamationTriangleIcon,
-} from '@heroicons/react/24/outline';
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  TextField,
+  InputAdornment,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  Chip,
+  IconButton,
+  Stack,
+  Pagination,
+  Alert,
+  Paper,
+  Collapse,
+  Divider,
+  Container,
+  Skeleton
+} from '@mui/material';
+import {
+  Search as MagnifyingGlassIcon,
+  FilterList as FunnelIcon,
+  Add as PlusIcon,
+  Visibility as EyeIcon,
+  Edit as PencilIcon,
+  Delete as TrashIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  Event as CalendarDaysIcon,
+  People as UserGroupIcon,
+  Description as DocumentTextIcon,
+  Warning as ExclamationTriangleIcon,
+} from '@mui/icons-material';
 import { rfqService } from '../../services/rfqService';
 import { RFQ, RFQFilters } from '../../shared/types';
 import { StatusBadge } from '../../components/ui/StatusBadge';
@@ -141,11 +165,11 @@ export const RFQList: React.FC<RFQListProps> = ({
   const getUrgencyDisplay = (urgency: string) => {
     switch (urgency) {
       case 'expired':
-        return { text: 'Expired', color: 'text-red-500', bg: 'bg-red-50' };
+        return { text: 'Expired', color: 'error' };
       case 'urgent':
-        return { text: 'Urgent', color: 'text-red-500', bg: 'bg-red-50' };
+        return { text: 'Urgent', color: 'error' };
       case 'warning':
-        return { text: 'Soon', color: 'text-yellow-500', bg: 'bg-yellow-50' };
+        return { text: 'Soon', color: 'warning' };
       default:
         return null;
     }
@@ -163,333 +187,328 @@ export const RFQList: React.FC<RFQListProps> = ({
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <SkeletonLoader width="200px" height="32px" />
-          <SkeletonLoader width="120px" height="40px" />
-        </div>
-        <div className="space-y-4">
+      <Container maxWidth="lg" sx={{ py: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Skeleton width={200} height={32} />
+          <Skeleton width={120} height={40} />
+        </Box>
+        <Stack spacing={2}>
           {[1, 2, 3, 4, 5].map(i => (
-            <SkeletonLoader key={i} width="100%" height="120px" />
+            <Skeleton key={i} width="100%" height={120} variant="rectangular" />
           ))}
-        </div>
-      </div>
+        </Stack>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <ExclamationTriangleIcon className="h-6 w-6 text-red-500 mr-2" />
-            <span className="text-red-700">{error}</span>
-          </div>
-        </div>
-      </div>
+      <Container maxWidth="lg" sx={{ py: 3 }}>
+        <Alert severity="error" icon={<ExclamationTriangleIcon />}>
+          {error}
+        </Alert>
+      </Container>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <Container maxWidth="lg" sx={{ py: 3 }}>
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">RFQ Management</h1>
-          <p className="text-gray-600 mt-1">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" sx={{ color: 'grey.900', fontWeight: 'bold' }}>
+            RFQ Management
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'grey.600' }}>
             {userRole === 'buyer' ? 'Manage your requests for quotations' : 'Browse available RFQs'}
-          </p>
-        </div>
+          </Typography>
+        </Box>
         {userRole === 'buyer' && (
-          <Link
+          <Button
+            component={Link}
             to="/rfq/create"
-            className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+            variant="contained"
+            startIcon={<PlusIcon />}
+            sx={{ borderRadius: 2 }}
           >
-            <PlusIcon className="h-5 w-5 mr-2" />
             Create RFQ
-          </Link>
+          </Button>
         )}
-      </div>
+      </Box>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <form onSubmit={handleSearch} className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input
-                  type="text"
+      <Card sx={{ mb: 3 }}>
+        <CardContent sx={{ p: 3 }}>
+          <form onSubmit={handleSearch}>
+            <Stack spacing={3}>
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <TextField
+                  fullWidth
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search RFQs by title, description, or category..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <MagnifyingGlassIcon sx={{ color: 'grey.400' }} />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-              >
-                Search
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowFilters(!showFilters)}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                <FunnelIcon className="h-5 w-5 mr-2" />
-                Filters
-              </button>
-            </div>
-          </div>
-        </form>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ borderRadius: 2 }}
+                >
+                  Search
+                </Button>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  onClick={() => setShowFilters(!showFilters)}
+                  startIcon={<FunnelIcon />}
+                  sx={{ borderRadius: 2 }}
+                >
+                  Filters
+                </Button>
+              </Box>
+            </Stack>
+          </form>
 
-        <AnimatePresence>
-          {showFilters && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-4 pt-4 border-t border-gray-200"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Status
-                  </label>
-                  <select
-                    value={filters.status}
-                    onChange={(e) => handleFilterChange('status', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  >
-                    {statusOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Category
-                  </label>
-                  <select
-                    value={filters.category}
-                    onChange={(e) => handleFilterChange('category', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  >
-                    {categoryOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sort By
-                  </label>
-                  <select
-                    value={filters.sortBy}
-                    onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  >
-                    {sortOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          <Collapse in={showFilters}>
+            <Box sx={{ mt: 2, pt: 3, borderTop: 1, borderColor: 'divider' }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>Status</InputLabel>
+                    <Select
+                      value={filters.status}
+                      onChange={(e) => handleFilterChange('status', e.target.value)}
+                      label="Status"
+                    >
+                      {statusOptions.map(option => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>Category</InputLabel>
+                    <Select
+                      value={filters.category}
+                      onChange={(e) => handleFilterChange('category', e.target.value)}
+                      label="Category"
+                    >
+                      {categoryOptions.map(option => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>Sort By</InputLabel>
+                    <Select
+                      value={filters.sortBy}
+                      onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                      label="Sort By"
+                    >
+                      {sortOptions.map(option => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Box>
+          </Collapse>
+        </CardContent>
+      </Card>
 
       {/* RFQ List */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-900">
+      <Card>
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Typography variant="h6" sx={{ color: 'grey.900' }}>
               RFQs ({filteredRFQs.length})
-            </h2>
-            <div className="text-sm text-gray-500">
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'grey.500' }}>
               Page {currentPage} of {totalPages}
-            </div>
-          </div>
-        </div>
+            </Typography>
+          </Box>
 
-        <div className="divide-y divide-gray-200">
-          {filteredRFQs.length === 0 ? (
-            <div className="p-8 text-center">
-              <DocumentTextIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {searchTerm ? 'No RFQs found' : 'No RFQs available'}
-              </h3>
-              <p className="text-gray-500 mb-4">
-                {searchTerm 
-                  ? 'Try adjusting your search terms or filters'
-                  : userRole === 'buyer' 
-                    ? 'Start by creating your first RFQ' 
-                    : 'No RFQs are currently available'
-                }
-              </p>
-              {userRole === 'buyer' && !searchTerm && (
-                <Link
-                  to="/rfq/create"
-                  className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-                >
-                  <PlusIcon className="h-5 w-5 mr-2" />
-                  Create First RFQ
-                </Link>
-              )}
-            </div>
-          ) : (
-            filteredRFQs.map((rfq) => {
-              const urgency = getUrgencyLevel(rfq);
-              const urgencyDisplay = getUrgencyDisplay(urgency);
-              
-              return (
-                <motion.div
-                  key={rfq.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-6 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <Link
-                          to={`/rfq/${rfq.id}`}
-                          className="text-lg font-medium text-gray-900 hover:text-orange-600 truncate"
-                        >
-                          {rfq.title}
-                        </Link>
-                        <StatusBadge status={rfq.status} type="rfq" />
-                        {urgencyDisplay && (
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${urgencyDisplay.color} ${urgencyDisplay.bg}`}>
-                            {urgencyDisplay.text}
-                          </span>
+          <Stack divider={<Divider />} spacing={0}>
+            {filteredRFQs.length === 0 ? (
+              <Box sx={{ p: 4, textAlign: 'center' }}>
+                <DocumentTextIcon sx={{ fontSize: 48, color: 'grey.400', mb: 2 }} />
+                <Typography variant="h6" sx={{ color: 'grey.900', mb: 1 }}>
+                  {searchTerm ? 'No RFQs found' : 'No RFQs available'}
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'grey.600', mb: 3 }}>
+                  {searchTerm 
+                    ? 'Try adjusting your search terms or filters'
+                    : userRole === 'buyer' 
+                      ? 'Start by creating your first RFQ' 
+                      : 'No RFQs are currently available'
+                  }
+                </Typography>
+                {userRole === 'buyer' && !searchTerm && (
+                  <Button
+                    component={Link}
+                    to="/rfq/create"
+                    variant="contained"
+                    startIcon={<PlusIcon />}
+                  >
+                    Create First RFQ
+                  </Button>
+                )}
+              </Box>
+            ) : (
+              filteredRFQs.map((rfq) => {
+                const urgency = getUrgencyLevel(rfq);
+                const urgencyDisplay = getUrgencyDisplay(urgency);
+                
+                return (
+                  <motion.div
+                    key={rfq.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <Paper sx={{ p: 3, bgcolor: 'grey.50' }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Box sx={{ flex: 1 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
+                            <Typography
+                              component={Link}
+                              to={`/rfq/${rfq.id}`}
+                              variant="h6"
+                              sx={{ 
+                                color: 'grey.900',
+                                textDecoration: 'none',
+                                '&:hover': { textDecoration: 'underline' }
+                              }}
+                            >
+                              {rfq.title}
+                            </Typography>
+                            <StatusBadge status={rfq.status} type="rfq" />
+                            {urgencyDisplay && (
+                              <Chip
+                                label={urgencyDisplay.text}
+                                color={urgencyDisplay.color as any}
+                                size="small"
+                                sx={{ fontSize: '0.75rem' }}
+                              />
+                            )}
+                          </Box>
+                          
+                          <Typography variant="body2" sx={{ color: 'grey.600', mb: 2 }}>
+                            {rfq.description}
+                          </Typography>
+                          
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <DocumentTextIcon sx={{ fontSize: 16 }} />
+                              <Typography variant="body2">{rfq.category}</Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <Typography variant="body2">{rfq.quantity} {rfq.unit}</Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <CalendarDaysIcon sx={{ fontSize: 16 }} />
+                              <Typography variant="body2">
+                                Delivery: {format(new Date(rfq.deliveryDate), 'MMM dd, yyyy')}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <Typography variant="body2">
+                                Deadline: {format(new Date(rfq.submissionDeadline), 'MMM dd, yyyy HH:mm')}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <Typography variant="body2">
+                                Created {formatDistanceToNow(new Date(rfq.createdAt))} ago
+                              </Typography>
+                            </Box>
+                          </Box>
+                          
+                          {rfq.proposalCount > 0 && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <UserGroupIcon sx={{ fontSize: 16 }} />
+                              <Typography variant="body2">
+                                {rfq.proposalCount} proposal{rfq.proposalCount !== 1 ? 's' : ''} received
+                              </Typography>
+                            </Box>
+                          )}
+                        </Box>
+                        
+                        {showActions && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <IconButton
+                              component={Link}
+                              to={`/rfq/${rfq.id}`}
+                              title="View RFQ"
+                              size="small"
+                            >
+                              <EyeIcon />
+                            </IconButton>
+                            {userRole === 'buyer' && rfq.status === 'draft' && (
+                              <IconButton
+                                component={Link}
+                                to={`/rfq/${rfq.id}/edit`}
+                                title="Edit RFQ"
+                                size="small"
+                              >
+                                <PencilIcon />
+                              </IconButton>
+                            )}
+                            {userRole === 'buyer' && (
+                              <IconButton
+                                onClick={() => handleDeleteRFQ(rfq.id)}
+                                title="Delete RFQ"
+                                size="small"
+                                color="error"
+                              >
+                                <TrashIcon />
+                              </IconButton>
+                            )}
+                          </Box>
                         )}
-                      </div>
-                      
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                        {rfq.description}
-                      </p>
-                      
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                        <div className="flex items-center">
-                          <DocumentTextIcon className="h-4 w-4 mr-1" />
-                          <span>{rfq.category}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <span>{rfq.quantity} {rfq.unit}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <CalendarDaysIcon className="h-4 w-4 mr-1" />
-                          <span>Delivery: {format(new Date(rfq.deliveryDate), 'MMM dd, yyyy')}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <span>Deadline: {format(new Date(rfq.submissionDeadline), 'MMM dd, yyyy HH:mm')}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <span>Created {formatDistanceToNow(new Date(rfq.createdAt))} ago</span>
-                        </div>
-                      </div>
-                      
-                      {rfq.proposalCount > 0 && (
-                        <div className="mt-3 flex items-center text-sm text-green-600">
-                          <UserGroupIcon className="h-4 w-4 mr-1" />
-                          <span>{rfq.proposalCount} proposal{rfq.proposalCount !== 1 ? 's' : ''} received</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {showActions && (
-                      <div className="flex items-center space-x-2 ml-4">
-                        <Link
-                          to={`/rfq/${rfq.id}`}
-                          className="p-2 text-gray-400 hover:text-blue-500 rounded-lg hover:bg-blue-50 transition-colors"
-                          title="View RFQ"
-                        >
-                          <EyeIcon className="h-5 w-5" />
-                        </Link>
-                        {userRole === 'buyer' && rfq.status === 'draft' && (
-                          <Link
-                            to={`/rfq/${rfq.id}/edit`}
-                            className="p-2 text-gray-400 hover:text-green-500 rounded-lg hover:bg-green-50 transition-colors"
-                            title="Edit RFQ"
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                          </Link>
-                        )}
-                        {userRole === 'buyer' && (
-                          <button
-                            onClick={() => handleDeleteRFQ(rfq.id)}
-                            className="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"
-                            title="Delete RFQ"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })
+                      </Box>
+                    </Paper>
+                  </motion.div>
+                );
+              })
+            )}
+          </Stack>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Box sx={{ mt: 3, pt: 3, borderTop: 1, borderColor: 'divider' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body2" sx={{ color: 'grey.500' }}>
+                  Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredRFQs.length)} of {filteredRFQs.length} results
+                </Typography>
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={(_, page) => setCurrentPage(page)}
+                  color="primary"
+                  shape="rounded"
+                />
+              </Box>
+            </Box>
           )}
-        </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-500">
-                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredRFQs.length)} of {filteredRFQs.length} results
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <ChevronLeftIcon className="h-5 w-5" />
-                </button>
-                
-                <div className="flex space-x-1">
-                  {[...Array(totalPages)].map((_, i) => (
-                    <button
-                      key={i + 1}
-                      onClick={() => setCurrentPage(i + 1)}
-                      className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === i + 1
-                          ? 'bg-orange-500 text-white'
-                          : 'text-gray-600 hover:bg-gray-100'
-                      }`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                </div>
-                
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <ChevronRightIcon className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };

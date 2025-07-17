@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+.env
+.env.local
+.env.development
+.env.test
+.git
+.gitignore
+README.md
+.vscode
+.idea
+src
+tsconfig.json
+*.ts
+!*.d.ts
+logs/*.log

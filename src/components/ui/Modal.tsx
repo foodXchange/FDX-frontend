@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useUIStore } from '@/store/useUIStore';
+import { Box, IconButton } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 
 interface ModalProps {
   id: string;
@@ -20,7 +21,6 @@ export const Modal: React.FC<ModalProps> = ({
   closeOnEscape = true,
   closeOnBackdrop = true,
   showCloseButton = true,
-  className,
 }) => {
   const closeModal = useUIStore((state) => state.closeModal);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -71,57 +71,103 @@ export const Modal: React.FC<ModalProps> = ({
     }
   };
 
-  const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    full: 'max-w-full mx-4',
+  const sizeStyles = {
+    sm: { maxWidth: '24rem' },
+    md: { maxWidth: '28rem' },
+    lg: { maxWidth: '32rem' },
+    xl: { maxWidth: '36rem' },
+    full: { maxWidth: '100%', mx: 2 },
   };
 
   return createPortal(
-    <div
-      className="fixed inset-0 z-50 overflow-y-auto"
+    <Box
+      sx={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        overflowY: 'auto'
+      }}
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
     >
-      <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: { xs: 'flex-end', sm: 'center' }, 
+        justifyContent: 'center', 
+        minHeight: '100vh', 
+        p: { xs: 2, sm: 0 },
+        pb: { xs: 10, sm: 0 },
+        textAlign: 'center'
+      }}>
         {/* Background overlay */}
-        <div
-          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        <Box
+          sx={{
+            position: 'fixed',
+            inset: 0,
+            bgcolor: 'rgba(0, 0, 0, 0.75)',
+            transition: 'opacity 0.15s'
+          }}
           aria-hidden="true"
           onClick={handleBackdropClick}
         />
 
         {/* This element is to trick the browser into centering the modal contents. */}
-        <span
-          className="hidden sm:inline-block sm:align-middle sm:h-screen"
+        <Box
+          component="span"
+          sx={{
+            display: { xs: 'none', sm: 'inline-block' },
+            verticalAlign: 'middle',
+            height: '100vh'
+          }}
           aria-hidden="true"
         >
           &#8203;
-        </span>
+        </Box>
 
         {/* Modal panel */}
-        <div
+        <Box
           ref={modalRef}
-          className={`inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full ${sizeClasses[size]} ${className || ''}`}
+          sx={{
+            display: 'inline-block',
+            verticalAlign: { xs: 'bottom', sm: 'middle' },
+            bgcolor: 'white',
+            borderRadius: 2,
+            textAlign: 'left',
+            overflow: 'hidden',
+            boxShadow: 24,
+            transform: 'translateZ(0)',
+            transition: 'all 0.15s',
+            my: { sm: 4 },
+            width: '100%',
+            position: 'relative',
+            ...sizeStyles[size]
+          }}
         >
           {showCloseButton && (
-            <button
-              type="button"
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1"
+            <IconButton
+              sx={{
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                color: 'grey.500',
+                '&:hover': { color: 'grey.600' },
+                '&:focus': {
+                  outline: 'none',
+                  boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.5)'
+                }
+              }}
               onClick={() => closeModal(id)}
+              aria-label="Close"
             >
-              <span className="sr-only">Close</span>
-              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-            </button>
+              <CloseIcon />
+            </IconButton>
           )}
 
           {children}
-        </div>
-      </div>
-    </div>,
+        </Box>
+      </Box>
+    </Box>,
     document.body
   );
 };

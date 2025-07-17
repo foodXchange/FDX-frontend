@@ -113,7 +113,7 @@ class CSRFTokenManager {
   }
 
   private isTokenValid(): boolean {
-    return this.token && Date.now() < this.tokenExpiry;
+    return Boolean(this.token) && Date.now() < this.tokenExpiry;
   }
 
   private async refreshToken(): Promise<string> {

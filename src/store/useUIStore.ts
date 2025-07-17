@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import React from 'react';
 
 interface Modal {
   id: string;
-  component: React.ComponentType<any>;
-  props?: any;
+  component: React.ComponentType<Record<string, unknown>>;
+  props?: Record<string, unknown>;
   options?: {
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
     closeOnEscape?: boolean;

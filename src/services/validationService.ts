@@ -1,3 +1,4 @@
+// Validation service for product specifications, compliance checks, and data integrity
 import { api } from './api';
 import { ProductSpecification, ApiResponse } from '../shared/types';
 

@@ -3,10 +3,26 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+  Card,
+  CardContent,
+  IconButton,
+  InputAdornment,
+  CircularProgress,
+  Stack
+} from '@mui/material';
+import {
+  Visibility,
+  VisibilityOff,
+  CheckCircle
+} from '@mui/icons-material';
 import { api } from '@/services/api-client';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 const resetPasswordSchema = z.object({
   password: z.string()
@@ -65,140 +81,178 @@ const ResetPassword: React.FC = () => {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="max-w-md w-full p-6 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Invalid Reset Link</h2>
-          <p className="text-gray-600 mb-6">
-            This password reset link is invalid or has expired.
-          </p>
-          <Link to="/forgot-password">
-            <Button variant="default" className="w-full">
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: 'grey.50',
+          py: 3,
+          px: { xs: 2, sm: 3, lg: 4 }
+        }}
+      >
+        <Card sx={{ maxWidth: 'md', width: '100%' }}>
+          <CardContent sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="h4" component="h2" gutterBottom fontWeight="bold">
+              Invalid Reset Link
+            </Typography>
+            <Typography color="text.secondary" paragraph>
+              This password reset link is invalid or has expired.
+            </Typography>
+            <Button
+              component={Link}
+              to="/forgot-password"
+              variant="contained"
+              fullWidth
+              size="large"
+            >
               Request New Reset Link
             </Button>
-          </Link>
+          </CardContent>
         </Card>
-      </div>
+      </Box>
     );
   }
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="max-w-md w-full p-6 text-center">
-          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-            <svg
-              className="h-6 w-6 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: 'grey.50',
+          py: 3,
+          px: { xs: 2, sm: 3, lg: 4 }
+        }}
+      >
+        <Card sx={{ maxWidth: 'md', width: '100%' }}>
+          <CardContent sx={{ p: 3, textAlign: 'center' }}>
+            <Box
+              sx={{
+                mx: 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 48,
+                width: 48,
+                borderRadius: '50%',
+                bgcolor: 'success.light',
+                mb: 3
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-          <h2 className="mt-6 text-2xl font-bold text-gray-900">Password Reset Successful</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Your password has been reset. Redirecting to login...
-          </p>
+              <CheckCircle sx={{ fontSize: 24, color: 'success.main' }} />
+            </Box>
+            <Typography variant="h4" component="h2" gutterBottom fontWeight="bold">
+              Password Reset Successful
+            </Typography>
+            <Typography color="text.secondary" variant="body2">
+              Your password has been reset. Redirecting to login...
+            </Typography>
+          </CardContent>
         </Card>
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Reset your password
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your new password below
-          </p>
-        </div>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'grey.50',
+        py: 3,
+        px: { xs: 2, sm: 3, lg: 4 }
+      }}
+    >
+      <Container maxWidth="sm">
+        <Stack spacing={3}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h3" component="h2" gutterBottom fontWeight="bold">
+              Reset your password
+            </Typography>
+            <Typography color="text.secondary">
+              Enter your new password below
+            </Typography>
+          </Box>
 
-        <Card className="mt-8 p-6">
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                New Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  {...register('password')}
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm pr-10"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-400" />
+          <Card>
+            <CardContent sx={{ p: 3 }}>
+              <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+                <Stack spacing={3}>
+                  <TextField
+                    {...register('password')}
+                    type={showPassword ? 'text' : 'password'}
+                    label="New Password"
+                    fullWidth
+                    autoComplete="new-password"
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                            aria-label="toggle password visibility"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+
+                  <TextField
+                    {...register('confirmPassword')}
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    label="Confirm New Password"
+                    fullWidth
+                    autoComplete="new-password"
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword?.message}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            edge="end"
+                            aria-label="toggle confirm password visibility"
+                          >
+                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+
+                  {errorMessage && (
+                    <Alert severity="error" sx={{ width: '100%' }}>
+                      {errorMessage}
+                    </Alert>
                   )}
-                </button>
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-                )}
-              </div>
-            </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm New Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  {...register('confirmPassword')}
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm pr-10"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
-                )}
-              </div>
-            </div>
-
-            {errorMessage && (
-              <div className="rounded-md bg-red-50 p-4">
-                <p className="text-sm text-red-800">{errorMessage}</p>
-              </div>
-            )}
-
-            <div>
-              <Button
-                type="submit"
-                variant="default"
-                className="w-full"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Resetting...' : 'Reset Password'}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      </div>
-    </div>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    size="large"
+                    disabled={isLoading}
+                    startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                  >
+                    {isLoading ? 'Resetting...' : 'Reset Password'}
+                  </Button>
+                </Stack>
+              </Box>
+            </CardContent>
+          </Card>
+        </Stack>
+      </Container>
+    </Box>
   );
 };
 

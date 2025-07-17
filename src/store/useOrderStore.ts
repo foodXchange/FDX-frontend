@@ -117,9 +117,9 @@ export const useOrderStore = create<OrderState>()(
             state.currentPage = currentPage;
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
         }
@@ -138,9 +138,9 @@ export const useOrderStore = create<OrderState>()(
             state.selectedOrder = response.data || null;
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
         }
@@ -166,9 +166,9 @@ export const useOrderStore = create<OrderState>()(
             }
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
           throw error;
@@ -239,8 +239,8 @@ export const useOrderStore = create<OrderState>()(
           };
 
           // In a real app, this would be a specific endpoint
-          // @ts-ignore - create method needs to be added to api
-          const response = await api.post('/orders', orderData) as ApiResponse<Order>;
+          // TODO: Add proper create method to API
+          const response = await (api as any).post('/orders', orderData) as { data: Order };
           const newOrder = response.data;
 
           set((state) => {
@@ -250,9 +250,9 @@ export const useOrderStore = create<OrderState>()(
           });
 
           return newOrder;
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
           throw error;
@@ -267,17 +267,17 @@ export const useOrderStore = create<OrderState>()(
 
         try {
           const response = await api.orders.getAll({
-            // @ts-ignore - orderType filter needs to be added to SearchParams
+            // TODO: Add orderType filter to SearchParams interface
             orderType: 'standing',
-          });
+          } as any);
 
           set((state) => {
             state.standingOrders = response.data || [];
             state.isLoading = false;
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
         }
@@ -289,11 +289,11 @@ export const useOrderStore = create<OrderState>()(
         });
 
         try {
-          // @ts-ignore - create method needs to be added to api
-          const response = await api.post('/orders', {
+          // TODO: Add proper create method to API
+          const response = await (api as any).post('/orders', {
             ...data,
             orderType: 'standing',
-          });
+          }) as { data: Order };
           const newOrder = response.data;
 
           set((state) => {
@@ -302,9 +302,9 @@ export const useOrderStore = create<OrderState>()(
           });
 
           return newOrder;
-        } catch (error: any) {
+        } catch (error: unknown) {
           set((state) => {
-            state.error = error.message;
+            state.error = error instanceof Error ? error.message : 'Unknown error occurred';
             state.isLoading = false;
           });
           throw error;

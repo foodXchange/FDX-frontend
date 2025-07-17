@@ -1,5 +1,6 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useEffect, useRef, useCallback, useState } from 'react';
-import { useAuthContext } from '@/contexts/AuthContext';
+// import { useAuth } from '@/contexts/AuthContext';
 
 interface WebSocketMessage {
   type: string;
@@ -30,7 +31,7 @@ export const useWebSocket = (options: UseWebSocketOptions) => {
     onMessage,
   } = options;
 
-  const { user } = useAuthContext();
+  const user = { id: 'temp-user', token: 'temp-token' }; // TODO: Get from auth context
   const ws = useRef<WebSocket | null>(null);
   const reconnectCount = useRef(0);
   const reconnectTimeout = useRef<NodeJS.Timeout>();

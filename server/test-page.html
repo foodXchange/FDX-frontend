@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FDX Server Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+        .endpoint h3 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.online {
+            background: #28a745;
+            color: white;
+        }
+        .status.offline {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FDX Agent Server Test Page <span id="serverStatus" class="status offline">OFFLINE</span></h1>
+        
+        <div class="endpoint">
+            <h3>Health Check</h3>
+            <button onclick="testEndpoint('/health', 'GET')">Test Health</button>
+            <div id="health-result" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="endpoint">
+            <h3>API Routes</h3>
+            <button onclick="testEndpoint('/api', 'GET')">Test API Root</button>
+            <button onclick="testEndpoint('/api/agents', 'GET')">List Agents</button>
+            <button onclick="testEndpoint('/api/leads', 'GET')">List Leads</button>
+            <div id="api-result" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="endpoint">
+            <h3>Authentication Test</h3>
+            <button onclick="testAuth()">Test Login</button>
+            <div id="auth-result" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="endpoint">
+            <h3>Upload Test</h3>
+            <input type="file" id="fileInput" accept="image/*">
+            <button onclick="testUpload()">Test Upload</button>
+            <div id="upload-result" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="endpoint">
+            <h3>WebSocket Test</h3>
+            <button onclick="testWebSocket()">Connect WebSocket</button>
+            <button onclick="closeWebSocket()">Disconnect</button>
+            <div id="ws-result" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3003';
+        let ws = null;
+
+        // Check server status on load
+        window.onload = () => {
+            checkServerStatus();
+            setInterval(checkServerStatus, 5000);
+        };
+
+        async function checkServerStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                if (response.ok) {
+                    document.getElementById('serverStatus').textContent = 'ONLINE';
+                    document.getElementById('serverStatus').className = 'status online';
+                } else {
+                    throw new Error('Server not responding');
+                }
+            } catch (error) {
+                document.getElementById('serverStatus').textContent = 'OFFLINE';
+                document.getElementById('serverStatus').className = 'status offline';
+            }
+        }
+
+        async function testEndpoint(endpoint, method = 'GET', body = null) {
+            const resultId = endpoint.includes('health') ? 'health-result' : 'api-result';
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Loading...';
+
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                const data = await response.json();
+                
+                resultDiv.textContent = JSON.stringify({
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, null, 2);
+                
+                resultDiv.className = response.ok ? 'result success' : 'result error';
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Testing authentication...';
+
+            try {
+                // First try to login
+                const loginResponse = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'password123'
+                    })
+                });
+
+                const loginData = await loginResponse.json();
+                
+                resultDiv.textContent = JSON.stringify({
+                    endpoint: '/api/auth/login',
+                    status: loginResponse.status,
+                    response: loginData
+                }, null, 2);
+                
+                resultDiv.className = loginResponse.ok ? 'result success' : 'result error';
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testUpload() {
+            const resultDiv = document.getElementById('upload-result');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (!fileInput.files[0]) {
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Please select a file first';
+                resultDiv.className = 'result error';
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Uploading...';
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                resultDiv.textContent = JSON.stringify({
+                    status: response.status,
+                    response: data
+                }, null, 2);
+                
+                resultDiv.className = response.ok ? 'result success' : 'result error';
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        function testWebSocket() {
+            const resultDiv = document.getElementById('ws-result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Connecting to WebSocket...';
+
+            try {
+                ws = new WebSocket('ws://localhost:3003');
+                
+                ws.onopen = () => {
+                    resultDiv.textContent = 'WebSocket connected!';
+                    resultDiv.className = 'result success';
+                };
+
+                ws.onmessage = (event) => {
+                    resultDiv.textContent += `\nReceived: ${event.data}`;
+                };
+
+                ws.onerror = (error) => {
+                    resultDiv.textContent = `WebSocket error: ${error.message || 'Connection failed'}`;
+                    resultDiv.className = 'result error';
+                };
+
+                ws.onclose = () => {
+                    resultDiv.textContent += '\nWebSocket disconnected';
+                };
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        function closeWebSocket() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+        }
+    </script>
+</body>
+</html>

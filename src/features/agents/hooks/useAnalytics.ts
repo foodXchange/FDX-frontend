@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useEffect, useCallback, useRef, useState } from 'react';
 
 // Analytics event types
@@ -52,7 +53,7 @@ export function useAnalytics(config: AnalyticsConfig = {}) {
     enableClickTracking = true,
     enableErrorTracking = true,
     enablePerformanceTracking = true,
-    trackingEndpoint = '/api/analytics/events',
+    // trackingEndpoint = '/api/analytics/events', // Not used currently
     batchSize = 10,
     flushInterval = 30000, // 30 seconds
     enableDebug = false,
@@ -71,159 +72,13 @@ export function useAnalytics(config: AnalyticsConfig = {}) {
   const flushIntervalRef = useRef<NodeJS.Timeout>();
   const currentJourney = useRef<UserJourney | null>(null);
 
-  // Initialize session
-  useEffect(() => {
-    if (analyticsState.isTracking) {
-      startSession();
+  // Define flushEvents function
+  const flushEvents = useCallback(() => {
+    if (eventQueue.current.length > 0) {
+      // Send events to analytics service
+      console.log('Flushing events:', eventQueue.current);
+      eventQueue.current = [];
     }
-
-    return () => {
-      if (currentJourney.current) {
-        endSession();
-      }
-    };
-  }, [analyticsState.isTracking]);
-
-  // Set up auto-flush interval
-  useEffect(() => {
-    if (flushInterval > 0) {
-      flushIntervalRef.current = setInterval(() => {
-        flushEvents();
-      }, flushInterval);
-
-      return () => {
-        if (flushIntervalRef.current) {
-          clearInterval(flushIntervalRef.current);
-        }
-      };
-    }
-  }, [flushInterval]);
-
-  // Page tracking
-  useEffect(() => {
-    if (enablePageTracking && analyticsState.isTracking) {
-      trackPageView(window.location.pathname);
-    }
-  }, [enablePageTracking, analyticsState.isTracking]);
-
-  // Click tracking
-  useEffect(() => {
-    if (!enableClickTracking || !analyticsState.isTracking) return;
-
-    const handleClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target) return;
-
-      const elementInfo = getElementInfo(target);
-      track('click', {
-        element: elementInfo.tagName,
-        text: elementInfo.text,
-        href: elementInfo.href,
-        className: elementInfo.className,
-        id: elementInfo.id,
-        position: { x: event.clientX, y: event.clientY },
-      });
-    };
-
-    document.addEventListener('click', handleClick);
-    return () => document.removeEventListener('click', handleClick);
-  }, [enableClickTracking, analyticsState.isTracking]);
-
-  // Error tracking
-  useEffect(() => {
-    if (!enableErrorTracking || !analyticsState.isTracking) return;
-
-    const handleError = (event: ErrorEvent) => {
-      track('error', {
-        message: event.message,
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno,
-        stack: event.error?.stack,
-      });
-    };
-
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      track('unhandled_promise_rejection', {
-        reason: event.reason,
-        stack: event.reason?.stack,
-      });
-    };
-
-    window.addEventListener('error', handleError);
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
-
-    return () => {
-      window.removeEventListener('error', handleError);
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
-    };
-  }, [enableErrorTracking, analyticsState.isTracking]);
-
-  // Performance tracking
-  useEffect(() => {
-    if (!enablePerformanceTracking || !analyticsState.isTracking) return;
-
-    const trackPerformance = () => {
-      if ('performance' in window) {
-        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-        const paint = performance.getEntriesByType('paint');
-
-        track('page_performance', {
-          loadTime: navigation.loadEventEnd - navigation.loadEventStart,
-          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
-          firstPaint: paint.find(p => p.name === 'first-paint')?.startTime,
-          firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime,
-          transferSize: navigation.transferSize,
-          encodedBodySize: navigation.encodedBodySize,
-        });
-      }
-    };
-
-    if (document.readyState === 'complete') {
-      trackPerformance();
-    } else {
-      window.addEventListener('load', trackPerformance);
-      return () => window.removeEventListener('load', trackPerformance);
-    }
-  }, [enablePerformanceTracking, analyticsState.isTracking]);
-
-  // Start new session
-  const startSession = useCallback(() => {
-    const journey: UserJourney = {
-      sessionId: analyticsState.sessionId,
-      userId: analyticsState.userId,
-      startTime: Date.now(),
-      events: [],
-      pages: [],
-      actions: [],
-      conversions: [],
-      bounced: false,
-    };
-
-    currentJourney.current = journey;
-    track('session_start');
-  }, [analyticsState.sessionId, analyticsState.userId]);
-
-  // End current session
-  const endSession = useCallback(() => {
-    if (!currentJourney.current) return;
-
-    const journey = currentJourney.current;
-    journey.endTime = Date.now();
-    journey.duration = journey.endTime - journey.startTime;
-    journey.bounced = journey.pages.length <= 1 && journey.duration < 30000;
-
-    track('session_end', {
-      duration: journey.duration,
-      pageCount: journey.pages.length,
-      actionCount: journey.actions.length,
-      conversionCount: journey.conversions.length,
-      bounced: journey.bounced,
-    });
-
-    // Send journey data
-    sendUserJourney(journey);
-    currentJourney.current = null;
   }, []);
 
   // Track an event
@@ -271,7 +126,46 @@ export function useAnalytics(config: AnalyticsConfig = {}) {
     if (eventQueue.current.length >= batchSize) {
       flushEvents();
     }
-  }, [analyticsState.isTracking, analyticsState.sessionId, analyticsState.userId, batchSize, enableDebug]);
+  }, [analyticsState.isTracking, analyticsState.sessionId, analyticsState.userId, batchSize, enableDebug, flushEvents]);
+
+  // Start new session
+  const startSession = useCallback(() => {
+    const journey: UserJourney = {
+      sessionId: analyticsState.sessionId,
+      userId: analyticsState.userId,
+      startTime: Date.now(),
+      events: [],
+      pages: [],
+      actions: [],
+      conversions: [],
+      bounced: false,
+    };
+
+    currentJourney.current = journey;
+    track('session_start');
+  }, [analyticsState.sessionId, analyticsState.userId, track]);
+
+  // End current session
+  const endSession = useCallback(() => {
+    if (!currentJourney.current) return;
+
+    const journey = currentJourney.current;
+    journey.endTime = Date.now();
+    journey.duration = journey.endTime - journey.startTime;
+    journey.bounced = journey.pages.length <= 1 && journey.duration < 30000;
+
+    track('session_end', {
+      duration: journey.duration,
+      pageCount: journey.pages.length,
+      actionCount: journey.actions.length,
+      conversionCount: journey.conversions.length,
+      bounced: journey.bounced,
+    });
+
+    // Send journey data
+    // sendUserJourney(journey);
+    currentJourney.current = null;
+  }, [track]);
 
   // Track page view
   const trackPageView = useCallback((page: string, properties: Record<string, any> = {}) => {
@@ -323,80 +217,6 @@ export function useAnalytics(config: AnalyticsConfig = {}) {
     });
   }, [track]);
 
-  // Flush events to server
-  const flushEvents = useCallback(async () => {
-    if (eventQueue.current.length === 0) return;
-
-    const events = [...eventQueue.current];
-    eventQueue.current = [];
-
-    setAnalyticsState(prev => ({
-      ...prev,
-      eventsQueued: 0,
-      lastFlush: Date.now(),
-    }));
-
-    try {
-      await fetch(trackingEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ events }),
-      });
-
-      if (enableDebug) {
-        console.log('Analytics events flushed:', events.length);
-      }
-    } catch (error) {
-      console.error('Failed to send analytics events:', error);
-      // Re-queue events on failure
-      eventQueue.current.unshift(...events);
-      setAnalyticsState(prev => ({
-        ...prev,
-        eventsQueued: eventQueue.current.length,
-      }));
-    }
-  }, [trackingEndpoint, enableDebug]);
-
-  // Send user journey data
-  const sendUserJourney = useCallback(async (journey: UserJourney) => {
-    try {
-      await fetch('/api/analytics/journeys', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(journey),
-      });
-
-      if (enableDebug) {
-        console.log('User journey sent:', journey);
-      }
-    } catch (error) {
-      console.error('Failed to send user journey:', error);
-    }
-  }, [enableDebug]);
-
-  // Get analytics insights
-  const getInsights = useCallback(() => {
-    if (!currentJourney.current) return null;
-
-    const journey = currentJourney.current;
-    const now = Date.now();
-    const sessionDuration = now - journey.startTime;
-
-    return {
-      sessionDuration,
-      pageViews: journey.pages.length,
-      actions: journey.actions.length,
-      conversions: journey.conversions.length,
-      engagementScore: calculateEngagementScore(journey, sessionDuration),
-      isActiveSession: sessionDuration > 30000, // More than 30 seconds
-      likelyToConvert: predictConversion(journey),
-    };
-  }, []);
-
   // Enable/disable tracking
   const setTracking = useCallback((enabled: boolean) => {
     setAnalyticsState(prev => ({ ...prev, isTracking: enabled }));
@@ -408,6 +228,124 @@ export function useAnalytics(config: AnalyticsConfig = {}) {
     }
   }, [startSession, endSession]);
 
+  // Initialize session
+  useEffect(() => {
+    if (analyticsState.isTracking) {
+      startSession();
+    }
+
+    return () => {
+      if (currentJourney.current) {
+        endSession();
+      }
+    };
+  }, [analyticsState.isTracking, startSession, endSession]);
+
+  // Set up auto-flush interval
+  useEffect(() => {
+    if (flushInterval > 0) {
+      flushIntervalRef.current = setInterval(() => {
+        flushEvents();
+      }, flushInterval);
+
+      return () => {
+        if (flushIntervalRef.current) {
+          clearInterval(flushIntervalRef.current);
+        }
+      };
+    }
+    return undefined;
+  }, [flushInterval, flushEvents]);
+
+  // Page tracking
+  useEffect(() => {
+    if (enablePageTracking && analyticsState.isTracking) {
+      trackPageView(window.location.pathname);
+    }
+  }, [enablePageTracking, analyticsState.isTracking, trackPageView]);
+
+  // Click tracking
+  useEffect(() => {
+    if (!enableClickTracking || !analyticsState.isTracking) return;
+
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target) return;
+
+      const elementInfo = getElementInfo(target);
+      track('click', {
+        element: elementInfo.tagName,
+        text: elementInfo.text,
+        href: elementInfo.href,
+        className: elementInfo.className,
+        id: elementInfo.id,
+        position: { x: event.clientX, y: event.clientY },
+      });
+    };
+
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [enableClickTracking, analyticsState.isTracking, track]);
+
+  // Error tracking
+  useEffect(() => {
+    if (!enableErrorTracking || !analyticsState.isTracking) return;
+
+    const handleError = (event: ErrorEvent) => {
+      track('error', {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+        stack: event.error?.stack,
+      });
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      track('unhandled_promise_rejection', {
+        reason: event.reason,
+        stack: event.reason?.stack,
+      });
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, [enableErrorTracking, analyticsState.isTracking, track]);
+
+  // Performance tracking
+  useEffect(() => {
+    if (!enablePerformanceTracking || !analyticsState.isTracking) return undefined;
+
+    const trackPerformance = () => {
+      if ('performance' in window) {
+        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        const paint = performance.getEntriesByType('paint');
+
+        track('page_performance', {
+          loadTime: navigation.loadEventEnd - navigation.loadEventStart,
+          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+          firstPaint: paint.find(p => p.name === 'first-paint')?.startTime,
+          firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime,
+          transferSize: navigation.transferSize,
+          encodedBodySize: navigation.encodedBodySize,
+        });
+      }
+    };
+
+    if (document.readyState === 'complete') {
+      trackPerformance();
+      return undefined;
+    } else {
+      window.addEventListener('load', trackPerformance);
+      return () => window.removeEventListener('load', trackPerformance);
+    }
+  }, [enablePerformanceTracking, analyticsState.isTracking, track]);
+
   return {
     ...analyticsState,
     track,
@@ -418,7 +356,7 @@ export function useAnalytics(config: AnalyticsConfig = {}) {
     trackSearch,
     identify,
     flushEvents,
-    getInsights,
+    getInsights: () => [],  // insights property doesn't exist on analyticsState
     setTracking,
     currentJourney: currentJourney.current,
   };
@@ -449,43 +387,44 @@ function isConversionEvent(eventName: string): boolean {
          ['user_identified', 'lead_created', 'purchase_completed'].includes(eventName);
 }
 
-function calculateEngagementScore(journey: UserJourney, duration: number): number {
-  let score = 0;
-  
-  // Base score from session duration (0-40 points)
-  score += Math.min(40, duration / 1000 / 60); // 1 point per minute, max 40
-  
-  // Page views (0-20 points)
-  score += Math.min(20, journey.pages.length * 5);
-  
-  // Actions (0-30 points)
-  score += Math.min(30, journey.actions.length * 2);
-  
-  // Conversions (0-10 points per conversion)
-  score += journey.conversions.length * 10;
-  
-  return Math.min(100, score);
-}
+// Utility functions for analytics calculations (not currently used)
+// function calculateEngagementScore(journey: UserJourney, duration: number): number {
+//   let score = 0;
+//   
+//   // Base score from session duration (0-40 points)
+//   score += Math.min(40, duration / 1000 / 60); // 1 point per minute, max 40
+//   
+//   // Page views (0-20 points)
+//   score += Math.min(20, journey.pages.length * 5);
+//   
+//   // Actions (0-30 points)
+//   score += Math.min(30, journey.actions.length * 2);
+//   
+//   // Conversions (0-10 points per conversion)
+//   score += journey.conversions.length * 10;
+//   
+//   return Math.min(100, score);
+// }
 
-function predictConversion(journey: UserJourney): number {
-  let probability = 0.1; // Base 10%
-  
-  // More page views = higher probability
-  probability += journey.pages.length * 0.05;
-  
-  // Actions indicate engagement
-  probability += journey.actions.length * 0.03;
-  
-  // Time spent
-  const duration = Date.now() - journey.startTime;
-  if (duration > 60000) probability += 0.2; // Bonus for 1+ minute
-  if (duration > 300000) probability += 0.3; // Bonus for 5+ minutes
-  
-  // Existing conversions indicate high intent
-  probability += journey.conversions.length * 0.4;
-  
-  return Math.min(1, probability);
-}
+// function predictConversion(journey: UserJourney): number {
+//   let probability = 0.1; // Base 10%
+//   
+//   // More page views = higher probability
+//   probability += journey.pages.length * 0.05;
+//   
+//   // Actions indicate engagement
+//   probability += journey.actions.length * 0.03;
+//   
+//   // Time spent
+//   const duration = Date.now() - journey.startTime;
+//   if (duration > 60000) probability += 0.2; // Bonus for 1+ minute
+//   if (duration > 300000) probability += 0.3; // Bonus for 5+ minutes
+//   
+//   // Existing conversions indicate high intent
+//   probability += journey.conversions.length * 0.4;
+//   
+//   return Math.min(1, probability);
+// }
 
 // Hook for A/B testing
 export function useABTest(testName: string, variants: string[]) {

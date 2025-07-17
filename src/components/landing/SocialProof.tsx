@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Box, Container, Typography, Paper, Avatar, IconButton, Modal } from '@mui/material';
+import { PlayIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 export const SocialProof: React.FC = () => {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -47,164 +49,194 @@ export const SocialProof: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-6">
+    <Box component="section" sx={{ py: 10, bgcolor: 'white' }}>
+      <Container maxWidth="xl">
         {/* Statistics */}
-        <motion.div
+        <Box
+          component={motion.div}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          sx={{ textAlign: 'center', mb: 8 }}
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '3rem' }, fontWeight: 700, color: 'text.primary', mb: 2 }}>
             Trusted by Industry Leaders
-          </h2>
-          <p className="text-xl text-gray-600 mb-12">
+          </Typography>
+          <Typography variant="h6" sx={{ color: 'text.secondary', mb: 6 }}>
             Join thousands of food companies transforming their supply chains
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          </Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 4 }}>
             {stats.map((stat, index) => (
-              <motion.div
+              <Box
+                component={motion.div}
                 key={index}
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center"
+                sx={{ textAlign: 'center' }}
               >
-                <div className="text-5xl font-bold mb-2" style={{ color: stat.color }}>
+                <Typography sx={{ fontSize: '3rem', fontWeight: 700, mb: 1, color: stat.color }}>
                   {stat.number}
-                </div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
-              </motion.div>
+                </Typography>
+                <Typography sx={{ color: 'text.secondary', fontWeight: 500 }}>{stat.label}</Typography>
+              </Box>
             ))}
-          </div>
-        </motion.div>
+          </Box>
+        </Box>
 
         {/* Video Testimonials */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <Box sx={{ display: 'grid', gridTemplateColumns: { md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }, gap: 4, mb: 8 }}>
           {testimonials.map((testimonial, index) => (
-            <motion.div
+            <Paper
+              component={motion.div}
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+              elevation={3}
+              sx={{ borderRadius: 4, overflow: 'hidden', transition: 'all 0.3s', '&:hover': { boxShadow: 6 } }}
             >
               {testimonial.hasVideo ? (
-                <div className="relative">
-                  <div className="aspect-video bg-gradient-to-br from-blue-100 to-orange-100 flex items-center justify-center relative">
-                    <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <motion.button
+                <Box sx={{ position: 'relative' }}>
+                  <Box sx={{ aspectRatio: '16/9', background: 'linear-gradient(135deg, #dbeafe, #fed7aa)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                    <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(0, 0, 0, 0.2)' }} />
+                    <IconButton
+                      component={motion.button}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="relative z-10 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg"
                       onClick={() => setSelectedVideo(testimonial.videoUrl)}
+                      sx={{ position: 'relative', zIndex: 10, width: 64, height: 64, bgcolor: 'white', boxShadow: 3 }}
                     >
-                      <svg className="w-6 h-6 text-orange-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    </motion.button>
-                    <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <div className="font-bold">{testimonial.author}</div>
-                      <div className="text-sm opacity-90">{testimonial.position}</div>
-                    </div>
-                  </div>
-                </div>
+                      <Box component={PlayIcon} sx={{ width: 24, height: 24, color: '#ea580c', ml: 0.5 }} />
+                    </IconButton>
+                    <Box sx={{ position: 'absolute', bottom: 16, left: 16, right: 16, color: 'white' }}>
+                      <Typography sx={{ fontWeight: 700 }}>{testimonial.author}</Typography>
+                      <Typography sx={{ fontSize: '0.875rem', opacity: 0.9 }}>{testimonial.position}</Typography>
+                    </Box>
+                  </Box>
+                </Box>
               ) : (
-                <div className="h-6"></div>
+                <Box sx={{ height: 24 }} />
               )}
               
-              <div className="p-6">
-                <div className="flex items-center mb-4">
-                  <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold mr-4 shadow-md"
-                    style={{ backgroundColor: '#FF6B35' }}
+              <Box sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar 
+                    sx={{ width: 48, height: 48, bgcolor: '#FF6B35', mr: 2, boxShadow: 2 }}
                   >
                     {testimonial.avatar}
-                  </div>
-                  <div>
-                    <div className="font-bold text-gray-900">{testimonial.author}</div>
-                    <div className="text-sm text-gray-600">{testimonial.position}</div>
-                    <div className="text-sm text-gray-500">{testimonial.company}</div>
-                  </div>
-                </div>
+                  </Avatar>
+                  <Box>
+                    <Typography sx={{ fontWeight: 700, color: 'text.primary' }}>{testimonial.author}</Typography>
+                    <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{testimonial.position}</Typography>
+                    <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{testimonial.company}</Typography>
+                  </Box>
+                </Box>
                 
-                <p className="text-gray-700 mb-4 leading-relaxed">"{testimonial.quote}"</p>
+                <Typography sx={{ color: 'text.secondary', mb: 2, lineHeight: 1.8 }}>"{testimonial.quote}"</Typography>
                 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-sm">
-                    <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
+                    <svg width="16" height="16" style={{ marginRight: 8, color: '#10b981' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
-                    <span className="font-medium text-green-600">
+                    <Typography sx={{ fontWeight: 500, color: 'success.main' }}>
                       {testimonial.metrics}
-                    </span>
-                  </div>
+                    </Typography>
+                  </Box>
                   {testimonial.hasVideo && (
-                    <span className="text-xs text-gray-500">
+                    <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
                       Watch full story
-                    </span>
+                    </Typography>
                   )}
-                </div>
-              </div>
-            </motion.div>
+                </Box>
+              </Box>
+            </Paper>
           ))}
-        </div>
+        </Box>
 
         {/* Case Study CTA */}
-        <motion.div
+        <Paper
+          component={motion.div}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-8"
+          sx={{ textAlign: 'center', background: 'linear-gradient(90deg, #f9fafb, #f3f4f6)', borderRadius: 4, p: 4 }}
         >
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 2 }}>
             Ready to Join These Success Stories?
-          </h3>
-          <p className="text-gray-600 mb-6">
+          </Typography>
+          <Typography sx={{ color: 'text.secondary', mb: 3 }}>
             See how FoodXchange can transform your sourcing process in just 14 days
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.button
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center' }}>
+            <Box
+              component={motion.button}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-orange-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-orange-700 transition-colors"
+              sx={{ 
+                bgcolor: '#ea580c', 
+                color: 'white', 
+                px: 4, 
+                py: 1.5, 
+                borderRadius: 2, 
+                fontWeight: 700, 
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s',
+                '&:hover': { bgcolor: '#dc2626' }
+              }}
             >
               Read Full Case Studies
-            </motion.button>
-            <motion.button
+            </Box>
+            <Box
+              component={motion.button}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="border-2 border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-bold hover:border-gray-400 transition-colors"
+              sx={{ 
+                border: 2,
+                borderColor: 'grey.300',
+                color: 'text.primary', 
+                px: 4, 
+                py: 1.5, 
+                borderRadius: 2, 
+                fontWeight: 700, 
+                bgcolor: 'transparent',
+                cursor: 'pointer',
+                transition: 'border-color 0.3s',
+                '&:hover': { borderColor: 'grey.400' }
+              }}
             >
               Schedule a Demo
-            </motion.button>
-          </div>
-        </motion.div>
-      </div>
+            </Box>
+          </Box>
+        </Paper>
+      </Container>
       
       {/* Video Modal */}
-      {selectedVideo && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="relative max-w-4xl w-full">
-            <button 
-              onClick={() => setSelectedVideo(null)}
-              className="absolute -top-10 right-0 text-white hover:text-gray-300 text-2xl"
-            >
-              ×
-            </button>
-            <div className="relative pb-[56.25%] h-0">
-              <iframe 
-                src={selectedVideo}
+      <Modal
+        open={!!selectedVideo}
+        onClose={() => setSelectedVideo(null)}
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Box sx={{ position: 'relative', maxWidth: '4xl', width: '100%', p: 2 }}>
+          <IconButton 
+            onClick={() => setSelectedVideo(null)}
+            sx={{ position: 'absolute', top: -40, right: 0, color: 'white', '&:hover': { color: 'grey.300' } }}
+          >
+            <Box component={XMarkIcon} sx={{ width: 24, height: 24 }} />
+          </IconButton>
+          <Box sx={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+            <iframe 
+              src={selectedVideo || ''}
                 title="Customer testimonial video"
-                className="absolute top-0 left-0 w-full h-full rounded-lg"
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: 8 }}
                 allowFullScreen
                 allow="autoplay; encrypted-media"
               />
-            </div>
-          </div>
-        </div>
-      )}
-    </section>
+          </Box>
+        </Box>
+      </Modal>
+    </Box>
   );
 };

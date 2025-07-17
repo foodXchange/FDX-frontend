@@ -2,23 +2,43 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowLeftIcon,
-  PencilIcon,
-  TrashIcon,
-  ClockIcon,
-  CalendarDaysIcon,
-  MapPinIcon,
-  DocumentTextIcon,
-  UserGroupIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  PaperAirplaneIcon,
-  EyeIcon,
-  ArrowDownTrayIcon,
-  XMarkIcon,
-  ChatBubbleLeftEllipsisIcon,
-  PlusIcon,
-} from '@heroicons/react/24/outline';
+  ArrowBack as ArrowLeftIcon,
+  Edit as PencilIcon,
+  Delete as TrashIcon,
+  Schedule as ClockIcon,
+  CalendarToday as CalendarDaysIcon,
+  LocationOn as MapPinIcon,
+  Description as DocumentTextIcon,
+  People as UserGroupIcon,
+  CheckCircle as CheckCircleIcon,
+  Warning as ExclamationTriangleIcon,
+  Send as PaperAirplaneIcon,
+  Visibility as EyeIcon,
+  Download as ArrowDownTrayIcon,
+  Close as XMarkIcon,
+  Chat as ChatBubbleLeftEllipsisIcon,
+  Add as PlusIcon,
+} from '@mui/icons-material';
+import {
+  Box,
+  Container,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Paper,
+  Chip,
+  Stack,
+  Divider,
+  TextField,
+  Avatar,
+  Alert,
+  Tab,
+  Tabs,
+  Badge,
+  IconButton
+} from '@mui/material';
 import { rfqService } from '../../services/rfqService';
 import { RFQ, Proposal } from '../../shared/types';
 import { StatusBadge } from '../../components/ui/StatusBadge';
@@ -30,12 +50,12 @@ interface RFQDetailProps {
 }
 
 const proposalStatuses = {
-  draft: { color: 'bg-gray-100 text-gray-800', label: 'Draft' },
-  submitted: { color: 'bg-blue-100 text-blue-800', label: 'Submitted' },
-  under_review: { color: 'bg-yellow-100 text-yellow-800', label: 'Under Review' },
-  accepted: { color: 'bg-green-100 text-green-800', label: 'Accepted' },
-  rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
-  withdrawn: { color: 'bg-gray-100 text-gray-800', label: 'Withdrawn' },
+  draft: { color: 'default', label: 'Draft' },
+  submitted: { color: 'primary', label: 'Submitted' },
+  under_review: { color: 'warning', label: 'Under Review' },
+  accepted: { color: 'success', label: 'Accepted' },
+  rejected: { color: 'error', label: 'Rejected' },
+  withdrawn: { color: 'default', label: 'Withdrawn' },
 };
 
 // const timelineSteps = [
@@ -149,11 +169,11 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
   const getUrgencyDisplay = (urgency: string) => {
     switch (urgency) {
       case 'expired':
-        return { text: 'Expired', color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-200' };
+        return { text: 'Expired', color: 'error' };
       case 'urgent':
-        return { text: 'Urgent', color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-200' };
+        return { text: 'Urgent', color: 'error' };
       case 'warning':
-        return { text: 'Soon', color: 'text-yellow-500', bg: 'bg-yellow-50', border: 'border-yellow-200' };
+        return { text: 'Soon', color: 'warning' };
       default:
         return null;
     }
@@ -161,30 +181,27 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6">
+      <Container maxWidth="lg" sx={{ py: 3 }}>
         <SkeletonLoader width="100%" height="400px" />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+        <Grid container spacing={3} sx={{ mt: 3 }}>
+          <Grid item xs={12} lg={8}>
             <SkeletonLoader width="100%" height="300px" />
-          </div>
-          <div>
+          </Grid>
+          <Grid item xs={12} lg={4}>
             <SkeletonLoader width="100%" height="300px" />
-          </div>
-        </div>
-      </div>
+          </Grid>
+        </Grid>
+      </Container>
     );
   }
 
   if (error || !rfq) {
     return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <ExclamationTriangleIcon className="h-6 w-6 text-red-500 mr-2" />
-            <span className="text-red-700">{error || 'RFQ not found'}</span>
-          </div>
-        </div>
-      </div>
+      <Container maxWidth="lg" sx={{ py: 3 }}>
+        <Alert severity="error" icon={<ExclamationTriangleIcon />}>
+          {error || 'RFQ not found'}
+        </Alert>
+      </Container>
     );
   }
 
@@ -192,86 +209,102 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
   const urgencyDisplay = getUrgencyDisplay(urgency);
 
   return (
-    <div className="p-6 space-y-6">
+    <Container maxWidth="lg" sx={{ py: 3 }}>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <button
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
             onClick={() => navigate('/rfq')}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+            sx={{ bgcolor: 'grey.100', color: 'grey.600', mr: 2 }}
           >
-            <ArrowLeftIcon className="h-5 w-5" />
-          </button>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{rfq.title}</h1>
-            <div className="flex items-center space-x-3 mt-2">
+            <ArrowLeftIcon />
+          </IconButton>
+          <Box>
+            <Typography variant="h4" sx={{ color: 'grey.900', fontWeight: 'bold' }}>
+              {rfq.title}
+            </Typography>
+            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
               <StatusBadge status={rfq.status} type="rfq" />
               {urgencyDisplay && (
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${urgencyDisplay.color} ${urgencyDisplay.bg} ${urgencyDisplay.border} border`}>
-                  <ClockIcon className="h-4 w-4 mr-1" />
-                  {urgencyDisplay.text}
-                </span>
+                <Chip
+                  icon={<ClockIcon />}
+                  label={urgencyDisplay.text}
+                  color={urgencyDisplay.color as any}
+                  variant="outlined"
+                  size="small"
+                />
               )}
-            </div>
-          </div>
-        </div>
+            </Stack>
+          </Box>
+        </Box>
         
         {userRole === 'buyer' && (
-          <div className="flex items-center space-x-2">
-            <button
+          <Stack direction="row" spacing={1}>
+            <Button
               onClick={() => navigate(`/rfq/${id}/edit`)}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              variant="outlined"
+              startIcon={<PencilIcon />}
+              sx={{ color: 'grey.700' }}
             >
-              <PencilIcon className="h-4 w-4 mr-2" />
               Edit
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleDeleteRFQ}
-              className="inline-flex items-center px-4 py-2 border border-red-300 rounded-lg text-red-700 hover:bg-red-50"
+              variant="outlined"
+              color="error"
+              startIcon={<TrashIcon />}
             >
-              <TrashIcon className="h-4 w-4 mr-2" />
               Delete
-            </button>
-          </div>
+            </Button>
+          </Stack>
         )}
-      </div>
+      </Box>
 
       {/* Timeline */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">RFQ Progress</h2>
-        {/* <ProgressTracker 
-          steps={timelineSteps} 
-          currentStep={getTimelineCurrentStep()} 
-        /> */}
-      </div>
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ color: 'grey.900', mb: 2 }}>
+            RFQ Progress
+          </Typography>
+          {/* <ProgressTracker 
+            steps={timelineSteps} 
+            currentStep={getTimelineCurrentStep()} 
+          /> */}
+        </CardContent>
+      </Card>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="flex space-x-8">
-          {[
-            { id: 'overview', label: 'Overview', icon: DocumentTextIcon },
-            { id: 'proposals', label: `Proposals (${proposals.length})`, icon: UserGroupIcon },
-            { id: 'messages', label: `Messages (${messages.length})`, icon: ChatBubbleLeftEllipsisIcon },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === tab.id
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <tab.icon className="h-5 w-5 mr-2" />
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
+      <Paper sx={{ mb: 3 }}>
+        <Tabs
+          value={activeTab}
+          onChange={(_, value) => setActiveTab(value)}
+          variant="fullWidth"
+          sx={{ borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Tab 
+            value="overview" 
+            label="Overview" 
+            icon={<DocumentTextIcon />} 
+            iconPosition="start"
+          />
+          <Tab 
+            value="proposals" 
+            label={`Proposals (${proposals.length})`} 
+            icon={<UserGroupIcon />} 
+            iconPosition="start"
+          />
+          <Tab 
+            value="messages" 
+            label={`Messages (${messages.length})`} 
+            icon={<ChatBubbleLeftEllipsisIcon />} 
+            iconPosition="start"
+          />
+        </Tabs>
+      </Paper>
 
       {/* Tab Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <Grid container spacing={3}>
+        <Grid item xs={12} lg={8}>
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -281,397 +314,522 @@ export const RFQDetail: React.FC<RFQDetailProps> = ({ userRole = 'buyer' }) => {
               transition={{ duration: 0.3 }}
             >
               {activeTab === 'overview' && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">RFQ Details</h3>
-                  
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-medium text-gray-700 mb-2">Description</h4>
-                      <p className="text-gray-600">{rfq.description}</p>
-                    </div>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ color: 'grey.900', mb: 3 }}>
+                      RFQ Details
+                    </Typography>
+                    
+                    <Stack spacing={3}>
+                      <Box>
+                        <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                          Description
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                          {rfq.description}
+                        </Typography>
+                      </Box>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-2">Quantity & Unit</h4>
-                        <p className="text-gray-600">{rfq.quantity} {rfq.unit}</p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-2">Category</h4>
-                        <p className="text-gray-600">{rfq.category}</p>
-                      </div>
-                    </div>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} md={6}>
+                          <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                            Quantity & Unit
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                            {rfq.quantity} {rfq.unit}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                            Category
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                            {rfq.category}
+                          </Typography>
+                        </Grid>
+                      </Grid>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-2">Delivery Date</h4>
-                        <div className="flex items-center text-gray-600">
-                          <CalendarDaysIcon className="h-4 w-4 mr-2" />
-                          {format(new Date(rfq.deliveryDate), 'PPP')}
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-2">Submission Deadline</h4>
-                        <div className="flex items-center text-gray-600">
-                          <ClockIcon className="h-4 w-4 mr-2" />
-                          {format(new Date(rfq.submissionDeadline), 'PPP p')}
-                        </div>
-                      </div>
-                    </div>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} md={6}>
+                          <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                            Delivery Date
+                          </Typography>
+                          <Box sx={{ display: 'flex', alignItems: 'center', color: 'grey.600' }}>
+                            <CalendarDaysIcon sx={{ fontSize: 16, mr: 1 }} />
+                            <Typography variant="body2">
+                              {format(new Date(rfq.deliveryDate), 'PPP')}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                            Submission Deadline
+                          </Typography>
+                          <Box sx={{ display: 'flex', alignItems: 'center', color: 'grey.600' }}>
+                            <ClockIcon sx={{ fontSize: 16, mr: 1 }} />
+                            <Typography variant="body2">
+                              {format(new Date(rfq.submissionDeadline), 'PPP p')}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </Grid>
 
-                    <div>
-                      <h4 className="font-medium text-gray-700 mb-2">Delivery Location</h4>
-                      <div className="flex items-center text-gray-600">
-                        <MapPinIcon className="h-4 w-4 mr-2" />
-                        <span>
-                          {typeof rfq.deliveryLocation === 'string' 
-                            ? rfq.deliveryLocation 
-                            : `${rfq.deliveryLocation.street}, ${rfq.deliveryLocation.city}, ${rfq.deliveryLocation.country}`
-                          }
-                        </span>
-                      </div>
-                    </div>
+                      <Box>
+                        <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                          Delivery Location
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', color: 'grey.600' }}>
+                          <MapPinIcon sx={{ fontSize: 16, mr: 1 }} />
+                          <Typography variant="body2">
+                            {typeof rfq.deliveryLocation === 'string' 
+                              ? rfq.deliveryLocation 
+                              : `${rfq.deliveryLocation.street}, ${rfq.deliveryLocation.city}, ${rfq.deliveryLocation.country}`
+                            }
+                          </Typography>
+                        </Box>
+                      </Box>
 
-                    <div>
-                      <h4 className="font-medium text-gray-700 mb-2">Product Specifications</h4>
-                      <div className="space-y-3">
-                        {rfq.lineItems.map((item, index) => (
-                          <div key={index} className="p-3 bg-gray-50 rounded-lg">
-                            <div className="font-medium text-gray-900 mb-2">{item.productName}</div>
-                            <div className="text-sm text-gray-600">
-                              Quantity: {item.quantity} {item.unit}
-                            </div>
-                            {item.description && (
-                              <div className="text-sm text-gray-600 mt-1">{item.description}</div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {rfq.requirements?.certifications && rfq.requirements.certifications.length > 0 && (
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-2">Required Certifications</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {rfq.requirements.certifications?.map((cert) => (
-                            <span key={cert} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                              {cert}
-                            </span>
+                      <Box>
+                        <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 2 }}>
+                          Product Specifications
+                        </Typography>
+                        <Stack spacing={2}>
+                          {rfq.lineItems.map((item, index) => (
+                            <Paper key={index} sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 2 }}>
+                              <Typography variant="body2" sx={{ color: 'grey.900', fontWeight: 'medium' }}>
+                                {item.productName}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: 'grey.600' }}>
+                                Quantity: {item.quantity} {item.unit}
+                              </Typography>
+                              {item.description && (
+                                <Typography variant="caption" sx={{ color: 'grey.600', display: 'block' }}>
+                                  {item.description}
+                                </Typography>
+                              )}
+                            </Paper>
                           ))}
-                        </div>
-                      </div>
-                    )}
+                        </Stack>
+                      </Box>
 
+                      {rfq.requirements?.certifications && rfq.requirements.certifications.length > 0 && (
+                        <Box>
+                          <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 2 }}>
+                            Required Certifications
+                          </Typography>
+                          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+                            {rfq.requirements.certifications?.map((cert) => (
+                              <Chip key={cert} label={cert} variant="outlined" size="small" />
+                            ))}
+                          </Stack>
+                        </Box>
+                      )}
 
-                    {rfq.requirements?.additionalRequirements && (
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-2">Additional Requirements</h4>
-                        <p className="text-gray-600">{rfq.requirements.additionalRequirements}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                      {rfq.requirements?.additionalRequirements && (
+                        <Box>
+                          <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                            Additional Requirements
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                            {rfq.requirements.additionalRequirements}
+                          </Typography>
+                        </Box>
+                      )}
+                    </Stack>
+                  </CardContent>
+                </Card>
               )}
 
               {activeTab === 'proposals' && (
-                <div className="space-y-4">
+                <Stack spacing={3}>
                   {userRole === 'supplier' && rfq.status === 'active' && (
-                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-medium text-orange-800">Submit Your Proposal</h3>
-                          <p className="text-sm text-orange-700">
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box>
+                          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                            Submit Your Proposal
+                          </Typography>
+                          <Typography variant="caption">
                             Deadline: {format(new Date(rfq.submissionDeadline), 'PPP p')}
-                          </p>
-                        </div>
-                        <button
+                          </Typography>
+                        </Box>
+                        <Button
                           onClick={() => setShowProposalForm(true)}
-                          className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+                          variant="contained"
+                          startIcon={<PlusIcon />}
+                          size="small"
                         >
-                          <PlusIcon className="h-4 w-4 mr-2" />
                           Submit Proposal
-                        </button>
-                      </div>
-                    </div>
+                        </Button>
+                      </Box>
+                    </Alert>
                   )}
 
                   {proposals.length === 0 ? (
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-                      <UserGroupIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Proposals Yet</h3>
-                      <p className="text-gray-500">
-                        {userRole === 'buyer' 
-                          ? 'Suppliers will submit their proposals here'
-                          : 'Be the first to submit a proposal for this RFQ'
-                        }
-                      </p>
-                    </div>
+                    <Card>
+                      <CardContent sx={{ textAlign: 'center', py: 6 }}>
+                        <UserGroupIcon sx={{ fontSize: 48, color: 'grey.400', mb: 2 }} />
+                        <Typography variant="h6" sx={{ color: 'grey.900', mb: 1 }}>
+                          No Proposals Yet
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'grey.500' }}>
+                          {userRole === 'buyer' 
+                            ? 'Suppliers will submit their proposals here'
+                            : 'Be the first to submit a proposal for this RFQ'
+                          }
+                        </Typography>
+                      </CardContent>
+                    </Card>
                   ) : (
-                    <div className="space-y-4">
+                    <Stack spacing={3}>
                       {proposals.map((proposal) => (
                         <motion.div
                           key={proposal.id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
                         >
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center space-x-3">
-                              <div className="flex-shrink-0">
-                                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                  <span className="text-sm font-medium text-gray-600">
+                          <Card>
+                            <CardContent>
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <Avatar sx={{ bgcolor: 'grey.200', color: 'grey.600', mr: 2 }}>
                                     {typeof proposal.supplier === 'string' ? proposal.supplier.charAt(0) : proposal.supplier.name.charAt(0)}
-                                  </span>
-                                </div>
-                              </div>
-                              <div>
-                                <h4 className="font-medium text-gray-900">
-                                  {typeof proposal.supplier === 'string' ? proposal.supplier : proposal.supplier.name}
-                                </h4>
-                                <p className="text-sm text-gray-500">
-                                  Submitted {formatDistanceToNow(new Date(proposal.createdAt))} ago
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${proposalStatuses[proposal.status].color}`}>
-                                {proposalStatuses[proposal.status].label}
-                              </span>
-                            </div>
-                          </div>
+                                  </Avatar>
+                                  <Box>
+                                    <Typography variant="subtitle1" sx={{ color: 'grey.900' }}>
+                                      {typeof proposal.supplier === 'string' ? proposal.supplier : proposal.supplier.name}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: 'grey.500' }}>
+                                      Submitted {formatDistanceToNow(new Date(proposal.createdAt))} ago
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                                <Chip
+                                  label={proposalStatuses[proposal.status].label}
+                                  color={proposalStatuses[proposal.status].color as any}
+                                  size="small"
+                                />
+                              </Box>
 
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                            <div className="bg-gray-50 rounded-lg p-3">
-                              <div className="text-sm text-gray-500 mb-1">Price</div>
-                              <div className="text-lg font-semibold text-green-600">${proposal.totalPrice}</div>
-                              <div className="text-xs text-gray-500">{proposal.currency}</div>
-                            </div>
-                            <div className="bg-gray-50 rounded-lg p-3">
-                              <div className="text-sm text-gray-500 mb-1">Delivery</div>
-                              <div className="text-sm font-medium text-gray-900">
-                                {proposal.deliveryTerms}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                Valid until {format(new Date(proposal.validUntil), 'MMM dd')}
-                              </div>
-                            </div>
-                            <div className="bg-gray-50 rounded-lg p-3">
-                              <div className="text-sm text-gray-500 mb-1">Terms</div>
-                              <div className="text-sm font-medium text-gray-900">
-                                {proposal.paymentTerms}
-                              </div>
-                            </div>
-                          </div>
+                              <Grid container spacing={2} sx={{ mb: 2 }}>
+                                <Grid item xs={12} md={4}>
+                                  <Paper sx={{ bgcolor: 'grey.50', p: 2 }}>
+                                    <Typography variant="caption" sx={{ color: 'grey.500' }}>
+                                      Price
+                                    </Typography>
+                                    <Typography variant="h6" sx={{ color: 'success.main', fontWeight: 'bold' }}>
+                                      ${proposal.totalPrice}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: 'grey.500' }}>
+                                      {proposal.currency}
+                                    </Typography>
+                                  </Paper>
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                  <Paper sx={{ bgcolor: 'grey.50', p: 2 }}>
+                                    <Typography variant="caption" sx={{ color: 'grey.500' }}>
+                                      Delivery
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'grey.900' }}>
+                                      {proposal.deliveryTerms}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: 'grey.500' }}>
+                                      Valid until {format(new Date(proposal.validUntil), 'MMM dd')}
+                                    </Typography>
+                                  </Paper>
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                  <Paper sx={{ bgcolor: 'grey.50', p: 2 }}>
+                                    <Typography variant="caption" sx={{ color: 'grey.500' }}>
+                                      Terms
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'grey.900' }}>
+                                      {proposal.paymentTerms}
+                                    </Typography>
+                                  </Paper>
+                                </Grid>
+                              </Grid>
 
-                          {proposal.notes && (
-                            <div className="mb-4">
-                              <h5 className="font-medium text-gray-700 mb-2">Notes</h5>
-                              <p className="text-sm text-gray-600">{proposal.notes}</p>
-                            </div>
-                          )}
+                              {proposal.notes && (
+                                <Box sx={{ mb: 2 }}>
+                                  <Typography variant="subtitle2" sx={{ color: 'grey.700', mb: 1 }}>
+                                    Notes
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                                    {proposal.notes}
+                                  </Typography>
+                                </Box>
+                              )}
 
-                          {proposal.attachments && proposal.attachments.length > 0 && (
-                            <div className="mb-4">
-                              <h5 className="font-medium text-gray-700 mb-2">Attachments</h5>
-                              <div className="flex flex-wrap gap-2">
-                                {proposal.attachments.map((attachment, index) => (
-                                  <button
-                                    key={index}
-                                    className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
-                                  >
-                                    <DocumentTextIcon className="h-4 w-4 mr-2" />
-                                    {attachment}
-                                    <ArrowDownTrayIcon className="h-4 w-4 ml-2" />
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+                              {proposal.attachments && proposal.attachments.length > 0 && (
+                                <Box sx={{ mb: 2 }}>
+                                  <Typography variant="subtitle2" sx={{ color: 'grey.700', mb: 1 }}>
+                                    Attachments
+                                  </Typography>
+                                  <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+                                    {proposal.attachments.map((attachment, index) => (
+                                      <Button
+                                        key={index}
+                                        variant="outlined"
+                                        size="small"
+                                        startIcon={<DocumentTextIcon />}
+                                        endIcon={<ArrowDownTrayIcon />}
+                                        sx={{ bgcolor: 'grey.50' }}
+                                      >
+                                        {attachment}
+                                      </Button>
+                                    ))}
+                                  </Stack>
+                                </Box>
+                              )}
 
-                          {userRole === 'buyer' && (
-                            <div className="flex items-center space-x-2 pt-4 border-t border-gray-200">
-                              <button
-                                onClick={() => setSelectedProposal(proposal)}
-                                className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
-                              >
-                                <EyeIcon className="h-4 w-4 mr-1" />
-                                View Details
-                              </button>
-                              <button
-                                onClick={() => setSelectedProposal(proposal)}
-                                className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
-                              >
-                                <ChatBubbleLeftEllipsisIcon className="h-4 w-4 mr-1" />
-                                Message
-                              </button>
-                              {proposal.status === 'submitted' && (
+                              {userRole === 'buyer' && (
                                 <>
-                                  <button
-                                    onClick={() => handleProposalAction(proposal.id, 'shortlist')}
-                                    className="inline-flex items-center px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600"
+                                  <Divider sx={{ my: 2 }} />
+                                  <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+                                  <Button
+                                    onClick={() => setSelectedProposal(proposal)}
+                                    variant="outlined"
+                                    size="small"
+                                    startIcon={<EyeIcon />}
                                   >
-                                    <CheckCircleIcon className="h-4 w-4 mr-1" />
-                                    Shortlist
-                                  </button>
-                                  <button
-                                    onClick={() => handleProposalAction(proposal.id, 'reject')}
-                                    className="inline-flex items-center px-3 py-1 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600"
+                                    View Details
+                                  </Button>
+                                  <Button
+                                    onClick={() => setSelectedProposal(proposal)}
+                                    variant="outlined"
+                                    size="small"
+                                    startIcon={<ChatBubbleLeftEllipsisIcon />}
                                   >
-                                    <XMarkIcon className="h-4 w-4 mr-1" />
-                                    Reject
-                                  </button>
+                                    Message
+                                  </Button>
+                                  {proposal.status === 'submitted' && (
+                                    <>
+                                      <Button
+                                        onClick={() => handleProposalAction(proposal.id, 'shortlist')}
+                                        variant="contained"
+                                        color="success"
+                                        size="small"
+                                        startIcon={<CheckCircleIcon />}
+                                      >
+                                        Shortlist
+                                      </Button>
+                                      <Button
+                                        onClick={() => handleProposalAction(proposal.id, 'reject')}
+                                        variant="contained"
+                                        color="error"
+                                        size="small"
+                                        startIcon={<XMarkIcon />}
+                                      >
+                                        Reject
+                                      </Button>
+                                    </>
+                                  )}
+                                  {proposal.status === 'accepted' && (
+                                    <Button
+                                      onClick={() => handleProposalAction(proposal.id, 'award')}
+                                      variant="contained"
+                                      color="primary"
+                                      size="small"
+                                      startIcon={<CheckCircleIcon />}
+                                    >
+                                      Award
+                                    </Button>
+                                  )}
+                                  </Stack>
                                 </>
                               )}
-                              {proposal.status === 'accepted' && (
-                                <button
-                                  onClick={() => handleProposalAction(proposal.id, 'award')}
-                                  className="inline-flex items-center px-3 py-1 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600"
-                                >
-                                  <CheckCircleIcon className="h-4 w-4 mr-1" />
-                                  Award
-                                </button>
-                              )}
-                            </div>
-                          )}
+                            </CardContent>
+                          </Card>
                         </motion.div>
                       ))}
-                    </div>
+                    </Stack>
                   )}
-                </div>
+                </Stack>
               )}
 
               {activeTab === 'messages' && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900">Messages</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Communicate with {userRole === 'buyer' ? 'suppliers' : 'the buyer'}
-                    </p>
-                  </div>
+                <Card>
+                  <CardContent>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider', pb: 2, mb: 3 }}>
+                      <Typography variant="h6" sx={{ color: 'grey.900' }}>
+                        Messages
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'grey.500' }}>
+                        Communicate with {userRole === 'buyer' ? 'suppliers' : 'the buyer'}
+                      </Typography>
+                    </Box>
 
-                  <div className="h-96 overflow-y-auto p-6">
-                    {messages.length === 0 ? (
-                      <div className="text-center py-8">
-                        <ChatBubbleLeftEllipsisIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-500">No messages yet</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {messages.map((message) => (
-                          <div
-                            key={message.id}
-                            className={`flex ${message.isFromCurrentUser ? 'justify-end' : 'justify-start'}`}
-                          >
-                            <div
-                              className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                                message.isFromCurrentUser
-                                  ? 'bg-orange-500 text-white'
-                                  : 'bg-gray-100 text-gray-900'
-                              }`}
+                    <Box sx={{ minHeight: 300, mb: 3 }}>
+                      {messages.length === 0 ? (
+                        <Box sx={{ textAlign: 'center', py: 8 }}>
+                          <ChatBubbleLeftEllipsisIcon sx={{ fontSize: 48, color: 'grey.400', mb: 2 }} />
+                          <Typography variant="body2" sx={{ color: 'grey.500' }}>
+                            No messages yet
+                          </Typography>
+                        </Box>
+                      ) : (
+                        <Stack spacing={2}>
+                          {messages.map((message) => (
+                            <Box
+                              key={message.id}
+                              sx={{
+                                display: 'flex',
+                                justifyContent: message.isFromCurrentUser ? 'flex-end' : 'flex-start'
+                              }}
                             >
-                              {!message.isFromCurrentUser && (
-                                <div className="font-medium text-sm mb-1">
-                                  {message.senderName}
-                                </div>
-                              )}
-                              <div className="text-sm">{message.content}</div>
-                              <div className={`text-xs mt-1 ${
-                                message.isFromCurrentUser ? 'text-orange-200' : 'text-gray-500'
-                              }`}>
-                                {format(new Date(message.createdAt), 'MMM dd, HH:mm')}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                              <Paper
+                                sx={{
+                                  maxWidth: { xs: '80%', md: '60%' },
+                                  px: 2,
+                                  py: 1,
+                                  bgcolor: message.isFromCurrentUser ? 'primary.main' : 'grey.100',
+                                  color: message.isFromCurrentUser ? 'white' : 'grey.900'
+                                }}
+                              >
+                                {!message.isFromCurrentUser && (
+                                  <Typography variant="caption" sx={{ fontWeight: 'medium', display: 'block', mb: 0.5 }}>
+                                    {message.senderName}
+                                  </Typography>
+                                )}
+                                <Typography variant="body2">
+                                  {message.content}
+                                </Typography>
+                                <Typography 
+                                  variant="caption" 
+                                  sx={{ 
+                                    color: message.isFromCurrentUser ? 'primary.light' : 'grey.500',
+                                    display: 'block',
+                                    mt: 0.5
+                                  }}
+                                >
+                                  {format(new Date(message.createdAt), 'MMM dd, HH:mm')}
+                                </Typography>
+                              </Paper>
+                            </Box>
+                          ))}
+                        </Stack>
+                      )}
+                    </Box>
 
-                  <form onSubmit={handleSendMessage} className="p-6 border-t border-gray-200">
-                    <div className="flex space-x-3">
-                      <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type your message..."
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      />
-                      <button
-                        type="submit"
-                        disabled={!newMessage.trim()}
-                        className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <PaperAirplaneIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                    <Box component="form" onSubmit={handleSendMessage} sx={{ borderTop: 1, borderColor: 'divider', pt: 2 }}>
+                      <Stack direction="row" spacing={1}>
+                        <TextField
+                          fullWidth
+                          variant="outlined"
+                          size="small"
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          placeholder="Type your message..."
+                        />
+                        <IconButton
+                          type="submit"
+                          disabled={!newMessage.trim()}
+                          color="primary"
+                        >
+                          <PaperAirplaneIcon />
+                        </IconButton>
+                      </Stack>
+                    </Box>
+                  </CardContent>
+                </Card>
               )}
             </motion.div>
           </AnimatePresence>
-        </div>
+        </Grid>
 
         {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Quick Stats */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Total Proposals</span>
-                <span className="font-semibold text-gray-900">{proposals.length}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Shortlisted</span>
-                <span className="font-semibold text-green-600">
-                  {proposals.filter(p => p.status === 'accepted').length}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Average Price</span>
-                <span className="font-semibold text-gray-900">
-                  ${proposals.length > 0 ? 
-                    (proposals.reduce((sum, p) => sum + p.totalPrice, 0) / proposals.length).toFixed(2) : 
-                    '0.00'
-                  }
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Time Left</span>
-                <span className={`font-semibold ${urgency === 'expired' ? 'text-red-600' : 'text-gray-900'}`}>
-                  {urgency === 'expired' ? 'Expired' : 
-                   formatDistanceToNow(new Date(rfq.submissionDeadline))}
-                </span>
-              </div>
-            </div>
-          </div>
+        <Grid item xs={12} lg={4}>
+          <Stack spacing={3}>
+            {/* Quick Stats */}
+            <Card>
+              <CardContent>
+                <Typography variant="h6" sx={{ color: 'grey.900', mb: 2 }}>
+                  Quick Stats
+                </Typography>
+                <Stack spacing={2}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                      Total Proposals
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'grey.900', fontWeight: 'medium' }}>
+                      {proposals.length}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                      Shortlisted
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'success.main', fontWeight: 'bold' }}>
+                      {proposals.filter(p => p.status === 'accepted').length}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                      Average Price
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'grey.900', fontWeight: 'medium' }}>
+                      ${proposals.length > 0 ? 
+                        (proposals.reduce((sum, p) => sum + p.totalPrice, 0) / proposals.length).toFixed(2) : 
+                        '0.00'
+                      }
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                      Time Left
+                    </Typography>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        color: urgency === 'expired' ? 'error.main' : 'grey.900',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {urgency === 'expired' ? 'Expired' : 
+                       formatDistanceToNow(new Date(rfq.submissionDeadline))}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </CardContent>
+            </Card>
 
-          {/* Recent Activity */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-            <div className="space-y-3">
-              {messages.slice(0, 3).map((message) => (
-                <div key={message.id} className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full flex-shrink-0 flex items-center justify-center">
-                    <span className="text-xs font-medium text-gray-600">
-                      {message.senderName.charAt(0)}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-900">{message.senderName}</p>
-                    <p className="text-xs text-gray-500 truncate">{message.content}</p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {formatDistanceToNow(new Date(message.createdAt))} ago
-                    </p>
-                  </div>
-                </div>
-              ))}
-              {messages.length === 0 && (
-                <p className="text-sm text-gray-500 text-center py-4">No recent activity</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            {/* Recent Activity */}
+            <Card>
+              <CardContent>
+                <Typography variant="h6" sx={{ color: 'grey.900', mb: 2 }}>
+                  Recent Activity
+                </Typography>
+                <Stack spacing={2}>
+                  {messages.slice(0, 3).map((message) => (
+                    <Box key={message.id} sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                      <Avatar sx={{ bgcolor: 'grey.200', color: 'grey.600', width: 32, height: 32, mr: 2 }}>
+                        {message.senderName.charAt(0)}
+                      </Avatar>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="body2" sx={{ color: 'grey.900', fontWeight: 'medium' }}>
+                          {message.senderName}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'grey.500', display: 'block', noWrap: true }}>
+                          {message.content}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'grey.400' }}>
+                          {formatDistanceToNow(new Date(message.createdAt))} ago
+                        </Typography>
+                      </Box>
+                    </Box>
+                  ))}
+                  {messages.length === 0 && (
+                    <Typography variant="body2" sx={{ color: 'grey.500', textAlign: 'center', py: 2 }}>
+                      No recent activity
+                    </Typography>
+                  )}
+                </Stack>
+              </CardContent>
+            </Card>
+          </Stack>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };

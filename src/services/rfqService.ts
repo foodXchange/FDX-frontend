@@ -1,3 +1,4 @@
+// RFQ (Request for Quotation) service for managing quotes, proposals, and supplier communications
 import { api } from './api';
 import { 
   RFQ, 

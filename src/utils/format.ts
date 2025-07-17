@@ -1,3 +1,4 @@
+// Utility functions for formatting data
 export const formatCurrency = (
   amount: number, 
   options: {

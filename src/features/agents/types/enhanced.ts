@@ -1,3 +1,4 @@
+import React from 'react';
 // Enhanced TypeScript types with branded types and strict validation
 
 // Branded types for better type safety
@@ -468,20 +469,5 @@ export interface SortCriteria {
   readonly priority: number;
 }
 
-// Export all types as a namespace
-export namespace AgentTypes {
-  export type {
-    LeadId, AgentId, UserId, SessionId, EmailAddress, PhoneNumber,
-    CompanyName, Currency, Percentage, Timestamp, URL,
-    Lead, Agent, Activity, Note, Attachment,
-    LeadMetadata, LeadSource, AgentPerformance, AgentPreferences,
-    ApiResponse, ApiError, ValidationResult, ValidationError,
-    FormFieldValue, FormState, SearchQuery, FilterCriteria, SortCriteria
-  };
-  
-  export {
-    LeadStatus, LeadPriority, AgentRole, ContactMethod,
-    ActivityType, ActivityOutcome, NotificationType,
-    DashboardWidget, Permission
-  };
-}
+// Re-export everything from index to avoid duplicates
+export * from './index';

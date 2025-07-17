@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ApiError, ApiResponse } from '@/services/api-client';
 
 interface UseApiOptions<T> {
@@ -16,15 +16,15 @@ interface UseApiResult<T> {
   isLoading: boolean;
   isError: boolean;
   isSuccess: boolean;
-  execute: (...args: any[]) => Promise<T>;
+  execute: (...args: unknown[]) => Promise<T>;
   reset: () => void;
 }
 
 // Simple in-memory cache
-const cache = new Map<string, { data: any; timestamp: number }>();
+const cache = new Map<string, { data: unknown; timestamp: number }>();
 
-export function useApi<T = any>(
-  apiFunction: (...args: any[]) => Promise<ApiResponse<T>>,
+export function useApi<T = unknown>(
+  apiFunction: (...args: unknown[]) => Promise<ApiResponse<T>>,
   options: UseApiOptions<T> = {}
 ): UseApiResult<T> {
   const [data, setData] = useState<T | null>(null);
@@ -44,7 +44,7 @@ export function useApi<T = any>(
   }, []);
 
   const execute = useCallback(
-    async (...args: any[]): Promise<T> => {
+    async (...args: unknown[]): Promise<T> => {
       // Cancel any pending request
       abortControllerRef.current?.abort();
       abortControllerRef.current = new AbortController();
@@ -122,8 +122,8 @@ export function useApi<T = any>(
 }
 
 // Hook for queries that should run automatically
-export function useQuery<T = any>(
-  queryKey: string | any[],
+export function useQuery<T = unknown>(
+  queryKey: string | unknown[],
   queryFn: () => Promise<ApiResponse<T>>,
   options: UseApiOptions<T> & { refetchInterval?: number } = {}
 ): UseApiResult<T> & { refetch: () => Promise<T> } {
@@ -153,7 +153,7 @@ export function useQuery<T = any>(
 }
 
 // Hook for mutations
-export function useMutation<TData = any, TVariables = any>(
+export function useMutation<TData = unknown, TVariables = unknown>(
   mutationFn: (variables: TVariables) => Promise<ApiResponse<TData>>,
   options: UseApiOptions<TData> = {}
 ): {

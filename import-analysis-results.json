@@ -1,0 +1,2886 @@
+{
+  "unusedImports": [
+    {
+      "file": "src/features/agents/components/LeadPipeline.tsx",
+      "unused": [
+        "DragIndicator",
+        "MoreVert",
+        "AttachMoney",
+        "AccessTime",
+        "Warning",
+        "CheckCircle",
+        "Phone",
+        "Event",
+        "Flag"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/LeadPipelineOptimized.tsx",
+      "unused": [
+        "DragIndicator",
+        "MoreVert",
+        "AttachMoney",
+        "AccessTime",
+        "Warning",
+        "CheckCircle",
+        "Phone",
+        "Event",
+        "Flag"
+      ]
+    },
+    {
+      "file": "src/features/documents/DocumentUploadCenter.tsx",
+      "unused": [
+        "Description",
+        "Close",
+        "Checklist",
+        "Warning",
+        "Schedule",
+        "Image",
+        "InsertDriveFile",
+        "RemoveRedEye",
+        "MoreHoriz"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/RelationshipTimelineOptimized.tsx",
+      "unused": [
+        "Phone",
+        "Event",
+        "CheckCircle",
+        "FilterList",
+        "Download",
+        "TrendingUp",
+        "Warning",
+        "FixedSizeList"
+      ]
+    },
+    {
+      "file": "src/components/leads/LeadDocuments.tsx",
+      "unused": [
+        "PictureAsPdf",
+        "Image",
+        "AttachFile",
+        "Delete",
+        "Download",
+        "Add",
+        "Visibility"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/AgentDashboard.tsx",
+      "unused": [
+        "AttachMoney",
+        "Work",
+        "EmojiEvents",
+        "TrendingUp",
+        "TrendingDown",
+        "Schedule",
+        "BarChart"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/ARMDashboard.tsx",
+      "unused": [
+        "Dashboard",
+        "People",
+        "Phone",
+        "TrendingUp",
+        "AttachMoney",
+        "Warning",
+        "Event"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/ARMDashboardOptimized.tsx",
+      "unused": [
+        "Dashboard",
+        "People",
+        "Phone",
+        "TrendingUp",
+        "AttachMoney",
+        "Warning",
+        "Event"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/RelationshipTimeline.tsx",
+      "unused": [
+        "Phone",
+        "Event",
+        "CheckCircle",
+        "FilterList",
+        "Download",
+        "TrendingUp",
+        "Warning"
+      ]
+    },
+    {
+      "file": "src/features/dashboard/TrackingDashboard.tsx",
+      "unused": [
+        "Warning",
+        "ShowChart",
+        "ArrowUpward",
+        "ArrowDownward",
+        "Inventory",
+        "Schedule",
+        "Thermostat"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/ExpertFilters.tsx",
+      "unused": [
+        "ExpandMore",
+        "Star",
+        "AttachMoney",
+        "Language",
+        "Category",
+        "LocationOn",
+        "Schedule"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/CommunicationCenter.tsx",
+      "unused": [
+        "Sms",
+        "AttachFile",
+        "Description",
+        "History",
+        "Star",
+        "StarBorder"
+      ]
+    },
+    {
+      "file": "src/components/ui/FileUpload.tsx",
+      "unused": [
+        "CloudUpload",
+        "InsertDriveFile",
+        "Delete",
+        "CheckCircle"
+      ]
+    },
+    {
+      "file": "src/features/tracking/SampleTracker.tsx",
+      "unused": [
+        "Schedule",
+        "Error",
+        "Inventory",
+        "LocalShipping"
+      ]
+    },
+    {
+      "file": "src/components/data/ImportExportWithUpload.tsx",
+      "unused": [
+        "CloudUpload",
+        "CloudDownload",
+        "CheckCircle"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ExpertSearchBar.tsx",
+      "unused": [
+        "FilterList",
+        "History",
+        "TrendingUp"
+      ]
+    },
+    {
+      "file": "src/components/profile/ProfileImageUpload.tsx",
+      "unused": [
+        "PhotoCamera",
+        "Edit"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/WhatsAppChat.tsx",
+      "unused": [
+        "ViewModule",
+        "EmojiEmotions"
+      ]
+    },
+    {
+      "file": "src/features/orders/StandingOrderManager.tsx",
+      "unused": [
+        "// CheckCircle",
+        "// Unused for now\r\n  RefreshCw"
+      ]
+    },
+    {
+      "file": "src/components/ui/tabs.tsx",
+      "unused": [
+        "Tab"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/atoms/LazyImage.tsx",
+      "unused": [
+        "Image"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/EarningsChart.tsx",
+      "unused": [
+        "Chart"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/molecules/VirtualizedList.tsx",
+      "unused": [
+        "FixedSizeList"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/CollaborationHub.tsx",
+      "unused": [
+        "FiberManualRecord"
+      ]
+    }
+  ],
+  "deadCode": [
+    {
+      "file": "src/features/agents/hooks/useARMQueries.ts",
+      "dead": [
+        "useCurrentAgent",
+        "useDashboardData",
+        "useLeads",
+        "useLeadById",
+        "useLeadActivities",
+        "useLeadNotes",
+        "useNotifications",
+        "useTasks",
+        "useWhatsAppMessages",
+        "useWhatsAppTemplates",
+        "useAnalytics",
+        "useUpdateAgent",
+        "useCreateLead",
+        "useUpdateLead",
+        "useUpdateLeadStatus",
+        "useDeleteLead",
+        "useCreateLeadActivity",
+        "useCreateLeadNote",
+        "useMarkNotificationRead",
+        "useBatchMarkNotificationsRead",
+        "useCreateTask",
+        "useUpdateTask",
+        "useSendWhatsAppMessage",
+        "useSendEmail",
+        "useSendSMS",
+        "useExportLeads",
+        "useImportLeads",
+        "useOptimisticLeadUpdate",
+        "usePrefetchLead",
+        "usePrefetchLeadActivities"
+      ]
+    },
+    {
+      "file": "src/features/agents/types/enhanced.ts",
+      "dead": [
+        "safety",
+        "PositiveNumber",
+        "ValidEmail",
+        "ApiResponse",
+        "guards",
+        "ValidationResult",
+        "createLeadId",
+        "createAgentId",
+        "createUserId",
+        "createEmailAddress",
+        "createPhoneNumber",
+        "createCurrency",
+        "createPercentage",
+        "createTimestamp",
+        "createURL",
+        "FormState",
+        "SearchQuery",
+        "FilterCriteria",
+        "SortCriteria"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/utils/constants.ts",
+      "dead": [
+        "EXPERT_MARKETPLACE_ROUTES",
+        "EXPERTISE_CATEGORIES",
+        "SUPPORTED_LANGUAGES",
+        "SUPPORTED_COUNTRIES",
+        "SERVICE_TYPES",
+        "COLLABORATION_STATUSES",
+        "BOOKING_STATUSES",
+        "PAYMENT_STATUSES",
+        "FILE_UPLOAD_LIMITS",
+        "RATING_CRITERIA",
+        "TIME_ZONES",
+        "BUSINESS_HOURS_TEMPLATE",
+        "PRICE_RANGES",
+        "SORT_OPTIONS",
+        "WEBSOCKET_EVENTS",
+        "LOCAL_STORAGE_KEYS"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/utils/validators.ts",
+      "dead": [
+        "urlSchema",
+        "expertProfileSchema",
+        "serviceSchema",
+        "bookingSchema",
+        "collaborationSchema",
+        "messageSchema",
+        "ratingSchema",
+        "validateTimeSlot",
+        "validateDateRange",
+        "validateFileSize",
+        "validateFileType",
+        "sanitizeFilename"
+      ]
+    },
+    {
+      "file": "src/features/agents/store/useAgentStore.ts",
+      "dead": [
+        "useAgent",
+        "useIsAuthenticated",
+        "useDashboardData",
+        "useLeads",
+        "useSelectedLead",
+        "useNotifications",
+        "useTasks",
+        "useWhatsAppMessages",
+        "useOnlineStatus"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/utils/formatters.ts",
+      "dead": [
+        "formatCurrency",
+        "formatFileSize",
+        "formatDuration",
+        "formatRelativeTime",
+        "formatInitials",
+        "formatPhoneNumber",
+        "formatPercentage",
+        "truncateText",
+        "formatBusinessHours"
+      ]
+    },
+    {
+      "file": "src/services/ai/types/index.ts",
+      "dead": [
+        "AIProvider",
+        "PredictionResult",
+        "DemandForecast",
+        "PriceOptimization",
+        "DocumentAnalysis",
+        "MarketIntelligence",
+        "AIInsight",
+        "ChatMessage",
+        "RecommendationEngine"
+      ]
+    },
+    {
+      "file": "src/features/agents/testing/test-utils.tsx",
+      "dead": [
+        "mockApiResponses",
+        "createMockFetch",
+        "measureRenderTime",
+        "testComponentProps",
+        "customMatchers",
+        "TestDataFactory",
+        "mockHooks",
+        "integrationHelpers"
+      ]
+    },
+    {
+      "file": "src/utils/api-transformers.ts",
+      "dead": [
+        "transformPaginatedResponse",
+        "formatFileSize",
+        "sanitizeHtml",
+        "formatCurrency",
+        "formatPercentage",
+        "debounce",
+        "throttle"
+      ]
+    },
+    {
+      "file": "src/components/ui/EmptyState.tsx",
+      "dead": [
+        "NoProductsEmptyState",
+        "NoRFQsEmptyState",
+        "NoSuppliersEmptyState",
+        "SearchEmptyState",
+        "ComingSoonEmptyState",
+        "IllustratedEmptyState"
+      ]
+    },
+    {
+      "file": "src/features/agents/types/index.ts",
+      "dead": [
+        "EarningsData",
+        "LeadSearchResult",
+        "CreateLeadRequest",
+        "UpdateLeadRequest",
+        "SendWhatsAppRequest",
+        "AgentStore"
+      ]
+    },
+    {
+      "file": "src/hooks/index.ts",
+      "dead": [
+        "SampleUpdate",
+        "OrderLineUpdate",
+        "OrderUpdate",
+        "DashboardMetrics",
+        "AIInsightUpdate",
+        "MetricUpdate"
+      ]
+    },
+    {
+      "file": "src/utils/format.ts",
+      "dead": [
+        "formatCurrency",
+        "formatNumber",
+        "formatPercentage",
+        "formatDate",
+        "formatRelativeTime",
+        "formatFileSize"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/atoms/ThemeToggleButton.tsx",
+      "dead": [
+        "HeaderThemeToggle",
+        "FloatingThemeToggle",
+        "ThemeSettingsMenu",
+        "CompactThemeToggle",
+        "useThemeKeyboardShortcut"
+      ]
+    },
+    {
+      "file": "src/features/agents/testing/msw-handlers.ts",
+      "dead": [
+        "resetMockData",
+        "addMockLead",
+        "addMockAgent",
+        "getMockLeads",
+        "getMockAgents"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/types/index.ts",
+      "dead": [
+        "Service",
+        "Collaboration",
+        "Booking",
+        "ExpertSearchFilters",
+        "ExpertSearchResult"
+      ]
+    },
+    {
+      "file": "src/components/ui/SkeletonLoader.tsx",
+      "dead": [
+        "ProductCardSkeleton",
+        "RFQListItemSkeleton",
+        "DashboardCardSkeleton",
+        "TableSkeleton"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/usePerformanceMonitor.tsx",
+      "dead": [
+        "usePerformanceMonitor",
+        "useNetworkMonitor",
+        "useOptimizedQuery",
+        "with"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/BuyerOnboardingTour.tsx",
+      "dead": [
+        "BuyerOnboardingTour",
+        "our",
+        "useBuyerOnboarding"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/OnboardingTour.tsx",
+      "dead": [
+        "OnboardingTour",
+        "WelcomeModal",
+        "OnboardingChecklist"
+      ]
+    },
+    {
+      "file": "src/components/ui/dropdown-menu.tsx",
+      "dead": [
+        "DropdownMenu",
+        "DropdownMenuLabel",
+        "DropdownMenuSeparator"
+      ]
+    },
+    {
+      "file": "src/features/agents/auth/AuthProvider.tsx",
+      "dead": [
+        "ProtectedRoute",
+        "PermissionGate",
+        "RoleGate"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useAnalytics.ts",
+      "dead": [
+        "calculateEngagementScore",
+        "predictConversion",
+        "useABTest"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useKeyboardShortcuts.ts",
+      "dead": [
+        "useAgentKeyboardShortcuts",
+        "useShortcutContext",
+        "useSequentialShortcuts"
+      ]
+    },
+    {
+      "file": "src/features/agents/services/armApi.ts",
+      "dead": [
+        "armApiService",
+        "to",
+        "handleApiError"
+      ]
+    },
+    {
+      "file": "src/services/api-client.ts",
+      "dead": [
+        "setAuthToken",
+        "clearAuthToken",
+        "isAuthenticated"
+      ]
+    },
+    {
+      "file": "src/services/monitoring/appInsights.ts",
+      "dead": [
+        "trackBusinessEvent",
+        "clearUserContext",
+        "flushTelemetry"
+      ]
+    },
+    {
+      "file": "src/components/landing/Features.tsx",
+      "dead": [
+        "safety",
+        "Features"
+      ]
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "dead": [
+        "safety",
+        "HeroSection"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/OnboardingManager.tsx",
+      "dead": [
+        "OnboardingFloatingButton",
+        "useOnboardingManager"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/SellerOnboardingTour.tsx",
+      "dead": [
+        "SellerOnboardingTour",
+        "useSellerOnboarding"
+      ]
+    },
+    {
+      "file": "src/components/ui/ProgressIndicator.tsx",
+      "dead": [
+        "ProgressIndicator",
+        "PageLoader"
+      ]
+    },
+    {
+      "file": "src/components/ui/tabs.tsx",
+      "dead": [
+        "TabsList",
+        "TabsContent"
+      ]
+    },
+    {
+      "file": "src/components/ui/Toast.tsx",
+      "dead": [
+        "ToastContainer",
+        "useToast"
+      ]
+    },
+    {
+      "file": "src/components/ui/Tooltip.tsx",
+      "dead": [
+        "HelpTooltip",
+        "InfoTooltip"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/AgentRFQList.tsx",
+      "dead": [
+        "extension",
+        "AgentRFQList"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/RelationshipTimelineOptimized.tsx",
+      "dead": [
+        "RelationshipTimelineOptimized",
+        "let"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useAccessibility.tsx",
+      "dead": [
+        "useAriaAttributes",
+        "useColorContrast"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useGlobalErrorHandler.ts",
+      "dead": [
+        "useAPIErrorHandler",
+        "useComponentErrorHandler"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useImageOptimization.ts",
+      "dead": [
+        "useProgressiveImage",
+        "useImagePreloader"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useKeyboardNavigation.ts",
+      "dead": [
+        "useFocusTrap",
+        "useRovingTabindex"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useOfflineSupport.ts",
+      "dead": [
+        "useProgressiveWebApp",
+        "useServiceWorker"
+      ]
+    },
+    {
+      "file": "src/features/agents/testing/setup.ts",
+      "dead": [
+        "testUtils",
+        "generateMockData"
+      ]
+    },
+    {
+      "file": "src/features/agents/utils/errorHandler.tsx",
+      "dead": [
+        "useErrorHandler",
+        "ARMErrorBoundary"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useBooking.ts",
+      "dead": [
+        "useBookings",
+        "useExpertAvailability"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useExperts.ts",
+      "dead": [
+        "useExperts",
+        "useExpert"
+      ]
+    },
+    {
+      "file": "src/features/tracking/SampleTracker.tsx",
+      "dead": [
+        "getTimelineIcon",
+        "SampleTracker"
+      ]
+    },
+    {
+      "file": "src/hooks/useApi.ts",
+      "dead": [
+        "useQuery",
+        "useMutation"
+      ]
+    },
+    {
+      "file": "src/hooks/useModal.ts",
+      "dead": [
+        "useModal",
+        "ConfirmModal"
+      ]
+    },
+    {
+      "file": "src/hooks/useOnboardingAnalytics.ts",
+      "dead": [
+        "useOnboardingAnalytics",
+        "useOnboardingAnalyticsData"
+      ]
+    },
+    {
+      "file": "src/hooks/usePermissions.ts",
+      "dead": [
+        "ROLE_PERMISSIONS",
+        "usePermissions"
+      ]
+    },
+    {
+      "file": "src/services/ai/analytics/supplyChainOptimizationService.ts",
+      "dead": [
+        "calc",
+        "supplyChainOptimizationService"
+      ]
+    },
+    {
+      "file": "src/services/ai/nlp/naturalLanguageInterface.ts",
+      "dead": [
+        "analyticsType",
+        "naturalLanguageInterface"
+      ]
+    },
+    {
+      "file": "src/utils/debug.ts",
+      "dead": [
+        "debugUtils",
+        "useWhyDidYouUpdate"
+      ]
+    },
+    {
+      "file": "src/components/auth/PermissionGate.tsx",
+      "dead": [
+        "PermissionGate"
+      ]
+    },
+    {
+      "file": "src/components/auth/ProtectedRoute.tsx",
+      "dead": [
+        "ProtectedRoute"
+      ]
+    },
+    {
+      "file": "src/components/data/ImportExportWithUpload.tsx",
+      "dead": [
+        "ImportExportWithUpload"
+      ]
+    },
+    {
+      "file": "src/components/ErrorBoundary/AsyncErrorBoundary.tsx",
+      "dead": [
+        "ErrorBoundary"
+      ]
+    },
+    {
+      "file": "src/components/ErrorBoundary/RouteErrorBoundary.tsx",
+      "dead": [
+        "RouteErrorBoundary"
+      ]
+    },
+    {
+      "file": "src/components/landing/Footer.tsx",
+      "dead": [
+        "Footer"
+      ]
+    },
+    {
+      "file": "src/components/landing/HowItWorks.tsx",
+      "dead": [
+        "HowItWorks"
+      ]
+    },
+    {
+      "file": "src/components/landing/LoginModal.tsx",
+      "dead": [
+        "LoginModal"
+      ]
+    },
+    {
+      "file": "src/components/landing/Navbar.tsx",
+      "dead": [
+        "Navbar"
+      ]
+    },
+    {
+      "file": "src/components/landing/ROICalculator.tsx",
+      "dead": [
+        "ROICalculator"
+      ]
+    },
+    {
+      "file": "src/components/landing/SocialProof.tsx",
+      "dead": [
+        "SocialProof"
+      ]
+    },
+    {
+      "file": "src/components/landing/StickyCTA.tsx",
+      "dead": [
+        "StickyCTA"
+      ]
+    },
+    {
+      "file": "src/components/landing/TrustBar.tsx",
+      "dead": [
+        "TrustBar"
+      ]
+    },
+    {
+      "file": "src/components/layout/Header.tsx",
+      "dead": [
+        "Header"
+      ]
+    },
+    {
+      "file": "src/components/layout/ModernHeader.tsx",
+      "dead": [
+        "ModernHeader"
+      ]
+    },
+    {
+      "file": "src/components/leads/LeadDocuments.tsx",
+      "dead": [
+        "LeadDocuments"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/InteractiveDemoComponents.tsx",
+      "dead": [
+        "DemoShowcase"
+      ]
+    },
+    {
+      "file": "src/components/profile/ProfileImageUpload.tsx",
+      "dead": [
+        "ProfileImageUpload"
+      ]
+    },
+    {
+      "file": "src/components/providers/StoreProvider.tsx",
+      "dead": [
+        "StoreProvider"
+      ]
+    },
+    {
+      "file": "src/components/ui/cards/ProductCard.tsx",
+      "dead": [
+        "ProductCard"
+      ]
+    },
+    {
+      "file": "src/components/ui/FileUpload.tsx",
+      "dead": [
+        "FileUpload"
+      ]
+    },
+    {
+      "file": "src/components/ui/GlobalLoading.tsx",
+      "dead": [
+        "GlobalLoading"
+      ]
+    },
+    {
+      "file": "src/components/ui/LoadingSpinner.tsx",
+      "dead": [
+        "LoadingDots"
+      ]
+    },
+    {
+      "file": "src/components/ui/ModalManager.tsx",
+      "dead": [
+        "ModalManager"
+      ]
+    },
+    {
+      "file": "src/components/ui/NotificationContainer.tsx",
+      "dead": [
+        "NotificationContainer"
+      ]
+    },
+    {
+      "file": "src/components/ui/StatusBadge.tsx",
+      "dead": [
+        "StatusBadge"
+      ]
+    },
+    {
+      "file": "src/components/ui/table.tsx",
+      "dead": [
+        "TableHeader"
+      ]
+    },
+    {
+      "file": "src/features/admin/DataImport.tsx",
+      "dead": [
+        "DataImport"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/AgentRFQCard.tsx",
+      "dead": [
+        "AgentRFQCard"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/ARMDashboard.tsx",
+      "dead": [
+        "ARMDashboard"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/ARMDashboardOptimized.tsx",
+      "dead": [
+        "ARMDashboardOptimized"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/CommissionDashboard.tsx",
+      "dead": [
+        "CommissionDashboard"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/CommunicationCenter.tsx",
+      "dead": [
+        "CommunicationCenter"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/EarningsChart.tsx",
+      "dead": [
+        "EarningsChart"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/LeadCard.tsx",
+      "dead": [
+        "LeadCard"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/LeadManagement.tsx",
+      "dead": [
+        "LeadManagement"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/LeadPipeline.tsx",
+      "dead": [
+        "LeadPipeline"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/LeadPipelineOptimized.tsx",
+      "dead": [
+        "LeadPipelineOptimized"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/AnalyticsDashboard.tsx",
+      "dead": [
+        "getEngagementLevel"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/PerformanceBadge.tsx",
+      "dead": [
+        "PerformanceBadge"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/RelationshipTimeline.tsx",
+      "dead": [
+        "RelationshipTimeline"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/utils/ErrorBoundary.tsx",
+      "dead": [
+        "useErrorReporting"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useDebounce.ts",
+      "dead": [
+        "useDebouncedCallback"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useOptimizedSearch.ts",
+      "dead": [
+        "to"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useSecurity.ts",
+      "dead": [
+        "useSecureFileUpload"
+      ]
+    },
+    {
+      "file": "src/features/agents/services/api.ts",
+      "dead": [
+        "agentApi"
+      ]
+    },
+    {
+      "file": "src/features/agents/services/websocketService.ts",
+      "dead": [
+        "useWebSocket"
+      ]
+    },
+    {
+      "file": "src/features/agents/utils/bundleOptimization.ts",
+      "dead": [
+        "BundleOptimization"
+      ]
+    },
+    {
+      "file": "src/features/agents/utils/pwa.ts",
+      "dead": [
+        "usePWA"
+      ]
+    },
+    {
+      "file": "src/features/auth/LoginForm.tsx",
+      "dead": [
+        "LoginForm"
+      ]
+    },
+    {
+      "file": "src/features/auth/Register.tsx",
+      "dead": [
+        "Register"
+      ]
+    },
+    {
+      "file": "src/features/auth/Unauthorized.tsx",
+      "dead": [
+        "Unauthorized"
+      ]
+    },
+    {
+      "file": "src/features/compliance/ComplianceDashboard.tsx",
+      "dead": [
+        "ComplianceDashboard"
+      ]
+    },
+    {
+      "file": "src/features/dashboard/DashboardCards.tsx",
+      "dead": [
+        "DashboardCards"
+      ]
+    },
+    {
+      "file": "src/features/dashboard/EnhancedDashboard.tsx",
+      "dead": [
+        "EnhancedDashboard"
+      ]
+    },
+    {
+      "file": "src/features/dashboard/TrackingDashboard.tsx",
+      "dead": [
+        "TrackingDashboard"
+      ]
+    },
+    {
+      "file": "src/features/documents/DocumentUploadCenter.tsx",
+      "dead": [
+        "DocumentUploadCenter"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/AvailabilityBadge.tsx",
+      "dead": [
+        "AvailabilityBadge"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/ExpertAvatar.tsx",
+      "dead": [
+        "ExpertAvatar"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/ExpertCard.tsx",
+      "dead": [
+        "ExpertCard"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/ExpertiseBadge.tsx",
+      "dead": [
+        "ExpertiseBadge"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/PriceDisplay.tsx",
+      "dead": [
+        "PriceDisplay"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/RatingDisplay.tsx",
+      "dead": [
+        "RatingDisplay"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ChatPanel.tsx",
+      "dead": [
+        "ChatPanel"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/CollaborationHeader.tsx",
+      "dead": [
+        "CollaborationHeader"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/DeliverablesPanel.tsx",
+      "dead": [
+        "DeliverablesPanel"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/DocumentsPanel.tsx",
+      "dead": [
+        "DocumentsPanel"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ExpertCard.tsx",
+      "dead": [
+        "ExpertCard"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ExpertSearchBar.tsx",
+      "dead": [
+        "ExpertSearchBar"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ExpertStats.tsx",
+      "dead": [
+        "ExpertStats"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/PortfolioGallery.tsx",
+      "dead": [
+        "PortfolioGallery"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ReviewList.tsx",
+      "dead": [
+        "ReviewList"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ServiceList.tsx",
+      "dead": [
+        "ServiceList"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/TimelinePanel.tsx",
+      "dead": [
+        "TimelinePanel"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/VideoCallPanel.tsx",
+      "dead": [
+        "VideoCallPanel"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/BookingCalendar.tsx",
+      "dead": [
+        "BookingCalendar"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/BookingManagement.tsx",
+      "dead": [
+        "BookingManagement"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/CollaborationWorkspace.tsx",
+      "dead": [
+        "CollaborationWorkspace"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/ExpertFilters.tsx",
+      "dead": [
+        "ExpertFilters"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/ExpertProfile.tsx",
+      "dead": [
+        "ExpertProfile"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useCollaboration.ts",
+      "dead": [
+        "useCollaboration"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useDebounce.ts",
+      "dead": [
+        "useDebounce"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useWebSocket.ts",
+      "dead": [
+        "useCollaborationWebSocket"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/providers/ExpertMarketplaceProvider.tsx",
+      "dead": [
+        "ExpertMarketplaceProvider"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/routes.tsx",
+      "dead": [
+        "expertMarketplaceRoutes"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/services/api.ts",
+      "dead": [
+        "expertApi"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/services/auth.ts",
+      "dead": [
+        "expertAuthService"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/services/fileUpload.ts",
+      "dead": [
+        "fileUploadService"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/services/notifications.ts",
+      "dead": [
+        "notificationService"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/services/payments.ts",
+      "dead": [
+        "paymentService"
+      ]
+    },
+    {
+      "file": "src/features/marketplace/MarketplaceView.tsx",
+      "dead": [
+        "MarketplaceView"
+      ]
+    },
+    {
+      "file": "src/features/monitoring/TemperatureMonitor.tsx",
+      "dead": [
+        "TemperatureMonitor"
+      ]
+    },
+    {
+      "file": "src/features/orders/OrderLinesTable.tsx",
+      "dead": [
+        "OrderLinesTable"
+      ]
+    },
+    {
+      "file": "src/features/orders/StandingOrderManager.tsx",
+      "dead": [
+        "StandingOrderManager"
+      ]
+    },
+    {
+      "file": "src/features/rfq/CreateRFQ.tsx",
+      "dead": [
+        "CreateRFQ"
+      ]
+    },
+    {
+      "file": "src/features/rfq/RFQDashboard.tsx",
+      "dead": [
+        "RFQDashboard"
+      ]
+    },
+    {
+      "file": "src/features/rfq/RFQDetail.tsx",
+      "dead": [
+        "RFQDetail"
+      ]
+    },
+    {
+      "file": "src/features/rfq/RFQList.tsx",
+      "dead": [
+        "RFQList"
+      ]
+    },
+    {
+      "file": "src/features/validation/SpecValidator.tsx",
+      "dead": [
+        "SpecValidator"
+      ]
+    },
+    {
+      "file": "src/hooks/useAI.ts",
+      "dead": [
+        "useAI"
+      ]
+    },
+    {
+      "file": "src/hooks/useApiError.ts",
+      "dead": [
+        "useApiError"
+      ]
+    },
+    {
+      "file": "src/hooks/useDashboardMetrics.ts",
+      "dead": [
+        "useDashboardMetrics"
+      ]
+    },
+    {
+      "file": "src/hooks/useErrorHandler.ts",
+      "dead": [
+        "errorRecoveryStrategies"
+      ]
+    },
+    {
+      "file": "src/hooks/useFileUpload.ts",
+      "dead": [
+        "useFileUpload"
+      ]
+    },
+    {
+      "file": "src/hooks/useMonitoring.ts",
+      "dead": [
+        "usePerformanceMonitoring"
+      ]
+    },
+    {
+      "file": "src/hooks/useOrderTracking.ts",
+      "dead": [
+        "useOrderTracking"
+      ]
+    },
+    {
+      "file": "src/hooks/useSampleTracking.ts",
+      "dead": [
+        "useSampleTracking"
+      ]
+    },
+    {
+      "file": "src/services/ai/aiService.ts",
+      "dead": [
+        "aiService"
+      ]
+    },
+    {
+      "file": "src/services/ai/analytics/marketIntelligenceService.ts",
+      "dead": [
+        "marketIntelligenceService"
+      ]
+    },
+    {
+      "file": "src/services/ai/analytics/recommendationEngine.ts",
+      "dead": [
+        "recommendationEngine"
+      ]
+    },
+    {
+      "file": "src/services/ai/analytics/supplierMatchingService.ts",
+      "dead": [
+        "supplierMatchingService"
+      ]
+    },
+    {
+      "file": "src/services/ai/index.ts",
+      "dead": [
+        "aiServiceManager"
+      ]
+    },
+    {
+      "file": "src/services/ai/nlp/documentIntelligenceService.ts",
+      "dead": [
+        "documentIntelligenceService"
+      ]
+    },
+    {
+      "file": "src/services/ai/nlp/searchService.ts",
+      "dead": [
+        "searchService"
+      ]
+    },
+    {
+      "file": "src/services/ai/predictions/demandForecastingService.ts",
+      "dead": [
+        "demandForecastingService"
+      ]
+    },
+    {
+      "file": "src/services/ai/predictions/priceOptimizationService.ts",
+      "dead": [
+        "priceOptimizationService"
+      ]
+    },
+    {
+      "file": "src/services/authService.ts",
+      "dead": [
+        "authService"
+      ]
+    },
+    {
+      "file": "src/services/complianceService.ts",
+      "dead": [
+        "complianceService"
+      ]
+    },
+    {
+      "file": "src/services/rfqService.ts",
+      "dead": [
+        "rfqService"
+      ]
+    },
+    {
+      "file": "src/services/validationService.ts",
+      "dead": [
+        "validationService"
+      ]
+    },
+    {
+      "file": "src/services/websocket.ts",
+      "dead": [
+        "websocket"
+      ]
+    },
+    {
+      "file": "src/utils/errorReporting.ts",
+      "dead": [
+        "logErrorToService"
+      ]
+    },
+    {
+      "file": "src/utils/validateNoCSS.ts",
+      "dead": [
+        "validateComponent"
+      ]
+    }
+  ],
+  "duplicateImports": [
+    {
+      "file": "src/features/agents/components/CommunicationCenter.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            28
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/agents/components/LeadPipeline.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            26
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/AnalyticsDashboard.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            25
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/AgentOnboarding.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            26
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/CommissionTracking.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            34
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/LeadManagement.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/WhatsAppIntegration.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            21
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/agents/__tests__/components/ARMDashboard.test.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material/styles",
+          "lines": [
+            4,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/DocumentsPanel.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            36
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ExpertStats.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/PortfolioGallery.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            15
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ReviewList.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            14
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ServiceList.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            17
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/VideoCallPanel.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            14
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/BookingCalendar.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            31
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/BookingManagement.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            38
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/ExpertProfile.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            26
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/pages/ExpertDiscovery.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            15
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/pages/ExpertMarketplace.tsx",
+      "duplicates": [
+        {
+          "module": "@mui/material",
+          "lines": [
+            0,
+            15
+          ]
+        }
+      ]
+    }
+  ],
+  "missingImports": [
+    {
+      "file": "src/components/auth/ProtectedRoute.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/data/ImportExportWithUpload.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ErrorBoundary/AsyncErrorBoundary.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ErrorBoundary/LandingErrorBoundary.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ErrorBoundary/RouteErrorBoundary.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/components/ErrorBoundary.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ExampleComponent.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/CTA.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/Features.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/Footer.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/HowItWorks.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/LoginModal.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/Navbar.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/ROICalculator.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/SocialProof.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/StickyCTA.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/landing/TrustBar.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/layout/Breadcrumbs.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/layout/Header.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/components/layout/ModernHeader.tsx",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/layout/Sidebar.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/leads/LeadDocuments.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/BuyerOnboardingTour.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/InteractiveDemoComponents.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/OnboardingManager.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/OnboardingTour.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/components/onboarding/SellerOnboardingTour.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/components/profile/ProfileImageUpload.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/providers/StoreProvider.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/components/ui/Badge.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/Button.tsx",
+      "missing": [
+        "import React from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/Card.tsx",
+      "missing": [
+        "import React from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/cards/ProductCard.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/dropdown-menu.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/EmptyState.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/FileUpload.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/GlobalLoading.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/LoadingSpinner.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/Modal.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/NotificationContainer.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/ProgressIndicator.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/SkeletonLoader.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/table.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/tabs.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/Toast.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/components/ui/Tooltip.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/admin/DataImport.tsx",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/auth/AuthProvider.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/AgentDashboard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/AgentRFQCard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/AgentRFQList.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/ARMDashboard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/ARMDashboardOptimized.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/atoms/AccessibleCard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/atoms/LazyImage.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/atoms/ThemeToggleButton.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/CommissionDashboard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/CommunicationCenter.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/LeadManagement.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/LeadPipeline.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/LeadPipelineOptimized.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/molecules/AdvancedSearchFilter.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/molecules/VirtualizedList.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/AdvancedAnalytics.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/AdvancedNotifications.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/AILeadScoring.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/AnalyticsDashboard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/BulkOperations.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/CollaborationHub.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/InternationalizationSystem.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/KeyboardShortcutsHelp.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/LeadKanban.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/MobileFeatures.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/OfflineIndicator.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/SecurityAuditSystem.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/organisms/WhatsAppChat.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/RelationshipTimeline.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/RelationshipTimelineOptimized.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/components/utils/ErrorBoundary.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/context/ThemeContext.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useAccessibility.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useAnalytics.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useDebounce.ts",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useGlobalErrorHandler.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useImageOptimization.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useInfiniteScroll.ts",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useKeyboardNavigation.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useKeyboardShortcuts.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useOfflineSupport.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useOptimizedSearch.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/usePerformanceMonitor.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useSecurity.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/hooks/useVirtualization.ts",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/AgentARMPage.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/AgentDashboard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/AgentOnboarding.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/AgentPortal.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/ARMTestPage.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/CommissionTracking.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/LeadManagement.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/pages/WhatsAppIntegration.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/services/websocketService.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/testing/test-utils.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/agents/utils/pwa.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/agents/__tests__/components/ARMDashboard.test.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/auth/ForgotPassword.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/auth/Login.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/auth/LoginForm.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/auth/Register.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/auth/ResetPassword.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/compliance/ComplianceDashboard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/compliance/components/ComplianceDashboard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/compliance/components/ComplianceValidator.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/dashboard/DashboardCards.tsx",
+      "missing": [
+        "import React from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/dashboard/TrackingDashboard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/documents/DocumentUploadCenter.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/AvailabilityBadge.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/ExpertAvatar.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/ExpertCard.test.tsx",
+      "missing": [
+        "import React from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/ExpertCard.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/ExpertiseBadge.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/PriceDisplay.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/atoms/RatingDisplay.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ChatPanel.tsx",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/CollaborationHeader.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/DeliverablesPanel.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/DocumentsPanel.tsx",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ExpertCard.tsx",
+      "missing": [
+        "import React from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ExpertSearchBar.tsx",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ExpertStats.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/PortfolioGallery.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ReviewList.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/ServiceList.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/TimelinePanel.tsx",
+      "missing": [
+        "import React from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/molecules/VideoCallPanel.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/BookingCalendar.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/BookingManagement.tsx",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/CollaborationWorkspace.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/ExpertFilters.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/components/organisms/ExpertProfile.tsx",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/contexts/BookingContext.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/contexts/CollaborationContext.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/contexts/ExpertContext.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useBooking.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useCollaboration.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useDebounce.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useExperts.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/hooks/useWebSocket.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/pages/BookingManagement.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/pages/CollaborationWorkspace.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/pages/ExpertDashboard.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/pages/ExpertDiscovery.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/pages/ExpertMarketplace.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/pages/ExpertProfile.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/expert-marketplace/pages/ExpertServices.tsx",
+      "missing": [
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/features/marketplace/MarketplaceView.tsx",
+      "missing": [
+        "import React from 'react';",
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/monitoring/TemperatureMonitor.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/orders/OrderLinesTable.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/orders/StandingOrderManager.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/profile/Settings.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/rfq/CreateRFQ.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/rfq/RFQDashboard.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/rfq/RFQDetail.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/rfq/RFQList.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/features/tracking/SampleTracker.tsx",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';",
+        "Missing MUI imports"
+      ]
+    },
+    {
+      "file": "src/hooks/useAI.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/hooks/useApi.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/hooks/useApiError.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/hooks/useDashboardMetrics.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/hooks/useFileUpload.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/hooks/useModal.ts",
+      "missing": [
+        "import React from 'react';"
+      ]
+    },
+    {
+      "file": "src/hooks/useMonitoring.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/hooks/useOnboardingAnalytics.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/hooks/useOrderTracking.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/hooks/useSampleTracking.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/utils/debug.ts",
+      "missing": [
+        "import { useState, useEffect, useContext } from 'react';"
+      ]
+    },
+    {
+      "file": "src/utils/errorReporting.ts",
+      "missing": [
+        "import React from 'react';"
+      ]
+    }
+  ],
+  "optimizationOpportunities": [
+    {
+      "file": "src/components/data/ImportExportWithUpload.tsx",
+      "optimizations": [
+        "Consider using named imports instead of namespace imports"
+      ]
+    }
+  ]
+}

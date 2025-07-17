@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Card,
@@ -12,19 +12,13 @@ import {
   Chip,
   Button,
   Collapse,
-  Grid,
   Slider,
-  DatePicker,
   Autocomplete,
-  FormControlLabel,
-  Checkbox,
-  Radio,
-  RadioGroup,
-  FormLabel,
-  Divider,
   IconButton,
   useTheme,
   alpha,
+  Divider,
+  Grid,
 } from '@mui/material';
 import {
   Search,
@@ -35,12 +29,10 @@ import {
   ExpandLess,
   TuneSharp,
   LocationOn,
-  Business,
   AttachMoney,
   Schedule,
-  Star,
 } from '@mui/icons-material';
-import { LeadSearchFilters, BusinessType, LeadPriority, LeadStatus, LeadSource } from '../../types';
+import { LeadSearchFilters, BusinessType, LeadPriority, LeadStatus } from '../../types';
 
 interface SavedFilter {
   id: string;
@@ -73,13 +65,13 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
   const [showSavedFilters, setShowSavedFilters] = useState(false);
 
   // Quick filter options
-  const quickFilters = [
+  const quickFilters: { label: string; filters: Partial<LeadSearchFilters> }[] = [
     { label: 'My Leads', filters: { assignedAgentId: 'current' } },
-    { label: 'Hot Leads', filters: { priority: ['urgent', 'high'] } },
+    { label: 'Hot Leads', filters: { priority: ['urgent', 'high'] as LeadPriority[] } },
     { label: 'New This Week', filters: { dateRange: { startDate: getWeekStart(), endDate: new Date().toISOString() } } },
-    { label: 'High Value', filters: { estimatedRevenue: { min: 10000 } } },
-    { label: 'Restaurants', filters: { businessType: ['restaurant'] } },
-    { label: 'Qualified', filters: { status: ['qualified', 'proposal', 'negotiation'] } },
+    { label: 'High Value', filters: { estimatedRevenue: { min: 10000, max: Number.MAX_SAFE_INTEGER } } },
+    { label: 'Restaurants', filters: { businessType: ['restaurant'] as BusinessType[] } },
+    { label: 'Qualified', filters: { status: ['qualified', 'proposal', 'negotiation'] as LeadStatus[] } },
   ];
 
   // Location suggestions (mock data)
@@ -101,7 +93,7 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
     onFiltersChange({ ...filters, [key]: value });
   };
 
-  const handleQuickFilter = (quickFilter: { filters: Partial<LeadSearchFilters> }) => {
+  const handleQuickFilter = (quickFilter: { label: string; filters: Partial<LeadSearchFilters> }) => {
     onFiltersChange({ ...filters, ...quickFilter.filters });
   };
 
@@ -321,7 +313,7 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
             
             <Grid container spacing={3}>
               {/* Status Filter */}
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Status</InputLabel>
                   <Select
@@ -350,7 +342,7 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
               </Grid>
 
               {/* Priority Filter */}
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Priority</InputLabel>
                   <Select
@@ -375,7 +367,7 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
               </Grid>
 
               {/* Business Type Filter */}
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Business Type</InputLabel>
                   <Select
@@ -404,7 +396,7 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
               </Grid>
 
               {/* Location Filter */}
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <Autocomplete
                   options={locationSuggestions}
                   value={filters.location || ''}
@@ -425,7 +417,7 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
               </Grid>
 
               {/* Source Filter */}
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Source</InputLabel>
                   <Select
@@ -453,7 +445,7 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
               </Grid>
 
               {/* Assigned Agent */}
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Assigned Agent</InputLabel>
                   <Select
@@ -469,7 +461,7 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
               </Grid>
 
               {/* Estimated Revenue Range */}
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="subtitle2" sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
                   <AttachMoney sx={{ mr: 1 }} />
                   Estimated Revenue Range
@@ -501,7 +493,7 @@ const AdvancedSearchFilter: React.FC<AdvancedSearchFilterProps> = ({
               </Grid>
 
               {/* Date Range */}
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="subtitle2" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
                   <Schedule sx={{ mr: 1 }} />
                   Date Range

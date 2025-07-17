@@ -1,0 +1,10 @@
+{
+  "processed": 184,
+  "timestamp": "2025-07-17T07:42:18.703Z",
+  "fixes": {
+    "unusedImports": 24,
+    "duplicateImports": 19,
+    "deadCode": 177,
+    "tailwindReplacements": "Multiple files processed"
+  }
+}

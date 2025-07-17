@@ -1,13 +1,36 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
-import { Toast } from '@components/ui/Toast';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  FormHelperText,
+  LinearProgress,
+  Stack,
+  Link,
+  Alert,
+  Snackbar
+} from '@mui/material';
+import {
+  Visibility,
+  VisibilityOff
+} from '@mui/icons-material';
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -79,226 +102,215 @@ export const Register: React.FC = () => {
   const passwordStrength = getPasswordStrength(password || '');
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'grey.50',
+        py: 3,
+        px: { xs: 2, sm: 3, lg: 4 }
+      }}
+    >
+      <Container maxWidth="sm">
+        <Box sx={{ mb: 4, textAlign: 'center' }}>
+          <Typography variant="h4" component="h1" gutterBottom>
             Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
             Or{' '}
             <Link
+              component={RouterLink}
               to="/login"
-              className="font-medium text-blue-600 hover:text-blue-500"
+              underline="hover"
             >
               sign in to existing account
             </Link>
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
-        <Card className="mt-8 p-6">
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Full Name
-              </label>
-              <div className="mt-1">
-                <input
+        <Card>
+          <CardContent sx={{ p: 4 }}>
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+              <Stack spacing={3}>
+                <TextField
                   {...register('name')}
+                  fullWidth
+                  label="Full Name"
                   type="text"
                   autoComplete="name"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="John Doe"
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
                 />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-                )}
-              </div>
-            </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
+                <TextField
                   {...register('email')}
+                  fullWidth
+                  label="Email address"
                   type="email"
                   autoComplete="email"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="you@example.com"
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
                 />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-                )}
-              </div>
-            </div>
 
-            <div>
-              <label htmlFor="company" className="block text-sm font-medium text-gray-700">
-                Company
-              </label>
-              <div className="mt-1">
-                <input
+                <TextField
                   {...register('company')}
+                  fullWidth
+                  label="Company"
                   type="text"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="ACME Corp"
+                  error={!!errors.company}
+                  helperText={errors.company?.message}
                 />
-                {errors.company && (
-                  <p className="mt-1 text-sm text-red-600">{errors.company.message}</p>
-                )}
-              </div>
-            </div>
 
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                I am a
-              </label>
-              <div className="mt-1">
-                <select
-                  {...register('role')}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-                  <option value="">Select role</option>
-                  <option value="buyer">Buyer</option>
-                  <option value="supplier">Supplier</option>
-                </select>
-                {errors.role && (
-                  <p className="mt-1 text-sm text-red-600">{errors.role?.message}</p>
-                )}
-              </div>
-            </div>
+                <FormControl fullWidth error={!!errors.role}>
+                  <InputLabel>I am a</InputLabel>
+                  <Select
+                    {...register('role')}
+                    label="I am a"
+                    defaultValue=""
+                  >
+                    <MenuItem value="">Select role</MenuItem>
+                    <MenuItem value="buyer">Buyer</MenuItem>
+                    <MenuItem value="supplier">Supplier</MenuItem>
+                  </Select>
+                  {errors.role && (
+                    <FormHelperText>{errors.role.message}</FormHelperText>
+                  )}
+                </FormControl>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <div className="mt-1 relative">
-                <input
+                <TextField
                   {...register('password')}
+                  fullWidth
+                  label="Password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm pr-10"
                   placeholder="••••••••"
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-              </div>
-              {password && (
-                <div className="mt-2">
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <div
-                        key={i}
-                        className={`h-1 flex-1 rounded-full ${
-                          i < passwordStrength
-                            ? passwordStrength <= 2
-                              ? 'bg-red-500'
-                              : passwordStrength <= 3
-                              ? 'bg-yellow-500'
-                              : 'bg-green-500'
-                            : 'bg-gray-200'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {passwordStrength <= 2
-                      ? 'Weak'
-                      : passwordStrength <= 3
-                      ? 'Medium'
-                      : 'Strong'}
-                  </p>
-                </div>
-              )}
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-              )}
-            </div>
+                {password && (
+                  <Box sx={{ mt: 1 }}>
+                    <Box sx={{ display: 'flex', gap: 0.5, mb: 0.5 }}>
+                      {[...Array(5)].map((_, i) => (
+                        <LinearProgress
+                          key={i}
+                          variant="determinate"
+                          value={i < passwordStrength ? 100 : 0}
+                          sx={{
+                            flex: 1,
+                            height: 4,
+                            borderRadius: 2,
+                            bgcolor: 'grey.200',
+                            '& .MuiLinearProgress-bar': {
+                              bgcolor: 
+                                passwordStrength <= 2 ? 'error.main' :
+                                passwordStrength <= 3 ? 'warning.main' :
+                                'success.main'
+                            }
+                          }}
+                        />
+                      ))}
+                    </Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Password strength: {passwordStrength <= 2 ? 'Weak' : passwordStrength <= 3 ? 'Medium' : 'Strong'}
+                    </Typography>
+                  </Box>
+                )}
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm Password
-              </label>
-              <div className="mt-1 relative">
-                <input
+                <TextField
                   {...register('confirmPassword')}
+                  fullWidth
+                  label="Confirm Password"
                   type={showConfirmPassword ? 'text' : 'password'}
                   autoComplete="new-password"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm pr-10"
                   placeholder="••••••••"
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-400" />
+
+                <Box>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        {...register('acceptTerms')}
+                        color="primary"
+                      />
+                    }
+                    label={
+                      <Typography variant="body2">
+                        I agree to the{' '}
+                        <Link component={RouterLink} to="/terms" underline="hover">
+                          Terms and Conditions
+                        </Link>{' '}
+                        and{' '}
+                        <Link component={RouterLink} to="/privacy" underline="hover">
+                          Privacy Policy
+                        </Link>
+                      </Typography>
+                    }
+                  />
+                  {errors.acceptTerms && (
+                    <FormHelperText error>{errors.acceptTerms.message}</FormHelperText>
                   )}
-                </button>
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
-                )}
-              </div>
-            </div>
+                </Box>
 
-            <div className="flex items-center">
-              <input
-                {...register('acceptTerms')}
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="acceptTerms" className="ml-2 block text-sm text-gray-900">
-                I agree to the{' '}
-                <Link to="/terms" className="text-blue-600 hover:text-blue-500">
-                  Terms and Conditions
-                </Link>{' '}
-                and{' '}
-                <Link to="/privacy" className="text-blue-600 hover:text-blue-500">
-                  Privacy Policy
-                </Link>
-              </label>
-            </div>
-            {errors.acceptTerms && (
-              <p className="text-sm text-red-600">{errors.acceptTerms.message}</p>
-            )}
-
-            <div>
-              <Button
-                type="submit"
-                variant="default"
-                className="w-full"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Creating account...' : 'Create account'}
-              </Button>
-            </div>
-          </form>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  size="large"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Creating account...' : 'Create account'}
+                </Button>
+              </Stack>
+            </Box>
+          </CardContent>
         </Card>
 
-        {showToast && (
-          <Toast
-            id="register-error"
-            title="Registration Failed"
-            message={error || 'Registration failed'}
-            type="error"
+        <Snackbar
+          open={showToast}
+          autoHideDuration={6000}
+          onClose={() => setShowToast(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert
             onClose={() => setShowToast(false)}
-          />
-        )}
-      </div>
-    </div>
+            severity="error"
+            sx={{ width: '100%' }}
+          >
+            {error || 'Registration failed'}
+          </Alert>
+        </Snackbar>
+      </Container>
+    </Box>
   );
 };

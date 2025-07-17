@@ -78,9 +78,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={mockExpert}
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 
@@ -95,9 +92,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={mockExpert}
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 
@@ -108,9 +102,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={mockExpert}
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 
@@ -121,9 +112,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={mockExpert}
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 
@@ -137,9 +125,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={mockExpert}
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 
@@ -153,9 +138,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={mockExpert}
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 
@@ -177,9 +159,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={unavailableExpert}
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 
@@ -191,10 +170,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={mockExpert}
-        variant="compact"
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 
@@ -210,9 +185,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={mockExpert}
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 
@@ -230,9 +202,6 @@ describe('ExpertCard', () => {
     renderWithProviders(
       <ExpertCard
         expert={mockExpert}
-        onBookmark={mockOnBookmark}
-        onMessage={mockOnMessage}
-        onBook={mockOnBook}
       />
     );
 

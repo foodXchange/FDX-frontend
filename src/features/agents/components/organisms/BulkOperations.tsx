@@ -40,13 +40,11 @@ import {
   Avatar,
   useTheme,
   CircularProgress,
-  Tooltip,
   FormControlLabel,
   Switch,
 } from '@mui/material';
 import {
   CheckBox,
-  CheckBoxOutlineBlank,
   MoreVert,
   Edit,
   Delete,
@@ -56,31 +54,17 @@ import {
   AutoMode,
   PlayArrow,
   Pause,
-  Stop,
-  Settings,
   History,
   Download,
-  Upload,
-  ContentCopy,
   FilterList,
   SelectAll,
   Clear,
-  Phone,
   Email,
-  WhatsApp,
-  Assignment as AssignmentIcon,
   Person,
-  Business,
-  LocationOn,
-  AttachMoney,
-  TrendingUp,
   CheckCircle,
   Error,
-  Warning,
-  Info,
 } from '@mui/icons-material';
 import { useAgentStore } from '../../store';
-import { Lead, LeadStatus, LeadPriority, BusinessType } from '../../types';
 
 interface BulkOperation {
   id: string;
@@ -145,10 +129,9 @@ interface AutomationSchedule {
 
 const BulkOperations: React.FC = () => {
   const theme = useTheme();
-  const { leads, setLeads, updateLead } = useAgentStore();
+  const { leads, updateLead } = useAgentStore();
   
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-  const [selectedTab, setSelectedTab] = useState(0);
   const [showBulkDialog, setShowBulkDialog] = useState(false);
   const [showAutomationDialog, setShowAutomationDialog] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<string>('');

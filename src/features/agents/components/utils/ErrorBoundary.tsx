@@ -8,7 +8,6 @@ import {
   Alert,
   AlertTitle,
   Collapse,
-  IconButton,
   Chip,
 } from '@mui/material';
 import {
@@ -90,7 +89,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     // In a real application, this would send to a service like Sentry, LogRocket, etc.
     const errorReport = {
       id: errorId,
-      message: error.message,
+      message: errorId,
       stack: error.stack,
       componentStack: errorInfo.componentStack,
       level,
@@ -129,7 +128,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     // 3. Potentially redirect users to a safe page
     console.error('CRITICAL ERROR DETECTED:', {
       errorId,
-      error: error.message,
+      error: errorId,
       stack: error.stack,
       componentStack: errorInfo.componentStack,
     });
@@ -163,7 +162,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   };
 
   private handleReportBug = () => {
-    const { error, errorInfo, errorId } = this.state;
+    const { errorId, error } = this.state;
     const bugReportUrl = `mailto:support@company.com?subject=Bug Report - ${errorId}&body=${encodeURIComponent(
       `Error ID: ${errorId}\n\nError: ${error?.message}\n\nPlease describe what you were doing when this error occurred:\n\n`
     )}`;
@@ -255,7 +254,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   };
 
   private renderPageError = () => {
-    const { error, errorId } = this.state;
+    const { errorId } = this.state;
     const { allowRetry = true } = this.props;
     const canRetry = this.retryCount < this.maxRetries && allowRetry;
 
@@ -428,7 +427,7 @@ export function useErrorReporting() {
     const errorId = generateErrorId();
     const errorReport = {
       id: errorId,
-      message: error.message,
+      message: errorId,
       stack: error.stack,
       context,
       timestamp: new Date().toISOString(),

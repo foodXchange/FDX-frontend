@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Drawer,
@@ -7,7 +7,6 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  Fab,
   Card,
   CardContent,
   List,
@@ -30,13 +29,11 @@ import {
 import {
   Menu,
   Close,
-  Add,
   Phone,
   Message,
   Email,
   Share,
   FilterList,
-  Sort,
   Search,
   Notifications,
   MoreVert,
@@ -81,7 +78,7 @@ const MobileFeatures: React.FC<MobileFeaturesProps> = ({
   const [pullToRefreshActive, setPullToRefreshActive] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [searchVisible, setSearchVisible] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(3);
+  const [notificationCount] = useState(3);
 
   // Touch gesture handling
   const swipeHandlers = useSwipeable({
@@ -155,7 +152,7 @@ const MobileFeatures: React.FC<MobileFeaturesProps> = ({
   ];
 
   // Mobile-optimized lead card with swipe actions
-  const MobileLeadCard: React.FC<{ lead: Lead; index: number }> = ({ lead, index }) => {
+  const MobileLeadCard: React.FC<{ lead: Lead; index: number }> = ({ lead }) => {
     const [swipeOffset, setSwipeOffset] = useState(0);
     const [isSwipingLeft, setIsSwipingLeft] = useState(false);
     const [isSwipingRight, setIsSwipingRight] = useState(false);

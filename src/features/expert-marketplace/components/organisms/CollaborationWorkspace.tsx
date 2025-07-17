@@ -1,7 +1,7 @@
-import { FC, useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import {
   Box,
-  Grid,
   Paper,
   Typography,
   Tabs,
@@ -11,8 +11,6 @@ import {
   Drawer,
   useTheme,
   useMediaQuery,
-  Divider,
-  Tooltip,
 } from '@mui/material';
 import {
   Chat,
@@ -42,7 +40,7 @@ interface CollaborationWorkspaceProps {
 export const CollaborationWorkspace: FC<CollaborationWorkspaceProps> = ({
   collaboration,
   onUpdateCollaboration,
-  onClose,
+  onClose: _onClose,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -52,7 +50,7 @@ export const CollaborationWorkspace: FC<CollaborationWorkspaceProps> = ({
   const [activeCall, setActiveCall] = useState(false);
   
   const {
-    isConnected,
+    isConnected: _isConnected,
     typingUsers,
     onlineUsers,
     sendTypingIndicator,

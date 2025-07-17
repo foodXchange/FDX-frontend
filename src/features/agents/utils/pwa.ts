@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useCallback } from 'react';
 // PWA Utilities for Agent Module
 
 export interface BeforeInstallPromptEvent extends Event {
@@ -227,7 +228,10 @@ class PWAManager {
 
     try {
       const registration = await navigator.serviceWorker.ready;
-      await registration.sync.register(tag);
+      // Check if sync is supported
+      if ('sync' in registration) {
+        await (registration as any).sync.register(tag);
+      }
     } catch (error) {
       console.error('Background sync registration failed:', error);
     }
@@ -275,6 +279,8 @@ class PWAManager {
 
 // Create singleton instance
 export const pwaManager = new PWAManager();
+
+// Import React for hooks
 
 // React hook for PWA functionality
 export const usePWA = () => {

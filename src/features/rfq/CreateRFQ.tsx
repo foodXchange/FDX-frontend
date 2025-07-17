@@ -5,13 +5,39 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  PlusIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  CheckCircle as CheckCircleIcon,
+  Warning as ExclamationTriangleIcon,
+  Add as PlusIcon,
+  Delete as TrashIcon,
+} from '@mui/icons-material';
+import {
+  Container,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Grid,
+  Box,
+  Stack,
+  Alert,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Paper,
+  Divider,
+  Stepper,
+  Step,
+  StepLabel,
+  IconButton,
+  Chip
+} from '@mui/material';
 import { rfqService } from '../../services/rfqService';
 import { validationService } from '../../services/validationService';
 import { SpecValidator } from '../validation/SpecValidator';
@@ -194,187 +220,180 @@ export const CreateRFQ: React.FC = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                RFQ Title *
-              </label>
-              <Controller
-                name="title"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="e.g., Premium Organic Apples for Retail Chain"
-                  />
-                )}
-              />
-              {errors.title && (
-                <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+          <Stack spacing={3}>
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="RFQ Title *"
+                  placeholder="e.g., Premium Organic Apples for Retail Chain"
+                  fullWidth
+                  error={!!errors.title}
+                  helperText={errors.title?.message}
+                  variant="outlined"
+                />
               )}
-            </div>
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description *
-              </label>
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <textarea
-                    {...field}
-                    rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="Detailed description of your requirements..."
-                  />
-                )}
-              />
-              {errors.description && (
-                <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Description *"
+                  placeholder="Detailed description of your requirements..."
+                  multiline
+                  rows={4}
+                  fullWidth
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                  variant="outlined"
+                />
               )}
-            </div>
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category *
-              </label>
-              <Controller
-                name="category"
-                control={control}
-                render={({ field }) => (
-                  <select
+            <Controller
+              name="category"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth error={!!errors.category}>
+                  <InputLabel>Category *</InputLabel>
+                  <Select
                     {...field}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    label="Category *"
                   >
-                    <option value="">Select a category</option>
+                    <MenuItem value="">Select a category</MenuItem>
                     {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
+                      <MenuItem key={cat} value={cat}>{cat}</MenuItem>
                     ))}
-                  </select>
-                )}
-              />
-              {errors.category && (
-                <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>
+                  </Select>
+                  {errors.category && (
+                    <Typography variant="caption" color="error" sx={{ mt: 1 }}>
+                      {errors.category.message}
+                    </Typography>
+                  )}
+                </FormControl>
               )}
-            </div>
-          </div>
+            />
+          </Stack>
         );
 
       case 2:
         return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-medium text-gray-900">Product Specifications</h3>
-              <button
-                type="button"
+          <Stack spacing={3}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="h6" sx={{ color: 'grey.900' }}>
+                Product Specifications
+              </Typography>
+              <Button
                 onClick={addSpecification}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                variant="outlined"
+                startIcon={<PlusIcon />}
+                size="small"
               >
-                <PlusIcon className="h-4 w-4 mr-1" />
                 Add Specification
-              </button>
-            </div>
+              </Button>
+            </Box>
 
-            <div className="space-y-4">
+            <Stack spacing={2}>
               {watchedSpecs.map((_, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-4">
-                    <h4 className="text-sm font-medium text-gray-900">
-                      Specification {index + 1}
-                    </h4>
-                    {watchedSpecs.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeSpecification(index)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Name *
-                      </label>
-                      <Controller
-                        name={`specifications.${index}.name`}
-                        control={control}
-                        render={({ field }) => (
-                          <input
-                            {...field}
-                            type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            placeholder="e.g., Color, Size, Weight"
-                          />
-                        )}
-                      />
-                    </div>
+                <Card key={index} variant="outlined">
+                  <CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                      <Typography variant="subtitle1" sx={{ color: 'grey.900' }}>
+                        Specification {index + 1}
+                      </Typography>
+                      {watchedSpecs.length > 1 && (
+                        <IconButton
+                          onClick={() => removeSpecification(index)}
+                          color="error"
+                          size="small"
+                        >
+                          <TrashIcon />
+                        </IconButton>
+                      )}
+                    </Box>
                     
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Value *
-                      </label>
-                      <Controller
-                        name={`specifications.${index}.value`}
-                        control={control}
-                        render={({ field }) => (
-                          <input
-                            {...field}
-                            type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            placeholder="e.g., Red, 5cm, 150g"
-                          />
-                        )}
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Tolerance
-                      </label>
-                      <Controller
-                        name={`specifications.${index}.tolerance`}
-                        control={control}
-                        render={({ field }) => (
-                          <input
-                            {...field}
-                            type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            placeholder="e.g., ±5%, ±1cm"
-                          />
-                        )}
-                      />
-                    </div>
-                    
-                    <div className="flex items-center">
-                      <Controller
-                        name={`specifications.${index}.critical`}
-                        control={control}
-                        render={({ field }) => (
-                          <label className="flex items-center">
-                            <input
-                              type="checkbox"
-                              checked={field.value}
-                              onChange={(e) => field.onChange(e.target.checked)}
-                              onBlur={field.onBlur}
-                              name={field.name}
-                              ref={field.ref}
-                              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Controller
+                          name={`specifications.${index}.name`}
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              label="Name *"
+                              placeholder="e.g., Color, Size, Weight"
+                              fullWidth
+                              variant="outlined"
+                              size="small"
                             />
-                            <span className="ml-2 text-sm text-gray-700">Critical</span>
-                          </label>
-                        )}
-                      />
-                    </div>
-                  </div>
-                </div>
+                          )}
+                        />
+                      </Grid>
+                      
+                      <Grid item xs={12} md={6}>
+                        <Controller
+                          name={`specifications.${index}.value`}
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              label="Value *"
+                              placeholder="e.g., Red, 5cm, 150g"
+                              fullWidth
+                              variant="outlined"
+                              size="small"
+                            />
+                          )}
+                        />
+                      </Grid>
+                      
+                      <Grid item xs={12} md={6}>
+                        <Controller
+                          name={`specifications.${index}.tolerance`}
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              label="Tolerance"
+                              placeholder="e.g., ±5%, ±1cm"
+                              fullWidth
+                              variant="outlined"
+                              size="small"
+                            />
+                          )}
+                        />
+                      </Grid>
+                      
+                      <Grid item xs={12} md={6}>
+                        <Controller
+                          name={`specifications.${index}.critical`}
+                          control={control}
+                          render={({ field }) => (
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={field.value}
+                                  onChange={(e) => field.onChange(e.target.checked)}
+                                  onBlur={field.onBlur}
+                                  name={field.name}
+                                  inputRef={field.ref}
+                                />
+                              }
+                              label="Critical"
+                            />
+                          )}
+                        />
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
               ))}
-            </div>
+            </Stack>
 
             {/* Validation Results */}
             {specValidationResults && (
@@ -386,398 +405,409 @@ export const CreateRFQ: React.FC = () => {
             )}
 
             {validationErrors.length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-red-500 mr-2" />
-                  <h4 className="text-sm font-medium text-red-800">Validation Errors</h4>
-                </div>
-                <ul className="text-sm text-red-700 space-y-1">
+              <Alert severity="error" icon={<ExclamationTriangleIcon />}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Validation Errors
+                </Typography>
+                <Stack spacing={0.5}>
                   {validationErrors.map((error, index) => (
-                    <li key={index}>• {error}</li>
+                    <Typography key={index} variant="caption">
+                      • {error}
+                    </Typography>
                   ))}
-                </ul>
-              </div>
+                </Stack>
+              </Alert>
             )}
-          </div>
+          </Stack>
         );
 
       case 3:
         return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Quantity *
-                </label>
+          <Stack spacing={3}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
                 <Controller
                   name="quantity"
                   control={control}
                   render={({ field }) => (
-                    <input
+                    <TextField
                       {...field}
+                      label="Quantity *"
                       type="number"
-                      min="1"
+                      InputProps={{ inputProps: { min: 1 } }}
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      fullWidth
+                      error={!!errors.quantity}
+                      helperText={errors.quantity?.message}
+                      variant="outlined"
                     />
                   )}
                 />
-                {errors.quantity && (
-                  <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>
-                )}
-              </div>
+              </Grid>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Unit *
-                </label>
+              <Grid item xs={12} md={6}>
                 <Controller
                   name="unit"
                   control={control}
                   render={({ field }) => (
-                    <select
-                      {...field}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    >
-                      <option value="">Select unit</option>
-                      {units.map(unit => (
-                        <option key={unit} value={unit}>{unit}</option>
-                      ))}
-                    </select>
+                    <FormControl fullWidth error={!!errors.unit}>
+                      <InputLabel>Unit *</InputLabel>
+                      <Select
+                        {...field}
+                        label="Unit *"
+                      >
+                        <MenuItem value="">Select unit</MenuItem>
+                        {units.map(unit => (
+                          <MenuItem key={unit} value={unit}>{unit}</MenuItem>
+                        ))}
+                      </Select>
+                      {errors.unit && (
+                        <Typography variant="caption" color="error" sx={{ mt: 1 }}>
+                          {errors.unit.message}
+                        </Typography>
+                      )}
+                    </FormControl>
                   )}
                 />
-                {errors.unit && (
-                  <p className="mt-1 text-sm text-red-600">{errors.unit.message}</p>
-                )}
-              </div>
-            </div>
+              </Grid>
+            </Grid>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Delivery Date *
-                </label>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
                 <Controller
                   name="deliveryDate"
                   control={control}
                   render={({ field }) => (
-                    <input
+                    <TextField
                       {...field}
+                      label="Delivery Date *"
                       type="date"
-                      min={new Date().toISOString().split('T')[0]}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      InputProps={{ inputProps: { min: new Date().toISOString().split('T')[0] } }}
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                      error={!!errors.deliveryDate}
+                      helperText={errors.deliveryDate?.message}
+                      variant="outlined"
                     />
                   )}
                 />
-                {errors.deliveryDate && (
-                  <p className="mt-1 text-sm text-red-600">{errors.deliveryDate.message}</p>
-                )}
-              </div>
+              </Grid>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Submission Deadline *
-                </label>
+              <Grid item xs={12} md={6}>
                 <Controller
                   name="submissionDeadline"
                   control={control}
                   render={({ field }) => (
-                    <input
+                    <TextField
                       {...field}
+                      label="Submission Deadline *"
                       type="datetime-local"
-                      min={new Date().toISOString().slice(0, 16)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      InputProps={{ inputProps: { min: new Date().toISOString().slice(0, 16) } }}
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                      error={!!errors.submissionDeadline}
+                      helperText={errors.submissionDeadline?.message}
+                      variant="outlined"
                     />
                   )}
                 />
-                {errors.submissionDeadline && (
-                  <p className="mt-1 text-sm text-red-600">{errors.submissionDeadline.message}</p>
-                )}
-              </div>
-            </div>
+              </Grid>
+            </Grid>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Delivery Location *
-              </label>
-              <Controller
-                name="deliveryLocation"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="Full delivery address"
-                  />
-                )}
-              />
-              {errors.deliveryLocation && (
-                <p className="mt-1 text-sm text-red-600">{errors.deliveryLocation.message}</p>
+            <Controller
+              name="deliveryLocation"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Delivery Location *"
+                  placeholder="Full delivery address"
+                  fullWidth
+                  error={!!errors.deliveryLocation}
+                  helperText={errors.deliveryLocation?.message}
+                  variant="outlined"
+                />
               )}
-            </div>
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Box>
+              <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 2 }}>
                 Required Certifications
-              </label>
+              </Typography>
               <Controller
                 name="certifications"
                 control={control}
                 render={({ field }) => (
-                  <div className="space-y-2">
-                    {commonCertifications.map(cert => (
-                      <label key={cert} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={field.value?.includes(cert) || false}
-                          onChange={(e) => {
-                            const current = field.value || [];
-                            if (e.target.checked) {
-                              field.onChange([...current, cert]);
-                            } else {
-                              field.onChange(current.filter(c => c !== cert));
+                  <FormGroup>
+                    <Grid container spacing={1}>
+                      {commonCertifications.map(cert => (
+                        <Grid item xs={12} sm={6} md={4} key={cert}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={field.value?.includes(cert) || false}
+                                onChange={(e) => {
+                                  const current = field.value || [];
+                                  if (e.target.checked) {
+                                    field.onChange([...current, cert]);
+                                  } else {
+                                    field.onChange(current.filter(c => c !== cert));
+                                  }
+                                }}
+                              />
                             }
-                          }}
-                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">{cert}</span>
-                      </label>
-                    ))}
-                  </div>
+                            label={cert}
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </FormGroup>
                 )}
               />
-            </div>
+            </Box>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Additional Requirements
-              </label>
-              <Controller
-                name="additionalRequirements"
-                control={control}
-                render={({ field }) => (
-                  <textarea
-                    {...field}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="Any additional requirements or special instructions..."
-                  />
-                )}
-              />
-            </div>
-          </div>
+            <Controller
+              name="additionalRequirements"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Additional Requirements"
+                  placeholder="Any additional requirements or special instructions..."
+                  multiline
+                  rows={3}
+                  fullWidth
+                  variant="outlined"
+                />
+              )}
+            />
+          </Stack>
         );
 
       case 4:
         return (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Budget Range (Optional)</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Minimum Budget
-                  </label>
+          <Stack spacing={3}>
+            <Box>
+              <Typography variant="h6" sx={{ color: 'grey.900', mb: 2 }}>
+                Budget Range (Optional)
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
                   <Controller
                     name="budgetRange.min"
                     control={control}
                     render={({ field }) => (
-                      <input
+                      <TextField
                         {...field}
+                        label="Minimum Budget"
                         type="number"
-                        min="0"
-                        step="0.01"
+                        InputProps={{ inputProps: { min: 0, step: 0.01 } }}
                         onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="0.00"
+                        fullWidth
+                        variant="outlined"
                       />
                     )}
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Maximum Budget
-                  </label>
+                </Grid>
+                <Grid item xs={12} md={6}>
                   <Controller
                     name="budgetRange.max"
                     control={control}
                     render={({ field }) => (
-                      <input
+                      <TextField
                         {...field}
+                        label="Maximum Budget"
                         type="number"
-                        min="0"
-                        step="0.01"
+                        InputProps={{ inputProps: { min: 0, step: 0.01 } }}
                         onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         placeholder="0.00"
+                        fullWidth
+                        variant="outlined"
                       />
                     )}
                   />
-                </div>
-              </div>
-            </div>
+                </Grid>
+              </Grid>
+            </Box>
 
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Evaluation Criteria</h3>
-                <button
-                  type="button"
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" sx={{ color: 'grey.900' }}>
+                  Evaluation Criteria
+                </Typography>
+                <Button
                   onClick={addEvaluationCriterion}
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  variant="outlined"
+                  startIcon={<PlusIcon />}
+                  size="small"
                 >
-                  <PlusIcon className="h-4 w-4 mr-1" />
                   Add Criterion
-                </button>
-              </div>
+                </Button>
+              </Box>
 
-              <div className="space-y-4">
+              <Stack spacing={2}>
                 {watch('evaluationCriteria')?.map((_, index) => (
-                  <div key={index} className="flex items-center space-x-4">
-                    <div className="flex-1">
-                      <Controller
-                        name={`evaluationCriteria.${index}.criterion`}
-                        control={control}
-                        render={({ field }) => (
-                          <input
-                            {...field}
-                            type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            placeholder="e.g., Price, Quality, Delivery Time"
-                          />
-                        )}
-                      />
-                    </div>
-                    <div className="w-32">
-                      <Controller
-                        name={`evaluationCriteria.${index}.weight`}
-                        control={control}
-                        render={({ field }) => (
-                          <div className="flex items-center">
-                            <input
-                              {...field}
-                              type="number"
-                              min="1"
-                              max="100"
-                              onChange={(e) => field.onChange(parseInt(e.target.value))}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            />
-                            <span className="ml-2 text-sm text-gray-500">%</span>
-                          </div>
-                        )}
-                      />
-                    </div>
+                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Controller
+                      name={`evaluationCriteria.${index}.criterion`}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          placeholder="e.g., Price, Quality, Delivery Time"
+                          variant="outlined"
+                          size="small"
+                          sx={{ flex: 1 }}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name={`evaluationCriteria.${index}.weight`}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          type="number"
+                          InputProps={{ 
+                            inputProps: { min: 1, max: 100 },
+                            endAdornment: <Typography variant="caption">%</Typography>
+                          }}
+                          onChange={(e) => field.onChange(parseInt(e.target.value))}
+                          variant="outlined"
+                          size="small"
+                          sx={{ width: 120 }}
+                        />
+                      )}
+                    />
                     {watch('evaluationCriteria')?.length > 1 && (
-                      <button
-                        type="button"
+                      <IconButton
                         onClick={() => removeEvaluationCriterion(index)}
-                        className="text-red-500 hover:text-red-700"
+                        color="error"
+                        size="small"
                       >
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
+                        <TrashIcon />
+                      </IconButton>
                     )}
-                  </div>
+                  </Box>
                 ))}
-              </div>
+              </Stack>
 
-              <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <div className="flex items-center">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 mr-2" />
-                  <p className="text-sm text-yellow-700">
-                    Total weight: {watch('evaluationCriteria')?.reduce((sum, c) => sum + (c.weight || 0), 0) || 0}%
-                    {watch('evaluationCriteria')?.reduce((sum, c) => sum + (c.weight || 0), 0) !== 100 && (
-                      <span className="ml-2 text-yellow-600">(Should equal 100%)</span>
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+              <Alert 
+                severity={watch('evaluationCriteria')?.reduce((sum, c) => sum + (c.weight || 0), 0) === 100 ? "success" : "warning"}
+                icon={<ExclamationTriangleIcon />}
+                sx={{ mt: 2 }}
+              >
+                <Typography variant="body2">
+                  Total weight: {watch('evaluationCriteria')?.reduce((sum, c) => sum + (c.weight || 0), 0) || 0}%
+                  {watch('evaluationCriteria')?.reduce((sum, c) => sum + (c.weight || 0), 0) !== 100 && (
+                    <Typography component="span" color="warning.main" sx={{ ml: 1 }}>
+                      (Should equal 100%)
+                    </Typography>
+                  )}
+                </Typography>
+              </Alert>
+            </Box>
+          </Stack>
         );
 
       case 5:
         return (
-          <div className="space-y-6">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="flex items-center">
-                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                <h3 className="text-lg font-medium text-green-800">Ready to Publish</h3>
-              </div>
-              <p className="text-sm text-green-700 mt-1">
+          <Stack spacing={3}>
+            <Alert severity="success" icon={<CheckCircleIcon />}>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                Ready to Publish
+              </Typography>
+              <Typography variant="body2">
                 Review all information below and click "Publish RFQ" to make it available to suppliers.
-              </p>
-            </div>
+              </Typography>
+            </Alert>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h4 className="text-lg font-medium text-gray-900 mb-4">RFQ Summary</h4>
-              <div className="space-y-4">
-                <div>
-                  <h5 className="font-medium text-gray-700">Basic Information</h5>
-                  <p className="text-sm text-gray-600">
-                    <strong>Title:</strong> {watch('title')}<br />
-                    <strong>Category:</strong> {watch('category')}<br />
-                    <strong>Description:</strong> {watch('description')}
-                  </p>
-                </div>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" sx={{ color: 'grey.900', mb: 3 }}>
+                  RFQ Summary
+                </Typography>
+                <Stack spacing={3}>
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                      Basic Information
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                      <strong>Title:</strong> {watch('title')}<br />
+                      <strong>Category:</strong> {watch('category')}<br />
+                      <strong>Description:</strong> {watch('description')}
+                    </Typography>
+                  </Box>
 
-                <div>
-                  <h5 className="font-medium text-gray-700">Quantity & Delivery</h5>
-                  <p className="text-sm text-gray-600">
-                    <strong>Quantity:</strong> {watch('quantity')} {watch('unit')}<br />
-                    <strong>Delivery Date:</strong> {watch('deliveryDate')}<br />
-                    <strong>Delivery Location:</strong> {watch('deliveryLocation')}
-                  </p>
-                </div>
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                      Quantity & Delivery
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                      <strong>Quantity:</strong> {watch('quantity')} {watch('unit')}<br />
+                      <strong>Delivery Date:</strong> {watch('deliveryDate')}<br />
+                      <strong>Delivery Location:</strong> {watch('deliveryLocation')}
+                    </Typography>
+                  </Box>
 
-                <div>
-                  <h5 className="font-medium text-gray-700">Specifications</h5>
-                  <div className="text-sm text-gray-600">
-                    {watch('specifications')?.map((spec, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <span><strong>{spec.name}:</strong> {spec.value}</span>
-                        {spec.tolerance && <span>(±{spec.tolerance})</span>}
-                        {spec.critical && <span className="text-red-600">(Critical)</span>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                      Specifications
+                    </Typography>
+                    <Stack spacing={1}>
+                      {watch('specifications')?.map((spec, index) => (
+                        <Typography key={index} variant="body2" sx={{ color: 'grey.600' }}>
+                          <strong>{spec.name}:</strong> {spec.value}
+                          {spec.tolerance && <span> (±{spec.tolerance})</span>}
+                          {spec.critical && <Chip label="Critical" color="error" size="small" sx={{ ml: 1 }} />}
+                        </Typography>
+                      ))}
+                    </Stack>
+                  </Box>
 
-                {(watch('certifications') || []).length > 0 && (
-                  <div>
-                    <h5 className="font-medium text-gray-700">Required Certifications</h5>
-                    <p className="text-sm text-gray-600">
-                      {(watch('certifications') || []).join(', ')}
-                    </p>
-                  </div>
-                )}
+                  {(watch('certifications') || []).length > 0 && (
+                    <Box>
+                      <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                        Required Certifications
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'grey.600' }}>
+                        {(watch('certifications') || []).join(', ')}
+                      </Typography>
+                    </Box>
+                  )}
 
-                <div>
-                  <h5 className="font-medium text-gray-700">Evaluation Criteria</h5>
-                  <div className="text-sm text-gray-600">
-                    {watch('evaluationCriteria')?.map((criterion, index) => (
-                      <div key={index}>
-                        {criterion.criterion}: {criterion.weight}%
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ color: 'grey.700', mb: 1 }}>
+                      Evaluation Criteria
+                    </Typography>
+                    <Stack spacing={1}>
+                      {watch('evaluationCriteria')?.map((criterion, index) => (
+                        <Typography key={index} variant="body2" sx={{ color: 'grey.600' }}>
+                          {criterion.criterion}: {criterion.weight}%
+                        </Typography>
+                      ))}
+                    </Stack>
+                  </Box>
+                </Stack>
+              </CardContent>
+            </Card>
 
             {validationErrors.length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-red-500 mr-2" />
-                  <h4 className="text-sm font-medium text-red-800">Please fix these issues:</h4>
-                </div>
-                <ul className="text-sm text-red-700 space-y-1">
+              <Alert severity="error" icon={<ExclamationTriangleIcon />}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Please fix these issues:
+                </Typography>
+                <Stack spacing={0.5}>
                   {validationErrors.map((error, index) => (
-                    <li key={index}>• {error}</li>
+                    <Typography key={index} variant="caption">
+                      • {error}
+                    </Typography>
                   ))}
-                </ul>
-              </div>
+                </Stack>
+              </Alert>
             )}
-          </div>
+          </Stack>
         );
 
       default:
@@ -786,64 +816,78 @@ export const CreateRFQ: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New RFQ</h1>
-        <p className="text-gray-600">
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ color: 'grey.900', fontWeight: 'bold', mb: 1 }}>
+          Create New RFQ
+        </Typography>
+        <Typography variant="body1" sx={{ color: 'grey.600' }}>
           Create a comprehensive request for quotation with detailed specifications
-        </p>
-      </div>
+        </Typography>
+      </Box>
 
-      {/* <ProgressTracker steps={steps} currentStep={currentStep} /> */}
+      <Box sx={{ mb: 3 }}>
+        <Stepper activeStep={currentStep - 1} alternativeLabel>
+          {steps.map((step) => (
+            <Step key={step.id}>
+              <StepLabel>
+                <Typography variant="caption">{step.title}</Typography>
+              </StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Box>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {renderStepContent()}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        <Card sx={{ mb: 3 }}>
+          <CardContent sx={{ p: 4 }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {renderStepContent()}
+              </motion.div>
+            </AnimatePresence>
+          </CardContent>
+        </Card>
 
-        <div className="flex justify-between items-center mt-8">
-          <button
-            type="button"
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Button
             onClick={prevStep}
             disabled={currentStep === 1}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="outlined"
+            startIcon={<ChevronLeftIcon />}
           >
-            <ChevronLeftIcon className="h-4 w-4 mr-2" />
             Previous
-          </button>
+          </Button>
 
-          <div className="flex space-x-3">
+          <Box>
             {currentStep < steps.length ? (
-              <button
-                type="button"
+              <Button
                 onClick={nextStep}
-                className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-medium"
+                variant="contained"
+                endIcon={<ChevronRightIcon />}
               >
                 Next
-                <ChevronRightIcon className="h-4 w-4 ml-2" />
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 type="submit"
                 disabled={isSubmitting || validationErrors.length > 0}
-                className="inline-flex items-center px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="contained"
+                color="success"
+                size="large"
               >
                 {isSubmitting ? 'Publishing...' : 'Publish RFQ'}
-              </button>
+              </Button>
             )}
-          </div>
-        </div>
-      </form>
-    </div>
+          </Box>
+        </Box>
+      </Box>
+    </Container>
   );
 };

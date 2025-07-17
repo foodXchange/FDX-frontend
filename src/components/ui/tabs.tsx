@@ -1,4 +1,5 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, useContext, createContext } from 'react';
+import { Box, Tabs as MuiTabs, Tab as MuiTab } from '@mui/material';
 
 interface TabsContextType {
   value: string;
@@ -28,7 +29,6 @@ export const Tabs: React.FC<TabsProps> = ({
   defaultValue,
   onValueChange,
   children,
-  className,
 }) => {
   const [internalValue, setInternalValue] = useState(defaultValue || '');
   
@@ -42,9 +42,9 @@ export const Tabs: React.FC<TabsProps> = ({
 
   return (
     <TabsContext.Provider value={{ value: currentValue, onValueChange: handleValueChange }}>
-      <div className={`w-full ${className || ''}`}>
+      <Box sx={{ width: '100%' }}>
         {children}
-      </div>
+      </Box>
     </TabsContext.Provider>
   );
 };
@@ -54,14 +54,34 @@ interface TabsListProps {
   className?: string;
 }
 
-export const TabsList: React.FC<TabsListProps> = ({ children, className }) => {
+export const TabsList: React.FC<TabsListProps> = ({ children }) => {
+  const { value, onValueChange } = useTabsContext();
+  
+  // Extract tab values from children
+  const tabs = React.Children.toArray(children).filter(
+    child => React.isValidElement(child) && child.type === TabsTrigger
+  );
+
   return (
-    <div
-      className={`inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground ${className || ''}`}
+    <MuiTabs
+      value={value}
+      onChange={(_, newValue) => onValueChange(newValue)}
+      sx={{
+        minHeight: 40,
+        bgcolor: 'grey.100',
+        borderRadius: 2,
+        p: 0.5,
+        '& .MuiTabs-indicator': {
+          display: 'none',
+        },
+        '& .MuiTabs-flexContainer': {
+          gap: 0.5,
+        },
+      }}
       role="tablist"
     >
-      {children}
-    </div>
+      {tabs}
+    </MuiTabs>
   );
 };
 
@@ -75,23 +95,40 @@ interface TabsTriggerProps {
 export const TabsTrigger: React.FC<TabsTriggerProps> = ({
   value,
   children,
-  className,
   disabled = false,
 }) => {
-  const { value: currentValue, onValueChange } = useTabsContext();
+  const { value: currentValue } = useTabsContext();
   const isActive = currentValue === value;
 
   return (
-    <button
-      className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${isActive ? 'bg-background text-foreground shadow-sm' : 'hover:bg-muted hover:text-foreground'} ${className || ''}`}
+    <MuiTab
+      value={value}
+      label={children}
+      disabled={disabled}
+      sx={{
+        minHeight: 32,
+        textTransform: 'none',
+        fontSize: '0.875rem',
+        fontWeight: 500,
+        px: 2,
+        py: 1,
+        borderRadius: 1,
+        transition: 'all 0.2s',
+        bgcolor: isActive ? 'background.paper' : 'transparent',
+        color: isActive ? 'text.primary' : 'text.secondary',
+        boxShadow: isActive ? 1 : 0,
+        '&:hover': {
+          bgcolor: isActive ? 'background.paper' : 'action.hover',
+          color: 'text.primary',
+        },
+        '&.Mui-disabled': {
+          opacity: 0.5,
+        },
+      }}
       role="tab"
       aria-selected={isActive}
       aria-controls={`tabpanel-${value}`}
-      disabled={disabled}
-      onClick={() => !disabled && onValueChange(value)}
-    >
-      {children}
-    </button>
+    />
   );
 };
 
@@ -104,7 +141,6 @@ interface TabsContentProps {
 export const TabsContent: React.FC<TabsContentProps> = ({
   value,
   children,
-  className,
 }) => {
   const { value: currentValue } = useTabsContext();
   
@@ -113,13 +149,21 @@ export const TabsContent: React.FC<TabsContentProps> = ({
   }
 
   return (
-    <div
-      className={`mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${className || ''}`}
+    <Box
+      sx={{
+        mt: 2,
+        outline: 'none',
+        '&:focus-visible': {
+          outline: '2px solid',
+          outlineColor: 'primary.main',
+          outlineOffset: 2,
+        },
+      }}
       role="tabpanel"
       id={`tabpanel-${value}`}
       aria-labelledby={`tab-${value}`}
     >
       {children}
-    </div>
+    </Box>
   );
 };

@@ -16,7 +16,6 @@ import {
   ChevronDownIcon,
   ChevronUpIcon
 } from '@heroicons/react/24/outline';
-import { useTheme } from '@mui/material/styles';
 import { logger } from '@/services/logger';
 import { SkeletonLoader } from '@components/ui/SkeletonLoader';
 import { ERROR_MESSAGES } from '@/constants';
@@ -351,7 +350,6 @@ const PageErrorFallback: React.FC<FallbackProps> = ({
   showErrorDetails,
   getErrorMessage
 }) => {
-  const theme = useTheme();
   
   return (
     <Box 
@@ -386,11 +384,12 @@ const PageErrorFallback: React.FC<FallbackProps> = ({
               borderRadius: '50%'
             }}
           >
-            <ExclamationTriangleIcon 
-              style={{ 
+            <Box
+              component={ExclamationTriangleIcon}
+              sx={{ 
                 width: 32, 
                 height: 32, 
-                color: theme.palette.error.main 
+                color: 'error.main' 
               }} 
             />
           </Box>
@@ -428,7 +427,7 @@ const PageErrorFallback: React.FC<FallbackProps> = ({
               variant="contained"
               onClick={resetError}
               disabled={isRetrying || retryCount >= maxRetries}
-              startIcon={isRetrying ? <CircularProgress size={16} /> : <ArrowPathIcon style={{ width: 20, height: 20 }} />}
+              startIcon={isRetrying ? <CircularProgress size={16} /> : <Box component={ArrowPathIcon} sx={{ width: 20, height: 20 }} />}
               sx={{ minWidth: 120 }}
             >
               {isRetrying ? 'Retrying...' : 'Try Again'}
@@ -455,7 +454,7 @@ const PageErrorFallback: React.FC<FallbackProps> = ({
                 variant="text"
                 size="small"
                 onClick={toggleDetails}
-                endIcon={showDetails ? <ChevronUpIcon style={{ width: 16, height: 16 }} /> : <ChevronDownIcon style={{ width: 16, height: 16 }} />}
+                endIcon={showDetails ? <Box component={ChevronUpIcon} sx={{ width: 16, height: 16 }} /> : <Box component={ChevronDownIcon} sx={{ width: 16, height: 16 }} />}
                 sx={{ mb: 2 }}
               >
                 {showDetails ? 'Hide' : 'Show'} Error Details
@@ -514,7 +513,7 @@ const SectionErrorFallback: React.FC<FallbackProps> = ({
         size="small" 
         onClick={resetError}
         disabled={isRetrying}
-        startIcon={isRetrying ? <CircularProgress size={16} /> : <ArrowPathIcon style={{ width: 16, height: 16 }} />}
+        startIcon={isRetrying ? <CircularProgress size={16} /> : <Box component={ArrowPathIcon} sx={{ width: 16, height: 16 }} />}
       >
         {isRetrying ? 'Retrying...' : 'Retry'}
       </Button>

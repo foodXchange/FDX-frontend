@@ -1,3 +1,4 @@
+import React from 'react';
 import { FC } from 'react';
 import { Box, Rating, Typography } from '@mui/material';
 

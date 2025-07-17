@@ -15,14 +15,9 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   List,
   ListItem,
   ListItemText,
-  ListItemAvatar,
-  FormControl,
-  InputLabel,
-  Select,
   useTheme,
   Badge,
   Paper,
@@ -35,8 +30,8 @@ import {
   Phone,
   VideoCall,
   Info,
-  Template,
-  Emoji,
+  ViewModule as Template,
+  EmojiEmotions as Emoji,
   Check,
   DoneAll,
   Schedule,
@@ -54,7 +49,7 @@ interface WhatsAppChatProps {
 
 const WhatsAppChat: React.FC<WhatsAppChatProps> = ({ lead, onClose }) => {
   const theme = useTheme();
-  const { currentAgent, whatsappMessages, whatsappTemplates, addWhatsAppMessage } = useAgentStore();
+  const { whatsappMessages, addWhatsAppMessage } = useAgentStore();
   
   const [messages, setMessages] = useState<WhatsAppMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -249,7 +244,7 @@ const WhatsAppChat: React.FC<WhatsAppChatProps> = ({ lead, onClose }) => {
                       {component.text}
                     </Typography>
                   )}
-                  {component.parameters?.map((param, paramIndex) => (
+                  {component.parameters?.map((_, paramIndex) => (
                     <TextField
                       key={paramIndex}
                       fullWidth
@@ -280,8 +275,8 @@ const WhatsAppChat: React.FC<WhatsAppChatProps> = ({ lead, onClose }) => {
             {templates.map((template) => (
               <ListItem
                 key={template.id}
-                button
                 onClick={() => setSelectedTemplate(template)}
+                sx={{ cursor: 'pointer' }}
               >
                 <ListItemText
                   primary={template.name}

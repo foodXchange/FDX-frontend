@@ -1,3 +1,4 @@
+import React from 'react';
 export interface Agent {
   id: string;
   userId: string;
@@ -17,6 +18,9 @@ export interface Agent {
   lastLoginAt?: string;
   createdAt: string;
   updatedAt: string;
+  // Additional properties used in components
+  activeLeads: number;
+  profileImage?: string;
 }
 
 export interface AgentLocation {
@@ -70,6 +74,15 @@ export interface Lead {
   followUpDate?: string;
   createdAt: string;
   updatedAt: string;
+  // Additional properties used in components
+  expiresAt: string;
+  rfqTitle: string;
+  category: string;
+  buyerName: string;
+  buyerLocation: string;
+  estimatedValue: number;
+  matchScore: number;
+  estimatedCommission: number;
 }
 
 export interface LeadNote {
@@ -110,6 +123,20 @@ export interface Commission {
   };
   metadata: Record<string, any>;
   createdAt: string;
+}
+
+export interface EarningsData {
+  totalEarnings: number;
+  monthlyEarnings: number;
+  pendingCommissions: number;
+  recentTransactions: any[];
+  projectedEarnings: number;
+  conversionRate: number;
+  today: number;
+  thisWeek: number;
+  thisMonth: number;
+  pending: number;
+  lifetime: number;
 }
 
 export interface CommissionStructure {
@@ -153,6 +180,9 @@ export interface PerformanceMetrics {
   revenue: number;
   commissionEarned: number;
   activeDays: number;
+  rank?: number;
+  conversionRate?: number;
+  averageDealSize: number;
 }
 
 export interface OnboardingStep {
@@ -251,7 +281,7 @@ export interface AgentTask {
 // Enums and Types
 export type AgentStatus = 'active' | 'inactive' | 'suspended' | 'pending_approval';
 export type AgentTier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
-export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost' | 'nurturing';
+export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost' | 'nurturing' | 'claimed' | 'negotiating' | 'won' | 'lost' | 'available';
 export type LeadPriority = 'low' | 'medium' | 'high' | 'urgent';
 export type LeadSource = 'website' | 'referral' | 'cold_call' | 'social_media' | 'advertisement' | 'event' | 'partner';
 export type BusinessType = 'restaurant' | 'grocery' | 'catering' | 'food_truck' | 'bakery' | 'farm' | 'distributor' | 'other';
@@ -274,6 +304,10 @@ export interface LeadSearchFilters {
     endDate: string;
   };
   search?: string;
+  estimatedRevenue?: {
+    min: number;
+    max: number;
+  };
 }
 
 export interface LeadSearchResult {
@@ -389,5 +423,6 @@ export interface AgentStore {
   addWhatsAppMessage: (message: WhatsAppMessage) => void;
   setOnlineStatus: (isOnline: boolean) => void;
   updateLastSync: () => void;
+  updateAgent: (updates: Partial<Agent>) => void;
   logout: () => void;
 }

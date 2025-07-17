@@ -1,13 +1,12 @@
-import { FC, useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import {
   Box,
   Paper,
   Typography,
   Button,
-  Grid,
   Card,
   CardContent,
-  Chip,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -18,7 +17,6 @@ import {
   Alert,
   Divider,
   IconButton,
-  Tooltip,
 } from '@mui/material';
 import {
   ChevronLeft,
@@ -31,6 +29,7 @@ import {
   Event,
   Cancel,
 } from '@mui/icons-material';
+import { Grid } from '@mui/material';
 import {
   format,
   startOfMonth,
@@ -44,7 +43,6 @@ import {
   isPast,
   startOfWeek,
   endOfWeek,
-  addDays,
 } from 'date-fns';
 import { Expert, Service, TimeSlot, Booking } from '../../types';
 import { useExpertAvailability, useBookings } from '../../hooks';
@@ -114,6 +112,8 @@ export const BookingCalendar: FC<BookingCalendarProps> = ({
         timeSlot: selectedSlot,
         type: bookingDetails.type,
         notes: bookingDetails.notes,
+        status: 'pending',
+        reminder: true,
         payment: {
           amount: service?.pricing.amount || expert.hourlyRate * (bookingDetails.duration / 60),
           currency: service?.pricing.currency || expert.currency,
@@ -128,17 +128,6 @@ export const BookingCalendar: FC<BookingCalendarProps> = ({
     } catch (error) {
       console.error('Booking failed:', error);
     }
-  };
-
-  const getDayClassName = (date: Date) => {
-    const classes = [];
-    
-    if (!isSameMonth(date, currentDate)) classes.push('other-month');
-    if (isToday(date)) classes.push('today');
-    if (isPast(date) && !isToday(date)) classes.push('past');
-    if (selectedDate && isSameDay(date, selectedDate)) classes.push('selected');
-    
-    return classes.join(' ');
   };
 
   const isDateAvailable = (date: Date) => {
@@ -177,7 +166,7 @@ export const BookingCalendar: FC<BookingCalendarProps> = ({
         <Grid container>
           {/* Week Headers */}
           {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-            <Grid item xs key={day}>
+            <Grid size={{ xs: 12 }} key={day}>
               <Typography
                 variant="body2"
                 align="center"
@@ -195,7 +184,7 @@ export const BookingCalendar: FC<BookingCalendarProps> = ({
             const isSelected = selectedDate && isSameDay(date, selectedDate);
             
             return (
-              <Grid item xs key={date.toISOString()}>
+              <Grid size={{ xs: 12 }} key={date.toISOString()}>
                 <Box
                   onClick={() => available && handleDateSelect(date)}
                   sx={{
@@ -248,7 +237,7 @@ export const BookingCalendar: FC<BookingCalendarProps> = ({
           ) : (
             <Grid container spacing={2}>
               {availableSlots.map((slot, index) => (
-                <Grid item xs={6} sm={4} md={3} key={index}>
+                <Grid size={{ xs: 6, sm: 4, md: 3 }} key={index}>
                   <Button
                     variant="outlined"
                     fullWidth

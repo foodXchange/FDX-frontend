@@ -14,8 +14,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Checkbox,
-  FormControlLabel,
   Alert,
   CircularProgress,
   Card,
@@ -24,17 +22,14 @@ import {
   Chip,
   useTheme,
   useMediaQuery,
-  Avatar,
-  IconButton,
-  Grid,
 } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   CheckCircle,
   CloudUpload,
   Phone,
   WhatsApp,
   LocationOn,
-  Business,
   School,
   VerifiedUser,
   ArrowBack,
@@ -48,7 +43,7 @@ const AgentOnboarding: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
-  const { currentAgent, setAgent } = useAgentStore();
+  const { currentAgent } = useAgentStore();
   const [onboardingStatus, setOnboardingStatus] = useState<OnboardingStatus | null>(null);
   const [activeStep, setActiveStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,7 +60,7 @@ const AgentOnboarding: React.FC = () => {
       const status = await agentApi.getOnboardingStatus();
       setOnboardingStatus(status);
       setActiveStep(status.currentStep);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to load onboarding status');
     } finally {
       setIsLoading(false);
@@ -99,7 +94,7 @@ const AgentOnboarding: React.FC = () => {
         // Onboarding complete, redirect to dashboard
         window.location.href = '/agents/dashboard';
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Failed to complete step');
     } finally {
       setIsLoading(false);
@@ -136,7 +131,7 @@ const AgentOnboarding: React.FC = () => {
             <Card sx={{ mt: 2 }}>
               <CardContent>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                       fullWidth
                       label="First Name"
@@ -145,7 +140,7 @@ const AgentOnboarding: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                       fullWidth
                       label="Last Name"
@@ -154,7 +149,7 @@ const AgentOnboarding: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                       fullWidth
                       label="Phone Number"
@@ -166,7 +161,7 @@ const AgentOnboarding: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                       fullWidth
                       label="WhatsApp Number"
@@ -178,7 +173,7 @@ const AgentOnboarding: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <TextField
                       fullWidth
                       label="Address"
@@ -192,7 +187,7 @@ const AgentOnboarding: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                       fullWidth
                       label="City"
@@ -201,7 +196,7 @@ const AgentOnboarding: React.FC = () => {
                       required
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                       fullWidth
                       label="State"
@@ -249,7 +244,14 @@ const AgentOnboarding: React.FC = () => {
             </Card>
           );
         }
-        break;
+        
+        return (
+          <Card sx={{ mt: 2 }}>
+            <CardContent>
+              <Typography>Form content for {step.title}</Typography>
+            </CardContent>
+          </Card>
+        );
 
       case 'document':
         return (
@@ -336,7 +338,7 @@ const AgentOnboarding: React.FC = () => {
                   'Lead Management',
                   'Commission Structure',
                   'Communication Best Practices',
-                ].map((module, index) => (
+                ].map((module) => (
                   <Box
                     key={module}
                     sx={{

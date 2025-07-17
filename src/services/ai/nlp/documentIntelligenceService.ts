@@ -1,3 +1,4 @@
+// Document Intelligence Service for AI-powered document analysis
 import { DocumentAnalysis } from '../types';
 import { aiService } from '../aiService';
 import { logger } from '../../logger';

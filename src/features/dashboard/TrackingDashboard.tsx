@@ -1,31 +1,46 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import {
-  Package,
-  CheckCircle,
-  AlertCircle,
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  IconButton,
+  Grid,
+  Tabs,
+  Tab,
+  Chip,
+  LinearProgress,
+  Stack,
+  Alert,
+  AlertTitle,
+  Paper,
+  Divider
+} from '@mui/material';
+import {
   TrendingUp,
-  Clock,
-  Thermometer,
-  Activity,
-  ArrowUp,
-  ArrowDown,
-  RefreshCw,
-} from 'lucide-react';
+  Warning as AlertCircle,
+  ShowChart as Activity,
+  Refresh as RefreshCw,
+  ArrowUpward as ArrowUp,
+  ArrowDownward as ArrowDown,
+  Inventory as Package,
+  Schedule as Clock,
+  CheckCircle,
+  Thermostat as Thermometer,
+  Close
+} from '@mui/icons-material';
 import { SampleTracker } from '../tracking';
 import { OrderLinesTable } from '../orders';
-import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';
+// import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';
 
 interface DashboardMetric {
   title: string;
   value: number | string;
   change?: number;
   changeType?: 'increase' | 'decrease';
-  icon: React.ElementType;
+  icon: React.ComponentType<any>;
   color: string;
   subtitle?: string;
 }
@@ -33,17 +48,22 @@ interface DashboardMetric {
 export const TrackingDashboard: React.FC = () => {
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
-  // WebSocket integration for real-time metrics
-  const {
-    isConnected,
-    metrics,
-    aiInsights,
-    connectionError,
-    refreshMetrics,
-    dismissAIInsight,
-    executeAIInsightAction,
-    lastUpdateTime
-  } = useDashboardMetrics({ refreshInterval: 30000 });
+  // Mock data for now - WebSocket integration placeholder
+  const isConnected = false;
+  const metrics = {
+    activeSamples: { value: 12, change: 20, changeType: 'increase' as const },
+    pendingOrders: { value: 24, change: -5, changeType: 'decrease' as const },
+    deliveredToday: { value: 8, change: 15, changeType: 'increase' as const },
+    temperatureAlerts: { value: 3, change: 50, changeType: 'increase' as const },
+    onTimeDelivery: { value: '92%' },
+    avgTransitTime: { value: '3.2 days' }
+  };
+  const aiInsights: any[] = [];
+  const connectionError: string | null = null;
+  const refreshMetrics = () => {};
+  const dismissAIInsight = (_id: string) => {};
+  const executeAIInsightAction = (_id: string) => {};
+  const lastUpdateTime = null;
 
   // Convert WebSocket metrics to display format
   const dashboardMetrics: DashboardMetric[] = [
@@ -53,7 +73,7 @@ export const TrackingDashboard: React.FC = () => {
       change: metrics.activeSamples?.change || 20,
       changeType: metrics.activeSamples?.changeType || 'increase',
       icon: Package,
-      color: 'text-blue-600',
+      color: 'primary',
       subtitle: 'In transit',
     },
     {
@@ -62,7 +82,7 @@ export const TrackingDashboard: React.FC = () => {
       change: metrics.pendingOrders?.change || -5,
       changeType: metrics.pendingOrders?.changeType || 'decrease',
       icon: Clock,
-      color: 'text-yellow-600',
+      color: 'warning',
       subtitle: 'Awaiting fulfillment',
     },
     {
@@ -71,7 +91,7 @@ export const TrackingDashboard: React.FC = () => {
       change: metrics.deliveredToday?.change || 15,
       changeType: metrics.deliveredToday?.changeType || 'increase',
       icon: CheckCircle,
-      color: 'text-green-600',
+      color: 'success',
       subtitle: 'Successfully completed',
     },
     {
@@ -80,7 +100,7 @@ export const TrackingDashboard: React.FC = () => {
       change: metrics.temperatureAlerts?.change || 50,
       changeType: metrics.temperatureAlerts?.changeType || 'increase',
       icon: Thermometer,
-      color: 'text-red-600',
+      color: 'error',
       subtitle: 'Require attention',
     },
   ];
@@ -93,263 +113,331 @@ export const TrackingDashboard: React.FC = () => {
   const getChangeIcon = (changeType?: 'increase' | 'decrease') => {
     if (!changeType) return null;
     return changeType === 'increase' ? (
-      <ArrowUp className="h-4 w-4" />
+      <ArrowUp sx={{ fontSize: 16 }} />
     ) : (
-      <ArrowDown className="h-4 w-4" />
+      <ArrowDown sx={{ fontSize: 16 }} />
     );
   };
 
   const getInsightIcon = (type: string) => {
     switch (type) {
       case 'warning':
-        return <AlertCircle className="h-5 w-5 text-yellow-600" />;
+        return <AlertCircle sx={{ fontSize: 20, color: 'warning.main' }} />;
       case 'success':
-        return <TrendingUp className="h-5 w-5 text-green-600" />;
+        return <TrendingUp sx={{ fontSize: 20, color: 'success.main' }} />;
       case 'info':
-        return <Activity className="h-5 w-5 text-blue-600" />;
+        return <Activity sx={{ fontSize: 20, color: 'primary.main' }} />;
       default:
-        return <Activity className="h-5 w-5 text-blue-600" />;
+        return <Activity sx={{ fontSize: 20, color: 'primary.main' }} />;
     }
   };
 
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+  }
+
+  function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <Box sx={{ p: 3 }}>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Tracking Dashboard</h1>
-          <p className="text-muted-foreground">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Tracking Dashboard
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
             Real-time overview of samples and orders
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
+          </Typography>
+        </Box>
+        <Stack direction="row" spacing={2} alignItems="center">
           {/* Connection Status */}
-          <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`} />
-            <span className="text-sm text-muted-foreground">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                bgcolor: isConnected ? 'success.main' : 'error.main'
+              }}
+            />
+            <Typography variant="caption" color="text.secondary">
               {isConnected ? "Live data" : "Offline"}
-            </span>
+            </Typography>
             {connectionError && (
-              <span className="text-sm text-red-600">
+              <Typography variant="caption" color="error">
                 ({connectionError})
-              </span>
+              </Typography>
             )}
-          </div>
-          <p className="text-sm text-muted-foreground">
+          </Box>
+          <Typography variant="caption" color="text.secondary">
             Last updated: {(lastUpdateTime || lastUpdate).toLocaleTimeString()}
-          </p>
+          </Typography>
           <Button
-            variant="outline"
-            size="sm"
+            variant="outlined"
+            size="small"
             onClick={handleRefresh}
+            startIcon={<RefreshCw />}
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
-        </div>
-      </div>
+        </Stack>
+      </Box>
 
       {/* Metrics Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Grid container spacing={3} sx={{ mb: 4 }}>
         {dashboardMetrics.map((metric, index) => {
           const Icon = metric.icon;
           return (
-            <Card key={index}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {metric.title}
-                </CardTitle>
-                <Icon className={`h-4 w-4 ${metric.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{metric.value}</div>
-                {metric.subtitle && (
-                  <p className="text-xs text-muted-foreground">
-                    {metric.subtitle}
-                  </p>
-                )}
-                {metric.change !== undefined && (
-                  <div
-                    className={`flex items-center gap-1 text-xs mt-2 ${metric.changeType === 'increase' ? "text-green-600" : "text-red-600"}`}
-                  >
-                    {getChangeIcon(metric.changeType)}
-                    <span>{Math.abs(metric.change)}%</span>
-                    <span className="text-muted-foreground">from last week</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Card>
+                <CardHeader
+                  title={metric.title}
+                  titleTypographyProps={{ variant: 'body2' }}
+                  avatar={<Icon color={metric.color as any} />}
+                />
+                <CardContent>
+                  <Typography variant="h4" component="div">
+                    {metric.value}
+                  </Typography>
+                  {metric.subtitle && (
+                    <Typography variant="caption" color="text.secondary">
+                      {metric.subtitle}
+                    </Typography>
+                  )}
+                  {metric.change !== undefined && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        mt: 1,
+                        color: metric.changeType === 'increase' ? 'success.main' : 'error.main'
+                      }}
+                    >
+                      {getChangeIcon(metric.changeType)}
+                      <Typography variant="caption">
+                        {Math.abs(metric.change)}%
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        from last week
+                      </Typography>
+                    </Box>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
           );
         })}
-      </div>
+      </Grid>
 
       {/* AI Insights Panel */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
-              AI Insights & Recommendations
+        <CardHeader
+          title={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Activity />
+              <Typography variant="h6">AI Insights & Recommendations</Typography>
               {isConnected && (
-                <Badge variant="success" className="ml-2">
-                  Live
-                </Badge>
+                <Chip
+                  label="Live"
+                  color="success"
+                  size="small"
+                  sx={{ ml: 1 }}
+                />
               )}
-            </CardTitle>
-            {aiInsights.length > 0 && (
-              <Badge variant="default">
-                {aiInsights.length} insights
-              </Badge>
-            )}
-          </div>
-        </CardHeader>
+            </Box>
+          }
+          action={
+            aiInsights.length > 0 && (
+              <Chip
+                label={`${aiInsights.length} insights`}
+                size="small"
+              />
+            )
+          }
+        />
         <CardContent>
-          <div className="space-y-4">
+          <Stack spacing={2}>
             {aiInsights.length > 0 ? (
               aiInsights.map((insight) => (
-                <div
+                <Alert
                   key={insight.id}
-                  className="flex items-start gap-3 p-4 rounded-lg border bg-muted/50"
+                  severity={insight.type === 'warning' ? 'warning' : insight.type === 'success' ? 'success' : 'info'}
+                  icon={getInsightIcon(insight.type)}
+                  action={
+                    <Stack direction="row" spacing={1}>
+                      {insight.action && (
+                        <Button
+                          size="small"
+                          onClick={() => executeAIInsightAction(insight.id)}
+                        >
+                          {insight.action.label}
+                        </Button>
+                      )}
+                      <IconButton
+                        size="small"
+                        onClick={() => dismissAIInsight(insight.id)}
+                      >
+                        <Close fontSize="small" />
+                      </IconButton>
+                    </Stack>
+                  }
                 >
-                  {getInsightIcon(insight.type)}
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-medium">{insight.title}</h4>
-                      <Badge 
-                        variant={insight.priority === 'high' ? 'warning' : 'default'}
-                        size="sm"
-                      >
-                        {insight.priority}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {insight.description}
-                    </p>
-                    {insight.timestamp && (
-                      <p className="text-xs text-muted-foreground">
-                        {insight.timestamp.toLocaleString()}
-                      </p>
+                  <AlertTitle>
+                    {insight.title}
+                    {insight.priority === 'high' && (
+                      <Chip
+                        label="High Priority"
+                        color="warning"
+                        size="small"
+                        sx={{ ml: 1 }}
+                      />
                     )}
-                  </div>
-                  <div className="flex gap-2">
-                    {insight.action && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => executeAIInsightAction(insight.id)}
-                      >
-                        {insight.action.label}
-                      </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => dismissAIInsight(insight.id)}
-                    >
-                      Dismiss
-                    </Button>
-                  </div>
-                </div>
+                  </AlertTitle>
+                  <Typography variant="body2">
+                    {insight.description}
+                  </Typography>
+                  {insight.timestamp && (
+                    <Typography variant="caption" color="text.secondary">
+                      {insight.timestamp.toLocaleString()}
+                    </Typography>
+                  )}
+                </Alert>
               ))
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>No insights available</p>
-                <p className="text-xs">Check back for AI-powered recommendations</p>
-              </div>
+              <Box sx={{ textAlign: 'center', py: 8 }}>
+                <Activity sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                <Typography color="text.secondary">
+                  No insights available
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Check back for AI-powered recommendations
+                </Typography>
+              </Box>
             )}
-          </div>
+          </Stack>
         </CardContent>
       </Card>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="samples" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="samples">Active Samples</TabsTrigger>
-          <TabsTrigger value="orders">Order Lines</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-        </TabsList>
+      <Paper sx={{ width: '100%' }}>
+        <Tabs value={tabValue} onChange={handleTabChange} aria-label="dashboard tabs">
+          <Tab label="Active Samples" />
+          <Tab label="Order Lines" />
+          <Tab label="Analytics" />
+        </Tabs>
 
-        <TabsContent value="samples" className="space-y-4">
+        <TabPanel value={tabValue} index={0}>
           <SampleTracker />
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="orders" className="space-y-4">
+        <TabPanel value={tabValue} index={1}>
           <OrderLinesTable />
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="analytics" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Sample Conversion Rates</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {[
-                    { product: 'Coffee Beans', rate: 85, samples: 20 },
-                    { product: 'Wheat Flour', rate: 72, samples: 15 },
-                    { product: 'Olive Oil', rate: 68, samples: 12 },
-                    { product: 'Frozen Berries', rate: 45, samples: 8 },
-                  ].map((item, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>{item.product}</span>
-                        <span className="text-muted-foreground">
-                          {item.rate}% ({item.samples} samples)
-                        </span>
-                      </div>
-                      <ProgressIndicator value={item.rate} className="h-2" />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+        <TabPanel value={tabValue} index={2}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardHeader title="Sample Conversion Rates" />
+                <CardContent>
+                  <Stack spacing={3}>
+                    {[
+                      { product: 'Coffee Beans', rate: 85, samples: 20 },
+                      { product: 'Wheat Flour', rate: 72, samples: 15 },
+                      { product: 'Olive Oil', rate: 68, samples: 12 },
+                      { product: 'Frozen Berries', rate: 45, samples: 8 },
+                    ].map((item, index) => (
+                      <Box key={index}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2">{item.product}</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {item.rate}% ({item.samples} samples)
+                          </Typography>
+                        </Box>
+                        <LinearProgress
+                          variant="determinate"
+                          value={item.rate}
+                          sx={{ height: 8, borderRadius: 1 }}
+                        />
+                      </Box>
+                    ))}
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Delivery Performance</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">On-Time Delivery</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        {metrics.onTimeDelivery?.value || '92%'}
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">Avg. Transit Time</p>
-                      <p className="text-2xl font-bold">
-                        {metrics.avgTransitTime?.value || '3.2 days'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="pt-4 space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span>Same Day</span>
-                      <Badge variant="default">12%</Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>1-2 Days</span>
-                      <Badge variant="default">45%</Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>3-5 Days</span>
-                      <Badge variant="default">38%</Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>&gt;5 Days</span>
-                      <Badge variant="default">5%</Badge>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardHeader title="Delivery Performance" />
+                <CardContent>
+                  <Stack spacing={3}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <Typography variant="body2" color="text.secondary">
+                          On-Time Delivery
+                        </Typography>
+                        <Typography variant="h4" color="success.main">
+                          {metrics.onTimeDelivery?.value || '92%'}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography variant="body2" color="text.secondary">
+                          Avg. Transit Time
+                        </Typography>
+                        <Typography variant="h4">
+                          {metrics.avgTransitTime?.value || '3.2 days'}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                    <Divider />
+                    <Stack spacing={2}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2">Same Day</Typography>
+                        <Chip label="12%" size="small" />
+                      </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2">1-2 Days</Typography>
+                        <Chip label="45%" size="small" />
+                      </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2">3-5 Days</Typography>
+                        <Chip label="38%" size="small" />
+                      </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2">&gt;5 Days</Typography>
+                        <Chip label="5%" size="small" />
+                      </Box>
+                    </Stack>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </TabPanel>
+      </Paper>
+    </Box>
   );
 };

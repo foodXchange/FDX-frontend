@@ -1,4 +1,5 @@
-import { rest } from 'msw';
+import React from 'react';
+import { rest, RestRequest, ResponseComposition, RestContext } from 'msw';
 import { mockLeadData, mockAgentData } from './test-utils';
 
 // Base API URL
@@ -41,7 +42,7 @@ const paginate = <T>(items: T[], page: number = 1, limit: number = 10) => {
 
 // Authentication handlers
 export const authHandlers = [
-  rest.post(`${API_BASE}/auth/login`, async (req, res, ctx) => {
+  rest.post(`${API_BASE}/auth/login`, async (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     const { email, password } = await req.json();
     
     await delay(500); // Simulate network delay
@@ -74,7 +75,7 @@ export const authHandlers = [
     );
   }),
 
-  rest.post(`${API_BASE}/auth/logout`, async (req, res, ctx) => {
+  rest.post(`${API_BASE}/auth/logout`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     await delay(200);
     return res(
       ctx.status(200),
@@ -82,7 +83,7 @@ export const authHandlers = [
     );
   }),
 
-  rest.get(`${API_BASE}/auth/me`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/auth/me`, async (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     const authHeader = req.headers.get('Authorization');
     
     if (!authHeader || !authHeader.includes('Bearer')) {
@@ -106,7 +107,7 @@ export const authHandlers = [
     );
   }),
 
-  rest.get(`${API_BASE}/csrf-token`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/csrf-token`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     return res(
       ctx.status(200),
       ctx.json({
@@ -119,7 +120,7 @@ export const authHandlers = [
 
 // Lead management handlers
 export const leadHandlers = [
-  rest.get(`${API_BASE}/leads`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/leads`, async (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     const url = new URL(req.url);
     const page = parseInt(url.searchParams.get('page') || '1');
     const limit = parseInt(url.searchParams.get('limit') || '10');
@@ -159,7 +160,7 @@ export const leadHandlers = [
     );
   }),
 
-  rest.get(`${API_BASE}/leads/:id`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/leads/:id`, async (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     const { id } = req.params;
     const lead = findItemById(mockLeads, id as string);
     
@@ -184,7 +185,7 @@ export const leadHandlers = [
     );
   }),
 
-  rest.post(`${API_BASE}/leads`, async (req, res, ctx) => {
+  rest.post(`${API_BASE}/leads`, async (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     const leadData = await req.json();
     
     await delay(400);
@@ -223,7 +224,7 @@ export const leadHandlers = [
     );
   }),
 
-  rest.put(`${API_BASE}/leads/:id`, async (req, res, ctx) => {
+  rest.put(`${API_BASE}/leads/:id`, async (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     const { id } = req.params;
     const updateData = await req.json();
     
@@ -258,7 +259,7 @@ export const leadHandlers = [
     );
   }),
 
-  rest.delete(`${API_BASE}/leads/:id`, async (req, res, ctx) => {
+  rest.delete(`${API_BASE}/leads/:id`, async (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     const { id } = req.params;
     
     await delay(250);
@@ -289,7 +290,7 @@ export const leadHandlers = [
 
 // Agent management handlers
 export const agentHandlers = [
-  rest.get(`${API_BASE}/agents`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/agents`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     await delay(200);
     
     return res(
@@ -301,7 +302,7 @@ export const agentHandlers = [
     );
   }),
 
-  rest.get(`${API_BASE}/agents/:id`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/agents/:id`, async (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     const { id } = req.params;
     const agent = findItemById(mockAgents, id as string);
     
@@ -329,7 +330,7 @@ export const agentHandlers = [
 
 // Analytics handlers
 export const analyticsHandlers = [
-  rest.get(`${API_BASE}/analytics/overview`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/analytics/overview`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     await delay(400);
     
     return res(
@@ -341,7 +342,7 @@ export const analyticsHandlers = [
     );
   }),
 
-  rest.get(`${API_BASE}/analytics/leads/conversion`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/analytics/leads/conversion`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     await delay(350);
     
     const conversionData = [
@@ -362,7 +363,7 @@ export const analyticsHandlers = [
     );
   }),
 
-  rest.get(`${API_BASE}/analytics/performance`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/analytics/performance`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     await delay(500);
     
     const performanceData = {
@@ -395,7 +396,7 @@ export const analyticsHandlers = [
 
 // Notification handlers
 export const notificationHandlers = [
-  rest.get(`${API_BASE}/notifications`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/notifications`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     await delay(200);
     
     return res(
@@ -407,7 +408,7 @@ export const notificationHandlers = [
     );
   }),
 
-  rest.post(`${API_BASE}/notifications/:id/read`, async (req, res, ctx) => {
+  rest.post(`${API_BASE}/notifications/:id/read`, async (req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     const { id } = req.params;
     
     await delay(100);
@@ -430,7 +431,7 @@ export const notificationHandlers = [
 
 // File upload handlers
 export const fileHandlers = [
-  rest.post(`${API_BASE}/upload`, async (req, res, ctx) => {
+  rest.post(`${API_BASE}/upload`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     await delay(1000); // Simulate upload time
     
     return res(
@@ -450,7 +451,7 @@ export const fileHandlers = [
 
 // Error simulation handlers
 export const errorHandlers = [
-  rest.get(`${API_BASE}/error/500`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/error/500`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     return res(
       ctx.status(500),
       ctx.json({
@@ -460,7 +461,7 @@ export const errorHandlers = [
     );
   }),
 
-  rest.get(`${API_BASE}/error/timeout`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/error/timeout`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     await delay(10000); // Simulate timeout
     return res(
       ctx.status(408),
@@ -471,14 +472,14 @@ export const errorHandlers = [
     );
   }),
 
-  rest.get(`${API_BASE}/error/network`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/error/network`, async (_req: RestRequest, res: ResponseComposition, _ctx: RestContext) => {
     return res.networkError('Network connection failed');
   }),
 ];
 
 // Security testing handlers
 export const securityHandlers = [
-  rest.get(`${API_BASE}/security/headers`, async (req, res, ctx) => {
+  rest.get(`${API_BASE}/security/headers`, async (_req: RestRequest, res: ResponseComposition, ctx: RestContext) => {
     return res(
       ctx.status(200),
       ctx.set('X-Content-Type-Options', 'nosniff'),

@@ -1,16 +1,17 @@
+import React from 'react';
 import { FC } from 'react';
 import { Chip, ChipProps } from '@mui/material';
 
 interface ExpertiseBadgeProps extends Omit<ChipProps, 'label'> {
   category: string;
   yearsExperience?: number;
-  variant?: 'default' | 'outlined';
+  variant?: 'filled' | 'outlined';
 }
 
 export const ExpertiseBadge: FC<ExpertiseBadgeProps> = ({
   category,
   yearsExperience,
-  variant = 'default',
+  variant = 'filled',
   ...chipProps
 }) => {
   const label = yearsExperience 

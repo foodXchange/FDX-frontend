@@ -1,11 +1,16 @@
 import React from 'react';
+import { Paper, Typography } from '@mui/material';
 
 export const SupplierDirectory: React.FC = () => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h3 className="text-lg font-semibold mb-4">Supplier Directory</h3>
-      <p className="text-gray-600">Browse verified suppliers.</p>
-    </div>
+    <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
+      <Typography variant="h6" sx={{ fontWeight: 'semibold', mb: 2 }}>
+        Supplier Directory
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'grey.600' }}>
+        Browse verified suppliers.
+      </Typography>
+    </Paper>
   );
 };
 

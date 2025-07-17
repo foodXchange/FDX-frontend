@@ -1,3 +1,4 @@
+// Price Optimization service for dynamic pricing strategies using AI-driven market analysis
 import { PriceOptimization, PredictionResult } from '../types';
 import { aiService } from '../aiService';
 import { logger } from '../../logger';

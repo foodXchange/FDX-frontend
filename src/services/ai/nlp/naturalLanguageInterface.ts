@@ -1,3 +1,4 @@
+// Natural Language Interface service for processing and responding to user messages in conversational AI
 import { ChatMessage } from '../types';
 import { aiService } from '../aiService';
 import { searchService } from './searchService';

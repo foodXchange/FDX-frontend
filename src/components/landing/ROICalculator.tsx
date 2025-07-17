@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Box, Container, Typography, Slider, Paper } from '@mui/material';
 
 export const ROICalculator: React.FC = () => {
   const [monthlyRFQs, setMonthlyRFQs] = useState(50);
@@ -23,165 +24,197 @@ export const ROICalculator: React.FC = () => {
   const savings = calculateSavings();
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-600 via-blue-700 to-orange-600">
-      <div className="container mx-auto px-6">
-        <motion.div
+    <Box component="section" sx={{ py: 10, background: 'linear-gradient(135deg, #1e40af, #1d4ed8, #ea580c)' }}>
+      <Container maxWidth="xl">
+        <Box
+          component={motion.div}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-6xl mx-auto"
+          sx={{ maxWidth: '6xl', mx: 'auto' }}
         >
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <Box sx={{ display: 'grid', gridTemplateColumns: { lg: '1fr 1fr' }, gap: 6, alignItems: 'center' }}>
             {/* Left Column - Calculator */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-              <h3 className="text-3xl font-bold text-white mb-6">
+            <Paper sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(4px)', borderRadius: 4, p: 4, border: 1, borderColor: 'rgba(255, 255, 255, 0.2)' }}>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: 'white', mb: 3 }}>
                 Calculate Your ROI
-              </h3>
-              <p className="text-blue-100 mb-8">
+              </Typography>
+              <Typography sx={{ color: '#dbeafe', mb: 4 }}>
                 See how much you could save with FoodXchange's automated sourcing platform
-              </p>
+              </Typography>
               
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-white font-medium mb-2">
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <Box>
+                  <Typography sx={{ color: 'white', fontWeight: 500, mb: 1 }}>
                     Monthly RFQs: {monthlyRFQs}
-                  </label>
-                  <input
-                    type="range"
-                    min="10"
-                    max="200"
+                  </Typography>
+                  <Slider
+                    min={10}
+                    max={200}
                     value={monthlyRFQs}
-                    onChange={(e) => setMonthlyRFQs(parseInt(e.target.value))}
-                    className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                    onChange={(_e, value) => setMonthlyRFQs(value as number)}
+                    sx={{ 
+                      color: 'white',
+                      '& .MuiSlider-track': { bgcolor: 'white' },
+                      '& .MuiSlider-rail': { bgcolor: 'rgba(255, 255, 255, 0.2)' },
+                      '& .MuiSlider-thumb': { bgcolor: 'white' }
+                    }}
                   />
-                  <div className="flex justify-between text-sm text-blue-200 mt-1">
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#bfdbfe', mt: 0.5 }}>
                     <span>10</span>
                     <span>200</span>
-                  </div>
-                </div>
+                  </Box>
+                </Box>
                 
-                <div>
-                  <label className="block text-white font-medium mb-2">
+                <Box>
+                  <Typography sx={{ color: 'white', fontWeight: 500, mb: 1 }}>
                     Average Order Value: ${avgOrderValue.toLocaleString()}
-                  </label>
-                  <input
-                    type="range"
-                    min="5000"
-                    max="100000"
-                    step="1000"
+                  </Typography>
+                  <Slider
+                    min={5000}
+                    max={100000}
+                    step={1000}
                     value={avgOrderValue}
-                    onChange={(e) => setAvgOrderValue(parseInt(e.target.value))}
-                    className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                    onChange={(_e, value) => setAvgOrderValue(value as number)}
+                    sx={{ 
+                      color: 'white',
+                      '& .MuiSlider-track': { bgcolor: 'white' },
+                      '& .MuiSlider-rail': { bgcolor: 'rgba(255, 255, 255, 0.2)' },
+                      '& .MuiSlider-thumb': { bgcolor: 'white' }
+                    }}
                   />
-                  <div className="flex justify-between text-sm text-blue-200 mt-1">
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#bfdbfe', mt: 0.5 }}>
                     <span>$5K</span>
                     <span>$100K</span>
-                  </div>
-                </div>
+                  </Box>
+                </Box>
                 
-                <div>
-                  <label className="block text-white font-medium mb-2">
+                <Box>
+                  <Typography sx={{ color: 'white', fontWeight: 500, mb: 1 }}>
                     Current Process Time: {currentProcessTime} days
-                  </label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="30"
+                  </Typography>
+                  <Slider
+                    min={1}
+                    max={30}
                     value={currentProcessTime}
-                    onChange={(e) => setCurrentProcessTime(parseInt(e.target.value))}
-                    className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                    onChange={(_e, value) => setCurrentProcessTime(value as number)}
+                    sx={{ 
+                      color: 'white',
+                      '& .MuiSlider-track': { bgcolor: 'white' },
+                      '& .MuiSlider-rail': { bgcolor: 'rgba(255, 255, 255, 0.2)' },
+                      '& .MuiSlider-thumb': { bgcolor: 'white' }
+                    }}
                   />
-                  <div className="flex justify-between text-sm text-blue-200 mt-1">
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#bfdbfe', mt: 0.5 }}>
                     <span>1 day</span>
                     <span>30 days</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </Box>
+                </Box>
+              </Box>
+            </Paper>
             
             {/* Right Column - Results */}
-            <div className="text-white">
-              <motion.div
+            <Box sx={{ color: 'white' }}>
+              <Box
+                component={motion.div}
                 key={savings.yearlySavings}
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="text-center mb-8"
+                sx={{ textAlign: 'center', mb: 4 }}
               >
-                <div className="text-6xl font-bold text-orange-300 mb-2">
+                <Typography sx={{ fontSize: '3.75rem', fontWeight: 700, color: '#fdba74', mb: 1 }}>
                   ${savings.yearlySavings.toLocaleString()}
-                </div>
-                <div className="text-xl text-blue-100">
+                </Typography>
+                <Typography sx={{ fontSize: '1.25rem', color: '#dbeafe' }}>
                   Estimated Annual Savings
-                </div>
-              </motion.div>
+                </Typography>
+              </Box>
               
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <motion.div
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20"
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, mb: 4 }}>
+                <Paper
+                  component={motion.div}
                   whileHover={{ scale: 1.05 }}
+                  sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(4px)', borderRadius: 3, p: 3, border: 1, borderColor: 'rgba(255, 255, 255, 0.2)' }}
                 >
-                  <div className="text-3xl font-bold text-orange-300">
+                  <Typography sx={{ fontSize: '1.875rem', fontWeight: 700, color: '#fdba74' }}>
                     {savings.timeSaved}
-                  </div>
-                  <div className="text-sm text-blue-200">
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.875rem', color: '#bfdbfe' }}>
                     Days Saved per RFQ
-                  </div>
-                </motion.div>
+                  </Typography>
+                </Paper>
                 
-                <motion.div
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20"
+                <Paper
+                  component={motion.div}
                   whileHover={{ scale: 1.05 }}
+                  sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(4px)', borderRadius: 3, p: 3, border: 1, borderColor: 'rgba(255, 255, 255, 0.2)' }}
                 >
-                  <div className="text-3xl font-bold text-orange-300">
+                  <Typography sx={{ fontSize: '1.875rem', fontWeight: 700, color: '#fdba74' }}>
                     ${savings.monthlySavings.toLocaleString()}
-                  </div>
-                  <div className="text-sm text-blue-200">
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.875rem', color: '#bfdbfe' }}>
                     Monthly Savings
-                  </div>
-                </motion.div>
+                  </Typography>
+                </Paper>
                 
-                <motion.div
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20"
+                <Paper
+                  component={motion.div}
                   whileHover={{ scale: 1.05 }}
+                  sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(4px)', borderRadius: 3, p: 3, border: 1, borderColor: 'rgba(255, 255, 255, 0.2)' }}
                 >
-                  <div className="text-3xl font-bold text-orange-300">
+                  <Typography sx={{ fontSize: '1.875rem', fontWeight: 700, color: '#fdba74' }}>
                     {savings.efficiency}%
-                  </div>
-                  <div className="text-sm text-blue-200">
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.875rem', color: '#bfdbfe' }}>
                     Efficiency Gain
-                  </div>
-                </motion.div>
+                  </Typography>
+                </Paper>
                 
-                <motion.div
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20"
+                <Paper
+                  component={motion.div}
                   whileHover={{ scale: 1.05 }}
+                  sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(4px)', borderRadius: 3, p: 3, border: 1, borderColor: 'rgba(255, 255, 255, 0.2)' }}
                 >
-                  <div className="text-3xl font-bold text-orange-300">
+                  <Typography sx={{ fontSize: '1.875rem', fontWeight: 700, color: '#fdba74' }}>
                     15%
-                  </div>
-                  <div className="text-sm text-blue-200">
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.875rem', color: '#bfdbfe' }}>
                     Cost Reduction
-                  </div>
-                </motion.div>
-              </div>
+                  </Typography>
+                </Paper>
+              </Box>
               
-              <div className="text-center">
-                <motion.button
+              <Box sx={{ textAlign: 'center' }}>
+                <Box
+                  component={motion.button}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-orange-600 text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-orange-700 transition-colors shadow-lg"
+                  sx={{ 
+                    bgcolor: '#ea580c', 
+                    color: 'white', 
+                    px: 4, 
+                    py: 2, 
+                    borderRadius: 2, 
+                    fontSize: '1.125rem', 
+                    fontWeight: 700, 
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: 3,
+                    transition: 'background-color 0.3s',
+                    '&:hover': { bgcolor: '#dc2626' }
+                  }}
                 >
                   Start Saving Today
-                </motion.button>
-                <p className="text-sm text-blue-200 mt-2">
+                </Box>
+                <Typography sx={{ fontSize: '0.875rem', color: '#bfdbfe', mt: 1 }}>
                   See these savings in your first month
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 };

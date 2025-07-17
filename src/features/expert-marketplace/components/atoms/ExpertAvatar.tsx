@@ -1,3 +1,4 @@
+import React from 'react';
 import { FC } from 'react';
 import { Avatar, Badge, AvatarProps, Box } from '@mui/material';
 import { Verified } from '@mui/icons-material';

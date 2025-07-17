@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { Box, Paper, Typography } from '@mui/material';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'glass' | 'gradient' | 'outlined';
@@ -7,38 +8,64 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = 'default', padding = 'md', shadow = 'md', children, ...props }, ref) => {
-    const cardStyles = {
-      default: 'bg-white border border-gray-200',
-      glass: 'bg-white/80 backdrop-blur-sm border border-white/20',
-      gradient: 'bg-gradient-to-br from-blue-50 to-orange-50 border border-white/20',
-      outlined: 'bg-white border-2 border-gray-200',
+  ({ variant = 'default', padding = 'md', shadow = 'md', children, ...props }, ref) => {
+    const variantStyles = {
+      default: {
+        bgcolor: 'white',
+        border: 1,
+        borderColor: 'grey.200'
+      },
+      glass: {
+        bgcolor: 'rgba(255, 255, 255, 0.8)',
+        backdropFilter: 'blur(4px)',
+        border: 1,
+        borderColor: 'rgba(255, 255, 255, 0.2)'
+      },
+      gradient: {
+        background: 'linear-gradient(to bottom right, #eff6ff, #ffedd5)',
+        border: 1,
+        borderColor: 'rgba(255, 255, 255, 0.2)'
+      },
+      outlined: {
+        bgcolor: 'white',
+        border: 2,
+        borderColor: 'grey.200'
+      },
     };
 
-    const paddingStyles = {
-      none: '',
-      sm: 'p-3',
-      md: 'p-4',
-      lg: 'p-6',
-      xl: 'p-8',
+    const paddingMap = {
+      none: 0,
+      sm: 1.5,
+      md: 2,
+      lg: 3,
+      xl: 4,
     };
 
-    const shadowStyles = {
-      none: '',
-      sm: 'shadow-sm',
-      md: 'shadow-md',
-      lg: 'shadow-lg',
-      xl: 'shadow-xl',
+    const shadowMap = {
+      none: 0,
+      sm: 1,
+      md: 2,
+      lg: 3,
+      xl: 4,
     };
 
     return (
-      <div
+      <Paper
         ref={ref}
-        className={`rounded-xl transition-all duration-200 hover:shadow-lg ${cardStyles[variant]} ${paddingStyles[padding]} ${shadowStyles[shadow]} ${className || ''}`}
+        elevation={shadowMap[shadow]}
+        sx={{
+          borderRadius: 3,
+          p: paddingMap[padding],
+          transition: 'all 0.2s',
+          '&:hover': {
+            boxShadow: 6
+          },
+          ...variantStyles[variant]
+        }}
         {...props}
       >
         {children}
-      </div>
+      </Paper>
     );
   }
 );
@@ -47,52 +74,83 @@ Card.displayName = 'Card';
 
 // Card sub-components
 const CardHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
+  ({ children, ...props }, ref) => (
+    <Box
       ref={ref}
-      className={`flex flex-col space-y-1.5 pb-4 ${className || ''}`}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1.5,
+        pb: 2
+      }}
       {...props}
-    />
+    >
+      {children}
+    </Box>
   )
 );
 CardHeader.displayName = 'CardHeader';
 
 const CardTitle = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => (
-    <h3
+  ({ children, ...props }, ref) => (
+    <Typography
       ref={ref}
-      className={`text-lg font-semibold leading-none tracking-tight text-gray-800 ${className || ''}`}
+      variant="h6"
+      component="h3"
+      sx={{
+        fontSize: '1.125rem',
+        fontWeight: 600,
+        lineHeight: 1.2,
+        letterSpacing: '-0.025em',
+        color: 'text.primary'
+      }}
       {...props}
-    />
+    >
+      {children}
+    </Typography>
   )
 );
 CardTitle.displayName = 'CardTitle';
 
 const CardDescription = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref) => (
-    <p
+  ({ children, ...props }, ref) => (
+    <Typography
       ref={ref}
-      className={`text-sm text-gray-600 ${className || ''}`}
+      variant="body2"
+      sx={{
+        fontSize: '0.875rem',
+        color: 'text.secondary'
+      }}
       {...props}
-    />
+    >
+      {children}
+    </Typography>
   )
 );
 CardDescription.displayName = 'CardDescription';
 
 const CardContent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={`pt-0 ${className || ''}`} {...props} />
+  ({ children, ...props }, ref) => (
+    <Box ref={ref} sx={{ pt: 0 }} {...props}>
+      {children}
+    </Box>
   )
 );
 CardContent.displayName = 'CardContent';
 
 const CardFooter = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
+  ({ children, ...props }, ref) => (
+    <Box
       ref={ref}
-      className={`flex items-center pt-4 ${className || ''}`}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        pt: 2
+      }}
       {...props}
-    />
+    >
+      {children}
+    </Box>
   )
 );
 CardFooter.displayName = 'CardFooter';

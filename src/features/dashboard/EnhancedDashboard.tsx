@@ -1,17 +1,31 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  ChartBarIcon,
-  UserGroupIcon,
-  DocumentDuplicateIcon,
-  CheckCircleIcon,
-  ArrowTrendingUpIcon,
-  BellIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
-} from '@heroicons/react/24/outline';
-import { Card, CardContent } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Stack,
+  Grid,
+  Avatar,
+  Chip,
+  Divider,
+  LinearProgress,
+  CircularProgress,
+  IconButton,
+  Paper
+} from '@mui/material';
+import {
+  BarChart as ChartBarIcon,
+  People as UserGroupIcon,
+  Description as DocumentDuplicateIcon,
+  CheckCircle as CheckCircleIcon,
+  TrendingUp as ArrowTrendingUpIcon,
+  Notifications as BellIcon,
+  ArrowUpward as ArrowUpIcon,
+  ArrowDownward as ArrowDownIcon,
+} from '@mui/icons-material';
 import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
 
 interface StatCardProps {
@@ -33,11 +47,11 @@ const StatCard: React.FC<StatCardProps> = ({
   onClick,
   delay = 0,
 }) => {
-  const colorClasses = {
-    blue: 'from-blue-500 to-blue-600',
-    green: 'from-green-500 to-green-600',
-    yellow: 'from-yellow-500 to-yellow-600',
-    purple: 'from-purple-500 to-purple-600',
+  const colorMap = {
+    blue: { primary: 'primary.main', secondary: 'primary.dark' },
+    green: { primary: 'success.main', secondary: 'success.dark' },
+    yellow: { primary: 'warning.main', secondary: 'warning.dark' },
+    purple: { primary: 'secondary.main', secondary: 'secondary.dark' },
   };
 
   const isPositive = change && change > 0;
@@ -49,41 +63,63 @@ const StatCard: React.FC<StatCardProps> = ({
       transition={{ delay, duration: 0.5 }}
       whileHover={{ y: -4 }}
       onClick={onClick}
-      className={`cursor-pointer ${onClick ? 'group' : ''}`}
+      style={{ cursor: onClick ? 'pointer' : 'default' }}
     >
-      <Card className="glass-morphism hover:shadow-xl transition-all duration-300 h-full">
-        <CardContent className="p-6">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-600">{title}</p>
-              <motion.p
+      <Card sx={{ height: '100%', boxShadow: 2 }}>
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="body2" sx={{ color: 'grey.600', mb: 1 }}>
+                {title}
+              </Typography>
+              <motion.div
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: delay + 0.2, type: 'spring', stiffness: 200 }}
-                className="text-3xl font-bold text-gray-900 mt-2"
               >
-                {value}
-              </motion.p>
+                <Typography variant="h4" sx={{ color: 'grey.900', fontWeight: 'bold' }}>
+                  {value}
+                </Typography>
+              </motion.div>
               
               {change !== undefined && (
-                <div className="flex items-center mt-2">
+                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                   {isPositive ? (
-                    <ArrowUpIcon className="w-4 h-4 text-green-500 mr-1" />
+                    <ArrowUpIcon sx={{ fontSize: 16, color: 'success.main', mr: 0.5 }} />
                   ) : (
-                    <ArrowDownIcon className="w-4 h-4 text-red-500 mr-1" />
+                    <ArrowDownIcon sx={{ fontSize: 16, color: 'error.main', mr: 0.5 }} />
                   )}
-                  <span className={`text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      fontWeight: 'medium',
+                      color: isPositive ? 'success.main' : 'error.main',
+                      mr: 1
+                    }}
+                  >
                     {Math.abs(change)}%
-                  </span>
-                  <span className="text-sm text-gray-500 ml-1">vs last month</span>
-                </div>
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'grey.500' }}>
+                    vs last month
+                  </Typography>
+                </Box>
               )}
-            </div>
+            </Box>
             
-            <div className={`p-3 rounded-lg bg-gradient-to-br ${colorClasses[color]} group-hover:scale-110 transition-transform duration-300`}>
-              <Icon className="w-6 h-6 text-white" />
-            </div>
-          </div>
+            <Avatar
+              sx={{
+                width: 56,
+                height: 56,
+                background: `linear-gradient(135deg, ${colorMap[color].primary}, ${colorMap[color].secondary})`,
+                transition: 'transform 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.1)'
+                }
+              }}
+            >
+              <Icon sx={{ color: 'white' }} />
+            </Avatar>
+          </Box>
         </CardContent>
       </Card>
     </motion.div>
@@ -103,47 +139,56 @@ const ActivityFeed: React.FC<{ activities: ActivityItem[] }> = ({ activities }) 
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'success':
-        return 'text-green-500';
+        return 'success.main';
       case 'warning':
-        return 'text-yellow-500';
+        return 'warning.main';
       case 'error':
-        return 'text-red-500';
+        return 'error.main';
       default:
-        return 'text-gray-500';
+        return 'grey.500';
     }
   };
 
   return (
-    <Card className="glass-morphism h-full">
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
-          <BellIcon className="w-5 h-5 text-gray-400" />
-        </div>
+    <Card sx={{ height: '100%' }}>
+      <CardContent sx={{ p: 3 }}>
+        <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="h6" sx={{ color: 'grey.900' }}>
+            Recent Activity
+          </Typography>
+          <BellIcon sx={{ fontSize: 20, color: 'grey.400' }} />
+        </Box>
         
-        <div className="space-y-4">
+        <Stack spacing={3}>
           {activities.map((activity, index) => (
             <motion.div
               key={activity.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0"
             >
-              <div className={`mt-1 ${getStatusColor(activity.status)}`}>
-                <CheckCircleIcon className="w-5 h-5" />
-              </div>
-              
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">{activity.title}</p>
-                <p className="text-sm text-gray-600 mt-1">{activity.description}</p>
-                <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
-              </div>
+              <Box sx={{ display: 'flex', gap: 2, pb: 2, borderBottom: 1, borderColor: 'divider' }}>
+                <Box sx={{ mt: 0.5 }}>
+                  <CheckCircleIcon sx={{ fontSize: 20, color: getStatusColor(activity.status) }} />
+                </Box>
+                
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="body2" sx={{ color: 'grey.900', fontWeight: 'medium' }}>
+                    {activity.title}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'grey.600', mt: 0.5 }}>
+                    {activity.description}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: 'grey.400', mt: 0.5, display: 'block' }}>
+                    {activity.time}
+                  </Typography>
+                </Box>
+              </Box>
             </motion.div>
           ))}
-        </div>
+        </Stack>
         
-        <Button variant="link" className="w-full mt-4 text-[#1E4C8A]">
+        <Button variant="text" sx={{ mt: 2, width: '100%' }}>
           View All Activity
         </Button>
       </CardContent>
@@ -155,37 +200,56 @@ const ComplianceOverview: React.FC = () => {
   const complianceScore = 98;
   
   return (
-    <Card className="glass-morphism h-full">
-      <CardContent className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Compliance Overview</h3>
+    <Card sx={{ height: '100%' }}>
+      <CardContent sx={{ p: 3 }}>
+        <Typography variant="h6" sx={{ color: 'grey.900', mb: 3 }}>
+          Compliance Overview
+        </Typography>
         
-        <div className="flex items-center justify-center mb-6">
-          <ProgressIndicator
-            value={complianceScore}
-            variant="circular"
-            size="lg"
-            color="success"
-            showLabel
-            animated
-          />
-        </div>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3 }}>
+          <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+            <CircularProgress
+              variant="determinate"
+              value={complianceScore}
+              size={80}
+              thickness={4}
+              sx={{ color: 'success.main' }}
+            />
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                bottom: 0,
+                right: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Typography variant="h6" component="div" sx={{ color: 'grey.900', fontWeight: 'bold' }}>
+                {complianceScore}%
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
         
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">FDA Compliance</span>
-            <span className="text-sm font-medium text-green-600">100%</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">HACCP Standards</span>
-            <span className="text-sm font-medium text-green-600">98%</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Organic Certification</span>
-            <span className="text-sm font-medium text-yellow-600">95%</span>
-          </div>
-        </div>
+        <Stack spacing={2}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="body2" sx={{ color: 'grey.600' }}>FDA Compliance</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'success.main' }}>100%</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="body2" sx={{ color: 'grey.600' }}>HACCP Standards</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'success.main' }}>98%</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="body2" sx={{ color: 'grey.600' }}>Organic Certification</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'warning.main' }}>95%</Typography>
+          </Box>
+        </Stack>
         
-        <Button variant="outline" className="w-full mt-4 hover-lift">
+        <Button variant="outlined" sx={{ mt: 3, width: '100%' }}>
           View Compliance Report
         </Button>
       </CardContent>
@@ -195,38 +259,59 @@ const ComplianceOverview: React.FC = () => {
 
 const QuickActions: React.FC = () => {
   const actions = [
-    { label: 'Create RFQ', icon: DocumentDuplicateIcon, color: 'bg-blue-500' },
-    { label: 'Invite Supplier', icon: UserGroupIcon, color: 'bg-green-500' },
-    { label: 'Import Data', icon: ArrowTrendingUpIcon, color: 'bg-purple-500' },
-    { label: 'Run Compliance Check', icon: CheckCircleIcon, color: 'bg-yellow-500' },
+    { label: 'Create RFQ', icon: DocumentDuplicateIcon, color: 'primary.main' },
+    { label: 'Invite Supplier', icon: UserGroupIcon, color: 'success.main' },
+    { label: 'Import Data', icon: ArrowTrendingUpIcon, color: 'secondary.main' },
+    { label: 'Run Compliance Check', icon: CheckCircleIcon, color: 'warning.main' },
   ];
 
   return (
-    <Card className="glass-morphism">
-      <CardContent className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+    <Card sx={{ backdropFilter: 'blur(10px)', bgcolor: 'rgba(255, 255, 255, 0.9)' }}>
+      <CardContent sx={{ p: 3 }}>
+        <Typography variant="h6" sx={{ color: 'grey.900', mb: 3 }}>
+          Quick Actions
+        </Typography>
         
-        <div className="grid grid-cols-2 gap-3">
+        <Grid container spacing={2}>
           {actions.map((action, index) => {
             const Icon = action.icon;
             return (
-              <motion.button
-                key={action.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex flex-col items-center p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-all"
-              >
-                <div className={`p-3 rounded-lg mb-2 ${action.color}`}>
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-sm font-medium text-gray-700">{action.label}</span>
-              </motion.button>
+              <Grid item xs={6} key={action.label}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      height: 80,
+                      width: '100%',
+                      flexDirection: 'column',
+                      gap: 1,
+                      border: 1,
+                      borderColor: 'grey.200',
+                      bgcolor: 'grey.50',
+                      '&:hover': {
+                        bgcolor: 'grey.100',
+                        borderColor: action.color
+                      }
+                    }}
+                  >
+                    <Avatar sx={{ bgcolor: action.color, width: 32, height: 32 }}>
+                      <Icon sx={{ color: 'white', fontSize: 20 }} />
+                    </Avatar>
+                    <Typography variant="caption" sx={{ color: 'grey.700', textAlign: 'center' }}>
+                      {action.label}
+                    </Typography>
+                  </Button>
+                </motion.div>
+              </Grid>
             );
           })}
-        </div>
+        </Grid>
       </CardContent>
     </Card>
   );
@@ -268,63 +353,107 @@ export const EnhancedDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <Stack spacing={4} sx={{ p: 3 }}>
       {/* Welcome Banner */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-[#1E4C8A] to-[#2E6BB8] rounded-2xl p-8 text-white"
       >
-        <h2 className="text-2xl font-bold mb-2">Good morning! 👋</h2>
-        <p className="text-blue-100 mb-4">
-          Here's what's happening with your business today.
-        </p>
-        <div className="flex gap-4">
-          <Button variant="gold" className="hover-lift">
-            View Today's Opportunities
-          </Button>
-          <Button variant="outline" className="text-white border-white hover:bg-white hover:text-[#1E4C8A]">
-            Schedule Demo
-          </Button>
-        </div>
+        <Paper 
+          sx={{ 
+            p: 4, 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            borderRadius: 2
+          }}
+        >
+          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
+            Good morning! 👋
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 3, opacity: 0.9 }}>
+            Here's what's happening with your business today.
+          </Typography>
+          <Stack direction="row" spacing={2}>
+            <Button 
+              variant="contained" 
+              sx={{ 
+                bgcolor: 'warning.main',
+                '&:hover': { bgcolor: 'warning.dark' },
+                fontWeight: 'bold'
+              }}
+            >
+              View Today's Opportunities
+            </Button>
+            <Button 
+              variant="outlined" 
+              sx={{ 
+                borderColor: 'white',
+                color: 'white',
+                '&:hover': { 
+                  borderColor: 'white',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)' 
+                }
+              }}
+            >
+              Schedule Demo
+            </Button>
+          </Stack>
+        </Paper>
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <Grid container spacing={3}>
         {stats.map((stat, index) => (
-          <StatCard key={stat.title} {...stat} delay={index * 0.1} />
+          <Grid item xs={12} sm={6} md={3} key={stat.title}>
+            <StatCard {...stat} delay={index * 0.1} />
+          </Grid>
         ))}
-      </div>
+      </Grid>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <ActivityFeed activities={activities} />
-          <QuickActions />
-        </div>
+      <Grid container spacing={3}>
+        <Grid item xs={12} lg={8}>
+          <Stack spacing={4}>
+            <ActivityFeed activities={activities} />
+            <QuickActions />
+          </Stack>
+        </Grid>
         
-        <div className="space-y-6">
-          <ComplianceOverview />
-          
-          {/* Performance Chart Placeholder */}
-          <Card className="glass-morphism">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Trends</h3>
-              <div className="h-48 flex items-center justify-center bg-gray-50 rounded-lg">
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+        <Grid item xs={12} lg={4}>
+          <Stack spacing={4}>
+            <ComplianceOverview />
+            
+            {/* Performance Chart Placeholder */}
+            <Card sx={{ backdropFilter: 'blur(10px)', bgcolor: 'rgba(255, 255, 255, 0.9)' }}>
+              <CardContent sx={{ p: 4 }}>
+                <Typography variant="h6" sx={{ color: 'grey.900', mb: 3 }}>
+                  Performance Trends
+                </Typography>
+                <Box 
+                  sx={{ 
+                    height: 150,
+                    bgcolor: 'grey.50',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 2
+                  }}
                 >
-                  <ChartBarIcon className="w-12 h-12 text-gray-400" />
-                </motion.div>
-              </div>
-              <p className="text-sm text-gray-500 text-center mt-4">
-                Chart visualization coming soon
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <ChartBarIcon sx={{ fontSize: 48, color: 'grey.400' }} />
+                  </motion.div>
+                </Box>
+                <Typography variant="body2" sx={{ mt: 2, color: 'grey.600', textAlign: 'center' }}>
+                  Chart visualization coming soon
+                </Typography>
+              </CardContent>
+            </Card>
+          </Stack>
+        </Grid>
+      </Grid>
+    </Stack>
   );
 };

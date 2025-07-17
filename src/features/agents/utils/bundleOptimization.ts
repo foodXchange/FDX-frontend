@@ -1,3 +1,4 @@
+import React from 'react';
 import { lazy, ComponentType, LazyExoticComponent } from 'react';
 
 // Bundle optimization utilities
@@ -214,7 +215,7 @@ export class TreeShakingOptimizer {
 export class ImageOptimizer {
   // Create responsive image with multiple formats
   static createResponsiveImage(src: string, alt: string, sizes: string[] = ['320w', '640w', '1024w']) {
-    const formats = ['webp', 'avif', 'jpg'];
+    // const formats = ['webp', 'avif', 'jpg']; // Not used currently
     
     return {
       src,
@@ -376,8 +377,10 @@ export class ServiceWorkerOptimizer {
         return registration;
       } catch (error) {
         console.error('Service Worker registration failed:', error);
+        return undefined;
       }
     }
+    return undefined;
   }
 
   // Clear old caches

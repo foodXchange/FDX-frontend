@@ -1,3 +1,4 @@
+// Core AI service for managing AI provider integrations and generating completions, embeddings, and insights
 import { AI_CONFIG, AI_ENDPOINTS } from '../../config/ai.config';
 import { AIProvider, AIInsight } from './types';
 import { logger } from '../logger';

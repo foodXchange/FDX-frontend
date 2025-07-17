@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
   CardContent,
   Typography,
-  Grid,
   Chip,
   Avatar,
   LinearProgress,
@@ -15,40 +14,30 @@ import {
   ListItemAvatar,
   ListItemText,
   ListItemSecondaryAction,
-  Divider,
   Alert,
-  Tooltip,
-  Badge,
   useTheme,
   alpha,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Switch,
   FormControlLabel,
+  Grid,
 } from '@mui/material';
 import {
   Psychology,
-  TrendingUp,
-  Star,
   Lightbulb,
-  AutoFixHigh,
   Schedule,
-  Phone,
   Email,
-  WhatsApp,
   Assignment,
   Warning,
-  CheckCircle,
   Speed,
-  Target,
-  Insights,
+  MyLocation,
   Tune,
   Refresh,
   Science,
@@ -57,7 +46,6 @@ import {
   ModelTraining,
 } from '@mui/icons-material';
 import { useAgentStore } from '../../store';
-import { Lead } from '../../types';
 
 interface LeadScore {
   leadId: string;
@@ -135,22 +123,23 @@ const AILeadScoring: React.FC = () => {
   const [modelMetrics, setModelMetrics] = useState<AIModelMetrics | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
 
-  useEffect(() => {
-    loadLeadScores();
-    loadModelMetrics();
-    
-    if (autoRefresh) {
-      const interval = setInterval(loadLeadScores, 5 * 60 * 1000); // 5 minutes
-      return () => clearInterval(interval);
-    }
-  }, [leads, selectedModel, autoRefresh]);
+  const loadModelMetrics = useCallback(() => {
+    setModelMetrics({
+      accuracy: 0.847,
+      precision: 0.823,
+      recall: 0.891,
+      lastTraining: '2024-01-15T10:30:00Z',
+      dataPoints: 15420,
+      modelVersion: selectedModel,
+    });
+  }, [selectedModel]);
 
-  const loadLeadScores = async () => {
+  const loadLeadScores = useCallback(async () => {
     setIsLoading(true);
     
     // Mock AI scoring data
     setTimeout(() => {
-      const mockScores: LeadScore[] = leads.slice(0, 10).map((lead, index) => {
+      const mockScores: LeadScore[] = leads.slice(0, 10).map((lead) => {
         const score = 0.2 + Math.random() * 0.7; // 20-90% range
         return {
           leadId: lead.id,
@@ -285,18 +274,20 @@ const AILeadScoring: React.FC = () => {
       setLeadScores(mockScores);
       setIsLoading(false);
     }, 1500);
-  };
+  }, [leads, selectedModel]);
 
-  const loadModelMetrics = () => {
-    setModelMetrics({
-      accuracy: 0.847,
-      precision: 0.823,
-      recall: 0.891,
-      lastTraining: '2024-01-15T10:30:00Z',
-      dataPoints: 15420,
-      modelVersion: selectedModel,
-    });
-  };
+  useEffect(() => {
+    loadLeadScores();
+    loadModelMetrics();
+    
+    if (autoRefresh) {
+      const interval = setInterval(loadLeadScores, 5 * 60 * 1000); // 5 minutes
+      return () => clearInterval(interval);
+    }
+    
+    return undefined;
+  }, [leads, selectedModel, autoRefresh, loadLeadScores, loadModelMetrics]);
+
 
   const getScoreColor = (score: number) => {
     if (score >= 0.7) return theme.palette.success.main;
@@ -522,11 +513,11 @@ const AILeadScoring: React.FC = () => {
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Typography variant="subtitle1" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Target color="primary" />
+            <MyLocation color="primary" />
             Predicted Outcome
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid size={{ xs: 6 }}>
               <Typography variant="body2" color="text.secondary">
                 Conversion Probability
               </Typography>
@@ -534,7 +525,7 @@ const AILeadScoring: React.FC = () => {
                 {Math.round(leadScore.predictedOutcome.conversionProbability * 100)}%
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={{ xs: 6 }}>
               <Typography variant="body2" color="text.secondary">
                 Deal Size
               </Typography>
@@ -542,7 +533,7 @@ const AILeadScoring: React.FC = () => {
                 {formatCurrency(leadScore.predictedOutcome.estimatedDealSize)}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={{ xs: 6 }}>
               <Typography variant="body2" color="text.secondary">
                 Expected Close
               </Typography>
@@ -550,7 +541,7 @@ const AILeadScoring: React.FC = () => {
                 {new Date(leadScore.predictedOutcome.expectedCloseDate).toLocaleDateString()}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={{ xs: 6 }}>
               <Typography variant="body2" color="text.secondary">
                 Confidence
               </Typography>
@@ -647,7 +638,7 @@ const AILeadScoring: React.FC = () => {
       {/* Lead Scores */}
       <Grid container spacing={3}>
         {/* Lead Cards */}
-        <Grid item xs={12} md={selectedLead ? 8 : 12}>
+        <Grid size={{ xs: 12, md: selectedLead ? 8 : 12 }}>
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
               <Box sx={{ textAlign: 'center' }}>
@@ -660,7 +651,7 @@ const AILeadScoring: React.FC = () => {
               {leadScores
                 .sort((a, b) => b.overallScore - a.overallScore)
                 .map((leadScore) => (
-                  <Grid item xs={12} sm={6} lg={selectedLead ? 6 : 4} key={leadScore.leadId}>
+                  <Grid size={{ xs: 12, sm: 6, lg: selectedLead ? 6 : 4 }} key={leadScore.leadId}>
                     <ScoreCard leadScore={leadScore} />
                   </Grid>
                 ))}
@@ -670,7 +661,7 @@ const AILeadScoring: React.FC = () => {
 
         {/* Detail Panel */}
         {selectedLead && (
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ position: 'sticky', top: 24 }}>
               <CardContent>
                 {(() => {
@@ -745,7 +736,7 @@ const AILeadScoring: React.FC = () => {
             
             <Box>
               <Typography variant="h6" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Target color="primary" />
+                <MyLocation color="primary" />
                 Scoring Algorithm
               </Typography>
               <Typography variant="body2">

@@ -41,7 +41,7 @@ export const ExpertProvider: FC<ExpertProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const searchExperts = useCallback(async (filters: ExpertSearchFilters) => {
+  const searchExperts = useCallback(async (_filters: ExpertSearchFilters) => {
     setLoading(true);
     setError(null);
     try {
