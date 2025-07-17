@@ -1,5 +1,5 @@
 import React, { useState, useContext, createContext } from 'react';
-import { Box, Tabs as MuiTabs, Tab as MuiTab } from '@mui/material';
+import { Box, Tabs as MuiTabs } from '@mui/material';
 
 interface TabsContextType {
   value: string;

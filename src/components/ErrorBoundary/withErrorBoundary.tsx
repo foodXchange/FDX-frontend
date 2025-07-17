@@ -1,11 +1,5 @@
 import React, { ComponentType } from 'react';
-import { 
-  EnhancedErrorBoundary, 
-  // GlobalErrorBoundary, 
-  PageErrorBoundary, 
-  SectionErrorBoundary, 
-  ComponentErrorBoundary 
-} from './EnhancedErrorBoundary';
+import { EnhancedErrorBoundary, PageErrorBoundary, SectionErrorBoundary, ComponentErrorBoundary } from './EnhancedErrorBoundary';
 import { ErrorBoundaryProps } from './types';
 
 // Higher-order component that wraps a component with error boundary

@@ -1,74 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  Box,
-  Grid,
-  Paper,
-  Typography,
-  Card,
-  CardContent,
-  CardHeader,
-  Avatar,
-  Chip,
-  Button,
-  Tab,
-  Tabs,
-  Badge,
-  Stack,
-  IconButton,
-  Menu,
-  MenuItem,
-  Divider,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListItemSecondaryAction,
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-  TimelineOppositeContent,
-  Tooltip,
-  LinearProgress,
-  Alert,
-  useTheme,
-  alpha,
-  Skeleton,
-} from '@mui/material';
-import {
-  Dashboard,
-  ShoppingCart,
-  Store,
-  SwapHoriz,
-  TrendingUp,
-  Assignment,
-  CheckCircle,
-  Warning,
-  Error as ErrorIcon,
-  Notifications,
-  MoreVert,
-  Star,
-  LocalShipping,
-  AttachMoney,
-  AccessTime,
-  VerifiedUser,
-  EmojiEvents,
-  WorkspacePremium,
-  Groups,
-  Inventory,
-  Analytics,
-  ChatBubble,
-  CalendarToday,
-  Flag,
-} from '@mui/icons-material';
+import { Box, Grid, Paper, Typography, Card, CardContent, CardHeader, Avatar, Chip, Button, Tab, Tabs, Badge, Stack, IconButton, Menu, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot, TimelineOppositeContent, Tooltip, LinearProgress, Alert, useTheme, alpha, Skeleton,  } from '@mui/material';
+import { Dashboard, ShoppingCart, Store, SwapHoriz, TrendingUp, Assignment, CheckCircle, Warning, Notifications, MoreVert, AttachMoney, VerifiedUser, EmojiEvents, WorkspacePremium, Groups, Inventory, Analytics, ChatBubble, CalendarToday, Flag,  } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../../../hooks/useAuth';
 import { useAnalytics } from '../hooks/useAnalytics';
 import { UserRole } from '../types';
-import { formatCurrency, formatNumber, formatPercentage } from '../../../utils/format';
+import { formatCurrency, formatNumber } from '../../../utils/format';
 
 // Glassmorphism card style
 const glassmorphCard = {

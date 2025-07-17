@@ -15,14 +15,7 @@ import {
   Button,
   Stack
 } from '@mui/material';
-import {
-  Menu as MenuIcon,
-  Notifications as NotificationsIcon,
-  AccountCircle as UserCircleIcon,
-  Settings as SettingsIcon,
-  Logout as LogoutIcon,
-  KeyboardArrowDown as ChevronDownIcon
-} from '@mui/icons-material';
+import { Menu as MenuIcon, Notifications as NotificationsIcon, Settings as SettingsIcon } from '@mui/icons-material';
 
 interface HeaderProps {
   currentUser?: {

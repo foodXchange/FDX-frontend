@@ -1,23 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Stack,
-  Divider,
-  LinearProgress
-} from '@mui/material';
-import {
-  Schedule as ClockIcon,
-  LocationOn as MapPinIcon,
-  AttachMoney as CurrencyDollarIcon,
-  Whatshot as FireIcon,
-  BarChart as ChartBarIcon
-} from '@mui/icons-material';
+import { Box, Typography, Button, Card, CardContent, Chip, Stack, Divider } from '@mui/material';
 import { Lead } from '../types';
 import { formatCurrency } from '@/utils/format';
 
@@ -65,7 +48,7 @@ export const LeadCard: React.FC<LeadCardProps> = ({
   return (
     <motion.div
       whileHover={{ y: -2 }}
-      style={{ width: '100%' }}
+      sx={{ width: '100%' }}
     >
       <Card 
         sx={{ 
@@ -201,7 +184,7 @@ export const LeadCard: React.FC<LeadCardProps> = ({
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  style={{ flex: 1 }}
+                  sx={{ flex: 1 }}
                 >
                   <Button
                     variant="contained"
@@ -220,7 +203,7 @@ export const LeadCard: React.FC<LeadCardProps> = ({
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  style={{ flex: variant === 'available' ? '0 0 auto' : 1 }}
+                  sx={{ flex: variant === 'available' ? '0 0 auto' : 1 }}
                 >
                   <Button
                     variant="outlined"

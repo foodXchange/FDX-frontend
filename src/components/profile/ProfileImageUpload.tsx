@@ -11,10 +11,7 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import {
-  PhotoCamera as CameraIcon,
-  Edit as EditIcon,
-} from '@mui/icons-material';
+import {  } from '@mui/icons-material';
 import { FileUpload } from '../ui/FileUpload';
 import { useAgentStore } from '../../features/agents/store/useAgentStore';
 

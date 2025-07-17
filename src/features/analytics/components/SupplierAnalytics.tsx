@@ -32,53 +32,9 @@ import {
   useTheme,
   alpha,
 } from '@mui/material';
-import {
-  Store,
-  TrendingUp,
-  TrendingDown,
-  CheckCircle,
-  Warning,
-  Error as ErrorIcon,
-  LocalShipping,
-  AttachMoney,
-  Speed,
-  VerifiedUser,
-  Star,
-  CompareArrows,
-  FilterList,
-  Download,
-  MoreVert,
-  EmojiEvents,
-  WorkspacePremium,
-  Timeline,
-  Assessment,
-  Flag,
-  ThumbUp,
-  ThumbDown,
-  Schedule,
-  Receipt,
-} from '@mui/icons-material';
-import { motion } from 'framer-motion';
-import {
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Legend,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Area,
-  AreaChart,
-} from 'recharts';
-import { formatCurrency, formatNumber, formatPercentage } from '../../../utils/format';
+import { Store, TrendingUp, TrendingDown, CheckCircle, Warning, LocalShipping, Speed, VerifiedUser, Star, CompareArrows, Download, MoreVert, EmojiEvents, WorkspacePremium,  } from '@mui/icons-material';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, Line, Area, AreaChart,  } from 'recharts';
+import { formatCurrency, formatPercentage } from '../../../utils/format';
 import { SupplierMetrics } from '../types';
 
 // Glassmorphism styles

@@ -1,18 +1,5 @@
 import React from 'react';
-import {
-  EnhancedErrorBoundary,
-  PageErrorBoundary,
-  SectionErrorBoundary,
-  ComponentErrorBoundary,
-  // RFQErrorFallback,
-  // AgentErrorFallback,
-  withAsyncErrorHandling,
-  withRetry,
-  withTimeout,
-  useAsyncError,
-  useErrorContext,
-  useErrorRecovery,
-} from './index';
+import { EnhancedErrorBoundary, PageErrorBoundary, SectionErrorBoundary, ComponentErrorBoundary, withAsyncErrorHandling, withRetry, withTimeout, useAsyncError, useErrorContext, useErrorRecovery } from './index';
 import { Alert, Button, Box } from '@mui/material';
 
 // Example 1: Dashboard with multiple sections
@@ -154,25 +141,25 @@ export const DataFetchingExample = () => {
 // Example 4: Feature-specific error boundaries
 export const RFQFeatureExample = () => {
   return (
-    <RFQErrorBoundary>
+    <SectionErrorBoundary>
       <Box sx={{ p: 3 }}>
         <h2>RFQ Management</h2>
-        <RFQList />
-        <RFQForm />
+        <div>RFQ List Component</div>
+        <div>RFQ Form Component</div>
       </Box>
-    </RFQErrorBoundary>
+    </SectionErrorBoundary>
   );
 };
 
 export const AgentFeatureExample = () => {
   return (
-    <AgentErrorBoundary>
+    <SectionErrorBoundary>
       <Box sx={{ p: 3 }}>
         <h2>Agent Dashboard</h2>
-        <AgentStats />
-        <LeadPipeline />
+        <div>Agent Stats Component</div>
+        <div>Lead Pipeline Component</div>
       </Box>
-    </AgentErrorBoundary>
+    </SectionErrorBoundary>
   );
 };
 

@@ -1,66 +1,10 @@
 import React, { useState, useRef, useCallback } from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  Grid,
-  Button,
-  IconButton,
-  Stack,
-  Chip,
-  LinearProgress,
-  Alert,
-  Tooltip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Slider,
-  FormControlLabel,
-  Switch,
-  Collapse,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemSecondaryAction,
-  Fab,
-  Badge,
-  Skeleton,
-  CircularProgress,
-  useTheme,
-  alpha,
-} from '@mui/material';
-import {
-  CloudUpload,
-  CameraAlt,
-  Search,
-  FilterList,
-  CheckCircle,
-  Close,
-  CompareArrows,
-  ZoomIn,
-  ZoomOut,
-  Refresh,
-  Download,
-  PhotoLibrary,
-  Palette,
-  Category,
-  LocalOffer,
-  Info,
-  TrendingUp,
-  SwapHoriz,
-  AutoAwesome,
-  ImageSearch,
-  Collections,
-} from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Box, Paper, Typography, Card, CardContent, CardMedia, Grid, Button, IconButton, Stack, Chip, Alert, Dialog, DialogTitle, DialogContent, Slider, FormControlLabel, Switch, Collapse, List, ListItem, ListItemIcon, ListItemText, Badge, CircularProgress, useTheme, alpha,  } from '@mui/material';
+import { CloudUpload, CameraAlt, FilterList, Close, CompareArrows, Refresh, PhotoLibrary, Palette, Category, TrendingUp, SwapHoriz, AutoAwesome, ImageSearch,  } from '@mui/icons-material';
+import { motion } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
 import { aiServiceManager } from '../../../services/ai';
-import { formatCurrency, formatPercentage } from '../../../utils/format';
+import { formatCurrency } from '../../../utils/format';
 
 // Glassmorphism styles
 const glassmorphismStyle = {
@@ -569,7 +513,7 @@ export const VisualSimilarityMatching: React.FC = () => {
                     <img
                       src={uploadedImage}
                       alt="Uploaded"
-                      style={{
+                      sx={{
                         width: '100%',
                         height: 'auto',
                         borderRadius: 8,

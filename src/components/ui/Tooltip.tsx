@@ -177,7 +177,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
               pointerEvents: interactive ? 'auto' : 'none',
               ...sx,
             }}
-            style={{ top: position.top, left: position.left }}
+            sx={{ top: position.top, left: position.left }}
           >
             {content}
             <div style={getArrowStyles()} />

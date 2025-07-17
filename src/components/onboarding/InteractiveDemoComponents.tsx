@@ -1,28 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-  Grid,
-  Chip,
-  LinearProgress,
-  CircularProgress,
-  Card,
-  CardContent,
-  Stack,
-  Avatar,
-  Divider,
-  ButtonGroup
-} from '@mui/material';
-import {
-  BarChart as ChartBarIcon,
-  People as UserGroupIcon,
-  AutoAwesome as SparklesIcon,
-  LocalShipping as TruckIcon,
-  Security as ShieldCheckIcon
-} from '@mui/icons-material';
+import { Box, Typography, Button, Paper, Grid, Chip, LinearProgress, CircularProgress, Card, CardContent, Stack, ButtonGroup } from '@mui/material';
 
 // Interactive AI Chat Demo
 export const AIChatDemo: React.FC<{ className?: string }> = ({ className }) => {
@@ -377,7 +355,7 @@ export const SupplierMatchDemo: React.FC<{ className?: string }> = ({ className 
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            style={{ marginBottom: 16 }}
+            sx={{ marginBottom: 16 }}
           >
             <CircularProgress size={40} />
           </motion.div>
@@ -483,7 +461,7 @@ export const ComplianceDemo: React.FC<{ className?: string }> = ({ className }) 
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}
               >
                 <ShieldCheckIcon sx={{ fontSize: 24, color: 'success.main' }} />
               </motion.div>

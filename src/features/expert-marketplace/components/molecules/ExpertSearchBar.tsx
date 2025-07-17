@@ -11,13 +11,7 @@ import {
   Tooltip,
   Divider,
 } from '@mui/material';
-import {
-  Search as SearchIcon,
-  FilterList as FilterIcon,
-  Clear as ClearIcon,
-  History as HistoryIcon,
-  TrendingUp as TrendingIcon,
-} from '@mui/icons-material';
+import { Search as SearchIcon, Clear as ClearIcon,  } from '@mui/icons-material';
 import { ExpertSearchFilters } from '../../types';
 
 interface ExpertSearchBarProps {

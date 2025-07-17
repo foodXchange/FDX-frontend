@@ -1,56 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-  Button,
-  IconButton,
-  Chip,
-  Grid,
-  Tabs,
-  Tab,
-  LinearProgress,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Menu,
-  MenuItem,
-  Divider,
-  TextField,
-  InputAdornment,
-  Select,
-  FormControl,
-  InputLabel,
-  CircularProgress,
-  Avatar
-} from '@mui/material';
-import {
-  Upload,
-  Download,
-  Add as Plus,
-  FolderOpen,
-  Description as FileText,
-  Close as X,
-  Search,
-  Shield,
-  Checklist as FileCheck,
-  CheckCircle,
-  Archive,
-  Warning as AlertTriangle,
-  Schedule as Clock,
-  Image as FileImage,
-  InsertDriveFile as File,
-  RemoveRedEye as Eye,
-  Delete as Trash2,
-  MoreHoriz as MoreHorizontal
-} from '@mui/icons-material';
+import { Box, Card, CardContent, CardHeader, Typography, Button, IconButton, Chip, Grid, Tabs, Tab, LinearProgress, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Menu, MenuItem, Divider, TextField, InputAdornment, Select, FormControl, InputLabel, CircularProgress } from '@mui/material';
+import { Upload, Download, Add as Plus, FolderOpen, Search, Shield, CheckCircle, Archive, Delete as Trash2 } from '@mui/icons-material';
 import { format, isAfter, isBefore, addDays } from 'date-fns';
 
 interface DocumentFile {
@@ -603,7 +553,7 @@ export const DocumentUploadCenter: React.FC = () => {
               multiple
               accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"
               onChange={handleFileChange}
-              style={{ display: 'none' }}
+              sx={{ display: 'none' }}
             />
           </Box>
         </Paper>

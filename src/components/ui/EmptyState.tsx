@@ -97,7 +97,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         <Button
           variant={action.variant || 'default'}
           onClick={action.onClick}
-          className="hover-lift"
+          // TODO: Convert // TODO: Convert className="hover-lift" to sx prop to sx prop
         >
           {action.label}
         </Button>
@@ -192,7 +192,7 @@ export const IllustratedEmptyState: React.FC<{
 }> = ({ illustration, title, description, action }) => {
   const illustrations = {
     products: (
-      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
+      <svg viewBox="0 0 200 200" sx={{ width: '100%', height: '100%' }}>
         <motion.rect
           x="50"
           y="50"
@@ -218,7 +218,7 @@ export const IllustratedEmptyState: React.FC<{
       </svg>
     ),
     orders: (
-      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
+      <svg viewBox="0 0 200 200" sx={{ width: '100%', height: '100%' }}>
         <motion.path
           d="M50 100 L100 50 L150 100 L100 150 Z"
           fill="none"
@@ -240,7 +240,7 @@ export const IllustratedEmptyState: React.FC<{
       </svg>
     ),
     analytics: (
-      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
+      <svg viewBox="0 0 200 200" sx={{ width: '100%', height: '100%' }}>
         <motion.line
           x1="40"
           y1="160"
@@ -310,7 +310,7 @@ export const IllustratedEmptyState: React.FC<{
         <Button
           variant={action.variant || 'default'}
           onClick={action.onClick}
-          className="hover-lift"
+          // TODO: Convert // TODO: Convert className="hover-lift" to sx prop to sx prop
         >
           {action.label}
         </Button>

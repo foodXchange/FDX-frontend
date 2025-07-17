@@ -7,11 +7,7 @@ import {
   Button,
   Stack
 } from '@mui/material';
-import { 
-  Home as HomeIcon, 
-  ArrowBack as ArrowLeftIcon,
-  SentimentVeryDissatisfied
-} from '@mui/icons-material';
+import { SentimentVeryDissatisfied, Home as HomeIcon, ArrowBack as ArrowLeftIcon } from '@mui/icons-material';
 
 const NotFound: React.FC = () => {
   

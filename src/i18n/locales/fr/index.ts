@@ -1,6 +1,6 @@
 // French translations placeholder
 // Copy the structure from English and translate accordingly
-export default {
+const config = {
   common: {},
   auth: {},
   rfq: {},
@@ -9,3 +9,5 @@ export default {
   errors: {},
   validation: {},
 };
+
+export default config;

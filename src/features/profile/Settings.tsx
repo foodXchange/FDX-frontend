@@ -1,33 +1,7 @@
 import React, { useState } from 'react';
 // import { useAuth } from '@/contexts/AuthContext'; // Uncomment when needed
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Tabs,
-  Tab,
-  Switch,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  Select,
-  MenuItem,
-  Divider,
-  Stack,
-  Container,
-  Alert,
-  Snackbar
-} from '@mui/material';
-import {
-  Notifications as BellIcon,
-  Language as GlobeAltIcon,
-  DarkMode as MoonIcon,
-  Security as ShieldCheckIcon,
-  VpnKey as KeyIcon,
-  PhoneAndroid as DevicePhoneMobileIcon
-} from '@mui/icons-material';
+import { Box, Typography, Card, CardContent, Button, Tabs, Tab, Switch, FormControl, InputLabel, Select, MenuItem, Divider, Stack, Container, Alert, Snackbar } from '@mui/material';
+import { Notifications as BellIcon, Language as GlobeAltIcon, Security as ShieldCheckIcon } from '@mui/icons-material';
 import { Toast } from '@components/ui/Toast';
 
 const Settings: React.FC = () => {

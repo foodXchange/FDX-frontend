@@ -26,19 +26,7 @@ import {
   Divider,
 } from '@mui/material';
 import { Grid } from '@mui/material';
-import {
-  Email as EmailIcon,
-  Phone as PhoneIcon,
-  WhatsApp as WhatsAppIcon,
-  Sms as SmsIcon,
-  Send as SendIcon,
-  AttachFile as AttachFileIcon,
-  Schedule as ScheduleIcon,
-  Description as TemplateIcon,
-  History as HistoryIcon,
-  Star as StarIcon,
-  StarBorder as StarBorderIcon,
-} from '@mui/icons-material';
+import { Email as EmailIcon, Phone as PhoneIcon, WhatsApp as WhatsAppIcon, Send as SendIcon, Schedule as ScheduleIcon,  } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { Lead, WhatsAppMessage, WhatsAppTemplate } from '../types';
 

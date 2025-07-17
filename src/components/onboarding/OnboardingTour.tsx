@@ -1,28 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Box,
-  Typography,
-  Button,
-  IconButton,
-  Paper,
-  Backdrop,
-  Stack,
-  LinearProgress,
-  Checkbox,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  Divider
-} from '@mui/material';
-import {
-  Close as XMarkIcon,
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-  Check as CheckIcon
-} from '@mui/icons-material';
+import { Box, Typography, Button, IconButton, Paper, Backdrop, Stack, LinearProgress, Checkbox, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Close as XMarkIcon } from '@mui/icons-material';
 
 export interface TourStep {
   id: string;
@@ -145,7 +124,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          style={{
+          sx={{
             position: 'absolute',
             inset: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.6)'
@@ -157,7 +136,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              style={{
+              sx={{
                 position: 'absolute',
                 top: targetRect.top - 8,
                 left: targetRect.left - 8,
@@ -176,7 +155,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          style={{
+          sx={{
             position: 'absolute',
             maxWidth: 320,
             zIndex: 2001,
@@ -310,7 +289,7 @@ export const WelcomeModal: React.FC<{
                   duration: 0.5,
                   delay: 0.5,
                 }}
-                style={{ fontSize: '4rem', marginBottom: 24 }}
+                sx={{ fontSize: '4rem', marginBottom: 24 }}
               >
                 👋
               </motion.div>

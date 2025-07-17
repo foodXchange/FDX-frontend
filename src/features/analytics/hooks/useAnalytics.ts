@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { analyticsService } from '../services/analyticsService';
-import { MetricData, ChartData, DashboardConfig, InsightData, ExportOptions } from '../types';
+import { MetricData, DashboardConfig, InsightData, ExportOptions } from '../types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useNotification } from '../../../hooks/useNotification';
 

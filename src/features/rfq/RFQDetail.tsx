@@ -1,44 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowBack as ArrowLeftIcon,
-  Edit as PencilIcon,
-  Delete as TrashIcon,
-  Schedule as ClockIcon,
-  CalendarToday as CalendarDaysIcon,
-  LocationOn as MapPinIcon,
-  Description as DocumentTextIcon,
-  People as UserGroupIcon,
-  CheckCircle as CheckCircleIcon,
-  Warning as ExclamationTriangleIcon,
-  Send as PaperAirplaneIcon,
-  Visibility as EyeIcon,
-  Download as ArrowDownTrayIcon,
-  Close as XMarkIcon,
-  Chat as ChatBubbleLeftEllipsisIcon,
-  Add as PlusIcon,
-} from '@mui/icons-material';
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Paper,
-  Chip,
-  Stack,
-  Divider,
-  TextField,
-  Avatar,
-  Alert,
-  Tab,
-  Tabs,
-  Badge,
-  IconButton
-} from '@mui/material';
+import { Edit as PencilIcon, Delete as TrashIcon, Description as DocumentTextIcon, Send as PaperAirplaneIcon,  } from '@mui/icons-material';
+import { Box, Container, Typography, Button, Card, CardContent, Grid, Paper, Chip, Stack, Divider, TextField, Avatar, Alert, Tab, Tabs, IconButton } from '@mui/material';
 import { rfqService } from '../../services/rfqService';
 import { RFQ, Proposal } from '../../shared/types';
 import { StatusBadge } from '../../components/ui/StatusBadge';

@@ -24,20 +24,7 @@ import {
   TimelineDot,
   TimelineOppositeContent,
 } from '@mui/lab';
-import {
-  Phone as PhoneIcon,
-  Email as EmailIcon,
-  WhatsApp as WhatsAppIcon,
-  Event as EventIcon,
-  Description as DescriptionIcon,
-  Note as NoteIcon,
-  CheckCircle as CheckCircleIcon,
-  FilterList as FilterListIcon,
-  Search as SearchIcon,
-  Download as DownloadIcon,
-  TrendingUp as TrendingUpIcon,
-  Warning as WarningIcon,
-} from '@mui/icons-material';
+import { Email as EmailIcon, WhatsApp as WhatsAppIcon, Description as DescriptionIcon, Note as NoteIcon, Search as SearchIcon,  } from '@mui/icons-material';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Lead, LeadActivity, LeadNote, ActivityType } from '../types';
 

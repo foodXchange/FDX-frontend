@@ -115,7 +115,7 @@ export const HowItWorks: React.FC = () => {
                     <img 
                       src={step.gif} 
                       alt={step.title}
-                      style={{ width: '100%', height: 256, objectFit: 'cover' }}
+                      sx={{ width: '100%', height: 256, objectFit: 'cover' }}
                       onError={(e) => {
                         // Fallback to placeholder if GIF fails
                         const target = e.target as HTMLImageElement;

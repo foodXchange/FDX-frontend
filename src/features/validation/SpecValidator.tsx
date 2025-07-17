@@ -18,7 +18,7 @@ export const SpecValidator: React.FC<SpecValidatorProps> = ({
   className
 }) => {
   return (
-    <Box className={className}>
+    <Box sx={{ className }}>
       <Typography variant="h6" sx={{ color: 'grey.900', mb: 2 }}>
         Product Specifications
       </Typography>

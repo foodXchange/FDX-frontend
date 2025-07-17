@@ -1,7 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Box, Typography, Button, Stack } from '@mui/material';
-import { Warning as ExclamationTriangleIcon } from '@mui/icons-material';
 
 interface Props {
   children: ReactNode;
@@ -122,7 +121,7 @@ Component Stack: ${this.state.errorInfo?.componentStack}
               {process.env.NODE_ENV === 'development' && (
                 <Box sx={{ mt: 3, textAlign: 'left' }}>
                   <details>
-                    <summary style={{ fontSize: '0.875rem', color: '#9ca3af', cursor: 'pointer' }}>
+                    <summary sx={{ fontSize: '0.875rem', color: '#9ca3af', cursor: 'pointer' }}>
                       Error Details (Development Only)
                     </summary>
                     <Box component="pre" sx={{ mt: 1, fontSize: '0.75rem', color: 'error.main', bgcolor: 'error.light', p: 1, borderRadius: 1, overflow: 'auto' }}>

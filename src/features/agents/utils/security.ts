@@ -476,7 +476,7 @@ export class PasswordValidator {
 // Create a singleton instance for the secure HTTP client
 export const secureHttpClient = new SecureHttpClient();
 
-export default {
+const config = {
   sanitizeContent,
   sanitizeUrl,
   csrfTokenManager,
@@ -487,3 +487,5 @@ export default {
   PasswordValidator,
   secureHttpClient,
 };
+
+export default config;

@@ -1,33 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-  Button,
-  Chip,
-  Tabs,
-  Tab,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Alert,
-  AlertTitle,
-  CircularProgress,
-  Stack,
-  Avatar,
-  Paper,
-  Divider
-} from '@mui/material';
-import {
-  CheckCircle as CheckCircleIcon,
-  Cancel as XCircleIcon,
-  Warning as ExclamationTriangleIcon,
-  Assignment as ClipboardDocumentCheckIcon,
-  Security as ShieldCheckIcon
-} from '@mui/icons-material';
+import { Box, Card, CardContent, CardHeader, Typography, Button, Chip, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Alert, AlertTitle, CircularProgress, Stack, Paper } from '@mui/material';
 
 interface ValidationResult {
   passed: boolean;

@@ -58,7 +58,8 @@
       "Bash(quick-start.bat)",
       "Bash(del analyze-tailwind.js)",
       "Bash(tail:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(del:*)"
     ],
     "deny": []
   }

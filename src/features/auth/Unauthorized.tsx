@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Card, CardContent, Box, Typography, Stack } from '@mui/material';
-import { GppBad as ShieldExclamationIcon } from '@mui/icons-material';
 
 export const Unauthorized: React.FC = () => {
   const navigate = useNavigate();

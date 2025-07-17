@@ -18,19 +18,7 @@ import {
   Paper,
   Divider
 } from '@mui/material';
-import {
-  TrendingUp,
-  Warning as AlertCircle,
-  ShowChart as Activity,
-  Refresh as RefreshCw,
-  ArrowUpward as ArrowUp,
-  ArrowDownward as ArrowDown,
-  Inventory as Package,
-  Schedule as Clock,
-  CheckCircle,
-  Thermostat as Thermometer,
-  Close
-} from '@mui/icons-material';
+import { TrendingUp, Refresh as RefreshCw, CheckCircle, Close } from '@mui/icons-material';
 import { SampleTracker } from '../tracking';
 import { OrderLinesTable } from '../orders';
 // import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';

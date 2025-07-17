@@ -15,10 +15,7 @@ import {
   Skeleton,
   InputAdornment
 } from '@mui/material';
-import {
-  FilterList as FunnelIcon,
-  Search as MagnifyingGlassIcon
-} from '@mui/icons-material';
+import { Search as MagnifyingGlassIcon } from '@mui/icons-material';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentStore } from '../store/useAgentStore';
 import { AgentRFQCard } from './AgentRFQCard';

@@ -97,7 +97,7 @@ const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
         severity: 'info' as const,
         title: 'Syncing',
         message: 'Syncing pending changes...',
-        icon: <Sync className="animate-spin" />,
+        icon: <Sync sx={{ animation: 'spin 1s linear infinite' }} />,
       };
     }
 

@@ -1,27 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Box,
-  Typography,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  Avatar,
-  Stack,
-  Fab,
-  Backdrop,
-  Paper,
-  IconButton,
-  Divider
-} from '@mui/material';
-import {
-  People as UserGroupIcon,
-  ShoppingBag as ShoppingBagIcon,
-  AutoAwesome as SparklesIcon,
-  Close as XMarkIcon
-} from '@mui/icons-material';
+import { Box, Typography, Button, Dialog, DialogContent, DialogTitle, Avatar, Stack, Fab, Backdrop, Paper, IconButton, Divider } from '@mui/material';
 import { SellerOnboardingTour, useSellerOnboarding } from './SellerOnboardingTour';
 import { BuyerOnboardingTour, useBuyerOnboarding } from './BuyerOnboardingTour';
 import { DemoShowcase } from './InteractiveDemoComponents';
@@ -285,7 +264,7 @@ export const OnboardingFloatingButton: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                style={{ position: 'absolute', bottom: 80, left: 0 }}
+                sx={{ position: 'absolute', bottom: 80, left: 0 }}
               >
                 <Stack spacing={1}>
                   {actions.map((action, index) => {

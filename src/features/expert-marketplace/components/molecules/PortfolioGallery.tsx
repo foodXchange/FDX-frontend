@@ -230,7 +230,7 @@ export const PortfolioGallery: FC<PortfolioGalleryProps> = ({ portfolio }) => {
                         <img
                           src={image}
                           alt={`Thumbnail ${index + 1}`}
-                          style={{
+                          sx={{
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',

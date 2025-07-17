@@ -23,21 +23,7 @@ import {
   Paper,
   InputAdornment,
 } from '@mui/material';
-import {
-  Send,
-  AttachFile,
-  MoreVert,
-  Phone,
-  VideoCall,
-  Info,
-  ViewModule as Template,
-  EmojiEmotions as Emoji,
-  Check,
-  DoneAll,
-  Schedule,
-  WhatsApp,
-  Close,
-} from '@mui/icons-material';
+import { Send, AttachFile, MoreVert, Phone, VideoCall, Info, Check, DoneAll, Schedule, WhatsApp, Close,  } from '@mui/icons-material';
 import { useAgentStore } from '../../store';
 import { agentApi } from '../../services';
 import { WhatsAppMessage, WhatsAppTemplate, Lead } from '../../types';

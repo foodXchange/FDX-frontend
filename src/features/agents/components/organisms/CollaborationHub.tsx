@@ -30,21 +30,7 @@ import {
   Card,
   CardContent,
 } from '@mui/material';
-import {
-  Groups,
-  Chat,
-  Videocam,
-  MoreVert,
-  Add,
-  Edit,
-  VideoCall,
-  ScreenShare,
-  FiberManualRecord as Record,
-  Stop,
-  PersonAdd,
-  Assignment,
-  Timeline,
-} from '@mui/icons-material';
+import { Groups, Chat, Videocam, MoreVert, Add, Edit, VideoCall, ScreenShare, Stop, PersonAdd, Assignment, Timeline,  } from '@mui/icons-material';
 import { useAgentStore } from '../../store';
 import { Agent } from '../../types';
 

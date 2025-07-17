@@ -145,7 +145,7 @@ export const TrustBar: React.FC = () => {
               >
                 <Box sx={{ position: 'relative', mb: 2 }}>
                   <Box
-                    className="logo"
+                    // TODO: Convert // TODO: Convert className="logo" to sx prop to sx prop
                     sx={{
                       width: 80,
                       height: 80,
@@ -164,7 +164,7 @@ export const TrustBar: React.FC = () => {
                     {client.logo}
                   </Box>
                   <Box
-                    className="overlay"
+                    // TODO: Convert // TODO: Convert className="overlay" to sx prop to sx prop
                     sx={{
                       position: 'absolute',
                       inset: 0,
@@ -176,7 +176,7 @@ export const TrustBar: React.FC = () => {
                   />
                 </Box>
                 <Typography 
-                  className="name"
+                  // TODO: Convert // TODO: Convert className="name" to sx prop to sx prop
                   variant="body2" 
                   sx={{ 
                     color: 'text.secondary',
@@ -235,7 +235,7 @@ export const TrustBar: React.FC = () => {
                 }}
               >
                 <Box
-                  className="blur-bg"
+                  // TODO: Convert // TODO: Convert className="blur-bg" to sx prop to sx prop
                   sx={{
                     position: 'absolute',
                     inset: 0,
@@ -246,7 +246,7 @@ export const TrustBar: React.FC = () => {
                   }}
                 />
                 <Box
-                  className="card"
+                  // TODO: Convert // TODO: Convert className="card" to sx prop to sx prop
                   sx={{
                     position: 'relative',
                     p: 4,

@@ -1,34 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
-  Paper,
-  Stack,
-  Container,
-  Divider
-} from '@mui/material';
-import {
-  CurrencyDollar as CurrencyDollarIcon,
-  Calendar as CalendarIcon,
-  Download as ArrowDownTrayIcon,
-  BarChart as ChartBarIcon
-} from '@mui/icons-material';
+import { Box, Typography, Button, Card, CardContent, Grid, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Stack, Container, Divider } from '@mui/material';
 import { formatCurrency, formatDate } from '@/utils/format';
 import { EarningsChart } from './EarningsChart';
 

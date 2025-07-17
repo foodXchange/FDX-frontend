@@ -24,19 +24,7 @@ import {
   ListItemIcon,
 } from '@mui/material';
 import { Grid } from '@mui/material';
-import {
-  DragIndicator as DragIcon,
-  MoreVert as MoreIcon,
-  Add as AddIcon,
-  AttachMoney as MoneyIcon,
-  AccessTime as TimeIcon,
-  Warning as WarningIcon,
-  CheckCircle as CheckIcon,
-  Email as EmailIcon,
-  Phone as PhoneIcon,
-  Event as EventIcon,
-  Flag as FlagIcon,
-} from '@mui/icons-material';
+import { Add as AddIcon, Email as EmailIcon,  } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DroppableStateSnapshot, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 import { format, differenceInDays } from 'date-fns';
 import { Lead, LeadStatus } from '../types';

@@ -26,7 +26,6 @@ const AdvancedAnalyticsDashboard = lazy(() => import('@features/analytics/compon
 const MultiRoleDashboard = lazy(() => import('@features/analytics/components/MultiRoleDashboard').then(m => ({ default: m.MultiRoleDashboard })));
 const ReportingEngine = lazy(() => import('@features/analytics/components/ReportingEngine').then(m => ({ default: m.ReportingEngine })));
 const SupplierAnalytics = lazy(() => import('@features/analytics/components/SupplierAnalytics').then(m => ({ default: m.SupplierAnalytics })));
-const ComplianceTracker = lazy(() => import('@features/analytics/components/ComplianceTracker').then(m => ({ default: m.ComplianceTracker })));
 
 // RFQ
 const RFQList = lazy(() => import('@features/rfq/RFQList').then(m => ({ default: m.RFQList })));
@@ -49,7 +48,7 @@ const ComplianceDashboard = lazy(() => import('@features/compliance/ComplianceDa
 const ComplianceValidator = lazy(() => import('@features/compliance/ComplianceValidator').then(m => ({ default: m.ComplianceValidator })));
 const CertificationManager = lazy(() => import('@features/compliance/components/CertificationManager').then(m => ({ default: m.CertificationManager })));
 const AuditManager = lazy(() => import('@features/compliance/components/AuditManager').then(m => ({ default: m.AuditManager })));
-const ComplianceTracker = lazy(() => import('@features/compliance/components/ComplianceTracker').then(m => ({ default: m.ComplianceTracker })));
+const ComplianceTracker = lazy(() => import('@features/analytics/components/ComplianceTracker').then(m => ({ default: m.ComplianceTracker })));
 
 // Documents
 const DocumentUploadCenter = lazy(() => import('@features/documents/DocumentUploadCenter').then(m => ({ default: m.DocumentUploadCenter })));

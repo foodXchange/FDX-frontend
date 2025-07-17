@@ -10,7 +10,7 @@ import {
   AsyncErrorHandler,
   ErrorProvider,
   ErrorMonitoringDashboard 
-} from '@/components/ErrorBoundary';
+} from '@/components/ErrorBoundary/index';
 import { theme } from '@/theme/muiTheme';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { reactPlugin } from '@/services/monitoring/appInsights';

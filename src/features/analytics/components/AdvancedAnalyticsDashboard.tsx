@@ -1,83 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  Box,
-  Grid,
-  Paper,
-  Typography,
-  Card,
-  CardContent,
-  CardHeader,
-  IconButton,
-  Tooltip,
-  Chip,
-  Button,
-  TextField,
-  InputAdornment,
-  Menu,
-  MenuItem,
-  Skeleton,
-  Alert,
-  Tab,
-  Tabs,
-  Divider,
-  Avatar,
-  AvatarGroup,
-  LinearProgress,
-  Stack,
-  useTheme,
-  alpha,
-} from '@mui/material';
-import {
-  TrendingUp,
-  TrendingDown,
-  Analytics,
-  Download,
-  Refresh,
-  FilterList,
-  MoreVert,
-  Search,
-  AutoGraph,
-  Timeline,
-  PieChart,
-  BarChart,
-  ShowChart,
-  Speed,
-  Warning,
-  CheckCircle,
-  Info,
-  AttachMoney,
-  LocalShipping,
-  StoreMallDirectory,
-  Assignment,
-  AccountTree,
-  EmojiEvents,
-} from '@mui/icons-material';
+import { Box, Grid, Paper, Typography, Card, CardContent, CardHeader, IconButton, Tooltip, Chip, Button, TextField, InputAdornment, Menu, MenuItem, Alert, Tab, Tabs, Avatar, LinearProgress, Stack, useTheme, alpha,  } from '@mui/material';
+import { TrendingUp, TrendingDown, Analytics, Download, Refresh, FilterList, MoreVert, Search, AutoGraph, ShowChart, Speed, Warning, CheckCircle, Info, AttachMoney, LocalShipping, StoreMallDirectory, Assignment,  } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart as RechartsBarChart,
-  Bar,
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Legend,
-  ResponsiveContainer,
-  RadialBarChart,
-  RadialBar,
-  Treemap,
-} from 'recharts';
+import { LineChart, Line, AreaChart, Area, Bar, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, RadialBarChart, RadialBar, Treemap,  } from 'recharts';
 import { aiServiceManager } from '../../../services/ai';
-import { useApi } from '../../../hooks/useApi';
 import { formatCurrency, formatNumber, formatPercentage } from '../../../utils/format';
 
 // Glassmorphism styles

@@ -12,15 +12,7 @@ import {
   Avatar,
   Paper
 } from '@mui/material';
-import { 
-  Schedule as Clock, 
-  Error as AlertCircle, 
-  Inventory as Package, 
-  LocalShipping as Truck, 
-  Home,
-  LocationOn,
-  Thermostat
-} from '@mui/icons-material';
+import { Home, LocationOn, Thermostat } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { useSampleTracking } from '../../hooks/useSampleTracking';
 

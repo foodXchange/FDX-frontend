@@ -18,16 +18,7 @@ import {
   TextField,
   MenuItem,
 } from '@mui/material';
-import {
-  Description as DocumentIcon,
-  PictureAsPdf as PdfIcon,
-  Image as ImageIcon,
-  AttachFile as AttachIcon,
-  Delete as DeleteIcon,
-  Download as DownloadIcon,
-  Add as AddIcon,
-  Visibility as ViewIcon,
-} from '@mui/icons-material';
+import { Description as DocumentIcon,  } from '@mui/icons-material';
 import { FileUpload } from '../ui/FileUpload';
 import { format } from 'date-fns';
 

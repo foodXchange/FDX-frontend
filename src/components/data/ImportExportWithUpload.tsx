@@ -18,11 +18,7 @@ import {
   CircularProgress,
   Grid,
 } from '@mui/material';
-import {
-  CloudUpload as UploadIcon,
-  CloudDownload as DownloadIcon,
-  CheckCircle as SuccessIcon,
-} from '@mui/icons-material';
+import { Upload as UploadIcon, CheckCircle as SuccessIcon, Download as DownloadIcon } from '@mui/icons-material';
 import { FileUpload } from '../ui/FileUpload';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';

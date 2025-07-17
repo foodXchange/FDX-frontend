@@ -13,12 +13,7 @@ import {
   ListItemSecondaryAction,
   Chip,
 } from '@mui/material';
-import {
-  CloudUpload as UploadIcon,
-  InsertDriveFile as FileIcon,
-  Delete as DeleteIcon,
-  CheckCircle as SuccessIcon,
-} from '@mui/icons-material';
+import {  } from '@mui/icons-material';
 
 interface UploadedFile {
   filename: string;
@@ -174,7 +169,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           accept={accept}
           multiple={multiple}
           onChange={handleFileSelect}
-          style={{ display: 'none' }}
+          sx={{ display: 'none' }}
         />
         
         <UploadIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />

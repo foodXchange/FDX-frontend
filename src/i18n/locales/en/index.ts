@@ -6,7 +6,7 @@ import compliance from './compliance.json';
 import errors from './errors.json';
 import validation from './validation.json';
 
-export default {
+const config = {
   common,
   auth,
   rfq,
@@ -15,3 +15,5 @@ export default {
   errors,
   validation,
 };
+
+export default config;

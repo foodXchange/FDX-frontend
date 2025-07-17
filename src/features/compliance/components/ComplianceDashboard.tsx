@@ -21,15 +21,6 @@ import {
   Alert,
   AlertTitle
 } from '@mui/material';
-import {
-  Shield as ShieldCheckIcon,
-  Warning as ExclamationTriangleIcon,
-  CheckCircle as CheckCircleIcon,
-  Cancel as XCircleIcon,
-  BarChart as ChartBarIcon,
-  Description as DocumentCheckIcon,
-  Close as CloseIcon
-} from '@mui/icons-material';
 
 interface ComplianceStats {
   totalValidations: number;

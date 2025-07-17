@@ -14,14 +14,7 @@ import {
   Stack,
   Divider
 } from '@mui/material';
-import { 
-  AccountCircle as UserCircleIcon, 
-  Email as EnvelopeIcon, 
-  Business as BuildingOfficeIcon, 
-  Schedule as CalendarIcon,
-  VerifiedUser as ShieldCheckIcon,
-  Edit as PencilIcon
-} from '@mui/icons-material';
+import { Email as EnvelopeIcon, Edit as PencilIcon } from '@mui/icons-material';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();

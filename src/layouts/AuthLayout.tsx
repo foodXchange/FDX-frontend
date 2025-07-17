@@ -1,13 +1,14 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import { Box } from '@mui/material';
 import { MonitoringProvider } from '@/providers/MonitoringProvider';
 
 const AuthLayout: React.FC = () => {
   return (
     <MonitoringProvider>
-      <div style={{ minHeight: '100vh', position: 'relative' }}>
+      <Box sx={{ minHeight: '100vh', position: 'relative' }}>
         <Outlet />
-      </div>
+      </Box>
     </MonitoringProvider>
   );
 };

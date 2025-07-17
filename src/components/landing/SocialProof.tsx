@@ -137,7 +137,7 @@ export const SocialProof: React.FC = () => {
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
-                    <svg width="16" height="16" style={{ marginRight: 8, color: '#10b981' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg width="16" height="16" sx={{ marginRight: 8, color: '#10b981' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                     <Typography sx={{ fontWeight: 500, color: 'success.main' }}>
@@ -230,7 +230,7 @@ export const SocialProof: React.FC = () => {
             <iframe 
               src={selectedVideo || ''}
                 title="Customer testimonial video"
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: 8 }}
+                sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: 8 }}
                 allowFullScreen
                 allow="autoplay; encrypted-media"
               />

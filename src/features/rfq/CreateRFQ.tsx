@@ -4,40 +4,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-  CheckCircle as CheckCircleIcon,
-  Warning as ExclamationTriangleIcon,
-  Add as PlusIcon,
-  Delete as TrashIcon,
-} from '@mui/icons-material';
-import {
-  Container,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Grid,
-  Box,
-  Stack,
-  Alert,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Paper,
-  Divider,
-  Stepper,
-  Step,
-  StepLabel,
-  IconButton,
-  Chip
-} from '@mui/material';
+import { Add as PlusIcon,  } from '@mui/icons-material';
+import { Container, Typography, Button, Card, CardContent, TextField, FormControl, InputLabel, Select, MenuItem, Grid, Box, Stack, Alert, Checkbox, FormControlLabel, FormGroup, Stepper, Step, StepLabel, IconButton, Chip } from '@mui/material';
 import { rfqService } from '../../services/rfqService';
 import { validationService } from '../../services/validationService';
 import { SpecValidator } from '../validation/SpecValidator';

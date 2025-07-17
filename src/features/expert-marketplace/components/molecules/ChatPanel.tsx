@@ -196,7 +196,7 @@ export const ChatPanel: FC<ChatPanelProps> = ({
                         >
                           <Box display="flex" justifyContent="space-between" alignItems="start" gap={2}>
                             <Box flex={1}>
-                              <Typography variant="body2" style={{ whiteSpace: 'pre-wrap' }}>
+                              <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
                                 {msg.content}
                               </Typography>
                               

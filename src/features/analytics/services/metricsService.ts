@@ -1,4 +1,4 @@
-import { RealtimeMetric, MetricSubscription } from '../types';
+import { RealtimeMetric } from '../types';
 
 class MetricsService {
   private ws: WebSocket | null = null;

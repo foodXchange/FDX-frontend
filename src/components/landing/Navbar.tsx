@@ -96,11 +96,11 @@ export const Navbar: React.FC = () => {
           <Toolbar disableGutters>
             {/* Logo */}
             <Box sx={{ flexGrow: 0, mr: 4 }}>
-              <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+              <Link to="/" sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
                 <img 
                   src={FoodXchangeLogo} 
                   alt="FoodXchange" 
-                  style={{ height: 40 }}
+                  sx={{ height: 40 }}
                   onError={(e) => {
                     // Fallback if logo not found
                     const target = e.currentTarget as HTMLImageElement;

@@ -12,15 +12,7 @@ import {
   Avatar,
   Paper
 } from '@mui/material';
-import {
-  Assignment as ClipboardDocumentListIcon,
-  Store as BuildingStorefrontIcon,
-  ShoppingCart as ShoppingCartIcon,
-  VerifiedUser as ShieldCheckIcon,
-  TrendingUp as ArrowTrendingUpIcon,
-  TrendingDown as ArrowTrendingDownIcon,
-  ArrowForward as ArrowRightIcon,
-} from '@mui/icons-material';
+import {  } from '@mui/icons-material';
 
 interface StatCardData {
   title: string;

@@ -1,32 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Stack,
-  Grid,
-  Avatar,
-  Chip,
-  Divider,
-  LinearProgress,
-  CircularProgress,
-  IconButton,
-  Paper
-} from '@mui/material';
-import {
-  BarChart as ChartBarIcon,
-  People as UserGroupIcon,
-  Description as DocumentDuplicateIcon,
-  CheckCircle as CheckCircleIcon,
-  TrendingUp as ArrowTrendingUpIcon,
-  Notifications as BellIcon,
-  ArrowUpward as ArrowUpIcon,
-  ArrowDownward as ArrowDownIcon,
-} from '@mui/icons-material';
-import { ProgressIndicator } from '../../components/ui/ProgressIndicator';
+import { Box, Card, CardContent, Typography, Button, Stack, Grid, Avatar, CircularProgress, Paper } from '@mui/material';
+import {  } from '@mui/icons-material';
 
 interface StatCardProps {
   title: string;
@@ -63,7 +38,7 @@ const StatCard: React.FC<StatCardProps> = ({
       transition={{ delay, duration: 0.5 }}
       whileHover={{ y: -4 }}
       onClick={onClick}
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
+      sx={{ cursor: onClick ? 'pointer' : 'default' }}
     >
       <Card sx={{ height: '100%', boxShadow: 2 }}>
         <CardContent sx={{ p: 3 }}>

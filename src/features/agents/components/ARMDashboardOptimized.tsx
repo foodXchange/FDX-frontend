@@ -23,18 +23,7 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import {
-  Dashboard as DashboardIcon,
-  People as PeopleIcon,
-  Timeline as TimelineIcon,
-  Phone as PhoneIcon,
-  TrendingUp as TrendingUpIcon,
-  AttachMoney as MoneyIcon,
-  Warning as WarningIcon,
-  Event as EventIcon,
-  Refresh as RefreshIcon,
-  Add as AddIcon,
-} from '@mui/icons-material';
+import { Timeline as TimelineIcon, Refresh as RefreshIcon, Add as AddIcon,  } from '@mui/icons-material';
 import { useAgentStore } from '../store/useAgentStore';
 import { Lead, LeadActivity, LeadNote, WhatsAppMessage, WhatsAppTemplate, LeadStatus } from '../types';
 import { formatCurrency } from '@/utils/format';

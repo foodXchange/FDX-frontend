@@ -19,15 +19,7 @@ import {
   TextField,
   Autocomplete,
 } from '@mui/material';
-import {
-  ExpandMore as ExpandMoreIcon,
-  Star as StarIcon,
-  AttachMoney as MoneyIcon,
-  Language as LanguageIcon,
-  Category as CategoryIcon,
-  LocationOn as LocationIcon,
-  Schedule as ScheduleIcon,
-} from '@mui/icons-material';
+import {  } from '@mui/icons-material';
 import { ExpertSearchFilters } from '../../types';
 
 interface ExpertFiltersProps {

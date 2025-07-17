@@ -1,36 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Stack,
-  IconButton,
-  Divider,
-  Alert,
-  Avatar,
-  Skeleton,
-  Chip,
-  Paper
-} from '@mui/material';
-import {
-  Add as PlusIcon,
-  Assignment as ClipboardDocumentListIcon,
-  Schedule as ClockIcon,
-  CheckCircle as CheckCircleIcon,
-  Warning as ExclamationTriangleIcon,
-  TrendingUp as ArrowTrendingUpIcon,
-  Visibility as EyeIcon,
-  Edit as PencilIcon,
-  Delete as TrashIcon,
-} from '@mui/icons-material';
+import { Box, Typography, Button, Card, CardContent, Grid, Stack, IconButton, Divider, Alert, Avatar, Skeleton, Paper } from '@mui/material';
+import { Edit as PencilIcon, Delete as TrashIcon,  } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { rfqService } from '../../services/rfqService';
 import { RFQ, RFQStats } from '../../shared/types';
-import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { formatDistanceToNow } from 'date-fns';
 

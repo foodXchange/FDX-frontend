@@ -1,25 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { CloudUpload as CloudArrowUpIcon, Description as DocumentTextIcon, CheckCircle as CheckCircleIcon, Cancel as XCircleIcon } from '@mui/icons-material';
-import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardHeader,
-  Button,
-  Box,
-  Stack,
-  Grid,
-  Paper,
-  Alert,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Chip,
-  Divider
-} from '@mui/material';
+import { Container, Typography, Card, CardContent, CardHeader, Button, Box, Stack, Grid, Paper, Alert, List, ListItem, ListItemText, Chip, Divider } from '@mui/material';
 
 interface ImportResult {
   success: boolean;
@@ -241,7 +222,7 @@ export const DataImport: React.FC = () => {
                   type="file"
                   accept=".csv,.xlsx,.xls"
                   onChange={handleFileSelect}
-                  style={{ display: 'none' }}
+                  sx={{ display: 'none' }}
                   id="file-upload"
                 />
                 <Button

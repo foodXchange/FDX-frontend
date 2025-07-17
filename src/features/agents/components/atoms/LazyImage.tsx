@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, CircularProgress, Avatar, Skeleton, Typography } from '@mui/material';
-import { Image as ImageIcon, BrokenImage } from '@mui/icons-material';
+import { BrokenImage } from '@mui/icons-material';
 import { useImageOptimization } from '../../hooks/useImageOptimization';
 
 interface LazyImageProps {

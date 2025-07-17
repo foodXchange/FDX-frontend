@@ -1,23 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Stack,
-  Divider,
-  LinearProgress
-} from '@mui/material';
-import {
-  Schedule as ClockIcon,
-  BarChart as ChartBarIcon,
-  LocationOn as MapPinIcon,
-  Tag as TagIcon,
-  Whatshot as FireIcon
-} from '@mui/icons-material';
+import { Box, Typography, Button, Card, CardContent, Chip, Stack, Divider } from '@mui/material';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatCurrency } from '@/utils/format';
 
@@ -120,7 +103,7 @@ export const AgentRFQCard: React.FC<AgentRFQCardProps> = ({
   return (
     <motion.div
       whileHover={{ y: -2 }}
-      style={{ width: '100%' }}
+      sx={{ width: '100%' }}
     >
       <Card 
         sx={{ 

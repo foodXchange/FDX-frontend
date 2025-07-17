@@ -58,11 +58,11 @@ export class ErrorBoundary extends Component<Props, State> {
         <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.50' }}>
           <Paper sx={{ maxWidth: 'md', width: '100%', p: 3, borderRadius: 2 }} elevation={3}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, mx: 'auto', bgcolor: 'error.light', borderRadius: '50%' }}>
-              <svg
+              <Box component="svg"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                style={{ width: 24, height: 24, color: '#d32f2f' }}
+                sx={{ width: 24, height: 24, color: '#d32f2f' }}
               >
                 <path
                   strokeLinecap="round"
@@ -70,7 +70,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   strokeWidth={2}
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                 />
-              </svg>
+              </Box>
             </Box>
             
             <Typography variant="h5" sx={{ mt: 2, fontWeight: 600, textAlign: 'center', color: 'text.primary' }}>
@@ -82,17 +82,17 @@ export class ErrorBoundary extends Component<Props, State> {
             </Typography>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details style={{ marginTop: 16 }}>
-                <summary style={{ cursor: 'pointer', fontSize: '0.875rem', color: '#757575' }}>
+              <Box component="details" sx={{ marginTop: 16 }}>
+                <Box component="summary" sx={{ cursor: 'pointer', fontSize: '0.875rem', color: '#757575' }}>
                   Error details
-                </summary>
+                </Box>
                 <Box sx={{ mt: 1, p: 1.5, bgcolor: 'grey.100', borderRadius: 1, fontSize: '0.75rem', overflow: 'auto' }}>
                   <Typography variant="caption" sx={{ fontWeight: 600 }}>{this.state.error.toString()}</Typography>
                   {this.state.errorInfo && (
-                    <pre style={{ marginTop: 8 }}>{this.state.errorInfo.componentStack}</pre>
+                    <Box component="pre" sx={{ marginTop: 8 }}>{this.state.errorInfo.componentStack}</Box>
                   )}
                 </Box>
-              </details>
+              </Box>
             )}
 
             <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>

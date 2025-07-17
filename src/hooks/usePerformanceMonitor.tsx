@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 // Performance metrics interface
 interface PerformanceMetrics {
@@ -121,7 +121,8 @@ export const usePerformanceMonitor = () => {
         };
       }
     }
-  }, []);
+    return webVitals;
+  }, [webVitals]);
 
   // Memory usage tracking
   const measureMemoryUsage = useCallback(() => {
@@ -179,7 +180,7 @@ export const usePerformanceMonitor = () => {
   }, []);
 
   // User interaction tracking
-  const trackUserInteraction = useCallback((interactionType: string) => {
+  const trackUserInteraction = useCallback((_interactionType: string) => {
     const startTime = performance.now();
     
     return () => {

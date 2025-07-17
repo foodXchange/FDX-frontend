@@ -24,12 +24,12 @@ const RouterError: React.FC<{ error: Error }> = ({ error }) => (
     <Box sx={{ maxWidth: '28rem', width: '100%', bgcolor: 'white', borderRadius: 2, boxShadow: 3, p: 3 }}>
       <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'error.main', mb: 2 }}>Route Error</Typography>
       <Typography variant="body1" sx={{ color: 'text.primary', mb: 1 }}>An error occurred while loading this page.</Typography>
-      <details style={{ marginTop: '1rem' }}>
-        <summary style={{ cursor: 'pointer', fontSize: '0.875rem', color: 'text.secondary' }}>Error details</summary>
-        <pre style={{ marginTop: '0.5rem', fontSize: '0.75rem', backgroundColor: '#f5f5f5', padding: '0.5rem', borderRadius: '4px', overflow: 'auto' }}>
+      <Box component="details" sx={{ marginTop: '1rem' }}>
+        <Box component="summary" sx={{ cursor: 'pointer', fontSize: '0.875rem', color: 'text.secondary' }}>Error details</Box>
+        <Box component="pre" sx={{ marginTop: '0.5rem', fontSize: '0.75rem', backgroundColor: '#f5f5f5', padding: '0.5rem', borderRadius: '4px', overflow: 'auto' }}>
           {error.message}
-        </pre>
-      </details>
+        </Box>
+      </Box>
       <Button
         onClick={() => window.location.href = '/'}
         variant="contained"

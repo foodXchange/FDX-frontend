@@ -57,7 +57,7 @@ export const Breadcrumbs: React.FC = () => {
             {index === 0 ? (
               <Link
                 to={breadcrumb.href}
-                style={{ textDecoration: 'none', color: 'inherit' }}
+                sx={{ textDecoration: 'none', color: 'inherit' }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary', '&:hover': { color: 'text.primary' } }}>
                   <Box component={HomeIcon} sx={{ flexShrink: 0, width: 20, height: 20 }} />
@@ -71,7 +71,7 @@ export const Breadcrumbs: React.FC = () => {
             ) : (
               <Link
                 to={breadcrumb.href}
-                style={{ textDecoration: 'none', color: 'inherit' }}
+                sx={{ textDecoration: 'none', color: 'inherit' }}
               >
                 <Typography sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'text.secondary', '&:hover': { color: 'text.primary' } }}>
                   {breadcrumb.name}

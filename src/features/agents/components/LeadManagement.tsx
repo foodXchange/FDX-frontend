@@ -19,15 +19,7 @@ import {
   Tab,
   Tooltip
 } from '@mui/material';
-import {
-  Refresh as ArrowPathIcon,
-  Chat as ChatBubbleLeftRightIcon,
-  Phone as PhoneIcon,
-  Email as EnvelopeIcon,
-  ViewKanban as ViewKanbanIcon,
-  ViewList as ViewListIcon,
-  Settings as SettingsIcon
-} from '@mui/icons-material';
+import { Refresh as ArrowPathIcon, Email as EnvelopeIcon } from '@mui/icons-material';
 import { useAgentStore } from '../store/useAgentStore';
 import { Lead } from '../types';
 import { LeadCard } from './LeadCard';

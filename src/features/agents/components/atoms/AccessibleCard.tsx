@@ -418,8 +418,8 @@ const AccessibleCard: React.FC<AccessibleCardProps> = ({
       <div
         aria-live="polite"
         aria-atomic="true"
-        className="sr-only"
-        style={{
+        // TODO: Convert // TODO: Convert className="sr-only" to sx prop to sx prop
+        sx={{
           position: 'absolute',
           width: 1,
           height: 1,

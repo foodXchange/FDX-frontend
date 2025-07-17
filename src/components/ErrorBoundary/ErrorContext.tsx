@@ -173,7 +173,7 @@ export const ErrorMonitoringDashboard: React.FC = () => {
   }
 
   return (
-    <div style={{
+    <div sx={{
       position: 'fixed',
       bottom: 16,
       right: 16,
@@ -187,44 +187,44 @@ export const ErrorMonitoringDashboard: React.FC = () => {
       zIndex: 9999,
       overflow: 'auto',
     }}>
-      <h3 style={{ margin: '0 0 16px 0', fontSize: 16 }}>Error Monitor</h3>
+      <h3 sx={{ margin: '0 0 16px 0', fontSize: 16 }}>Error Monitor</h3>
       
-      <div style={{ marginBottom: 16 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+      <div sx={{ marginBottom: 16 }}>
+        <div sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
           <span>Total Errors:</span>
           <strong>{metrics.totalErrors}</strong>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+        <div sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
           <span>Recovery Rate:</span>
           <strong>{(metrics.recoveryRate * 100).toFixed(1)}%</strong>
         </div>
         {metrics.meanTimeToRecovery > 0 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+          <div sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
             <span>Avg Recovery Time:</span>
             <strong>{(metrics.meanTimeToRecovery / 1000).toFixed(1)}s</strong>
           </div>
         )}
       </div>
 
-      <div style={{ marginBottom: 16 }}>
-        <h4 style={{ margin: '0 0 8px 0', fontSize: 14 }}>By Category</h4>
+      <div sx={{ marginBottom: 16 }}>
+        <h4 sx={{ margin: '0 0 8px 0', fontSize: 14 }}>By Category</h4>
         {Object.entries(metrics.errorsByCategory).map(([category, count]) => (
           count > 0 && (
-            <div key={category} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span style={{ fontSize: 12 }}>{category}:</span>
-              <span style={{ fontSize: 12 }}>{count}</span>
+            <div key={category} sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+              <span sx={{ fontSize: 12 }}>{category}:</span>
+              <span sx={{ fontSize: 12 }}>{count}</span>
             </div>
           )
         ))}
       </div>
 
-      <div style={{ marginBottom: 16 }}>
-        <h4 style={{ margin: '0 0 8px 0', fontSize: 14 }}>Recent Errors</h4>
+      <div sx={{ marginBottom: 16 }}>
+        <h4 sx={{ margin: '0 0 8px 0', fontSize: 14 }}>Recent Errors</h4>
         {errorHistory.slice(0, 5).map(entry => (
-          <div key={entry.id} style={{ marginBottom: 8, fontSize: 12 }}>
-            <div style={{ fontWeight: 600 }}>{entry.error.name}</div>
-            <div style={{ color: '#6b7280' }}>{entry.error.message}</div>
-            <div style={{ color: '#9ca3af' }}>
+          <div key={entry.id} sx={{ marginBottom: 8, fontSize: 12 }}>
+            <div sx={{ fontWeight: 600 }}>{entry.error.name}</div>
+            <div sx={{ color: '#6b7280' }}>{entry.error.message}</div>
+            <div sx={{ color: '#9ca3af' }}>
               {new Date(entry.timestamp).toLocaleTimeString()}
             </div>
           </div>
@@ -233,7 +233,7 @@ export const ErrorMonitoringDashboard: React.FC = () => {
 
       <button
         onClick={clearErrorHistory}
-        style={{
+        sx={{
           width: '100%',
           padding: '8px 16px',
           backgroundColor: '#ef4444',

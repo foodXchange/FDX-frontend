@@ -16,15 +16,6 @@ import {
   Stack,
   Paper,
 } from '@mui/material';
-import {
-  AttachMoney as CurrencyDollarIcon,
-  Work as BriefcaseIcon,
-  EmojiEvents as TrophyIcon,
-  TrendingUp as ArrowUpIcon,
-  TrendingDown as ArrowDownIcon,
-  Schedule as ClockIcon,
-  BarChart as ChartBarIcon
-} from '@mui/icons-material';
 import { formatCurrency } from '@/utils/format';
 import { PerformanceBadge } from './PerformanceBadge';
 import { Lead } from '../types';

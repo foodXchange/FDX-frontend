@@ -1,33 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-  Button,
-  IconButton,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Grid,
-  Tabs,
-  Tab,
-  Stack,
-  Menu,
-  MenuItem,
-  Divider,
-  LinearProgress,
-  Alert,
-  AlertTitle,
-  Badge,
-  CircularProgress
-} from '@mui/material';
+import { Box, Card, CardContent, CardHeader, Typography, Button, IconButton, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, Tabs, Tab, Stack, Menu, MenuItem, Divider, Alert, AlertTitle, CircularProgress } from '@mui/material';
 import {
   Thermostat,
   Warning,

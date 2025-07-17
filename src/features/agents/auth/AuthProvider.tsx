@@ -260,7 +260,7 @@ export const ProtectedRoute: React.FC<{
 
   if (isLoading) {
     return (
-      <div style={{ 
+      <div sx={{ 
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
@@ -277,7 +277,7 @@ export const ProtectedRoute: React.FC<{
 
   if (requiredPermission && !hasPermission(requiredPermission)) {
     return (
-      <div style={{ 
+      <div sx={{ 
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
@@ -290,7 +290,7 @@ export const ProtectedRoute: React.FC<{
 
   if (requiredRole && !hasRole(requiredRole)) {
     return (
-      <div style={{ 
+      <div sx={{ 
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 

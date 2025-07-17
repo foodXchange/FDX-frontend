@@ -4,17 +4,7 @@ import { OnboardingTour, TourStep, WelcomeModal, OnboardingChecklist } from './O
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
 import { UserRole } from '../../shared/types';
-import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-  Stack,
-  Card,
-  CardContent,
-  Chip,
-  Divider
-} from '@mui/material';
+import { Box, Typography, Button, Paper, Stack, Card, CardContent, Chip } from '@mui/material';
 
 interface SellerOnboardingProps {
   onComplete?: () => void;

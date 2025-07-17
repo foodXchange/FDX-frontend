@@ -318,7 +318,7 @@ class DebugUtils {
 export const debugUtils = new DebugUtils();
 
 // React DevTools hook
-export function useWhyDidYouUpdate(name: string, props: Record<string, any>): void {
+export function useWhyDidYouUpdate(name: string, _props: Record<string, any>): void {
   if (process.env.NODE_ENV === 'development') {
     // This would need React import - removing for now to avoid TypeScript errors
     // const previousProps = React.useRef<Record<string, any>>();

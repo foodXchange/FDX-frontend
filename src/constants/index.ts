@@ -204,7 +204,7 @@ export const DEV_CONFIG = {
   logLevel: process.env.NODE_ENV === 'development' ? 'debug' : 'error',
 } as const;
 
-export default {
+const config = {
   BRAND_COLORS,
   ICON_SIZES,
   ICON_CLASS,
@@ -225,3 +225,5 @@ export default {
   FEATURE_FLAGS,
   DEV_CONFIG,
 };
+
+export default config;

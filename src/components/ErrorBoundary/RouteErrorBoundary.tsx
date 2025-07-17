@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouteError, useNavigate } from 'react-router-dom';
 import { Button, Card, CardContent, Box, Typography, Stack } from '@mui/material';
 import { logger } from '@/services/logger';
-import { Warning as ExclamationTriangleIcon, Home as HomeIcon, Refresh as ArrowPathIcon } from '@mui/icons-material';
+import { Home as HomeIcon } from '@mui/icons-material';
 
 export const RouteErrorBoundary: React.FC = () => {
   const error = useRouteError() as Error;
@@ -43,7 +43,7 @@ export const RouteErrorBoundary: React.FC = () => {
           {process.env.NODE_ENV === 'development' && error && (
             <Box sx={{ mt: 3, textAlign: 'left' }}>
               <details>
-                <summary style={{ cursor: 'pointer', color: '#6b7280' }}>
+                <summary sx={{ cursor: 'pointer', color: '#6b7280' }}>
                   Error Details
                 </summary>
                 <Box sx={{ mt: 1, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>

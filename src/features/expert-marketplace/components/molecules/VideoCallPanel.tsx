@@ -146,7 +146,7 @@ export const VideoCallPanel: FC<VideoCallPanelProps> = ({
                     ref={videoRef}
                     autoPlay
                     muted
-                    style={{
+                    sx={{
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',

@@ -1,79 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  Button,
-  Grid,
-  Card,
-  CardContent,
-  CardHeader,
-  IconButton,
-  Menu,
-  MenuItem,
-  Divider,
-  Stack,
-  Chip,
-  TextField,
-  Select,
-  FormControl,
-  InputLabel,
-  Tab,
-  Tabs,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Alert,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemSecondaryAction,
-  Switch,
-  Slider,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  useTheme,
-  alpha,
-} from '@mui/material';
-import {
-  Download,
-  Print,
-  Share,
-  Schedule,
-  FilterList,
-  MoreVert,
-  TrendingUp,
-  TrendingDown,
-  Assessment,
-  PictureAsPdf,
-  TableChart,
-  Description,
-  BarChart,
-  PieChart,
-  Timeline,
-  BubbleChart,
-  ScatterPlot,
-  Heatmap,
-  CompareArrows,
-  Speed,
-  Warning,
-  CheckCircle,
-  Error as ErrorIcon,
-  Info,
-  CalendarMonth,
-  Email,
-  CloudDownload,
-  Visibility,
-  Edit,
-  Delete,
-} from '@mui/icons-material';
+import { Box, Paper, Typography, Button, Grid, Card, CardContent, MenuItem, Divider, Stack, Chip, TextField, Select, FormControl, InputLabel, Tab, Tabs, ToggleButton, ToggleButtonGroup, Dialog, DialogTitle, DialogContent, DialogActions, Alert, CircularProgress, Switch, Checkbox, FormControlLabel, FormGroup, useTheme, alpha,  } from '@mui/material';
+import { Download, Schedule, FilterList, TrendingUp, Assessment, TableChart, Description, BarChart, PieChart, Timeline, BubbleChart, ScatterPlot, Heatmap, Warning, CheckCircle, Info,  } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -82,38 +9,9 @@ import * as d3 from 'd3';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart as RechartsBarChart,
-  Bar,
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  ScatterChart,
-  Scatter,
-  RadarChart,
-  Radar,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Treemap,
-  Sankey,
-  Funnel,
-  FunnelChart,
-  XAxis,
-  YAxis,
-  ZAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays } from 'date-fns';
+import { LineChart, Line, AreaChart, Area, BarChart as RechartsBarChart, Bar, PieChart as RechartsPieChart, Pie, Cell, ScatterChart, Scatter, RadarChart, Radar, Treemap, Sankey, Funnel, FunnelChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer,  } from 'recharts';
+import { format } from 'date-fns';
 import { useAnalytics } from '../hooks/useAnalytics';
-import { formatCurrency, formatNumber, formatPercentage } from '../../../utils/format';
 import { ChartData, ExportOptions, AnalyticsReport } from '../types';
 
 // Glassmorphism styles

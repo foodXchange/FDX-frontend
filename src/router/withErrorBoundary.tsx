@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
-import { PageErrorBoundary, SectionErrorBoundary } from '@/components/ErrorBoundary';
+import { PageErrorBoundary, SectionErrorBoundary } from '@/components/ErrorBoundary/index';
 import { CircularProgress, Box } from '@mui/material';
 
 // Loading fallback component

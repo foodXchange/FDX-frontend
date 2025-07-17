@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Box,
   Typography,
@@ -25,24 +25,10 @@ import {
   Container,
   Skeleton
 } from '@mui/material';
-import {
-  Search as MagnifyingGlassIcon,
-  FilterList as FunnelIcon,
-  Add as PlusIcon,
-  Visibility as EyeIcon,
-  Edit as PencilIcon,
-  Delete as TrashIcon,
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-  Event as CalendarDaysIcon,
-  People as UserGroupIcon,
-  Description as DocumentTextIcon,
-  Warning as ExclamationTriangleIcon,
-} from '@mui/icons-material';
+import { Search as MagnifyingGlassIcon, Edit as PencilIcon, Delete as TrashIcon,  } from '@mui/icons-material';
 import { rfqService } from '../../services/rfqService';
 import { RFQ, RFQFilters } from '../../shared/types';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
 import { formatDistanceToNow, format } from 'date-fns';
 
 interface RFQListProps {

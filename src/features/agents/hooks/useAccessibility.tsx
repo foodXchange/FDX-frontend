@@ -187,7 +187,7 @@ export function useAccessibility(config: AccessibilityConfig = {}) {
       ref={announcementRef}
       aria-live="polite"
       aria-atomic="true"
-      style={{
+      sx={{
         position: 'absolute',
         width: '1px',
         height: '1px',

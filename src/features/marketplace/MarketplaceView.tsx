@@ -13,11 +13,6 @@ import {
   Toolbar,
   Container
 } from '@mui/material';
-import {
-  FilterList as FunnelIcon,
-  GridView as Squares2X2Icon,
-  ViewList as ListBulletIcon
-} from '@mui/icons-material';
 import { ProductCard } from '../../components/ui/cards/ProductCard';
 
 const mockProducts = [

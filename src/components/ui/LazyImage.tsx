@@ -1,26 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import {
-  Box,
-  Skeleton,
-  IconButton,
-  Typography,
-  useTheme,
-  alpha,
-  CircularProgress,
-  Fade,
-  Zoom,
-} from '@mui/material';
-import {
-  BrokenImage,
-  Image as ImageIcon,
-  Refresh,
-  Visibility,
-  VisibilityOff,
-  Download,
-  Fullscreen,
-  ZoomIn,
-  ZoomOut,
-} from '@mui/icons-material';
+import { Box, Skeleton, IconButton, Typography, useTheme, alpha, CircularProgress,  } from '@mui/material';
+import { BrokenImage, Image as ImageIcon, Refresh, Download, Fullscreen, ZoomIn, ZoomOut,  } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Image optimization configurations
@@ -451,7 +431,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
           <img
             src={placeholder}
             alt=""
-            style={{
+            sx={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',
