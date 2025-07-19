@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Paper, Typography, Chip } from '@mui/material';
+import {Paper, Typography, Chip } from '@mui/material';
 import { WifiOff as OfflineIcon } from '@mui/icons-material';
 import { useNetworkStatus, useBackgroundSync } from '../pwa/hooks';
 

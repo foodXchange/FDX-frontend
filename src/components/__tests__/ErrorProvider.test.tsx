@@ -1,5 +1,4 @@
 /** @jsx React.createElement */
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '../../test-utils/render';
 import { ErrorProvider, useStandardErrorHandler } from '../../hooks/useStandardErrorHandler';
 import { mockErrorHandler } from '../../test-utils/mocks';

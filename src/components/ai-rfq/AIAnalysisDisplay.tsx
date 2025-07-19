@@ -14,8 +14,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  CircularProgress,
-  Divider
+  CircularProgress
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
@@ -26,7 +25,7 @@ import {
   Lightbulb as LightbulbIcon,
   Assessment as AssessmentIcon
 } from '@mui/icons-material';
-import { AIAnalysisResult, AIInsight, AIRecommendation } from '../../types/ai-rfq';
+import { AIAnalysisResult, AIRecommendation } from '../../types/ai-rfq';
 
 interface AIAnalysisDisplayProps {
   analysis: AIAnalysisResult;
@@ -240,7 +239,7 @@ export const AIAnalysisDisplay: React.FC<AIAnalysisDisplayProps> = ({
                 Overall Risk Level: {analysis.riskAssessment.overallRisk.toUpperCase()}
               </Alert>
               
-              <Typography variant="subtitle3" sx={{ mb: 1 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
                 Risk Factors:
               </Typography>
               <List dense>

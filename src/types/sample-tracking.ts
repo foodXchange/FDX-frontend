@@ -1,4 +1,6 @@
 // Real-time Sample Tracking System Types
+import { DateRange, ContactInfo, Location, GeoCoordinates, Dimensions, TemperatureRange, HumidityRange, CostAnalysis, TrendData, AuthorizationInfo, ProductSpecification, Ingredient, NutritionalInfo, AllergenInfo, LabelRequirement, TransportationMode, RouteInfo, HandlingConditions, IntegrityCheck, MonitoringDevice, SensorRange, EquipmentInfo, PersonnelInfo, TestProtocol, TestSequence, PreparationStep, TestParameter, AcceptanceCriteria, ReportingRequirement } from './common';
+
 export interface Sample {
   id: string;
   sampleNumber: string;

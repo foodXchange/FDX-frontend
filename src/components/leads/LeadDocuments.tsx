@@ -18,7 +18,7 @@ import {
   TextField,
   MenuItem,
 } from '@mui/material';
-import { Description as DescriptionIcon } from '@mui/icons-material';
+import { Description } from '@mui/icons-material';
 import { FileUpload } from '../ui/FileUpload';
 import { format } from 'date-fns';
 import { DocumentTextIcon, PhotoIcon, PlusIcon, PaperClipIcon, EyeIcon, ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/outline';

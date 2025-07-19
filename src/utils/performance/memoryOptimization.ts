@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 
 // Memory-efficient state management
 export function useMemoryEfficientState<T>(
@@ -142,7 +142,7 @@ export function useMemoryEfficientFetch<T>(
 
       return data;
     } catch (error) {
-      if (error.name !== 'AbortError') {
+      if (error instanceof Error && error.name !== 'AbortError') {
         throw error;
       }
       throw new Error('Request aborted');

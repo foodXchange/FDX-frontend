@@ -1,4 +1,5 @@
-import { rumMonitor } from '../monitoring/rum';
+import React from 'react';
+import { rumMonitor } from '../../monitoring/rum';
 
 // Performance budget enforcement
 export const performanceBudgets = {
@@ -152,11 +153,11 @@ class PerformanceMonitor {
       response: navigation.responseEnd - navigation.responseStart,
       
       // Processing timing
-      domProcessing: navigation.domComplete - navigation.domLoading,
+      domProcessing: navigation.domComplete - navigation.domInteractive,
       
       // Overall metrics
-      pageLoad: navigation.loadEventEnd - navigation.navigationStart,
-      ttfb: navigation.responseStart - navigation.navigationStart,
+      pageLoad: navigation.loadEventEnd - navigation.fetchStart,
+      ttfb: navigation.responseStart - navigation.fetchStart,
     };
   }
 

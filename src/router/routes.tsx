@@ -81,6 +81,12 @@ const PredictiveAnalytics = lazy(() => import('@features/ai-recommendations/comp
 const CollaborationHub = lazy(() => import('@features/collaboration/pages/CollaborationHub').then(m => ({ default: m.CollaborationHub })));
 const ProjectManagement = lazy(() => import('@features/collaboration/components/ProjectManagement').then(m => ({ default: m.ProjectManagement })));
 
+// Payments
+const PaymentDashboard = lazy(() => import('@features/payments/components/PaymentDashboard').then(m => ({ default: m.PaymentDashboard })));
+
+// Contracts
+const ContractDashboard = lazy(() => import('@features/contracts/components/ContractDashboard').then(m => ({ default: m.ContractDashboard })));
+
 // Error Pages
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
@@ -235,6 +241,18 @@ export const routes: RouteObject[] = [
             element: <StandingOrderManager />,
           },
         ],
+      },
+
+      // Payments
+      {
+        path: 'payments',
+        element: <PaymentDashboard />,
+      },
+
+      // Contracts
+      {
+        path: 'contracts',
+        element: <ContractDashboard />,
       },
 
       // Marketplace

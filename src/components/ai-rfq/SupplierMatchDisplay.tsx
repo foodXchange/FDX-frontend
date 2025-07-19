@@ -14,10 +14,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Divider,
   Grid,
   LinearProgress,
-  IconButton,
   Tooltip
 } from '@mui/material';
 import {
@@ -25,12 +23,10 @@ import {
   Business as BusinessIcon,
   Star as StarIcon,
   TrendingUp as TrendingUpIcon,
-  Security as SecurityIcon,
   LocalShipping as LocalShippingIcon,
-  AttachMoney as AttachMoneyIcon,
-  Info as InfoIcon
+  AttachMoney as AttachMoneyIcon
 } from '@mui/icons-material';
-import { SupplierMatch, MatchReason } from '../../types/ai-rfq';
+import { SupplierMatch } from '../../types/ai-rfq';
 
 interface SupplierMatchDisplayProps {
   matches: SupplierMatch[];
@@ -235,7 +231,7 @@ export const SupplierMatchDisplay: React.FC<SupplierMatchDisplayProps> = ({
                 Why this supplier matches:
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {match.matchReasons?.slice(0, 3).map((reason, index) => (
+                {match.matchReasons?.slice(0, 3).map((reason: any, index: number) => (
                   <Tooltip key={index} title={reason.explanation}>
                     <Chip
                       label={`${reason.factor} (${Math.round(reason.score * 100)}%)`}
@@ -248,7 +244,7 @@ export const SupplierMatchDisplay: React.FC<SupplierMatchDisplayProps> = ({
             </Box>
 
             {/* Recommendations & Concerns */}
-            {(match.recommendations?.length > 0 || match.concerns?.length > 0) && (
+            {(match.recommendations && match.recommendations.length > 0 || match.concerns && match.concerns.length > 0) && (
               <Box sx={{ mb: 2 }}>
                 {match.recommendations?.length > 0 && (
                   <Box sx={{ mb: 1 }}>
@@ -260,13 +256,13 @@ export const SupplierMatchDisplay: React.FC<SupplierMatchDisplayProps> = ({
                     </Typography>
                   </Box>
                 )}
-                {match.concerns?.length > 0 && (
+                {match.concerns && match.concerns.length > 0 && (
                   <Box>
                     <Typography variant="caption" color="warning.main" fontWeight="medium">
                       ⚠ Considerations:
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {match.concerns.slice(0, 2).join(', ')}
+                      {match.concerns?.slice(0, 2).join(', ')}
                     </Typography>
                   </Box>
                 )}
@@ -308,7 +304,7 @@ export const SupplierMatchDisplay: React.FC<SupplierMatchDisplayProps> = ({
                       Compliance Status
                     </Typography>
                     <List dense>
-                      {match.compliance?.certifications?.slice(0, 3).map((cert, index) => (
+                      {match.compliance?.certifications?.slice(0, 3).map((cert: any, index: number) => (
                         <ListItem key={index} sx={{ py: 0.5 }}>
                           <ListItemText
                             primary={cert.name || 'Certification'}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Avatar,
   Badge,
@@ -12,7 +12,9 @@ import {
   ListItemAvatar,
   ListItemText,
   Menu,
-  Typography
+  Typography,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import {
   Notifications,
@@ -20,22 +22,98 @@ import {
   CheckCircle,
   Warning,
   Info,
-  Error as ErrorIcon
+  Error as ErrorIcon,
+  ShoppingCart,
+  Receipt,
+  AttachMoney,
+  LocalShipping,
+  Assignment,
+  Person
 } from '@mui/icons-material';
 import { format } from 'date-fns';
+import { useWebSocket } from '../hooks/useWebSocket';
+import { useAuth } from '../hooks/useAuth';
+import notificationSound from '../assets/notification.mp3';
 
-interface Notification {
-  id: string,
+export interface Notification {
+  id: string;
   type: 'info' | 'warning' | 'error' | 'success';
-  title: string,
+  category: 'order' | 'payment' | 'invoice' | 'rfq' | 'sample' | 'compliance' | 'system';
+  title: string;
   message: string;
-  timestamp: string,
+  timestamp: string;
   read: boolean;
+  actionUrl?: string;
+  metadata?: Record<string, any>;
 }
 
 export const RealTimeNotifications: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [lastNotification, setLastNotification] = useState<Notification | null>(null);
+  const { user } = useAuth();
+  const { messages, isConnected, sendMessage } = useWebSocket(`wss://api.fdx-platform.com/ws?userId=${user?.id}`);
+
+  // Load notifications from localStorage on mount
+  useEffect(() => {
+    const savedNotifications = localStorage.getItem('notifications');
+    if (savedNotifications) {
+      setNotifications(JSON.parse(savedNotifications));
+    }
+  }, []);
+
+  // Save notifications to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+  }, [notifications]);
+
+  // Handle incoming WebSocket messages
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      
+      if (lastMessage.type === 'notification') {
+        const newNotification: Notification = {
+          id: lastMessage.id || `notif-${Date.now()}`,
+          type: lastMessage.data.type || 'info',
+          category: lastMessage.data.category || 'system',
+          title: lastMessage.data.title,
+          message: lastMessage.data.message,
+          timestamp: lastMessage.timestamp || new Date().toISOString(),
+          read: false,
+          actionUrl: lastMessage.data.actionUrl,
+          metadata: lastMessage.data.metadata
+        };
+
+        setNotifications(prev => [newNotification, ...prev]);
+        setLastNotification(newNotification);
+        setShowSnackbar(true);
+
+        // Play notification sound if enabled
+        if (localStorage.getItem('notificationSound') !== 'false') {
+          const audio = new Audio(notificationSound);
+          audio.play().catch(e => console.log('Could not play notification sound:', e));
+        }
+
+        // Send browser notification if permitted
+        if (Notification.permission === 'granted') {
+          new Notification(newNotification.title, {
+            body: newNotification.message,
+            icon: '/favicon.ico',
+            tag: newNotification.id
+          });
+        }
+      }
+    }
+  }, [messages]);
+
+  // Request notification permission on mount
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -45,34 +123,72 @@ export const RealTimeNotifications: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const markAsRead = (id: string) => {
+  const markAsRead = useCallback((id: string) => {
     setNotifications(prev =>
       prev.map(notification =>
         notification.id === id ? { ...notification, read: true } : notification
       )
     );
-  };
 
-  const markAllAsRead = () => {
+    // Send read status to server
+    sendMessage({
+      type: 'notification_read',
+      notificationId: id
+    });
+  }, [sendMessage]);
+
+  const markAllAsRead = useCallback(() => {
     setNotifications(prev =>
       prev.map(notification => ({ ...notification, read: true }))
     );
-  };
 
-  const clearNotifications = () => {
+    // Send bulk read status to server
+    sendMessage({
+      type: 'notifications_read_all',
+      notificationIds: notifications.filter(n => !n.read).map(n => n.id)
+    });
+  }, [notifications, sendMessage]);
+
+  const clearNotifications = useCallback(() => {
     setNotifications([]);
-  };
+    localStorage.removeItem('notifications');
+  }, []);
 
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'success':
-        return <CheckCircle color="success" />;
-      case 'warning':
-        return <Warning color="warning" />;
-      case 'error':
-        return <ErrorIcon color="error" />;
+  const handleNotificationClick = useCallback((notification: Notification) => {
+    markAsRead(notification.id);
+    
+    if (notification.actionUrl) {
+      window.location.href = notification.actionUrl;
+    }
+    
+    handleClose();
+  }, [markAsRead]);
+
+  const getNotificationIcon = (category: string, type: string) => {
+    switch (category) {
+      case 'order':
+        return <ShoppingCart color={type as any} />;
+      case 'payment':
+        return <AttachMoney color={type as any} />;
+      case 'invoice':
+        return <Receipt color={type as any} />;
+      case 'rfq':
+        return <Assignment color={type as any} />;
+      case 'sample':
+        return <LocalShipping color={type as any} />;
+      case 'compliance':
+        return <Warning color={type as any} />;
       default:
-        return <Info color="info" />;
+        switch (type) {
+          case 'success':
+            return <CheckCircle color="success" />;
+          case 'warning':
+            return <Warning color="warning" />;
+          case 'error':
+            return <ErrorIcon color="error" />;
+          default:
+            return <Info color="info" />;
+        }
     }
   };
 
@@ -92,34 +208,26 @@ export const RealTimeNotifications: React.FC = () => {
   const unreadCount = notifications.filter(n => !n.read).length;
   const open = Boolean(anchorEl);
 
-  // Mock data for demonstration
+  // Subscribe to specific notification channels
   useEffect(() => {
-    const mockNotifications: Notification[] = [
-      {
-        id: '1',
-        type: 'info',
-        title: 'New Message',
-        message: 'You have received a new message',
-        timestamp: new Date().toISOString(),
-        read: false
-      },
-      {
-        id: '2',
-        type: 'success',
-        title: 'Task Completed',
-        message: 'Your task has been completed successfully',
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-        read: false
-      }
-    ];
-    setNotifications(mockNotifications);
-  }, []);
+    if (isConnected && user) {
+      sendMessage({
+        type: 'subscribe',
+        channels: [
+          `user:${user.id}`,
+          `organization:${user.organizationId}`,
+          'system:broadcast'
+        ]
+      });
+    }
+  }, [isConnected, user, sendMessage]);
 
   return (
     <>
       <IconButton
         color="inherit"
-        onClick={handleClick} aria-label={`${unreadCount} unread notifications`}
+        onClick={handleClick}
+        aria-label={`${unreadCount} unread notifications`}
       >
         <Badge badgeContent={unreadCount} color="error">
           {unreadCount > 0 ? <NotificationsActive /> : <Notifications />}
@@ -127,7 +235,10 @@ export const RealTimeNotifications: React.FC = () => {
       </IconButton>
 
       <Menu
-        anchorEl={anchorEl} open={open} onClose={handleClose} anchorOrigin={{
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',
         }}
@@ -149,6 +260,14 @@ export const RealTimeNotifications: React.FC = () => {
               Notifications
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
+              {!isConnected && (
+                <Chip
+                  label="Offline"
+                  size="small"
+                  color="error"
+                  sx={{ fontSize: '0.7rem' }}
+                />
+              )}
               {unreadCount > 0 && (
                 <Button size="small" onClick={markAllAsRead}>
                   Mark all read
@@ -180,11 +299,11 @@ export const RealTimeNotifications: React.FC = () => {
                       backgroundColor: 'action.selected',
                     },
                   }}
-                  onClick={() => markAsRead(notification.id)}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <ListItemAvatar>
                     <Avatar sx={{ bgcolor: 'transparent' }}>
-                      {getNotificationIcon(notification.type)}
+                      {getNotificationIcon(notification.category, notification.type)}
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
@@ -194,8 +313,10 @@ export const RealTimeNotifications: React.FC = () => {
                           {notification.title}
                         </Typography>
                         <Chip
-                          label={notification.type} size="small"
-                          color={getNotificationColor(notification.type) as any} sx={{ fontSize: '0.6rem', height: 16 }}
+                          label={notification.category}
+                          size="small"
+                          color={getNotificationColor(notification.type) as any}
+                          sx={{ fontSize: '0.6rem', height: 16 }}
                         />
                       </Box>
                     }
@@ -207,6 +328,19 @@ export const RealTimeNotifications: React.FC = () => {
                         <Typography variant="caption" color="text.disabled">
                           {format(new Date(notification.timestamp), 'MMM d, yyyy h:mm a')}
                         </Typography>
+                        {notification.metadata && (
+                          <Box sx={{ mt: 0.5 }}>
+                            {Object.entries(notification.metadata).map(([key, value]) => (
+                              <Chip
+                                key={key}
+                                label={`${key}: ${value}`}
+                                size="small"
+                                variant="outlined"
+                                sx={{ mr: 0.5, fontSize: '0.65rem', height: 18 }}
+                              />
+                            ))}
+                          </Box>
+                        )}
                       </Box>
                     }
                   />
@@ -217,6 +351,41 @@ export const RealTimeNotifications: React.FC = () => {
           </List>
         )}
       </Menu>
+
+      {/* Toast notification for new messages */}
+      <Snackbar
+        open={showSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setShowSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        {lastNotification && (
+          <Alert
+            onClose={() => setShowSnackbar(false)}
+            severity={lastNotification.type}
+            sx={{ width: '100%' }}
+            action={
+              lastNotification.actionUrl && (
+                <Button
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    if (lastNotification.actionUrl) {
+                      window.location.href = lastNotification.actionUrl;
+                    }
+                  }}
+                >
+                  View
+                </Button>
+              )
+            }
+          >
+            <strong>{lastNotification.title}</strong>
+            <br />
+            {lastNotification.message}
+          </Alert>
+        )}
+      </Snackbar>
     </>
   );
 };

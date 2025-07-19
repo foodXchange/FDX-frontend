@@ -1,4 +1,6 @@
 // Expert Marketplace Types
+import { Location, ReviewCategory } from './common';
+
 export interface Expert {
   id: string;
   userId: string;

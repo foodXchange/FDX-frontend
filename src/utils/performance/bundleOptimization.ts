@@ -27,7 +27,7 @@ export const treeShakingHelpers = {
   muiImports: {
     Button: () => import('@mui/material/Button'),
     TextField: () => import('@mui/material/TextField'),
-    DataGrid: () => import('@mui/x-data-grid/DataGrid'),
+    DataGrid: () => import('@mui/x-data-grid').then(mod => ({ default: mod.DataGrid })),
     DatePicker: () => import('@mui/x-date-pickers/DatePicker'),
   },
   

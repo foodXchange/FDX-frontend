@@ -7,6 +7,7 @@ import React, {
   useState,
   ComponentType 
 } from 'react';
+import { useThrottle } from '../performance';
 
 // HOC for pure component optimization
 export function withMemoization<P extends object>(
@@ -92,7 +93,7 @@ export function OptimizedList<T>({
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: windowSize });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleScroll = useThrottledCallback(() => {
+  const handleScroll = useThrottle(() => {
     if (!containerRef.current) return;
 
     const { scrollTop, clientHeight } = containerRef.current;

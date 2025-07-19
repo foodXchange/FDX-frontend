@@ -19,7 +19,7 @@ export function createLazyComponent<T extends ComponentType<any>>(
                 <Box p={3} textAlign="center">
                   <p>Failed to load component. Please refresh the page.</p>
                 </Box>
-              )) as T,
+              )) as unknown as T,
             });
           });
         }, 1000);

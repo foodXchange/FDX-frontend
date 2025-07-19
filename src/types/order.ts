@@ -1,4 +1,6 @@
 // Comprehensive Order Management Types
+import { Dimensions, TemperatureRange, ProductSpecification, AllergenInfo } from './common';
+
 export interface Order {
   id: string;
   orderNumber: string;

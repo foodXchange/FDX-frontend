@@ -1,4 +1,7 @@
 // Comprehensive Supplier Management Types
+import { GeoCoordinates, ProductSpecification, EquipmentInfo, CorrectiveAction, AuditRecommendation, AuditFinding, AuditTeamMember, SpendAnalysis, DiversityMetrics, SustainabilityMetrics, ReviewPeriod, ReviewCategory, ActionItem, ReviewParticipant, CommunicationParticipant, CapacityConstraint, SeasonalVariation } from './common';
+import { OperatingHours, ScalabilityInfo, StorageRequirement, CustomizationOption } from './supplier-common';
+
 export interface Supplier {
   id: string;
   supplierCode: string;

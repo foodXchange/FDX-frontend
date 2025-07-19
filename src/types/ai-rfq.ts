@@ -1,4 +1,6 @@
 // AI-Powered RFQ Management Types
+import { DateRange, TrendData, TransportationMode } from './common';
+
 export interface EnhancedRFQ {
   id: string;
   title: string;

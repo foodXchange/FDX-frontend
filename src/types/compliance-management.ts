@@ -1,4 +1,6 @@
 // Comprehensive Compliance Management Types
+import { DateRange, ReportingRequirement, AuditRecommendation, AuditFinding } from './common';
+
 export interface ComplianceRecord {
   id: string;
   entityType: EntityType;

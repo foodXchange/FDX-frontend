@@ -1,282 +1,420 @@
-// =============================================================================
-// COMMON TYPES - Shared type definitions across the application
-// =============================================================================
+// Common types used across multiple modules
 
-import React from 'react';
-
-// Base Types
-export type ID = string | number;
-
-export type Status = 'idle' | 'loading' | 'success' | 'error';
-
-export interface BaseEntity {
-  id: ID;
-  createdAt: string;
-  updatedAt: string;
+export interface DateRange {
+  start: string;
+  end: string;
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrevious: boolean;
-  };
-}
-
-export interface ApiResponse<T> {
-  data: T;
-  message?: string;
-  success: boolean;
-  timestamp: string;
-}
-
-export interface ApiError {
-  message: string;
-  code: string;
-  details?: Record<string, any>;
-  timestamp: string;
-}
-
-// Form Types
-export interface FormField {
+export interface ContactInfo {
   name: string;
-  label: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'select' | 'textarea' | 'checkbox' | 'file';
-  required?: boolean;
-  placeholder?: string;
-  options?: Array<{ value: string; label: string }>;
-  validation?: {
-    min?: number;
-    max?: number;
-    pattern?: string;
-    custom?: (value: any) => boolean | string;
-  };
-}
-
-export interface FormState<T = Record<string, any>> {
-  values: T;
-  errors: Partial<Record<keyof T, string>>;
-  touched: Partial<Record<keyof T, boolean>>;
-  isSubmitting: boolean;
-  isValid: boolean;
-}
-
-// Navigation Types
-export interface NavItem {
-  id: string;
-  label: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  path?: string;
-  children?: NavItem[];
-  badge?: number | string;
-  disabled?: boolean;
-  onClick?: () => void;
-}
-
-export interface BreadcrumbItem {
-  label: string;
-  path?: string;
-  active?: boolean;
-}
-
-// Theme Types
-export interface ThemeConfig {
-  mode: 'light' | 'dark';
-  primaryColor: string;
-  fontFamily: string;
-  borderRadius: number;
-  spacing: number;
-}
-
-// Notification Types
-export interface Notification {
-  id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  title: string;
-  message?: string;
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
-  duration?: number;
-  timestamp: string;
-  read: boolean;
-}
-
-// Loading Types
-export interface LoadingState {
-  isLoading: boolean;
-  message?: string;
-  progress?: number;
-}
-
-// Modal Types
-export interface ModalProps {
-  open: boolean;
-  onClose: () => void;
+  email?: string;
+  phone?: string;
   title?: string;
-  size?: 'small' | 'medium' | 'large' | 'fullscreen';
-  disableBackdropClick?: boolean;
-  showCloseButton?: boolean;
+  department?: string;
 }
 
-// Data Table Types
-export interface TableColumn<T> {
-  id: keyof T;
-  label: string;
-  width?: number | string;
-  sortable?: boolean;
-  filterable?: boolean;
-  renderCell?: (value: any, row: T) => React.ReactNode;
-  align?: 'left' | 'center' | 'right';
+export interface Location {
+  address: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+  coordinates?: GeoCoordinates;
+  type?: 'origin' | 'destination' | 'current' | 'warehouse' | 'office';
 }
 
-export interface TableFilter {
-  column: string;
-  operator: 'equals' | 'contains' | 'startsWith' | 'endsWith' | 'greaterThan' | 'lessThan';
-  value: any;
+export interface GeoCoordinates {
+  latitude: number;
+  longitude: number;
+  altitude?: number;
+  accuracy?: number;
 }
 
-export interface TableSort {
-  column: string;
-  direction: 'asc' | 'desc';
+export interface Dimensions {
+  length: number;
+  width: number;
+  height: number;
+  unit: 'mm' | 'cm' | 'm' | 'in' | 'ft';
 }
 
-export interface TableState<T> {
-  data: T[];
-  loading: boolean;
-  error: string | null;
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-  };
-  filters: TableFilter[];
-  sort: TableSort[];
-  selectedRows: ID[];
+export interface TemperatureRange {
+  min: number;
+  max: number;
+  unit: 'C' | 'F' | 'K';
 }
 
-// File Upload Types
-export interface FileUpload {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  status: 'pending' | 'uploading' | 'success' | 'error';
-  progress: number;
-  url?: string;
-  error?: string;
+export interface HumidityRange {
+  min: number;
+  max: number;
+  unit: '%RH';
 }
 
-// Analytics Types
-export interface MetricData {
-  label: string;
-  value: number;
-  change?: number;
-  changeType?: 'increase' | 'decrease' | 'neutral';
-  format?: 'number' | 'currency' | 'percentage';
+export interface CostAnalysis {
+  totalCost: number;
+  averageCostPerSample?: number;
+  costByType?: Record<string, number>;
+  costByCategory?: Record<string, number>;
+  currency?: string;
 }
 
-export interface ChartData {
-  labels: string[];
-  datasets: Array<{
-    label: string;
-    data: number[];
-    backgroundColor?: string | string[];
-    borderColor?: string | string[];
-    borderWidth?: number;
-  }>;
-}
-
-// Search Types
-export interface SearchResult<T> {
-  id: ID;
-  title: string;
-  description?: string;
-  category?: string;
-  data: T;
-  relevance: number;
-}
-
-export interface SearchFilters {
-  category?: string;
-  dateRange?: {
-    start: string;
-    end: string;
-  };
-  tags?: string[];
-  [key: string]: any;
-}
-
-// Utility Types
-export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
-
-export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
-export type RequiredOnly<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
-
-// Event Types
-export interface CustomEvent<T = any> {
-  type: string;
-  data: T;
+export interface TrendData {
   timestamp: string;
-  source?: string;
+  value: number;
+  label?: string;
+  category?: string;
 }
 
-// Permission Types
-export interface Permission {
+export interface AuthorizationInfo {
+  authorized: boolean;
+  authorizedBy?: string;
+  authorizedAt?: string;
+  expiresAt?: string;
+  level?: string;
+  valid?: boolean;
+}
+
+export interface ScheduleRequirement {
+  minDuration?: number;
+  maxDuration?: number;
+  preferredTimes?: string[];
+  blackoutDates?: string[];
+  timezone?: string;
+}
+
+export interface ProductSpecification {
+  parameter: string;
+  value: string | number;
+  unit?: string;
+  min?: number;
+  max?: number;
+  tolerance?: number;
+}
+
+export interface Ingredient {
+  name: string;
+  percentage?: number;
+  origin?: string;
+  certification?: string;
+}
+
+export interface NutritionalInfo {
+  calories?: number;
+  protein?: number;
+  carbohydrates?: number;
+  fat?: number;
+  fiber?: number;
+  sugar?: number;
+  sodium?: number;
+  [key: string]: number | undefined;
+}
+
+export interface AllergenInfo {
+  contains: string[];
+  mayContain: string[];
+  freeFrom: string[];
+}
+
+export interface LabelRequirement {
+  type: string;
+  content: string;
+  position?: string;
+  size?: string;
+  language?: string;
+}
+
+export interface TransportationMode {
+  type: 'air' | 'sea' | 'road' | 'rail' | 'courier' | 'hand-carry';
+  carrier?: string;
+  service?: string;
+}
+
+export interface RouteInfo {
+  location: Location;
+  estimatedArrival: string;
+  actualArrival?: string;
+  status: string;
+}
+
+export interface HandlingConditions {
+  temperature?: TemperatureRange;
+  humidity?: HumidityRange;
+  lightProtection?: boolean;
+  orientation?: string;
+  specialInstructions?: string[];
+}
+
+export interface IntegrityCheck {
+  intact: boolean;
+  verified: boolean;
+  issues: string[];
+  checkedBy?: string;
+  checkedAt?: string;
+}
+
+export interface MonitoringDevice {
+  id: string;
+  type: string;
+  model?: string;
+  status: string;
+  lastReading?: string;
+  accuracy?: number;
+}
+
+export interface SensorRange {
+  min: number;
+  max: number;
+  unit: string;
+}
+
+export interface EquipmentInfo {
   id: string;
   name: string;
-  description: string;
-  resource: string;
-  action: 'create' | 'read' | 'update' | 'delete' | 'manage';
+  type: string;
+  calibrationDate?: string;
+  nextCalibrationDate?: string;
 }
 
-export interface Role {
+export interface PersonnelInfo {
   id: string;
   name: string;
-  description: string;
-  permissions: Permission[];
-  level: number;
+  role: string;
+  qualification?: string;
+  certifications?: string[];
 }
 
-// Audit Types
-export interface AuditLog extends BaseEntity {
-  userId: string;
-  action: string;
-  resource: string;
-  resourceId: string;
-  changes?: Record<string, { old: any; new: any }>;
-  metadata?: Record<string, any>;
-  ipAddress?: string;
-  userAgent?: string;
-}
-
-// Configuration Types
-export interface AppConfig {
+export interface TestProtocol {
+  id: string;
   name: string;
   version: string;
-  environment: 'development' | 'staging' | 'production';
-  api: {
-    baseURL: string;
-    timeout: number;
-    retryAttempts: number;
-  };
-  features: Record<string, boolean>;
-  theme: ThemeConfig;
-  localization: {
-    defaultLanguage: string;
-    supportedLanguages: string[];
-  };
+  standard?: string;
+  steps: string[];
 }
 
-// Export all types
-export type * from './api';
-export type * from './auth';
-export type * from './business';
+export interface TestSequence {
+  order: number;
+  testId: string;
+  dependsOn?: string[];
+  parallel?: boolean;
+}
+
+export interface PreparationStep {
+  step: number;
+  description: string;
+  duration: number;
+  equipment?: string[];
+  reagents?: string[];
+}
+
+export interface TestParameter {
+  name: string;
+  type: string;
+  unit?: string;
+  range?: { min: number; max: number };
+}
+
+export interface AcceptanceCriteria {
+  parameter: string;
+  condition: string;
+  value: string | number;
+  critical: boolean;
+}
+
+export interface ReportingRequirement {
+  type: string;
+  format: string;
+  frequency?: string;
+  recipients?: string[];
+}
+
+// Performance and Analytics types
+export interface PerformanceData {
+  metric: string;
+  value: number;
+  timestamp: string;
+  unit?: string;
+  target?: number;
+  status?: 'good' | 'warning' | 'critical';
+}
+
+export interface AnalyticsData {
+  period: DateRange;
+  metrics: Record<string, number>;
+  trends: TrendData[];
+  insights?: string[];
+}
+
+// Blockchain and IoT types
+export interface BlockchainRecord {
+  transactionId: string;
+  blockNumber: number;
+  timestamp: string;
+  data: any;
+  verified: boolean;
+}
+
+export interface IoTDeviceData {
+  deviceId: string;
+  timestamp: string;
+  readings: Record<string, number>;
+  location?: GeoCoordinates;
+  batteryLevel?: number;
+  signalStrength?: number;
+}
+
+// Audit types
+export interface CorrectiveAction {
+  id: string;
+  description: string;
+  assignedTo: string;
+  dueDate: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'overdue';
+  completedAt?: string;
+  evidence?: string[];
+}
+
+export interface AuditRecommendation {
+  id: string;
+  type: 'improvement' | 'corrective' | 'preventive';
+  description: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  status: 'open' | 'accepted' | 'rejected' | 'implemented';
+}
+
+export interface AuditFinding {
+  id: string;
+  category: string;
+  severity: 'minor' | 'major' | 'critical';
+  description: string;
+  evidence: string[];
+  recommendations: AuditRecommendation[];
+  correctiveActions: CorrectiveAction[];
+}
+
+export interface AuditTeamMember {
+  userId: string;
+  name: string;
+  role: 'lead' | 'member' | 'observer' | 'specialist';
+  expertise: string[];
+}
+
+// Supplier specific types
+export interface SpendAnalysis {
+  totalSpend: number;
+  byCategory: Record<string, number>;
+  byProduct: Record<string, number>;
+  trend: TrendData[];
+  savingsOpportunities?: number;
+}
+
+export interface DiversityMetrics {
+  minorityOwned: boolean;
+  womenOwned: boolean;
+  veteranOwned: boolean;
+  smallBusiness: boolean;
+  certifications: string[];
+  spendPercentage?: number;
+}
+
+export interface SustainabilityMetrics {
+  carbonFootprint?: number;
+  renewableEnergyUsage?: number;
+  wasteReduction?: number;
+  sustainabilityCertifications: string[];
+  esgScore?: number;
+}
+
+export interface ReviewPeriod {
+  start: string;
+  end: string;
+  type: 'monthly' | 'quarterly' | 'annual' | 'ad-hoc';
+}
+
+export interface ReviewCategory {
+  name: string;
+  weight: number;
+  score: number;
+  comments?: string;
+}
+
+export interface ActionItem {
+  id: string;
+  description: string;
+  assignedTo: string;
+  dueDate: string;
+  status: 'pending' | 'completed' | 'cancelled';
+  completedAt?: string;
+}
+
+export interface ReviewParticipant {
+  userId: string;
+  name: string;
+  role: string;
+  department: string;
+  feedback?: string;
+}
+
+export interface CommunicationParticipant {
+  userId: string;
+  name: string;
+  email: string;
+  role: string;
+  organization?: string;
+}
+
+// Integration types
+export interface IntegrationConfig {
+  type: 'erp' | 'crm' | 'wms' | 'tms' | 'custom';
+  endpoint: string;
+  authentication: {
+    type: 'basic' | 'oauth2' | 'apikey' | 'jwt';
+    credentials?: any;
+  };
+  mapping?: Record<string, string>;
+  syncFrequency?: string;
+  enabled: boolean;
+}
+
+export interface WebhookConfig {
+  url: string;
+  events: string[];
+  secret?: string;
+  retryPolicy?: {
+    maxRetries: number;
+    backoffMultiplier: number;
+  };
+  enabled: boolean;
+}
+
+// AI and ML types
+export interface ModelPrediction {
+  confidence: number;
+  value: any;
+  alternatives?: Array<{
+    value: any;
+    confidence: number;
+  }>;
+  explanation?: string;
+}
+
+export interface TrainingData {
+  inputFeatures: Record<string, any>;
+  outputLabel: any;
+  weight?: number;
+  metadata?: Record<string, any>;
+}
+
+// Capacity and constraints
+export interface CapacityConstraint {
+  type: 'volume' | 'weight' | 'units' | 'custom';
+  current: number;
+  maximum: number;
+  unit: string;
+  utilizationPercentage: number;
+}
+
+export interface SeasonalVariation {
+  period: string;
+  demandMultiplier: number;
+  capacityAdjustment?: number;
+  notes?: string;
+}
