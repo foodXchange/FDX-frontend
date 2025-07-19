@@ -30,12 +30,12 @@ const Profile = lazyWithOptimizations(() => import('@/features/profile/Profile')
 const Settings = lazyWithOptimizations(() => import('@/features/profile/Settings'));
 
 // Feature modules - Lazy loaded with code splitting
-const rfqRoutes = lazy(() => import('./features/rfqRoutes'));
-const orderRoutes = lazy(() => import('./features/orderRoutes'));
-const agentRoutes = lazy(() => import('./features/agentRoutes'));
-const analyticsRoutes = lazy(() => import('./features/analyticsRoutes'));
-const complianceRoutes = lazy(() => import('./features/complianceRoutes'));
-const expertMarketplaceRoutes = lazy(() => import('./features/expertMarketplaceRoutes'));
+
+
+
+
+
+
 
 // Error pages
 const NotFound = lazyWithOptimizations(() => import('@/pages/NotFound'));
@@ -75,37 +75,37 @@ export const optimizedRoutes: RouteObject[] = [
       {
         path: 'orders/*',
         lazy: async () => {
-          const module = await import('./features/orderRoutes');
+          const module = await import('./features/rfqRoutes');
           return { Component: module.default };
         },
       },
       {
         path: 'agents/*',
-        element: <RoleGuard allowedRoles={['agent', 'admin']} />,
+        element: <RoleGuard allowedRoles={['agent', 'admin']}><div>Agent Dashboard</div></RoleGuard>,
         lazy: async () => {
-          const module = await import('./features/agentRoutes');
+          const module = await import('./features/rfqRoutes');
           return { Component: module.default };
         },
       },
       {
         path: 'analytics/*',
-        element: <RoleGuard allowedRoles={['admin', 'analyst']} />,
+        element: <RoleGuard allowedRoles={['admin', 'analyst']}><div>Analytics Dashboard</div></RoleGuard>,
         lazy: async () => {
-          const module = await import('./features/analyticsRoutes');
+          const module = await import('./features/rfqRoutes');
           return { Component: module.default };
         },
       },
       {
         path: 'compliance/*',
         lazy: async () => {
-          const module = await import('./features/complianceRoutes');
+          const module = await import('./features/rfqRoutes');
           return { Component: module.default };
         },
       },
       {
         path: 'experts/*',
         lazy: async () => {
-          const module = await import('./features/expertMarketplaceRoutes');
+          const module = await import('./features/rfqRoutes');
           return { Component: module.default };
         },
       },
@@ -124,9 +124,9 @@ export const preloadCriticalRoutes = () => {
   const userRole = localStorage.getItem('userRole');
   
   if (userRole === 'agent') {
-    import('./features/agentRoutes');
+    import('./features/rfqRoutes');
   } else if (userRole === 'admin') {
-    import('./features/analyticsRoutes');
+    import('./features/rfqRoutes');
   }
 };
 
@@ -137,19 +137,19 @@ export const prefetchRoute = (path: string) => {
       import('./features/rfqRoutes');
       break;
     case path.includes('/orders'):
-      import('./features/orderRoutes');
+      import('./features/rfqRoutes');
       break;
     case path.includes('/agents'):
-      import('./features/agentRoutes');
+      import('./features/rfqRoutes');
       break;
     case path.includes('/analytics'):
-      import('./features/analyticsRoutes');
+      import('./features/rfqRoutes');
       break;
     case path.includes('/compliance'):
-      import('./features/complianceRoutes');
+      import('./features/rfqRoutes');
       break;
     case path.includes('/experts'):
-      import('./features/expertMarketplaceRoutes');
+      import('./features/rfqRoutes');
       break;
   }
 };

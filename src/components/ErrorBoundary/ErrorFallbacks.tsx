@@ -12,11 +12,22 @@ import {
   Chip,
   LinearProgress,
 } from '@mui/material';
-import { Refresh as ArrowPathIcon, Home as HomeIcon,  } from '@mui/icons-material';
+import { Home as HomeIcon } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ErrorFallbackProps, ErrorCategory } from './types';
 import { getUserFriendlyMessage } from './utils';
 import { useNavigate } from 'react-router-dom';
+import { 
+  ChevronUpIcon, 
+  ChevronDownIcon, 
+  ExclamationTriangleIcon, 
+  ArrowPathIcon,
+  WifiIcon,
+  ServerIcon,
+  CodeBracketIcon,
+  ClockIcon,
+  BugAntIcon
+} from '@heroicons/react/24/outline';
 
 // Icon mapping for error categories
 const errorIcons: Record<ErrorCategory, React.ElementType> = {
@@ -172,7 +183,7 @@ export const GlobalErrorFallback: React.FC<ErrorFallbackProps> = ({
                   isRetrying ? (
                     <CircularProgress size={20} color="inherit" />
                   ) : (
-                    <ArrowPathIcon sx={{ width: 20, height: 20 }} />
+                    <Box component={ArrowPathIcon} sx={{ width: 20, height: 20 }} />
                   )
                 }
                 sx={{ minWidth: 140 }}
@@ -183,7 +194,7 @@ export const GlobalErrorFallback: React.FC<ErrorFallbackProps> = ({
               <Button
                 variant="outlined"
                 onClick={() => navigate('/')}
-                startIcon={<HomeIcon sx={{ width: 20, height: 20 }} />}
+                startIcon={<Box component={HomeIcon} sx={{ width: 20, height: 20 }} />}
               >
                 Go Home
               </Button>
@@ -216,9 +227,9 @@ export const GlobalErrorFallback: React.FC<ErrorFallbackProps> = ({
                   onClick={toggleDetails}
                   endIcon={
                     showDetails ? (
-                      <ChevronUpIcon sx={{ width: 16, height: 16 }} />
+                      <Box component={ChevronUpIcon} sx={{ width: 16, height: 16 }} />
                     ) : (
-                      <ChevronDownIcon sx={{ width: 16, height: 16 }} />
+                      <Box component={ChevronDownIcon} sx={{ width: 16, height: 16 }} />
                     )
                   }
                   sx={{ mb: 2 }}
@@ -318,7 +329,7 @@ export const SectionErrorFallback: React.FC<ErrorFallbackProps> = ({
             isRetrying ? (
               <CircularProgress size={16} color="inherit" />
             ) : (
-              <ArrowPathIcon sx={{ width: 16, height: 16 }} />
+              <Box component={ArrowPathIcon} sx={{ width: 16, height: 16 }} />
             )
           }
         >
@@ -367,7 +378,8 @@ export const ComponentErrorFallback: React.FC<ErrorFallbackProps & { isolate?: b
             borderStyle: 'dashed',
           }}
         >
-          <ExclamationTriangleIcon
+          <Box 
+            component={ExclamationTriangleIcon}
             sx={{
               width: 32,
               height: 32,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ExclamationTriangleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import {
   Box,
   Card,

@@ -237,7 +237,7 @@ export class AIServiceManager {
     return await marketIntelligenceService.identifyMarketOpportunities(businessProfile);
   }
 
-  async analyzeMarketEntry(targetMarket: CompetitorAnalysis, analysisType: string) {
+  async analyzeMarketEntry(targetMarket: CompetitorAnalysis, analysisType: { budget: number; timeline: string; expertise: string[]; }) {
     return await marketIntelligenceService.analyzeMarketEntryStrategy(targetMarket, analysisType);
   }
 

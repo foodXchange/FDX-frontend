@@ -7,6 +7,7 @@ import { rfqService } from '../../services/rfqService';
 import { RFQ, RFQStats } from '../../shared/types';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { formatDistanceToNow } from 'date-fns';
+import { ExclamationTriangleIcon, PlusIcon, EyeIcon } from '@heroicons/react/24/outline';
 
 export const RFQDashboard: React.FC = () => {
   const [stats, setStats] = useState<RFQStats | null>(null);

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Box, Card, CardContent, Typography, Button, Stack, Grid, Avatar, CircularProgress, Paper } from '@mui/material';
 import {  } from '@mui/icons-material';
+import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 interface StatCardProps {
   title: string;

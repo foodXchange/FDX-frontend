@@ -28,6 +28,7 @@ import { Email as EmailIcon, WhatsApp as WhatsAppIcon, Description as Descriptio
 import { format, formatDistanceToNow } from 'date-fns';
 import { debounce } from 'lodash';
 import { Lead, LeadActivity, LeadNote, ActivityType } from '../types';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 interface RelationshipTimelineProps {
   lead: Lead;
@@ -364,7 +365,7 @@ export const RelationshipTimelineOptimized: React.FC<RelationshipTimelineProps> 
           </Tooltip>
           <Tooltip title="Export timeline">
             <IconButton onClick={exportTimeline}>
-              <DownloadIcon />
+              <ArrowDownTrayIcon />
             </IconButton>
           </Tooltip>
         </Box>

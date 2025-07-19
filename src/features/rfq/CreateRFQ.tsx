@@ -10,6 +10,7 @@ import { rfqService } from '../../services/rfqService';
 import { validationService } from '../../services/validationService';
 import { SpecValidator } from '../validation/SpecValidator';
 import { CreateRFQData } from '../../shared/types';
+import { ExclamationTriangleIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 const rfqSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),

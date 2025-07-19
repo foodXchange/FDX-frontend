@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { Box, Typography, Button } from '@mui/material';
 import { ErrorHistoryEntry, ErrorContextValue, ErrorCategory, ErrorMetrics } from './types';
 import { categorizeError, generateErrorId } from './utils';
 import { logger } from '@/services/logger';
@@ -173,7 +174,7 @@ export const ErrorMonitoringDashboard: React.FC = () => {
   }
 
   return (
-    <div sx={{
+    <Box sx={{
       position: 'fixed',
       bottom: 16,
       right: 16,
@@ -187,53 +188,51 @@ export const ErrorMonitoringDashboard: React.FC = () => {
       zIndex: 9999,
       overflow: 'auto',
     }}>
-      <h3 sx={{ margin: '0 0 16px 0', fontSize: 16 }}>Error Monitor</h3>
+      <Typography variant="h6" sx={{ margin: '0 0 16px 0', fontSize: 16 }}>Error Monitor</Typography>
       
-      <div sx={{ marginBottom: 16 }}>
-        <div sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+      <Box sx={{ marginBottom: 16 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
           <span>Total Errors:</span>
           <strong>{metrics.totalErrors}</strong>
-        </div>
-        <div sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
           <span>Recovery Rate:</span>
           <strong>{(metrics.recoveryRate * 100).toFixed(1)}%</strong>
-        </div>
+        </Box>
         {metrics.meanTimeToRecovery > 0 && (
-          <div sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
             <span>Avg Recovery Time:</span>
             <strong>{(metrics.meanTimeToRecovery / 1000).toFixed(1)}s</strong>
-          </div>
+          </Box>
         )}
-      </div>
+      </Box>
 
-      <div sx={{ marginBottom: 16 }}>
-        <h4 sx={{ margin: '0 0 8px 0', fontSize: 14 }}>By Category</h4>
+      <Box sx={{ marginBottom: 16 }}>
+        <Typography variant="h6" sx={{ margin: '0 0 8px 0', fontSize: 14 }}>By Category</Typography>
         {Object.entries(metrics.errorsByCategory).map(([category, count]) => (
           count > 0 && (
-            <div key={category} sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span sx={{ fontSize: 12 }}>{category}:</span>
-              <span sx={{ fontSize: 12 }}>{count}</span>
-            </div>
+            <Box key={category} sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+              <Typography variant="body2" sx={{ fontSize: 12 }}>{category}:</Typography>
+              <Typography variant="body2" sx={{ fontSize: 12 }}>{count}</Typography>
+            </Box>
           )
         ))}
-      </div>
+      </Box>
 
-      <div sx={{ marginBottom: 16 }}>
-        <h4 sx={{ margin: '0 0 8px 0', fontSize: 14 }}>Recent Errors</h4>
+      <Box sx={{ marginBottom: 16 }}>
+        <Typography variant="h6" sx={{ margin: '0 0 8px 0', fontSize: 14 }}>Recent Errors</Typography>
         {errorHistory.slice(0, 5).map(entry => (
-          <div key={entry.id} sx={{ marginBottom: 8, fontSize: 12 }}>
-            <div sx={{ fontWeight: 600 }}>{entry.error.name}</div>
-            <div sx={{ color: '#6b7280' }}>{entry.error.message}</div>
-            <div sx={{ color: '#9ca3af' }}>
+          <Box key={entry.id} sx={{ marginBottom: 8, fontSize: 12 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>{entry.error.name}</Typography>
+            <Typography variant="body2" sx={{ color: '#6b7280' }}>{entry.error.message}</Typography>
+            <Typography variant="body2" sx={{ color: '#9ca3af' }}>
               {new Date(entry.timestamp).toLocaleTimeString()}
-            </div>
-          </div>
+            </Typography>
+          </Box>
         ))}
-      </div>
+      </Box>
 
-      <button
-        onClick={clearErrorHistory}
-        sx={{
+      <Button onClick={clearErrorHistory} sx={{
           width: '100%',
           padding: '8px 16px',
           backgroundColor: '#ef4444',
@@ -242,10 +241,8 @@ export const ErrorMonitoringDashboard: React.FC = () => {
           borderRadius: 4,
           cursor: 'pointer',
           fontSize: 14,
-        }}
-      >
-        Clear History
-      </button>
-    </div>
+        }}>Clear History
+      </Button>
+    </Box>
   );
 };

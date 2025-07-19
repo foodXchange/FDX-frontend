@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { toast } from 'notistack';
+import { enqueueSnackbar } from 'notistack';
 
 // Default options for React Query
 const defaultOptions = {
@@ -15,7 +15,7 @@ const defaultOptions = {
     // Don't refetch on window focus in production
     refetchOnWindowFocus: process.env.NODE_ENV === 'development',
     // Don't refetch on reconnect
-    refetchOnReconnect: 'always',
+    refetchOnReconnect: 'always' as const,
   },
   mutations: {
     // Retry mutations once
@@ -23,7 +23,7 @@ const defaultOptions = {
     // Show error messages
     onError: (error: any) => {
       const message = error?.response?.data?.message || error?.message || 'An error occurred';
-      toast.error(message);
+      enqueueSnackbar(message, { variant: 'error' });
     },
   },
 };

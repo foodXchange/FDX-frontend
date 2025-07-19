@@ -19,6 +19,7 @@ import { Search as MagnifyingGlassIcon } from '@mui/icons-material';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAgentStore } from '../store/useAgentStore';
 import { AgentRFQCard } from './AgentRFQCard';
+import { FunnelIcon } from '@heroicons/react/24/outline';
 
 interface RFQ {
   id: string;

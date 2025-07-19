@@ -24,11 +24,12 @@ import {
   ListItemIcon,
 } from '@mui/material';
 import { Grid } from '@mui/material';
-import { Add as AddIcon, Email as EmailIcon,  } from '@mui/icons-material';
+import { Add as PlusIcon, Email as EmailIcon,  } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DroppableStateSnapshot, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 import { format, differenceInDays } from 'date-fns';
 import { Lead, LeadStatus } from '../types';
 import { formatCurrency } from '@/utils/format';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 interface LeadPipelineProps {
   leads: Lead[];
@@ -416,7 +417,7 @@ export const LeadPipeline: React.FC<LeadPipelineProps> = ({
                         <Button
                           fullWidth
                           variant="outlined"
-                          startIcon={<AddIcon />}
+                          startIcon={<PlusIcon />}
                           sx={{ mt: 1 }}
                         >
                           Add New Lead
@@ -445,7 +446,7 @@ export const LeadPipeline: React.FC<LeadPipelineProps> = ({
         </MenuItem>
         <MenuItem onClick={handleAddActivity}>
           <ListItemIcon>
-            <AddIcon fontSize="small" />
+            <PlusIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Add Activity</ListItemText>
         </MenuItem>

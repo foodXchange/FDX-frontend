@@ -2,8 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { initializeAllMonitoring } from './monitoring';
 
 // NO CSS IMPORTS ALLOWED HERE
+
+// Initialize monitoring before app startup
+initializeAllMonitoring();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

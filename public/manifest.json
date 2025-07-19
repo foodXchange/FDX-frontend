@@ -1,86 +1,104 @@
 {
-  "name": "FDX Agent Portal",
-  "short_name": "FDX Agent",
-  "description": "Mobile-first agent portal for managing leads, commissions, and WhatsApp communication",
-  "start_url": "/agents",
+  "name": "FoodXchange - B2B Food Trading Platform",
+  "short_name": "FoodXchange",
+  "description": "Comprehensive B2B platform for food trading, supplier management, and supply chain optimization",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1976d2",
   "orientation": "portrait-primary",
-  "categories": ["business", "productivity"],
+  "scope": "/",
+  "categories": [
+    "business",
+    "productivity",
+    "food"
+  ],
   "lang": "en-US",
-  "scope": "/agents/",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
+      "src": "/favicon-192x192.png",
       "sizes": "192x192",
-      "purpose": "maskable any"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "logo512.png",
-      "type": "image/png",
+      "src": "/favicon-512x512.png",
       "sizes": "512x512",
-      "purpose": "maskable any"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow"
     }
   ],
   "shortcuts": [
     {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "View your agent dashboard",
-      "url": "/agents/dashboard",
+      "name": "Create RFQ",
+      "short_name": "New RFQ",
+      "description": "Create a new Request for Quote",
+      "url": "/rfqs/create",
       "icons": [
         {
-          "src": "logo192.png",
+          "src": "/favicon-192x192.png",
           "sizes": "192x192"
         }
       ]
     },
     {
-      "name": "Leads",
-      "short_name": "Leads",
-      "description": "Manage your leads",
-      "url": "/agents/leads",
+      "name": "Browse Suppliers",
+      "short_name": "Suppliers",
+      "description": "Browse available suppliers",
+      "url": "/suppliers",
       "icons": [
         {
-          "src": "logo192.png",
+          "src": "/favicon-192x192.png",
           "sizes": "192x192"
         }
       ]
     },
     {
-      "name": "WhatsApp",
-      "short_name": "WhatsApp",
-      "description": "WhatsApp conversations",
-      "url": "/agents/whatsapp",
+      "name": "Order History",
+      "short_name": "Orders",
+      "description": "View order history",
+      "url": "/orders",
       "icons": [
         {
-          "src": "logo192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Commissions",
-      "short_name": "Commissions",
-      "description": "Track your commissions",
-      "url": "/agents/commissions",
-      "icons": [
-        {
-          "src": "logo192.png",
+          "src": "/favicon-192x192.png",
           "sizes": "192x192"
         }
       ]
     }
   ],
-  "prefer_related_applications": false,
-  "launch_handler": {
-    "client_mode": "navigate-existing"
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "documents",
+          "accept": [
+            "image/*",
+            ".pdf",
+            ".doc",
+            ".docx"
+          ]
+        }
+      ]
+    }
   }
 }

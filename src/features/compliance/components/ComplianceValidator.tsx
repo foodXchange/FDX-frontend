@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, CardHeader, Typography, Button, Chip, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Alert, AlertTitle, CircularProgress, Stack, Paper } from '@mui/material';
+import { ExclamationTriangleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 
 interface ValidationResult {
   passed: boolean;

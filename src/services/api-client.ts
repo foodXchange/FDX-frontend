@@ -294,7 +294,7 @@ export const api = {
       tempApiClient.post(`/products/${productId}/sample-request`, data),
   },
 
-  // RFQs
+    // RFQs
   rfqs: {
     getAll: (params?: SearchParams): Promise<ApiResponse<RFQ[]>> =>
       tempApiClient.get('/rfq', { params }),
@@ -313,6 +313,28 @@ export const api = {
     
     delete: (id: string): Promise<ApiResponse> =>
       tempApiClient.delete(`/rfq/${id}`),
+    
+    // AI-powered features
+    analyzeWithAI: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/rfq/${id}/ai-analysis`),
+    
+    getAIMatches: (id: string, options?: any): Promise<ApiResponse<any[]>> =>
+      tempApiClient.post(`/rfq/${id}/ai-matches`, options),
+    
+    optimizeRequirements: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/rfq/${id}/optimize`),
+    
+    generateSpecifications: (id: string, productType: string): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/rfq/${id}/generate-specs`, { productType }),
+    
+    validateCompliance: (id: string, targetMarkets: string[]): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/rfq/${id}/validate-compliance`, { targetMarkets }),
+    
+    predictPricing: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/rfq/${id}/predict-pricing`),
+    
+    recommendSuppliers: (id: string, criteria?: any): Promise<ApiResponse<any[]>> =>
+      tempApiClient.post(`/rfq/${id}/recommend-suppliers`, criteria),
   },
 
   // Proposals
@@ -338,11 +360,58 @@ export const api = {
     getById: (id: string): Promise<ApiResponse<Order>> =>
       tempApiClient.get(`/orders/${id}`),
     
+    create: (data: any): Promise<ApiResponse<Order>> =>
+      tempApiClient.post('/orders', data),
+    
+    update: (id: string, data: any): Promise<ApiResponse<Order>> =>
+      tempApiClient.put(`/orders/${id}`, data),
+    
     updateStatus: (id: string, status: string): Promise<ApiResponse<Order>> =>
       tempApiClient.patch(`/orders/${id}/status`, { status }),
+    
+    cancel: (id: string, reason: string): Promise<ApiResponse<Order>> =>
+      tempApiClient.post(`/orders/${id}/cancel`, { reason }),
+    
+    approve: (id: string, notes?: string): Promise<ApiResponse<Order>> =>
+      tempApiClient.post(`/orders/${id}/approve`, { notes }),
+    
+    confirm: (id: string, estimatedDeliveryDate: string): Promise<ApiResponse<Order>> =>
+      tempApiClient.post(`/orders/${id}/confirm`, { estimatedDeliveryDate }),
+    
+    getSummary: (dateRange?: { start: string; end: string }): Promise<ApiResponse<any>> => {
+      const params = dateRange ? `?start=${dateRange.start}&end=${dateRange.end}` : '';
+      return tempApiClient.get(`/orders/summary${params}`);
+    },
+    
+    getDocuments: (id: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get(`/orders/${id}/documents`),
+    
+    uploadDocument: (id: string, file: File, type: string): Promise<ApiResponse<any>> => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', type);
+      return tempApiClient.post(`/orders/${id}/documents`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    },
+    
+    getCommunications: (id: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get(`/orders/${id}/communications`),
+    
+    addCommunication: (id: string, data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/orders/${id}/communications`, data),
+    
+    processPayment: (id: string, paymentDetails: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/orders/${id}/payments`, paymentDetails),
+    
+    getTracking: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.get(`/orders/${id}/tracking`),
+    
+    bulkUpdate: (orderIds: string[], updates: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post('/orders/bulk-update', { orderIds, updates }),
   },
 
-  // Compliance
+    // Compliance Management
   compliance: {
     validate: (data: any): Promise<ApiResponse<ComplianceValidation>> =>
       tempApiClient.post('/compliance/validate', data),
@@ -358,6 +427,66 @@ export const api = {
     
     getReport: (rfqId: string): Promise<ApiResponse<any>> =>
       tempApiClient.get(`/compliance/report/${rfqId}`),
+    
+    // Certification Management
+    getCertifications: (entityType: string, entityId?: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get('/compliance/certifications', { params: { entityType, entityId } }),
+    
+    addCertification: (data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post('/compliance/certifications', data),
+    
+    updateCertification: (id: string, data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.put(`/compliance/certifications/${id}`, data),
+    
+    renewCertification: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/compliance/certifications/${id}/renew`),
+    
+    // Audit Management
+    getAudits: (params?: any): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get('/compliance/audits', { params }),
+    
+    createAudit: (data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post('/compliance/audits', data),
+    
+    updateAudit: (id: string, data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.put(`/compliance/audits/${id}`, data),
+    
+    completeAudit: (id: string, results: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/compliance/audits/${id}/complete`, results),
+    
+    // Compliance Tracking
+    getTrackingData: (entityType: string, entityId: string): Promise<ApiResponse<any>> =>
+      tempApiClient.get(`/compliance/tracking/${entityType}/${entityId}`),
+    
+    updateComplianceStatus: (entityType: string, entityId: string, status: any): Promise<ApiResponse<any>> =>
+      tempApiClient.put(`/compliance/tracking/${entityType}/${entityId}`, status),
+    
+    // Document Management
+    getComplianceDocuments: (entityType: string, entityId: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get(`/compliance/documents/${entityType}/${entityId}`),
+    
+    uploadComplianceDocument: (entityType: string, entityId: string, file: File, docType: string): Promise<ApiResponse<any>> => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('documentType', docType);
+      return tempApiClient.post(`/compliance/documents/${entityType}/${entityId}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    },
+    
+    // Regulatory Requirements
+    getRegulatoryRequirements: (productType: string, markets: string[]): Promise<ApiResponse<any[]>> =>
+      tempApiClient.post('/compliance/regulatory-requirements', { productType, markets }),
+    
+    checkCompliance: (entityType: string, entityId: string, requirements: string[]): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/compliance/check/${entityType}/${entityId}`, { requirements }),
+    
+    // Analytics & Reporting
+    getComplianceMetrics: (dateRange?: any): Promise<ApiResponse<any>> =>
+      tempApiClient.get('/compliance/metrics', { params: dateRange }),
+    
+    generateComplianceReport: (options: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post('/compliance/reports/generate', options),
   },
 
   // AI Services
@@ -372,7 +501,7 @@ export const api = {
       tempApiClient.post('/ai/products/batch-analyze', { productIds }),
   },
 
-  // Sample Requests
+    // Sample Requests & Tracking
   samples: {
     getAll: (params?: SearchParams): Promise<ApiResponse<SampleRequest[]>> =>
       tempApiClient.get('/samples', { params }),
@@ -380,11 +509,146 @@ export const api = {
     getById: (id: string): Promise<ApiResponse<SampleRequest>> =>
       tempApiClient.get(`/samples/${id}`),
     
+    create: (data: any): Promise<ApiResponse<SampleRequest>> =>
+      tempApiClient.post('/samples', data),
+    
+    update: (id: string, data: any): Promise<ApiResponse<SampleRequest>> =>
+      tempApiClient.put(`/samples/${id}`, data),
+    
     updateStatus: (id: string, status: string): Promise<ApiResponse<SampleRequest>> =>
       tempApiClient.patch(`/samples/${id}/status`, { status }),
     
     submitFeedback: (id: string, feedback: any): Promise<ApiResponse> =>
       tempApiClient.post(`/samples/${id}/feedback`, feedback),
+    
+    // Real-time tracking features
+    getTracking: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.get(`/samples/${id}/tracking`),
+    
+    updateLocation: (id: string, location: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/samples/${id}/location`, location),
+    
+    addTrackingEvent: (id: string, event: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/samples/${id}/events`, event),
+    
+    getTemperatureLog: (id: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get(`/samples/${id}/temperature`),
+    
+    addTemperatureReading: (id: string, reading: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/samples/${id}/temperature`, reading),
+    
+    getChainOfCustody: (id: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get(`/samples/${id}/chain-of-custody`),
+    
+    updateCustody: (id: string, custodyData: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/samples/${id}/custody-transfer`, custodyData),
+    
+    generateBarcode: (id: string): Promise<ApiResponse<{ barcode: string; qrCode: string }>> =>
+      tempApiClient.post(`/samples/${id}/generate-barcode`),
+    
+    scanBarcode: (barcode: string): Promise<ApiResponse<SampleRequest>> =>
+      tempApiClient.get(`/samples/barcode/${barcode}`),
+    
+    getAnalyticsData: (dateRange?: any): Promise<ApiResponse<any>> =>
+      tempApiClient.get('/samples/analytics', { params: dateRange }),
+  },
+
+
+  // Expert Marketplace
+  experts: {
+    getAll: (params?: SearchParams): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get('/experts', { params }),
+    
+    getById: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.get(`/experts/${id}`),
+    
+    search: (query: any): Promise<ApiResponse<any[]>> =>
+      tempApiClient.post('/experts/search', query),
+    
+    getAvailability: (id: string, dateRange?: any): Promise<ApiResponse<any>> =>
+      tempApiClient.get(`/experts/${id}/availability`, { params: dateRange }),
+    
+    createBooking: (data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post('/experts/bookings', data),
+    
+    getBookings: (params?: any): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get('/experts/bookings', { params }),
+    
+    updateBooking: (id: string, data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.put(`/experts/bookings/${id}`, data),
+    
+    cancelBooking: (id: string, reason: string): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/experts/bookings/${id}/cancel`, { reason }),
+    
+    addReview: (expertId: string, review: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/experts/${expertId}/reviews`, review),
+    
+    getReviews: (expertId: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get(`/experts/${expertId}/reviews`),
+    
+    createProject: (data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post('/experts/projects', data),
+    
+    getProjects: (params?: any): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get('/experts/projects', { params }),
+    
+    updateProject: (id: string, data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.put(`/experts/projects/${id}`, data),
+    
+    getAnalytics: (expertId?: string): Promise<ApiResponse<any>> =>
+      tempApiClient.get('/experts/analytics', { params: { expertId } }),
+  },
+
+
+  // Supplier Management
+  suppliers: {
+    getAll: (params?: SearchParams): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get('/suppliers', { params }),
+    
+    getById: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.get(`/suppliers/${id}`),
+    
+    create: (data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post('/suppliers', data),
+    
+    update: (id: string, data: any): Promise<ApiResponse<any>> =>
+      tempApiClient.put(`/suppliers/${id}`, data),
+    
+    delete: (id: string): Promise<ApiResponse> =>
+      tempApiClient.delete(`/suppliers/${id}`),
+    
+    verify: (id: string, verificationData: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/suppliers/${id}/verify`, verificationData),
+    
+    getVerificationStatus: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.get(`/suppliers/${id}/verification`),
+    
+    getCertifications: (id: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get(`/suppliers/${id}/certifications`),
+    
+    addCertification: (id: string, certification: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/suppliers/${id}/certifications`, certification),
+    
+    getPerformanceMetrics: (id: string, dateRange?: any): Promise<ApiResponse<any>> =>
+      tempApiClient.get(`/suppliers/${id}/performance`, { params: dateRange }),
+    
+    getCapabilities: (id: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get(`/suppliers/${id}/capabilities`),
+    
+    updateCapabilities: (id: string, capabilities: any[]): Promise<ApiResponse<any>> =>
+      tempApiClient.put(`/suppliers/${id}/capabilities`, { capabilities }),
+    
+    getAuditHistory: (id: string): Promise<ApiResponse<any[]>> =>
+      tempApiClient.get(`/suppliers/${id}/audits`),
+    
+    scheduleAudit: (id: string, auditData: any): Promise<ApiResponse<any>> =>
+      tempApiClient.post(`/suppliers/${id}/audits`, auditData),
+    
+    getRiskAssessment: (id: string): Promise<ApiResponse<any>> =>
+      tempApiClient.get(`/suppliers/${id}/risk-assessment`),
+    
+    updateRiskProfile: (id: string, riskData: any): Promise<ApiResponse<any>> =>
+      tempApiClient.put(`/suppliers/${id}/risk-profile`, riskData),
   },
 
   // File Upload

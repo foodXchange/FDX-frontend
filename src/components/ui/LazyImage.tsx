@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Box, Skeleton, IconButton, Typography, useTheme, alpha, CircularProgress,  } from '@mui/material';
-import { BrokenImage, Image as ImageIcon, Refresh, Download, Fullscreen, ZoomIn, ZoomOut,  } from '@mui/icons-material';
+import { BrokenImage, Image as PhotoIcon, Refresh, Download, Fullscreen, ZoomIn, ZoomOut,  } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Image optimization configurations

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Box, Typography, Card, CardContent, Button, Tabs, Tab, Switch, FormControl, InputLabel, Select, MenuItem, Divider, Stack, Container, Alert, Snackbar } from '@mui/material';
 import { Notifications as BellIcon, Language as GlobeAltIcon, Security as ShieldCheckIcon } from '@mui/icons-material';
 import { Toast } from '@components/ui/Toast';
+import { ShieldCheckIcon } from '@heroicons/react/24/outline';
 
 const Settings: React.FC = () => {
   // const { updateProfile } = useAuth(); // Uncomment when profile update is needed

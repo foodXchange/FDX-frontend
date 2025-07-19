@@ -14,6 +14,7 @@ import {
   Chip,
 } from '@mui/material';
 import {  } from '@mui/icons-material';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 interface UploadedFile {
   filename: string;
@@ -200,7 +201,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                     onClick={() => removeFile(index)}
                     disabled={uploading}
                   >
-                    <DeleteIcon />
+                    <TrashIcon />
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>

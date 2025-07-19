@@ -14,6 +14,7 @@ import {
   Container
 } from '@mui/material';
 import { ProductCard } from '../../components/ui/cards/ProductCard';
+import { FunnelIcon } from '@heroicons/react/24/outline';
 
 const mockProducts = [
   {

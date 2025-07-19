@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { Box, Typography, IconButton, Button, Tooltip, CircularProgress } from '@mui/material';
-import { Refresh as RefreshIcon, Add as AddIcon, Dashboard as DashboardIcon } from '@mui/icons-material';
+import { Refresh as RefreshIcon, Add as PlusIcon, Dashboard as DashboardIcon } from '@mui/icons-material';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 interface ARMDashboardHeaderProps {
   isLoading: boolean;
@@ -29,7 +30,7 @@ export const ARMDashboardHeader = memo<ARMDashboardHeaderProps>(({
         </Tooltip>
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={<PlusIcon />}
           onClick={onAddLead}
           sx={{ textTransform: 'none' }}
         >

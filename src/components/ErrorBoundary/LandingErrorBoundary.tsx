@@ -1,6 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Box, Typography, Button, Stack } from '@mui/material';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface Props {
   children: ReactNode;
@@ -79,7 +80,7 @@ Component Stack: ${this.state.errorInfo?.componentStack}
                 transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
               >
                 <Box sx={{ bgcolor: 'error.light', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', width: 64, height: 64, mx: 'auto', mb: 3 }}>
-                  <ExclamationTriangleIcon sx={{ fontSize: 32, color: 'error.main' }} />
+                  <Box component={ExclamationTriangleIcon} sx={{ fontSize: 32, color: 'error.main' }} />
                 </Box>
               </motion.div>
               
@@ -121,9 +122,9 @@ Component Stack: ${this.state.errorInfo?.componentStack}
               {process.env.NODE_ENV === 'development' && (
                 <Box sx={{ mt: 3, textAlign: 'left' }}>
                   <details>
-                    <summary sx={{ fontSize: '0.875rem', color: '#9ca3af', cursor: 'pointer' }}>
+                    <Box component="summary" sx={{ fontSize: '0.875rem', color: '#9ca3af', cursor: 'pointer' }}>
                       Error Details (Development Only)
-                    </summary>
+                    </Box>
                     <Box component="pre" sx={{ mt: 1, fontSize: '0.75rem', color: 'error.main', bgcolor: 'error.light', p: 1, borderRadius: 1, overflow: 'auto' }}>
                       {this.state.error?.message}
                       {this.state.error?.stack}

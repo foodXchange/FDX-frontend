@@ -3,6 +3,7 @@ import { useRouteError, useNavigate } from 'react-router-dom';
 import { Button, Card, CardContent, Box, Typography, Stack } from '@mui/material';
 import { logger } from '@/services/logger';
 import { Home as HomeIcon } from '@mui/icons-material';
+import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 export const RouteErrorBoundary: React.FC = () => {
   const error = useRouteError() as Error;
@@ -29,7 +30,7 @@ export const RouteErrorBoundary: React.FC = () => {
       <Card sx={{ maxWidth: 400, width: '100%' }}>
         <CardContent sx={{ p: 4, textAlign: 'center' }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-            <ExclamationTriangleIcon sx={{ color: 'error.main', fontSize: 48 }} />
+            <Box component={ExclamationTriangleIcon} sx={{ color: 'error.main', fontSize: 48 }} />
           </Box>
           
           <Typography variant="h5" sx={{ color: 'grey.900', mb: 2 }}>
@@ -43,9 +44,9 @@ export const RouteErrorBoundary: React.FC = () => {
           {process.env.NODE_ENV === 'development' && error && (
             <Box sx={{ mt: 3, textAlign: 'left' }}>
               <details>
-                <summary sx={{ cursor: 'pointer', color: '#6b7280' }}>
+                <Box component="summary" sx={{ cursor: 'pointer', color: '#6b7280' }}>
                   Error Details
-                </summary>
+                </Box>
                 <Box sx={{ mt: 1, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
                   <Typography variant="body2" sx={{ color: 'error.main', mb: 1 }}>
                     {error.message || 'Unknown error'}

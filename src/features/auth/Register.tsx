@@ -314,3 +314,4 @@ export const Register: React.FC = () => {
     </Box>
   );
 };
+export default Register;

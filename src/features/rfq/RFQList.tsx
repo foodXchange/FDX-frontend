@@ -30,6 +30,7 @@ import { rfqService } from '../../services/rfqService';
 import { RFQ, RFQFilters } from '../../shared/types';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { formatDistanceToNow, format } from 'date-fns';
+import { ExclamationTriangleIcon, UserGroupIcon, PlusIcon, FunnelIcon, DocumentTextIcon, CalendarDaysIcon, EyeIcon } from '@heroicons/react/24/outline';
 
 interface RFQListProps {
   userRole?: 'buyer' | 'supplier';

@@ -15,6 +15,7 @@ import {
   Divider
 } from '@mui/material';
 import { Email as EnvelopeIcon, Edit as PencilIcon } from '@mui/icons-material';
+import { UserCircleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();

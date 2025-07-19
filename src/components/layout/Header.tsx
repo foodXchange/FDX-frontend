@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -16,6 +15,7 @@ import {
   Stack
 } from '@mui/material';
 import { Menu as MenuIcon, Notifications as NotificationsIcon, Settings as SettingsIcon } from '@mui/icons-material';
+import { ChevronDownIcon, UserCircleIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 
 interface HeaderProps {
   currentUser?: {
@@ -136,7 +136,7 @@ export function Header({ currentUser, onLogout, onMenuToggle }: HeaderProps) {
                   sx={{ width: 32, height: 32 }}
                 />
               ) : (
-                <UserCircleIcon sx={{ fontSize: 32, color: 'grey.400' }} />
+                <Box component={UserCircleIcon} sx={{ fontSize: 32, color: 'grey.400' }} />
               )}
               <Box sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'left' }}>
                 <Typography variant="body2" sx={{ color: 'grey.700' }}>
@@ -146,7 +146,7 @@ export function Header({ currentUser, onLogout, onMenuToggle }: HeaderProps) {
                   {user.email}
                 </Typography>
               </Box>
-              <ChevronDownIcon sx={{ fontSize: 16, color: 'grey.400' }} />
+              <Box component={ChevronDownIcon} sx={{ fontSize: 16, color: 'grey.400' }} />
             </Button>
 
             {/* Dropdown Menu */}
@@ -175,19 +175,19 @@ export function Header({ currentUser, onLogout, onMenuToggle }: HeaderProps) {
               <Divider />
               
               <MenuItem onClick={handleProfileClose}>
-                <UserCircleIcon sx={{ mr: 2, fontSize: 16 }} />
+                <Box component={UserCircleIcon} sx={{ mr: 2, fontSize: 16 }} />
                 Profile Settings
               </MenuItem>
               
               <MenuItem onClick={handleProfileClose}>
-                <SettingsIcon sx={{ mr: 2, fontSize: 16 }} />
+                <Box component={SettingsIcon} sx={{ mr: 2, fontSize: 16 }} />
                 Account Settings
               </MenuItem>
               
               <Divider />
               
               <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
-                <LogoutIcon sx={{ mr: 2, fontSize: 16 }} />
+                <Box component={ArrowRightOnRectangleIcon} sx={{ mr: 2, fontSize: 16 }} />
                 Sign Out
               </MenuItem>
             </Menu>

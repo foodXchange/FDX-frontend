@@ -1,62 +1,23 @@
-// Service Worker for Agent PWA
-const CACHE_NAME = 'fdx-agent-v1';
-const urlsToCache = [
+const CACHE_NAME = 'fdx-frontend-v1.0.0';
+const STATIC_CACHE_URLS = [
   '/',
   '/static/js/bundle.js',
   '/static/css/main.css',
-  '/agents/dashboard',
-  '/agents/leads',
-  '/agents/whatsapp',
-  '/agents/commissions',
-  '/manifest.json'
+  '/manifest.json',
+  '/favicon.ico'
 ];
 
-// Install event - cache resources
+const API_CACHE_URLS = [
+  '/api/rfqs',
+  '/api/suppliers',
+  '/api/orders'
+];
+
+// Install event - cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-  );
-});
-
-// Fetch event - serve from cache when offline
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        if (response) {
-          return response;
-        }
-        
-        // Important: Clone the request before using it
-        const fetchRequest = event.request.clone();
-        
-        return fetch(fetchRequest).then((response) => {
-          // Check if we received a valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          
-          // Important: Clone the response before using it
-          const responseToCache = response.clone();
-          
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-          
-          return response;
-        }).catch(() => {
-          // Return offline page for navigation requests
-          if (event.request.destination === 'document') {
-            return caches.match('/offline.html');
-          }
-        });
-      })
+      .then((cache) => cache.addAll(STATIC_CACHE_URLS))
   );
 });
 
@@ -65,79 +26,148 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
+        cacheNames
+          .filter((cacheName) => cacheName !== CACHE_NAME)
+          .map((cacheName) => caches.delete(cacheName))
       );
     })
   );
 });
 
-// Push notification event
-self.addEventListener('push', (event) => {
-  const options = {
-    body: event.data ? event.data.text() : 'New notification',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge-72x72.png',
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: 1
-    },
-    actions: [
-      {
-        action: 'explore',
-        title: 'View Details',
-        icon: '/icons/checkmark.png'
-      },
-      {
-        action: 'close',
-        title: 'Close',
-        icon: '/icons/xmark.png'
-      }
-    ]
-  };
-  
-  event.waitUntil(
-    self.registration.showNotification('FDX Agent', options)
+// Fetch event - serve from cache, fallback to network
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Handle API requests with network-first strategy
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Cache successful API responses
+          if (response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(`${CACHE_NAME}-api`).then((cache) => {
+              cache.put(request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache for API requests
+          return caches.match(request);
+        })
+    );
+    return;
+  }
+
+  // Handle static assets with cache-first strategy
+  event.respondWith(
+    caches.match(request)
+      .then((response) => {
+        if (response) {
+          return response;
+        }
+        return fetch(request)
+          .then((response) => {
+            // Cache new resources
+            if (response.status === 200) {
+              const responseClone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, responseClone);
+              });
+            }
+            return response;
+          });
+      })
   );
 });
 
-// Notification click event
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  
-  if (event.action === 'explore') {
-    // Open the app and navigate to relevant section
-    event.waitUntil(
-      clients.openWindow('/agents/dashboard')
-    );
-  } else if (event.action === 'close') {
-    // Just close the notification
-    event.notification.close();
-  } else {
-    // Default action - open the app
-    event.waitUntil(
-      clients.openWindow('/agents/dashboard')
-    );
-  }
-});
-
-// Background sync for offline actions
+// Background sync for offline form submissions
 self.addEventListener('sync', (event) => {
   if (event.tag === 'background-sync') {
-    event.waitUntil(doBackgroundSync());
+    event.waitUntil(
+      // Handle offline form submissions
+      handleBackgroundSync()
+    );
   }
 });
 
-function doBackgroundSync() {
-  // Sync offline actions when connection is restored
-  return new Promise((resolve) => {
-    // Implementation for syncing offline lead updates, messages, etc.
-    console.log('Background sync triggered');
-    resolve();
+async function handleBackgroundSync() {
+  const db = await openDB();
+  const tx = db.transaction(['pending-requests'], 'readonly');
+  const store = tx.objectStore('pending-requests');
+  const requests = await store.getAll();
+
+  for (const requestData of requests) {
+    try {
+      await fetch(requestData.url, {
+        method: requestData.method,
+        headers: requestData.headers,
+        body: requestData.body
+      });
+      
+      // Remove from pending requests after successful sync
+      const deleteTx = db.transaction(['pending-requests'], 'readwrite');
+      const deleteStore = deleteTx.objectStore('pending-requests');
+      await deleteStore.delete(requestData.id);
+    } catch (error) {
+      console.error('Background sync failed:', error);
+    }
+  }
+}
+
+// IndexedDB helper
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('fdx-offline-db', 1);
+    
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+    
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains('pending-requests')) {
+        db.createObjectStore('pending-requests', { keyPath: 'id' });
+      }
+    };
   });
 }
+
+// Push notification handler
+self.addEventListener('push', (event) => {
+  if (event.data) {
+    const data = event.data.json();
+    const options = {
+      body: data.body,
+      icon: '/favicon-192x192.png',
+      badge: '/favicon-192x192.png',
+      data: data.data,
+      actions: [
+        {
+          action: 'view',
+          title: 'View Details'
+        },
+        {
+          action: 'dismiss',
+          title: 'Dismiss'
+        }
+      ]
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(data.title, options)
+    );
+  }
+});
+
+// Notification click handler
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'view') {
+    event.waitUntil(
+      clients.openWindow(event.notification.data.url || '/')
+    );
+  }
+});

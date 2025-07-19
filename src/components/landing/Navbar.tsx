@@ -96,8 +96,8 @@ export const Navbar: React.FC = () => {
           <Toolbar disableGutters>
             {/* Logo */}
             <Box sx={{ flexGrow: 0, mr: 4 }}>
-              <Link to="/" sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-                <img 
+              <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+                <Box component="img" 
                   src={FoodXchangeLogo} 
                   alt="FoodXchange" 
                   sx={{ height: 40 }}
@@ -142,7 +142,7 @@ export const Navbar: React.FC = () => {
                     FoodXchange
                   </Box>
                 </Box>
-              </Link>
+              </Box>
             </Box>
             
             {/* Desktop Navigation */}

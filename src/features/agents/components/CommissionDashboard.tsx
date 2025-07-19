@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Box, Typography, Button, Card, CardContent, Grid, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Stack, Container, Divider } from '@mui/material';
 import { formatCurrency, formatDate } from '@/utils/format';
 import { EarningsChart } from './EarningsChart';
+import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 export const CommissionDashboard: React.FC = () => {
   const [dateFilter, setDateFilter] = useState<'week' | 'month' | 'year'>('month');

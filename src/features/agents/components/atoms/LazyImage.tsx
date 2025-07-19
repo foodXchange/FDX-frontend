@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Box, CircularProgress, Avatar, Skeleton, Typography } from '@mui/material';
 import { BrokenImage } from '@mui/icons-material';
 import { useImageOptimization } from '../../hooks/useImageOptimization';
+import { PhotoIcon } from '@heroicons/react/24/outline';
 
 interface LazyImageProps {
   src: string;
@@ -155,7 +156,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
               opacity: isLoaded ? 0 : 1,
             }}
           >
-            <ImageIcon />
+            <PhotoIcon />
           </Avatar>
         ) : null;
       

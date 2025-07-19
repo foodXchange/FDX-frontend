@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Box, Typography, Button, Paper, Grid, Chip, LinearProgress, CircularProgress, Card, CardContent, Stack, ButtonGroup } from '@mui/material';
+import { SparklesIcon, ChartBarIcon, UserGroupIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 
 // Interactive AI Chat Demo
 export const AIChatDemo: React.FC<{ className?: string }> = ({ className }) => {
@@ -59,7 +60,7 @@ export const AIChatDemo: React.FC<{ className?: string }> = ({ className }) => {
       className={className || ''}
     >
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-        <SparklesIcon sx={{ fontSize: 20, color: 'secondary.main', mr: 1 }} />
+        <Box component={SparklesIcon} sx={{ fontSize: 20, color: 'secondary.main', mr: 1 } } />
         <Typography variant="h6" sx={{ color: 'grey.900' }}>
           AI Assistant Demo
         </Typography>
@@ -163,7 +164,7 @@ export const MarketDataDemo: React.FC<{ className?: string }> = ({ className }) 
       className={className || ''}
     >
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-        <ChartBarIcon sx={{ fontSize: 20, color: 'success.main', mr: 1 }} />
+        <Box component={ChartBarIcon} sx={{ fontSize: 20, color: 'success.main', mr: 1 } } />
         <Typography variant="h6" sx={{ color: 'grey.900' }}>
           Live Market Data
         </Typography>
@@ -325,7 +326,7 @@ export const SupplierMatchDemo: React.FC<{ className?: string }> = ({ className 
       className={className || ''}
     >
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-        <UserGroupIcon sx={{ fontSize: 20, color: 'primary.main', mr: 1 }} />
+        <Box component={UserGroupIcon} sx={{ fontSize: 20, color: 'primary.main', mr: 1 } } />
         <Typography variant="h6" sx={{ color: 'grey.900' }}>
           AI Supplier Matching
         </Typography>
@@ -448,7 +449,7 @@ export const ComplianceDemo: React.FC<{ className?: string }> = ({ className }) 
       className={className || ''}
     >
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-        <ShieldCheckIcon sx={{ fontSize: 20, color: 'success.main', mr: 1 }} />
+        <Box component={ShieldCheckIcon} sx={{ fontSize: 20, color: 'success.main', mr: 1 } } />
         <Typography variant="h6" sx={{ color: 'grey.900' }}>
           Compliance Checker
         </Typography>
@@ -463,7 +464,7 @@ export const ComplianceDemo: React.FC<{ className?: string }> = ({ className }) 
                 transition={{ duration: 1, repeat: Infinity }}
                 sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}
               >
-                <ShieldCheckIcon sx={{ fontSize: 24, color: 'success.main' }} />
+                <Box component={ShieldCheckIcon} sx={{ fontSize: 24, color: 'success.main' } } />
               </motion.div>
               <Typography variant="body2" sx={{ color: 'grey.600' }}>
                 Checking compliance...
@@ -573,7 +574,7 @@ export const OrderTrackingDemo: React.FC<{ className?: string }> = ({ className 
       className={className || ''}
     >
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-        <TruckIcon sx={{ fontSize: 20, color: 'warning.main', mr: 1 }} />
+        <Box component={TruckIcon} sx={{ fontSize: 20, color: 'warning.main', mr: 1 } } />
         <Typography variant="h6" sx={{ color: 'grey.900' }}>
           Live Order Tracking
         </Typography>

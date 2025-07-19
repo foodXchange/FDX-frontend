@@ -112,7 +112,7 @@ export const HowItWorks: React.FC = () => {
                     whileHover={{ scale: 1.02 }}
                     sx={{ position: 'relative', borderRadius: 4, overflow: 'hidden', boxShadow: 3, transition: 'all 0.3s', '&:hover': { boxShadow: 6 } }}
                   >
-                    <img 
+                    <Box component="img" 
                       src={step.gif} 
                       alt={step.title}
                       sx={{ width: '100%', height: 256, objectFit: 'cover' }}

@@ -18,9 +18,10 @@ import {
   TextField,
   MenuItem,
 } from '@mui/material';
-import { Description as DocumentIcon,  } from '@mui/icons-material';
+import { Description as DescriptionIcon } from '@mui/icons-material';
 import { FileUpload } from '../ui/FileUpload';
 import { format } from 'date-fns';
+import { DocumentTextIcon, PhotoIcon, PlusIcon, PaperClipIcon, EyeIcon, ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 interface Document {
   id: string;
@@ -66,9 +67,9 @@ export const LeadDocuments: React.FC<LeadDocumentsProps> = ({
   const [localDocuments, setLocalDocuments] = useState<Document[]>(documents);
 
   const getFileIcon = (mimetype: string) => {
-    if (mimetype.includes('pdf')) return <PdfIcon />;
-    if (mimetype.includes('image')) return <ImageIcon />;
-    return <DocumentIcon />;
+    if (mimetype.includes('pdf')) return <DocumentTextIcon />;
+    if (mimetype.includes('image')) return <PhotoIcon />;
+    return <DocumentTextIcon />;
   };
 
   const formatFileSize = (bytes: number): string => {
@@ -123,7 +124,7 @@ export const LeadDocuments: React.FC<LeadDocumentsProps> = ({
         <Typography variant="h6">Documents</Typography>
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={<PlusIcon />}
           onClick={() => setUploadDialogOpen(true)}
         >
           Upload Document
@@ -132,7 +133,7 @@ export const LeadDocuments: React.FC<LeadDocumentsProps> = ({
 
       {localDocuments.length === 0 ? (
         <Box textAlign="center" py={4}>
-          <AttachIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+          <Box component={PaperClipIcon} sx={{ fontSize: 48, color: 'text.secondary', mb: 2 } } />
           <Typography color="text.secondary">
             No documents uploaded yet
           </Typography>
@@ -181,7 +182,7 @@ export const LeadDocuments: React.FC<LeadDocumentsProps> = ({
                   target="_blank"
                   sx={{ mr: 1 }}
                 >
-                  <ViewIcon />
+                  <EyeIcon />
                 </IconButton>
                 <IconButton
                   edge="end"
@@ -189,14 +190,14 @@ export const LeadDocuments: React.FC<LeadDocumentsProps> = ({
                   download
                   sx={{ mr: 1 }}
                 >
-                  <DownloadIcon />
+                  <ArrowDownTrayIcon />
                 </IconButton>
                 <IconButton
                   edge="end"
                   onClick={() => handleDeleteDocument(doc.id)}
                   color="error"
                 >
-                  <DeleteIcon />
+                  <TrashIcon />
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>

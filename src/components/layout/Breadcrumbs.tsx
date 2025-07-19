@@ -55,7 +55,7 @@ export const Breadcrumbs: React.FC = () => {
         {breadcrumbs.map((breadcrumb, index) => (
           <Box key={breadcrumb.href}>
             {index === 0 ? (
-              <Link
+              <Box component={Link}
                 to={breadcrumb.href}
                 sx={{ textDecoration: 'none', color: 'inherit' }}
               >
@@ -63,20 +63,20 @@ export const Breadcrumbs: React.FC = () => {
                   <Box component={HomeIcon} sx={{ flexShrink: 0, width: 20, height: 20 }} />
                   <Box component="span" sx={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden' }}>{breadcrumb.name}</Box>
                 </Box>
-              </Link>
+              </Box>
             ) : index === breadcrumbs.length - 1 ? (
               <Typography sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'text.primary' }}>
                 {breadcrumb.name}
               </Typography>
             ) : (
-              <Link
+              <Box component={Link}
                 to={breadcrumb.href}
                 sx={{ textDecoration: 'none', color: 'inherit' }}
               >
                 <Typography sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'text.secondary', '&:hover': { color: 'text.primary' } }}>
                   {breadcrumb.name}
                 </Typography>
-              </Link>
+              </Box>
             )}
           </Box>
         ))}

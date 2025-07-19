@@ -48,3 +48,4 @@ export const Unauthorized: React.FC = () => {
     </Box>
   );
 };
+export default Unauthorized;

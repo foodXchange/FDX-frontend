@@ -18,10 +18,11 @@ import {
   CircularProgress,
   Grid,
 } from '@mui/material';
-import { Upload as UploadIcon, CheckCircle as SuccessIcon, Download as DownloadIcon } from '@mui/icons-material';
+import { Upload as UploadIcon, CheckCircle as SuccessIcon } from '@mui/icons-material';
 import { FileUpload } from '../ui/FileUpload';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
+import { ArrowDownTrayIcon as ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 interface ImportExportWithUploadProps {
   onImport?: (data: any[]) => void;
@@ -301,7 +302,7 @@ export const ImportExportWithUpload: React.FC<ImportExportWithUploadProps> = ({
               <Button
                 variant="outlined"
                 size="large"
-                startIcon={<DownloadIcon />}
+                startIcon={<ArrowDownTrayIcon />}
                 onClick={() => handleExport('csv')}
                 fullWidth
               >
@@ -310,7 +311,7 @@ export const ImportExportWithUpload: React.FC<ImportExportWithUploadProps> = ({
               <Button
                 variant="outlined"
                 size="large"
-                startIcon={<DownloadIcon />}
+                startIcon={<ArrowDownTrayIcon />}
                 onClick={() => handleExport('excel')}
                 fullWidth
               >

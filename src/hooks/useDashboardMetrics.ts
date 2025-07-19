@@ -1,3 +1,4 @@
+import { TypedWebSocket } from '../types/websocket';
 import { useState, useEffect, useCallback } from 'react';
 import { websocket } from '../services/websocket';
 import { aiService } from '../services/ai/aiService';

@@ -8,6 +8,7 @@ import { RFQ, Proposal } from '../../shared/types';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
 import { formatDistanceToNow, format } from 'date-fns';
+import { ExclamationTriangleIcon, UserGroupIcon, PlusIcon, DocumentTextIcon, CalendarDaysIcon, EyeIcon } from '@heroicons/react/24/outline';
 
 interface RFQDetailProps {
   userRole?: 'buyer' | 'supplier';

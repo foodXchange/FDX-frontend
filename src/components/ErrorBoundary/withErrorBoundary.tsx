@@ -1,14 +1,15 @@
-import React, { ComponentType } from 'react';
+import React from 'react';
+import { ComponentType } from 'react';
 import { EnhancedErrorBoundary, PageErrorBoundary, SectionErrorBoundary, ComponentErrorBoundary } from './EnhancedErrorBoundary';
 import { ErrorBoundaryProps } from './types';
 
-// Higher-order component that wraps a component with error boundary
+// Simplified error boundary HOCs
 export function withErrorBoundary<P extends object>(
   Component: ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
+  errorBoundaryProps?: Partial<ErrorBoundaryProps>
 ) {
   const WrappedComponent = (props: P) => (
-    <EnhancedErrorBoundary {...errorBoundaryProps}>
+    <EnhancedErrorBoundary fallback={React.createElement("div", null, "Something went wrong")} {...errorBoundaryProps}>
       <Component {...props} />
     </EnhancedErrorBoundary>
   );
@@ -17,13 +18,12 @@ export function withErrorBoundary<P extends object>(
   return WrappedComponent;
 }
 
-// Specific HOCs for different error boundary levels
 export function withPageErrorBoundary<P extends object>(
   Component: ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
+  errorBoundaryProps?: Partial<ErrorBoundaryProps>
 ) {
   const WrappedComponent = (props: P) => (
-    <PageErrorBoundary {...errorBoundaryProps}>
+    <PageErrorBoundary fallback={React.createElement("div", null, "Page error occurred")} {...errorBoundaryProps}>
       <Component {...props} />
     </PageErrorBoundary>
   );
@@ -34,10 +34,10 @@ export function withPageErrorBoundary<P extends object>(
 
 export function withSectionErrorBoundary<P extends object>(
   Component: ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
+  errorBoundaryProps?: Partial<ErrorBoundaryProps>
 ) {
   const WrappedComponent = (props: P) => (
-    <SectionErrorBoundary {...errorBoundaryProps}>
+    <SectionErrorBoundary fallback={React.createElement("div", null, "Section error occurred")} {...errorBoundaryProps}>
       <Component {...props} />
     </SectionErrorBoundary>
   );
@@ -48,10 +48,10 @@ export function withSectionErrorBoundary<P extends object>(
 
 export function withComponentErrorBoundary<P extends object>(
   Component: ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
+  errorBoundaryProps?: Partial<ErrorBoundaryProps>
 ) {
   const WrappedComponent = (props: P) => (
-    <ComponentErrorBoundary {...errorBoundaryProps}>
+    <ComponentErrorBoundary fallback={React.createElement("div", null, "Component error occurred")} {...errorBoundaryProps}>
       <Component {...props} />
     </ComponentErrorBoundary>
   );
@@ -59,3 +59,5 @@ export function withComponentErrorBoundary<P extends object>(
   WrappedComponent.displayName = `withComponentErrorBoundary(${Component.displayName || Component.name})`;
   return WrappedComponent;
 }
+
+export default withErrorBoundary;

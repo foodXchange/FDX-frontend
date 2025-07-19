@@ -24,6 +24,7 @@ import { useAgentStore } from '../store/useAgentStore';
 import { Lead } from '../types';
 import { LeadCard } from './LeadCard';
 import { AgentRFQList } from './AgentRFQList';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 type ViewMode = 'kanban' | 'list';
 type LeadStatus = Lead['status'];

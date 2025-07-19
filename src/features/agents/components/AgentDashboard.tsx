@@ -19,6 +19,7 @@ import {
 import { formatCurrency } from '@/utils/format';
 import { PerformanceBadge } from './PerformanceBadge';
 import { Lead } from '../types';
+import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 export const AgentDashboard: React.FC = () => {
   const { user } = useAuth();

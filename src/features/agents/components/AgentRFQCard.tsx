@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Box, Typography, Button, Card, CardContent, Chip, Stack, Divider } from '@mui/material';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatCurrency } from '@/utils/format';
+import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 interface RFQ {
   id: string;

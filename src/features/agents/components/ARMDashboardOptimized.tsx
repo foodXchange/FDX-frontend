@@ -23,11 +23,12 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import { Timeline as TimelineIcon, Refresh as RefreshIcon, Add as AddIcon,  } from '@mui/icons-material';
+import { Timeline as TimelineIcon, Refresh as RefreshIcon, Add as PlusIcon,  } from '@mui/icons-material';
 import { useAgentStore } from '../store/useAgentStore';
 import { Lead, LeadActivity, LeadNote, WhatsAppMessage, WhatsAppTemplate, LeadStatus } from '../types';
 import { formatCurrency } from '@/utils/format';
 import { usePerformanceMonitor, useOperationMonitor } from '../hooks/usePerformanceMonitor';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 // Lazy load heavy components
 const LeadPipelineOptimized = lazy(() => 
@@ -324,7 +325,7 @@ export const ARMDashboardOptimized: React.FC = () => {
             </Tooltip>
             <Button
               variant="contained"
-              startIcon={<AddIcon />}
+              startIcon={<PlusIcon />}
               onClick={() => {/* Open add lead dialog */}}
             >
               Add New Lead

@@ -6,6 +6,7 @@ import { BuyerOnboardingTour, useBuyerOnboarding } from './BuyerOnboardingTour';
 import { DemoShowcase } from './InteractiveDemoComponents';
 import { useAppStore } from '../../store/useAppStore';
 import { UserRole } from '../../shared/types';
+import { SparklesIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 
 interface OnboardingManagerProps {
   forceShow?: boolean;
